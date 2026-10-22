@@ -155,7 +155,7 @@ ol.steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column;
 .pre { white-space: pre-wrap; font-size: 14px; line-height: 1.55; }
 
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line); display: flex; justify-content: center; padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
-.tabbar-in { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; width: 100%; max-width: 760px; }
+.tabbar-in { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; width: 100%; max-width: 760px; }
 .tab { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; border-radius: 10px; font-size: 11px; font-weight: 500; color: var(--muted); cursor: pointer; }
 .tab svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tab.on { color: var(--accent); background: var(--surface2); }
@@ -221,6 +221,13 @@ input[type=file] { font-size: 13px; max-width: 100%; }
 .slot select { font-size: 14px; }
 .sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 @media (max-width: 380px) { .ringcard { flex-direction: column; align-items: stretch; } .ringbox { margin: 0 auto; } }
+.tab { min-width: 0; font-size: 10.5px; }
+.shoprow { align-items: center; padding: 3px 0; }
+.shoprow .grow { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.shoprow .grow.done { text-decoration: line-through; color: var(--muted); }
+ul.plain { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+pre.label { background: var(--surface2); border-radius: 8px; padding: 10px 12px; margin: 0; font-family: var(--mono); font-size: 13px; white-space: pre-wrap; }
+.rcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </style>
 
 </head>
@@ -1832,17 +1839,534 @@ if (typeof module !== 'undefined') {
   };
 }
 
+/* ===== Baukasten für das Gefrierer-Meal-Prep: Bausteine (eigene Fassungen einfacher Grundzubereitungen) =====
+   Jede Charge ergibt mehrere gleich große Blöcke. Nährwerte je Block = Summe der Zutaten / Blockanzahl.
+   Die Blockanzahl wird aus dem geschätzten Gewicht nach dem Garen und der Dichte berechnet (Richtwert, kein Messwert). */
+const MODULE = [
+  { id: 'Protein', ml: 250, text: 'Fleisch, Fisch oder pflanzliches Eiweiß, fertig gegart. Ein Block liefert den Eiweißanteil einer Mahlzeit.' },
+  { id: 'Beilage', ml: 250, text: 'Reis, Getreide, Nudeln oder Püree, fertig gegart. Ein Block ist die Sättigungsbeilage.' },
+  { id: 'Sauce', ml: 125, text: 'Würzige Sauce, die Protein und Beilage zu einem Gericht verbindet.' },
+  { id: 'Gemüse', ml: 250, text: 'Gegartes Gemüse und Suppen. Ein Block ist eine Gemüseportion oder eine kleine Suppe.' },
+  { id: 'Booster', ml: 50, text: 'Würzpasten und Aromabasen. Ein kleiner Würfel gibt jedem Gericht Geschmack.' }
+];
+const STIL_PASST = {
+  neutral: ['neutral', 'italien', 'mediterran', 'asien', 'indien', 'orient', 'mex', 'deutsch'],
+  italien: ['neutral', 'italien', 'mediterran'], mediterran: ['neutral', 'italien', 'mediterran', 'orient'],
+  asien: ['neutral', 'asien'], indien: ['neutral', 'indien', 'orient'], orient: ['neutral', 'indien', 'orient', 'mediterran'],
+  mex: ['neutral', 'mex'], deutsch: ['neutral', 'deutsch']
+};
+const STIL_NAME = { neutral: 'neutral', italien: 'Italien', mediterran: 'Mittelmeer', asien: 'Asien', indien: 'Indien', orient: 'Orient', mex: 'Mexiko', deutsch: 'Deutschland' };
+let _bn = 0;
+function B(o) {
+  _bn += 1;
+  return Object.assign({
+    id: 'b' + String(_bn).padStart(2, '0'), cube: true, devices: ['Herd'], dens: 1, spices: [], tips: '', months: 3, style: 'neutral', cuisine: '',
+    thaw: 'Über Nacht im Kühlschrank auftauen oder direkt aus dem Gefrierer im Topf bei kleiner Hitze erwärmen.',
+    reheat: 'Unter Rühren durchgehend sehr heiß erhitzen (mind. 70 °C).', src: 'Eigene Grundzubereitung für das Gefrierer-Meal-Prep'
+  }, o);
+}
+const BAUSTEINE = [
+  /* ---------- Protein ---------- */
+  B({
+    name: 'Hähnchen-Geschnetzeltes, mild gewürzt', mod: 'Protein', group: 'Geflügel', ml: 250, cooked: 1250, prep: 20, cook: 20,
+    ing: [['haehnchenbrust', 1000], ['zwiebel', 150], ['knoblauch', 15], ['olivenoel', 20], ['huehnerbruehe', 300]],
+    spices: ['salz', 'pfeffer', 'paprika_suess', 'thymian'],
+    steps: ['Hähnchenbrust in schmale Streifen schneiden, mit Salz, Pfeffer, Paprika und Thymian mischen.', 'Öl in einer großen Pfanne heiß werden lassen, Fleisch in zwei Portionen 4 Minuten kräftig anbraten und herausnehmen.', 'Zwiebel und Knoblauch im Bratsatz glasig dünsten, mit der Brühe ablöschen, Fleisch zurückgeben und 5 Minuten leise ziehen lassen, bis es durch ist (Kern mind. 70 °C).', 'Auf Zimmertemperatur bringen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Passt zu Reis, Nudeln und jeder Sauce. Nicht zu lange garen, sonst wird die Brust beim Aufwärmen trocken.', months: 3
+  }),
+  B({
+    name: 'Pulled Chicken mit Rauchpaprika', mod: 'Protein', group: 'Geflügel', style: 'mex', cuisine: 'Mexiko', ml: 250, cooked: 1250, prep: 20, cook: 60, devices: ['Multikocher', 'Dutch Oven', 'Herd'],
+    ing: [['haehnchenkeule', 1200], ['zwiebel', 200], ['tomatenmark', 40], ['passata', 200], ['essig', 30], ['honig', 15]],
+    spices: ['rauchpaprika', 'kreuzkuemmel', 'knoblauchpulver', 'oregano', 'salz'],
+    steps: ['Keulenfleisch mit allen Gewürzen einreiben und mit gewürfelter Zwiebel, Tomatenmark, Passata, Essig und Honig in den Topf geben.', 'Zugedeckt bei kleiner Hitze 50 Minuten schmoren, bis das Fleisch zerfällt und im Kern mindestens 70 °C hat.', 'Fleisch mit zwei Gabeln zerzupfen und in der Sauce 5 Minuten durchziehen lassen.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Für Tacos, Bowls und Wraps. Im Multikocher auf „Schmoren“ etwa 45 Minuten.', months: 3
+  }),
+  B({
+    name: 'Putenhack-Gemüse-Basis', mod: 'Protein', group: 'Geflügel', ml: 250, cooked: 1350, prep: 20, cook: 25,
+    ing: [['putenhack', 1000], ['zwiebel', 150], ['karotte', 150], ['staudensellerie', 100], ['tomatenmark', 30], ['olivenoel', 20], ['gemuesebruehe', 200]],
+    spices: ['salz', 'pfeffer', 'oregano', 'knoblauchpulver'],
+    steps: ['Zwiebel, Karotte und Sellerie fein würfeln und im Öl 6 Minuten weich dünsten.', 'Hack zugeben, krümelig braten, bis nichts Rosa mehr zu sehen ist, dann Tomatenmark kurz mitrösten.', 'Mit Brühe ablöschen, würzen und 10 Minuten einkochen lassen, bis das Hack durch ist (mind. 70 °C).', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Vielseitig für Pasta, Gemüsepfannen, gefüllte Paprika und Bowls.', months: 3
+  }),
+  B({
+    name: 'Rinderhack-Basis mit Zwiebel und Tomate', mod: 'Protein', group: 'Rind', ml: 250, cooked: 1250, prep: 15, cook: 25,
+    ing: [['rinderhack', 1000], ['zwiebel', 200], ['knoblauch', 20], ['tomatenmark', 40], ['olivenoel', 10], ['rinderbruehe', 200]],
+    spices: ['salz', 'pfeffer', 'paprika_suess', 'oregano'],
+    steps: ['Zwiebel würfeln und im Öl glasig dünsten, Knoblauch kurz mitgaren.', 'Hack zugeben und bei hoher Hitze krümelig und braun anbraten, dann Tomatenmark 2 Minuten mitrösten.', 'Mit Brühe ablöschen, würzen und 8 Minuten einkochen lassen, bis alles durch ist (mind. 70 °C).', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Grundlage für Bolognese, Chili, Hackpfanne und gefüllte Gemüse. Fett nach dem Braten abschöpfen.', months: 3
+  }),
+  B({
+    name: 'Rindergulasch-Schmorfleisch', mod: 'Protein', group: 'Rind', style: 'deutsch', cuisine: 'Deutschland', ml: 250, cooked: 1750, prep: 25, cook: 120, devices: ['Dutch Oven', 'Multikocher', 'Herd'],
+    ing: [['rindergulasch', 1200], ['zwiebel', 400], ['paprika', 200], ['tomatenmark', 50], ['rapsoel', 20], ['rinderbruehe', 500]],
+    spices: ['paprika_suess', 'kuemmel', 'majoran', 'salz', 'pfeffer', 'lorbeer'],
+    steps: ['Fleisch trocken tupfen und im heißen Öl portionsweise rundum braun anbraten.', 'Zwiebeln und Paprika würfeln, zugeben und 5 Minuten mitrösten, Tomatenmark und Gewürze unterrühren.', 'Mit Brühe aufgießen und zugedeckt 100 bis 120 Minuten bei kleiner Hitze schmoren, bis das Fleisch weich ist.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Im Dutch Oven im Ofen bei 160 °C geht es ohne Rühren. Die Sauce vor dem Einfrieren nicht zu dünn einkochen.', months: 3
+  }),
+  B({
+    name: 'Schweinefilet-Streifen in Pilzsauce', mod: 'Protein', group: 'Schwein', style: 'deutsch', cuisine: 'Deutschland', ml: 250, cooked: 1400, prep: 20, cook: 20,
+    ing: [['schweinefilet', 1000], ['champignons', 300], ['zwiebel', 150], ['senf', 20], ['rapsoel', 20], ['huehnerbruehe', 300]],
+    spices: ['salz', 'pfeffer', 'paprika_suess'],
+    steps: ['Filet in dünne Streifen schneiden und würzen. Pilze in Scheiben, Zwiebel in Würfel schneiden.', 'Fleisch im heißen Öl portionsweise 2 Minuten scharf anbraten und herausnehmen.', 'Pilze und Zwiebel im Bratsatz 6 Minuten braten, Senf zugeben, mit Brühe ablöschen und 5 Minuten einkochen.', 'Fleisch zurückgeben und 3 Minuten durchziehen lassen, bis es durch ist. Abkühlen lassen, einfrieren.'],
+    tips: 'Beim Aufwärmen nur erhitzen und nicht kochen, damit das Filet zart bleibt.', months: 2
+  }),
+  B({
+    name: 'Hackbällchen in Tomatensauce', mod: 'Protein', group: 'Rind', style: 'italien', cuisine: 'Italien', ml: 250, cooked: 1700, prep: 30, cook: 30,
+    ing: [['rinderhack', 600], ['schweinehack', 200], ['eier', 55], ['semmelbroesel', 60], ['zwiebel', 100], ['petersilie', 15], ['passata', 800], ['olivenoel', 15]],
+    spices: ['salz', 'pfeffer', 'oregano', 'knoblauchpulver'],
+    steps: ['Hack mit Ei, Semmelbröseln, fein gewürfelter Zwiebel, Petersilie und Gewürzen verkneten und zu etwa 24 kleinen Bällchen formen.', 'Bällchen im Öl 5 Minuten rundum anbraten.', 'Passata zugießen und zugedeckt 20 Minuten leise köcheln, bis die Bällchen im Kern mindestens 70 °C haben.', 'Abkühlen lassen, in Silikonformen füllen (je Block 3 bis 4 Bällchen mit Sauce) und einfrieren.'],
+    tips: 'Mit Reis, Nudeln oder Polenta kombinieren. Ein Schuss Balsamico am Ende rundet die Sauce ab.', months: 3
+  }),
+  B({
+    name: 'Garnelen in Knoblauch-Tomaten', mod: 'Protein', group: 'Fisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 250, cooked: 1000, prep: 15, cook: 15,
+    ing: [['garnelen', 800], ['tomaten_dose', 400], ['knoblauch', 30], ['olivenoel', 20], ['zitronensaft', 20], ['petersilie', 20]],
+    spices: ['salz', 'pfeffer', 'chili_flocken'],
+    steps: ['Knoblauch im Öl bei mittlerer Hitze 1 Minute anschwitzen, Tomaten zugeben und 8 Minuten einkochen.', 'Garnelen zugeben und 3 Minuten ziehen lassen, bis sie rosa und durchgegart sind.', 'Zitronensaft und Petersilie unterrühren, abkühlen lassen.', 'In Silikonformen füllen und rasch einfrieren.'],
+    tips: 'Beim Aufwärmen nur kurz erhitzen, sonst werden die Garnelen zäh. Frisch verbrauchen, innerhalb von 2 Monaten.', months: 2
+  }),
+  B({
+    name: 'Kabeljau-Fenchel-Tomatenragout', mod: 'Protein', group: 'Fisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 250, cooked: 1700, prep: 20, cook: 25,
+    ing: [['kabeljau', 1000], ['fenchel', 300], ['tomaten_dose', 400], ['zwiebel', 100], ['oliven', 50], ['olivenoel', 20], ['gemuesebruehe', 200]],
+    spices: ['salz', 'pfeffer', 'fenchelsaat', 'oregano'],
+    steps: ['Fenchel und Zwiebel würfeln und im Öl 8 Minuten weich dünsten.', 'Tomaten, Brühe, Oliven und Gewürze zugeben und 10 Minuten einkochen.', 'Kabeljau in große Stücke schneiden, einlegen und zugedeckt 6 Minuten bei kleiner Hitze gar ziehen lassen.', 'Vorsichtig umrühren, abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Fisch möglichst innerhalb von 2 Monaten essen. Langsam im Kühlschrank auftauen.', months: 2
+  }),
+  B({
+    name: 'Rote Linsen mit Röstgemüse', mod: 'Protein', group: 'Vegetarisch', style: 'indien', cuisine: 'Indien', ml: 250, cooked: 1600, prep: 15, cook: 25,
+    ing: [['linsen', 350], ['zwiebel', 150], ['karotte', 150], ['tomatenmark', 30], ['olivenoel', 20], ['gemuesebruehe', 800]],
+    spices: ['kurkuma', 'kreuzkuemmel', 'koriander_gem', 'salz', 'pfeffer'],
+    steps: ['Zwiebel und Karotte fein würfeln und im Öl 6 Minuten dünsten, Tomatenmark und Gewürze 1 Minute mitrösten.', 'Gewaschene Linsen und Brühe zugeben und 18 bis 20 Minuten köcheln, bis alles weich ist.', 'Kräftig abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
+    tips: 'Ergibt mit Reis ein vollständiges Dal. Pro Block rund 15 g Eiweiß, mit Skyr oder Ei obenauf mehr.', months: 4
+  }),
+  B({
+    name: 'Kichererbsen in Tomaten-Kreuzkümmel-Sauce', mod: 'Protein', group: 'Vegetarisch', style: 'orient', cuisine: 'Orient', ml: 250, cooked: 1550, prep: 15, cook: 20,
+    ing: [['kichererbsen', 960], ['tomaten_dose', 400], ['zwiebel', 200], ['knoblauch', 20], ['olivenoel', 20]],
+    spices: ['kreuzkuemmel', 'paprika_suess', 'kurkuma', 'salz', 'pfeffer'],
+    steps: ['Zwiebel würfeln und im Öl glasig dünsten, Knoblauch und Gewürze 1 Minute mitgaren.', 'Tomaten und abgetropfte Kichererbsen zugeben und 12 Minuten leise köcheln.', 'Mit Salz und Pfeffer abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
+    tips: 'Zu Reis, Bulgur oder Quinoa. Frischen Joghurt oder Skyr erst nach dem Auftauen dazugeben.', months: 4
+  }),
+  B({
+    name: 'Tofu-Hack mit Ingwer und Soja', mod: 'Protein', group: 'Vegetarisch', style: 'asien', cuisine: 'Asien', ml: 250, cooked: 1000, prep: 15, cook: 15,
+    ing: [['tofu', 800], ['sojasauce', 40], ['zwiebel', 150], ['ingwer', 20], ['knoblauch', 15], ['rapsoel', 25]],
+    spices: ['pfeffer', 'fuenf_gewuerz'],
+    steps: ['Tofu mit den Händen grob zerbröseln und im Öl bei hoher Hitze 8 Minuten braun braten.', 'Zwiebel, Ingwer und Knoblauch fein würfeln, zugeben und 3 Minuten mitbraten.', 'Mit Sojasauce und Gewürz abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
+    tips: 'Tofu wird nach dem Einfrieren fester und nimmt Sauce gut auf. Gut mit der Erdnuss-Soja-Sauce.', months: 3
+  }),
+  /* ---------- Beilage ---------- */
+  B({
+    name: 'Basmatireis, gekocht', mod: 'Beilage', group: 'Vegetarisch', ml: 250, dens: 0.8, cooked: 1500, prep: 5, cook: 20,
+    ing: [['basmatireis', 500]], spices: ['salz'],
+    steps: ['Reis waschen, bis das Wasser klar ist.', 'In Salzwasser nach Packungsanweisung garen, abgießen und kurz ausdampfen lassen.', 'Sofort flach ausbreiten, damit er schnell abkühlt, und innerhalb von 2 Stunden in Silikonformen füllen.', 'Fest andrücken und rasch einfrieren.'],
+    tips: 'Reis rasch abkühlen und einfrieren, nie warm stehen lassen. Beim Aufwärmen einen Löffel Wasser zugeben.', months: 3,
+    reheat: 'Mit einem Löffel Wasser abgedeckt erhitzen, bis er durchgehend sehr heiß ist (mind. 70 °C).'
+  }),
+  B({
+    name: 'Vollkornreis, gekocht', mod: 'Beilage', group: 'Vegetarisch', ml: 250, dens: 0.8, cooked: 1400, prep: 5, cook: 40,
+    ing: [['vollkornreis', 500]], spices: ['salz'],
+    steps: ['Reis waschen und in Salzwasser nach Packungsanweisung garen (etwa 35 Minuten).', 'Abgießen und kurz ausdampfen lassen.', 'Sofort flach ausbreiten und innerhalb von 2 Stunden in Silikonformen füllen.', 'Fest andrücken und rasch einfrieren.'],
+    tips: 'Sättigt länger als weißer Reis. Beim Aufwärmen etwas Wasser zugeben.', months: 3,
+    reheat: 'Mit einem Löffel Wasser abgedeckt erhitzen, bis er durchgehend sehr heiß ist (mind. 70 °C).'
+  }),
+  B({
+    name: 'Bulgur, gekocht', mod: 'Beilage', group: 'Vegetarisch', style: 'orient', cuisine: 'Orient', ml: 250, dens: 0.75, cooked: 1300, prep: 5, cook: 15,
+    ing: [['bulgur', 500]], spices: ['salz'],
+    steps: ['Bulgur mit der doppelten Menge kochendem Salzwasser übergießen und zugedeckt 12 Minuten quellen lassen.', 'Mit einer Gabel auflockern und flach ausbreiten, bis er abgekühlt ist.', 'Innerhalb von 2 Stunden in Silikonformen füllen.', 'Fest andrücken und einfrieren.'],
+    tips: 'Passt zu Kichererbsen, Köfte und Ofengemüse.', months: 3
+  }),
+  B({
+    name: 'Quinoa, gekocht', mod: 'Beilage', group: 'Vegetarisch', ml: 250, dens: 0.75, cooked: 1100, prep: 5, cook: 20,
+    ing: [['quinoa', 400]], spices: ['salz'],
+    steps: ['Quinoa heiß abspülen, damit sie nicht bitter schmeckt.', 'In der doppelten Menge Salzwasser 15 Minuten köcheln und zugedeckt 5 Minuten quellen lassen.', 'Flach ausbreiten, abkühlen lassen und innerhalb von 2 Stunden in Silikonformen füllen.', 'Fest andrücken und einfrieren.'],
+    tips: 'Etwas eiweißreicher als Reis, gut für Bowls.', months: 3
+  }),
+  B({
+    name: 'Kartoffelpüree mit Magerquark', mod: 'Beilage', group: 'Vegetarisch', style: 'deutsch', cuisine: 'Deutschland', ml: 250, cooked: 1650, prep: 15, cook: 25,
+    ing: [['kartoffeln', 1500], ['milch15', 200], ['butter', 30], ['magerquark', 150]], spices: ['salz', 'muskat', 'pfeffer'],
+    steps: ['Kartoffeln schälen, vierteln und in Salzwasser 20 Minuten weich kochen, abgießen und ausdampfen lassen.', 'Mit warmer Milch, Butter und Quark zu einem glatten Püree stampfen, mit Salz und Muskat abschmecken.', 'Abkühlen lassen und innerhalb von 2 Stunden in Silikonformen füllen.', 'Glatt streichen und einfrieren.'],
+    tips: 'Mit Quark statt Sahne bleibt es leichter. Beim Aufwärmen mit einem Schuss Milch glatt rühren.', months: 3
+  }),
+  B({
+    name: 'Vollkornnudeln, bissfest gekocht', mod: 'Beilage', group: 'Vegetarisch', style: 'italien', cuisine: 'Italien', ml: 250, dens: 0.6, cooked: 1200, prep: 5, cook: 10,
+    ing: [['vollkornnudeln', 500]], spices: ['salz'],
+    steps: ['Nudeln in reichlich Salzwasser 2 Minuten kürzer als angegeben kochen, damit sie beim Aufwärmen nicht weich werden.', 'Abgießen, mit kaltem Wasser abschrecken und gut abtropfen lassen.', 'Mit wenig Öl aus der Sauce oder einem Teelöffel Öl mischen, in Silikonformen füllen und fest andrücken.', 'Rasch einfrieren.'],
+    tips: 'Zum Aufwärmen 1 Minute in kochendes Wasser geben oder in der Sauce erhitzen.', months: 2
+  }),
+  B({
+    name: 'Polenta mit Brühe', mod: 'Beilage', group: 'Vegetarisch', style: 'italien', cuisine: 'Italien', ml: 250, cooked: 1500, prep: 5, cook: 20,
+    ing: [['polenta', 300], ['gemuesebruehe', 1200]], spices: ['salz', 'pfeffer', 'muskat'],
+    steps: ['Brühe aufkochen, Polenta unter Rühren einrieseln lassen und 15 bis 20 Minuten bei kleiner Hitze quellen lassen, bis sie dick ist.', 'Abschmecken und etwas abkühlen lassen.', 'Innerhalb von 2 Stunden in Silikonformen füllen und glatt streichen.', 'Einfrieren.'],
+    tips: 'Zum Aufwärmen mit einem Schuss Brühe cremig rühren oder in Scheiben anbraten.', months: 3
+  }),
+  /* ---------- Sauce ---------- */
+  B({
+    name: 'Tomatensauce, Basis', mod: 'Sauce', group: 'Vegetarisch', style: 'italien', cuisine: 'Italien', ml: 125, dens: 1.05, cooked: 1050, prep: 10, cook: 30,
+    ing: [['passata', 1000], ['zwiebel', 150], ['knoblauch', 20], ['olivenoel', 30], ['tomatenmark', 30]],
+    spices: ['salz', 'pfeffer', 'oregano', 'basilikum_tr'],
+    steps: ['Zwiebel fein würfeln und im Öl glasig dünsten, Knoblauch kurz mitgaren.', 'Tomatenmark 1 Minute mitrösten, Passata und Gewürze zugeben.', 'Bei kleiner Hitze 25 Minuten einkochen lassen, bis die Sauce sämig ist.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Basis für Pasta, Shakshuka, Pizza und Schmorgerichte.', months: 4
+  }),
+  B({
+    name: 'Kokos-Curry-Sauce', mod: 'Sauce', group: 'Vegetarisch', style: 'asien', cuisine: 'Asien', ml: 125, cooked: 1000, prep: 10, cook: 15,
+    ing: [['kokosmilch', 500], ['huehnerbruehe', 400], ['currypaste', 80], ['zwiebel', 150], ['knoblauch', 20], ['ingwer', 30], ['limettensaft', 30], ['fischsauce', 20]],
+    spices: [],
+    steps: ['Zwiebel, Knoblauch und Ingwer fein würfeln und in einem Topf 4 Minuten ohne Fett anschwitzen, die Currypaste 1 Minute mitrösten.', 'Mit Brühe und Kokosmilch aufgießen und 10 Minuten leise köcheln.', 'Mit Limettensaft und Fischsauce abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
+    tips: 'Mit Hähnchen, Garnelen oder Tofu und Reis entsteht daraus in 10 Minuten ein Curry.', months: 3
+  }),
+  B({
+    name: 'Masala-Tomaten-Sauce mit Cashews', mod: 'Sauce', group: 'Vegetarisch', style: 'indien', cuisine: 'Indien', ml: 125, dens: 1.02, cooked: 1000, prep: 15, cook: 30,
+    ing: [['tomaten_dose', 800], ['zwiebel', 250], ['knoblauch', 25], ['ingwer', 30], ['cashews', 60], ['butter', 20]],
+    spices: ['garam_masala', 'kurkuma', 'koriander_gem', 'chilipulver', 'salz'],
+    steps: ['Zwiebel, Knoblauch und Ingwer in der Butter 8 Minuten goldgelb dünsten, Gewürze 1 Minute mitrösten.', 'Tomaten und Cashews zugeben und 20 Minuten köcheln.', 'Alles fein pürieren und abschmecken.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Mit gegartem Hähnchen oder Kichererbsen wird daraus ein cremiges Curry nach Butter-Chicken-Art. Joghurt erst nach dem Auftauen zugeben.', months: 3
+  }),
+  B({
+    name: 'Champignon-Rahmsauce, leicht', mod: 'Sauce', group: 'Vegetarisch', style: 'deutsch', cuisine: 'Deutschland', ml: 125, cooked: 1150, prep: 15, cook: 20,
+    ing: [['champignons', 600], ['zwiebel', 200], ['gemuesebruehe', 400], ['kochsahne', 150], ['speisestaerke', 20], ['senf', 10]],
+    spices: ['salz', 'pfeffer', 'muskat'],
+    steps: ['Pilze und Zwiebel klein schneiden und ohne Fett 10 Minuten anbraten, bis die Flüssigkeit verdampft ist.', 'Mit Brühe aufgießen, Senf zugeben und 5 Minuten köcheln.', 'Stärke mit etwas kaltem Wasser anrühren, einrühren, kurz aufkochen und die Sahne zugeben.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Beim Aufwärmen gut rühren. Passt zu Geflügel, Schwein und Kartoffelpüree.', months: 3
+  }),
+  B({
+    name: 'Paprika-Ajvar-Sauce', mod: 'Sauce', group: 'Vegetarisch', style: 'orient', cuisine: 'Balkan', ml: 125, cooked: 1000, prep: 15, cook: 30,
+    ing: [['paprika', 800], ['ajvar', 150], ['zwiebel', 150], ['tomatenmark', 30], ['knoblauch', 15], ['olivenoel', 20], ['gemuesebruehe', 200]],
+    spices: ['paprika_suess', 'salz', 'pfeffer'],
+    steps: ['Paprika und Zwiebel würfeln und im Öl 10 Minuten dünsten, Knoblauch und Tomatenmark zugeben.', 'Mit Brühe aufgießen und 15 Minuten köcheln, bis alles weich ist.', 'Ajvar unterrühren, alles fein pürieren und abschmecken.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Zu Hack, Hähnchen, Bulgur und Gemüse. Kräftig mit Paprika und Knoblauch.', months: 3
+  }),
+  B({
+    name: 'Erdnuss-Soja-Sauce', mod: 'Sauce', group: 'Vegetarisch', style: 'asien', cuisine: 'Asien', ml: 125, dens: 1.05, cooked: 650, prep: 10, cook: 10,
+    ing: [['erdnussmus', 120], ['sojasauce', 80], ['gemuesebruehe', 400], ['limettensaft', 40], ['ingwer', 20], ['knoblauch', 15], ['sambal', 15], ['honig', 20]],
+    spices: [],
+    steps: ['Ingwer und Knoblauch fein reiben und mit Erdnussmus und Sojasauce glatt rühren.', 'Brühe nach und nach einrühren und 5 Minuten bei kleiner Hitze erwärmen.', 'Mit Limettensaft, Sambal und Honig abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
+    tips: 'Für Tofu-Hack, Hähnchen, Nudeln und Gemüse. Enthält Erdnuss und Soja.', months: 3
+  }),
+  /* ---------- Gemüse und Suppen ---------- */
+  B({
+    name: 'Mediterranes Ofengemüse', mod: 'Gemüse', group: 'Vegetarisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 250, dens: 0.9, cooked: 1275, prep: 20, cook: 35, devices: ['Backofen', 'Airfryer'],
+    ing: [['paprika', 400], ['zucchini', 500], ['aubergine', 400], ['zwiebel', 200], ['olivenoel', 40]],
+    spices: ['salz', 'pfeffer', 'oregano', 'thymian'],
+    steps: ['Gemüse in grobe Stücke schneiden, mit Öl und Gewürzen mischen und auf zwei Blechen verteilen.', 'Bei 210 °C Ober-/Unterhitze 30 bis 35 Minuten rösten, bis die Ränder braun sind, einmal wenden.', 'Auf einem Blech abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
+    tips: 'Das Gemüse wird nach dem Auftauen weicher. Für Bowls, Pasta und als Füllung gedacht, nicht für knackige Beilagen.', months: 3
+  }),
+  B({
+    name: 'Spinat mit Zwiebel und Knoblauch', mod: 'Gemüse', group: 'Vegetarisch', ml: 250, dens: 1, cooked: 700, prep: 15, cook: 10,
+    ing: [['spinat', 1500], ['zwiebel', 150], ['knoblauch', 20], ['olivenoel', 20]],
+    spices: ['salz', 'pfeffer', 'muskat'],
+    steps: ['Zwiebel und Knoblauch im Öl 3 Minuten dünsten.', 'Spinat in Portionen zugeben und zusammenfallen lassen, bis die Flüssigkeit fast verdampft ist (ca. 5 Minuten).', 'Mit Salz, Pfeffer und Muskat würzen und abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
+    tips: 'Zu Fisch, Ei, Linsen und Paneer. Die Menge reduziert sich stark beim Garen.', months: 3
+  }),
+  B({
+    name: 'Rotkohl mit Apfel', mod: 'Gemüse', group: 'Vegetarisch', style: 'deutsch', cuisine: 'Deutschland', ml: 250, cooked: 1300, prep: 20, cook: 40,
+    ing: [['rotkohl', 1200], ['apfel', 300], ['zwiebel', 150], ['essig', 40], ['honig', 20], ['rapsoel', 15]],
+    spices: ['salz', 'pfeffer', 'nelken', 'lorbeer', 'zimt'],
+    steps: ['Kohl fein hobeln, Apfel und Zwiebel würfeln.', 'Zwiebel im Öl glasig dünsten, Kohl, Apfel, Essig, Honig und Gewürze zugeben.', 'Zugedeckt 35 bis 40 Minuten bei kleiner Hitze schmoren, zwischendurch rühren, bis der Kohl weich ist.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
+    tips: 'Passt zu Schwein, Wild und Geflügel. Schmeckt aufgewärmt oft besser.', months: 3
+  }),
+  B({
+    name: 'Kürbis-Ingwer-Suppe', mod: 'Gemüse', group: 'Vegetarisch', ml: 500, dens: 1.03, cooked: 2400, prep: 20, cook: 30,
+    ing: [['kuerbis', 1200], ['zwiebel', 200], ['karotte', 200], ['ingwer', 30], ['gemuesebruehe', 1000], ['kokosmilch', 100]],
+    spices: ['salz', 'pfeffer', 'kurkuma'],
+    steps: ['Kürbis, Zwiebel, Karotte und Ingwer in Stücke schneiden und mit der Brühe 20 Minuten weich kochen.', 'Fein pürieren, Kokosmilch einrühren und abschmecken.', 'Abkühlen lassen, in große Silikonformen (500 ml) füllen.', 'Einfrieren.'],
+    tips: 'Ein Block ist eine Portion Suppe. Mit Kernen oder gerösteten Kichererbsen toppen.', months: 4
+  }),
+  B({
+    name: 'Tomaten-Paprika-Suppe', mod: 'Gemüse', group: 'Vegetarisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 500, dens: 1.02, cooked: 2000, prep: 15, cook: 30,
+    ing: [['tomaten_dose', 800], ['paprika', 400], ['zwiebel', 200], ['gemuesebruehe', 800], ['olivenoel', 20]],
+    spices: ['salz', 'pfeffer', 'paprika_suess', 'basilikum_tr'],
+    steps: ['Zwiebel und Paprika würfeln und im Öl 8 Minuten dünsten.', 'Tomaten und Brühe zugeben und 20 Minuten köcheln.', 'Fein pürieren und abschmecken.', 'Abkühlen lassen, in große Silikonformen (500 ml) füllen und einfrieren.'],
+    tips: 'Eine leichte Mahlzeit allein oder als Beilage zu Protein-Blöcken, zum Beispiel mit Putenhack.', months: 4
+  }),
+  /* ---------- Booster ---------- */
+  B({
+    name: 'Ingwer-Knoblauch-Paste', mod: 'Booster', group: 'Vegetarisch', style: 'asien', cuisine: 'Asien', ml: 50, cooked: 330, prep: 15, cook: 0,
+    ing: [['ingwer', 150], ['knoblauch', 150], ['rapsoel', 40]], spices: ['salz'],
+    steps: ['Ingwer schälen und grob würfeln, Knoblauch schälen.', 'Mit Öl und Salz im Mixer zu einer feinen Paste verarbeiten.', 'In kleine Silikonformen (50 ml) füllen.', 'Einfrieren und die Würfel später direkt in die Pfanne geben.'],
+    tips: 'Basis für Currys, Wok-Gerichte und Marinaden. Ein Würfel reicht für 2 bis 4 Portionen.', months: 3,
+    thaw: 'Würfel direkt gefroren in die heiße Pfanne oder den Topf geben.', reheat: 'Wird beim Kochen im Gericht miterhitzt.'
+  }),
+  B({
+    name: 'Soffritto aus Zwiebel, Karotte und Sellerie', mod: 'Booster', group: 'Vegetarisch', style: 'italien', cuisine: 'Italien', ml: 50, cooked: 650, prep: 20, cook: 20,
+    ing: [['zwiebel', 400], ['karotte', 300], ['staudensellerie', 200], ['olivenoel', 40]], spices: ['salz'],
+    steps: ['Alles sehr fein würfeln oder im Zerkleinerer hacken.', 'Im Öl bei mittlerer Hitze 15 bis 20 Minuten weich und leicht goldgelb dünsten, mit Salz würzen.', 'Abkühlen lassen.', 'In kleine Silikonformen (50 ml) füllen und einfrieren.'],
+    tips: 'Spart bei Schmorgerichten, Bolognese und Suppen die Vorbereitungszeit.', months: 3,
+    thaw: 'Würfel direkt gefroren zu Gerichten in den Topf geben.', reheat: 'Wird beim Kochen im Gericht miterhitzt.'
+  }),
+  B({
+    name: 'Kräuterpesto mit Mandeln', mod: 'Booster', group: 'Vegetarisch', style: 'italien', cuisine: 'Italien', ml: 50, cooked: 380, prep: 15, cook: 0,
+    ing: [['basilikum', 100], ['petersilie', 50], ['olivenoel', 120], ['parmesan', 40], ['mandeln', 40], ['knoblauch', 10], ['zitronensaft', 20]], spices: ['salz', 'pfeffer'],
+    steps: ['Alle Zutaten im Mixer zu einer groben Paste verarbeiten.', 'Mit Salz und Pfeffer abschmecken.', 'In kleine Silikonformen (50 ml) füllen.', 'Einfrieren.'],
+    tips: 'Würfel auftauen, mit heißen Nudeln oder Gemüse mischen. Nicht kochen, sonst verliert es die Farbe.', months: 3,
+    thaw: 'Würfel bei Zimmertemperatur oder im Kühlschrank auftauen.', reheat: 'Nicht erhitzen, kalt unterrühren.'
+  }),
+  B({
+    name: 'Chimichurri', mod: 'Booster', group: 'Vegetarisch', style: 'mex', cuisine: 'Argentinien', ml: 50, cooked: 290, prep: 15, cook: 0,
+    ing: [['petersilie', 100], ['knoblauch', 20], ['essig', 40], ['olivenoel', 120], ['chili_frisch', 10]], spices: ['oregano', 'salz'],
+    steps: ['Petersilie, Knoblauch und Chili sehr fein hacken.', 'Mit Essig, Öl, Oregano und Salz verrühren.', 'In kleine Silikonformen (50 ml) füllen.', 'Einfrieren.'],
+    tips: 'Zu gegrilltem Fleisch, Hähnchen und Fisch, auch als Marinade.', months: 3,
+    thaw: 'Würfel bei Zimmertemperatur oder im Kühlschrank auftauen.', reheat: 'Kalt verwenden oder zum Schluss unterrühren.'
+  }),
+  B({
+    name: 'Harissa-Paste, mild-scharf', mod: 'Booster', group: 'Vegetarisch', style: 'orient', cuisine: 'Nordafrika', ml: 50, cooked: 450, prep: 20, cook: 15,
+    ing: [['paprika', 400], ['chili_frisch', 60], ['knoblauch', 30], ['olivenoel', 40], ['tomatenmark', 40]], spices: ['kreuzkuemmel', 'koriander_gem', 'salz'],
+    steps: ['Paprika vierteln und bei 220 °C 15 Minuten rösten, bis die Haut Blasen wirft, dann häuten.', 'Mit Chili, Knoblauch, Tomatenmark, Öl und Gewürzen fein pürieren.', 'Abschmecken, in kleine Silikonformen (50 ml) füllen.', 'Einfrieren.'],
+    tips: 'Für Marinaden, Eintöpfe, Eier und Bowls. Die Schärfe über die Chilimenge anpassen.', months: 3,
+    thaw: 'Würfel direkt gefroren ins Gericht geben.', reheat: 'Wird beim Kochen im Gericht miterhitzt.'
+  })
+];
+const BMAP = {}; BAUSTEINE.forEach(b => { BMAP[b.id] = b; });
+
+/* ===== Logik: Gefrierer-Meal-Prep (Baukasten, Mahlzeit bauen, Sessions, Soll/Ist, Lager) ===== */
+/* Bausteine ergänzen: Blockanzahl aus Gewicht und Dichte schätzen, damit calcRecipe je Block rechnet */
+BAUSTEINE.forEach(b => {
+  b.yieldMl = b.cooked / b.dens;
+  b.n = Math.max(2, Math.round(b.yieldMl / b.ml));
+  b.servings = b.n;
+  b.fill = b.yieldMl / (b.n * b.ml);
+  b.meal = 'Baustein';
+  b.freeze = { ok: 'ja', block: b.ml, months: b.months, note: '' };
+  b.storage = 'Im Kühlschrank bis zu 3 Tage' + (b.group === 'Fisch' ? ' (Fisch besser nach 2 Tagen aufbrauchen)' : '') + '.';
+  b.level = 'leicht';
+});
+const MOD_IDS = MODULE.map(m => m.id);
+const PREP_KEYS = ['Komplett', 'Protein', 'Beilage', 'Sauce', 'Gemüse', 'Booster'];
+const KEY_ML = { Komplett: '500 oder 250 ml', Protein: '250 ml', Beilage: '250 ml', Sauce: '125 ml', Gemüse: '250 oder 500 ml', Booster: '50 ml' };
+const BLOCK_PREFIX = { Protein: 'P', Beilage: 'B', Sauce: 'S', Gemüse: 'G', Booster: 'X', Komplett: 'K' };
+
+function cubePP(b) { return calcRecipe(b).pp; }
+function bausteinAllergene(b) { return derive(b); }
+
+function validateBaustein(b, profile) {
+  const checks = [];
+  const add = (name, ok, detail, level) => checks.push({ name, ok, detail: detail || '', level: level || (ok ? 'ok' : 'fail') });
+  const cr = calcRecipe(b);
+  add('Pflichtfelder', !!(b.name && MOD_IDS.includes(b.mod) && KAMMERN[b.ml] && Array.isArray(b.ing) && b.ing.length >= 1 && Array.isArray(b.steps) && b.steps.length >= 3 && b.cooked > 0 && b.n >= 2), 'Name, Modul, Blockgröße, Zutaten, mind. 3 Schritte, Ausbeute');
+  add('Zutaten im Stamm', cr.missing.length === 0, cr.missing.length ? 'Unbekannt: ' + cr.missing.join(', ') : 'Alle Zutaten haben Nährwert-Referenzen');
+  const badSp = (b.spices || []).filter(id => !SMAP[id]);
+  add('Gewürze im Stamm', badSp.length === 0, badSp.length ? 'Unbekannt: ' + badSp.join(', ') : (b.spices || []).length + ' Gewürze zugeordnet');
+  const badAmt = (b.ing || []).filter(([id, g]) => !(g > 0 && g <= 3000));
+  add('Mengen positiv und plausibel', badAmt.length === 0, badAmt.length ? 'Auffällig: ' + badAmt.map(x => x[0]).join(', ') : '');
+  const ex = recipeExclusionHits(b, profile && profile.excl);
+  add('Persönliche Ausschlüsse', ex.length === 0, ex.length ? 'Treffer: ' + ex.join(', ') : 'Keine Treffer bei den festen und eigenen Ausschlüssen');
+  const en = energyCheck(b);
+  add('Energie-Plausibilität', en.ok, en.kcal + ' kcal vs. ' + en.calc + ' kcal aus Makros je Block');
+  add('Blockfüllung', b.fill >= 0.9 && b.fill <= 1.12, 'Geschätzte Ausbeute ' + Math.round(b.yieldMl) + ' ml für ' + b.n + ' Blöcke à ' + b.ml + ' ml (Füllgrad ' + Math.round(b.fill * 100) + ' %)', (b.fill >= 0.9 && b.fill <= 1.12) ? 'ok' : 'warn');
+  add('Gefrierangaben', !!(b.months > 0 && b.months <= 6), b.ml + ' ml, ' + b.months + ' Monate');
+  if (profile) { const cf = conflicts(b, profile); add('Mein Profil (Allergene/Unverträglichkeiten)', cf.length === 0, cf.length ? cf.join('; ') : 'Keine Konflikte', cf.length ? 'warn' : 'ok'); }
+  return { checks, fails: checks.filter(c => c.level === 'fail').length, warns: checks.filter(c => c.level === 'warn').length, cr };
+}
+function runQABaukasten(profile) {
+  const res = []; const add = (name, ok, detail) => res.push({ name, ok, detail });
+  add('Bausteine', true, BAUSTEINE.length + ' Bausteine in ' + MOD_IDS.length + ' Modulen');
+  add('ID-Eindeutigkeit', new Set(BAUSTEINE.map(b => b.id)).size === BAUSTEINE.length, '');
+  add('Namens-Eindeutigkeit', new Set(BAUSTEINE.map(b => norm(b.name))).size === BAUSTEINE.length, '');
+  const bad = BAUSTEINE.filter(b => validateBaustein(b, null).fails > 0);
+  add('Vollprüfung je Baustein', bad.length === 0, bad.length ? bad.map(b => b.name).join(', ') : 'Alle ohne harte Fehler');
+  const wrn = BAUSTEINE.filter(b => validateBaustein(b, null).warns > 0);
+  add('Warnungen', wrn.length === 0, wrn.length ? wrn.map(b => b.name).join(', ') : 'Keine');
+  const ex = BAUSTEINE.filter(b => recipeExclusionHits(b, profile.excl).length);
+  add('Ausschlüsse in allen Bausteinen', ex.length === 0, ex.length ? ex.map(b => b.name).join(', ') : 'Keine Treffer');
+  const noMod = MOD_IDS.filter(m => !BAUSTEINE.some(b => b.mod === m));
+  add('Jedes Modul besetzt', noMod.length === 0, noMod.join(', '));
+  return res;
+}
+
+/* ---------- Mahlzeit bauen ---------- */
+function stylePasst(a, b) { return (STIL_PASST[a] || STIL_PASST.neutral).includes(b); }
+function mealBuild(sel, profile) {
+  const parts = MOD_IDS.map(m => sel[m] && BMAP[sel[m]] ? { mod: m, b: BMAP[sel[m]], pp: cubePP(BMAP[sel[m]]), n: Math.max(1, Number((sel.q && sel.q[m]) || 1)) } : null).filter(Boolean);
+  const t = { kcal: 0, p: 0, c: 0, f: 0, ml: 0 };
+  parts.forEach(x => { t.kcal += x.pp.kcal * x.n; t.p += x.pp.p * x.n; t.c += x.pp.c * x.n; t.f += x.pp.f * x.n; t.ml += x.b.ml * x.n; });
+  t.p = Math.round(t.p * 10) / 10; t.c = Math.round(t.c * 10) / 10; t.f = Math.round(t.f * 10) / 10;
+  const al = new Set(), intol = new Set(); let his = 0;
+  parts.forEach(x => { const d = derive(x.b); d.al.forEach(a => al.add(a)); d.intol.forEach(u => intol.add(u)); his = Math.max(his, d.his); });
+  const cf = []; parts.forEach(x => conflicts(x.b, profile).forEach(c => { const s = x.b.name + ': ' + c; if (!cf.includes(s)) cf.push(s); }));
+  const styles = [...new Set(parts.map(x => x.b.style).filter(s => s !== 'neutral'))];
+  const clash = []; for (let i = 0; i < styles.length; i++) for (let j = i + 1; j < styles.length; j++) if (!stylePasst(styles[i], styles[j])) clash.push(STIL_NAME[styles[i]] + ' und ' + STIL_NAME[styles[j]]);
+  const notes = [];
+  if (!parts.some(x => x.mod === 'Protein')) notes.push('Ohne Protein-Block bleibt die Mahlzeit eiweißarm.');
+  if (!parts.some(x => x.mod === 'Beilage') && !parts.some(x => x.mod === 'Gemüse' && x.b.ml === 500)) notes.push('Ohne Beilage sättigt die Mahlzeit weniger.');
+  if (clash.length) notes.push('Die Geschmacksrichtungen passen nicht gut zusammen: ' + clash.join('; ') + '.');
+  if (t.kcal > 0 && t.p / (t.kcal / 100) < 4) notes.push('Wenig Eiweiß für die Kalorien (unter 4 g je 100 kcal).');
+  return { parts, tot: t, al: [...al], intol: [...intol], his, hisLabel: ['niedrig', 'mittel', 'erhöht'][his], conflicts: cf, clash, notes };
+}
+function mealName(sel) {
+  const names = MOD_IDS.map(m => sel[m] && BMAP[sel[m]] ? BMAP[sel[m]].name.split(',')[0] : null).filter(Boolean);
+  return names.join(' + ');
+}
+/* Vorschläge: jeder Protein-Block mit passender Beilage, Sauce, Gemüse und Booster (deterministisch, ohne Stil-Konflikte) */
+function suggestMeals(profile, limit) {
+  const ok = b => !conflicts(b, profile).length && !recipeExclusionHits(b, profile.excl).length;
+  const by = {}; MOD_IDS.forEach(m => { by[m] = BAUSTEINE.filter(b => b.mod === m && ok(b)); });
+  const out = []; let k = 0;
+  by.Protein.forEach(p => {
+    const chosen = [p]; const sel = { Protein: p.id };
+    const choose = (mod, list, skip) => {
+      const styles = chosen.map(x => x.style).filter(s => s !== 'neutral');
+      const compat = list.filter(b => b.style === 'neutral' || styles.every(s => stylePasst(s, b.style) && stylePasst(b.style, s)));
+      const pref = compat.filter(b => b.style !== 'neutral' && styles.includes(b.style));
+      const neut = compat.filter(b => b.style === 'neutral');
+      const pool = pref.length ? pref : (neut.length ? neut : compat);
+      if (!pool.length) return;
+      const b = pool[skip % pool.length]; sel[mod] = b.id; chosen.push(b);
+    };
+    choose('Beilage', by.Beilage, k);
+    if (!(p.group === 'Fisch' || /sauce|ragout|tomaten|pilz/i.test(p.name))) choose('Sauce', by.Sauce, k);
+    choose('Gemüse', by.Gemüse.filter(g => g.ml === 250), k);
+    choose('Booster', by.Booster, k);
+    out.push({ sel, m: mealBuild(sel, profile), name: mealName(sel) });
+    k++;
+  });
+  out.sort((a, b) => (b.m.tot.p / Math.max(1, b.m.tot.kcal)) - (a.m.tot.p / Math.max(1, a.m.tot.kcal)));
+  return limit ? out.slice(0, limit) : out;
+}
+
+/* ---------- Session-Planer ---------- */
+function planItemInfo(it, byRecipe) {
+  if (it.k === 'b') {
+    const b = BMAP[it.id]; if (!b) return null;
+    return { name: b.name, ing: b.ing, spices: b.spices, ml: b.ml, cubes: b.n, prep: b.prep, cook: b.cook, devices: b.devices, months: b.months, mod: b.mod, kind: 'b', obj: b, group: b.group };
+  }
+  const r = byRecipe[it.id]; if (!r) return null;
+  const fz = r.freeze || {};
+  if (!fz.ok || fz.ok === 'nein' || !KAMMERN[fz.block]) return { name: r.name, ing: r.ing, spices: r.spices, ml: 0, cubes: 0, prep: r.prep, cook: r.cook, devices: r.devices, months: 0, mod: 'Komplett', kind: 'r', obj: r, group: r.group, notFreezable: true };
+  return { name: r.name, ing: r.ing, spices: r.spices, ml: fz.block, cubes: r.servings, prep: r.prep, cook: r.cook, devices: r.devices, months: fz.months, mod: 'Komplett', kind: 'r', obj: r, group: r.group, limited: fz.ok === 'eingeschränkt' };
+}
+function sessionYield(plan, byRecipe) {
+  const cubes = { 50: 0, 125: 0, 250: 0, 500: 0 }; let liters = 0; const items = []; let activeMin = 0, maxCook = 0, bl = 0;
+  const warn = [];
+  plan.forEach(it => {
+    const info = planItemInfo(it, byRecipe); if (!info) return;
+    const n = Math.max(1, Math.round(it.n || 1));
+    items.push({ it, info, batches: n });
+    if (info.notFreezable) { warn.push(info.name + ' ist nicht zum Einfrieren vorgesehen.'); return; }
+    if (info.limited) warn.push(info.name + ' lässt sich nur eingeschränkt einfrieren.');
+    cubes[info.ml] += info.cubes * n; liters += info.cubes * n * info.ml / 1000; bl += info.cubes * n;
+    activeMin += (info.prep || 0) * n; maxCook = Math.max(maxCook, info.cook || 0);
+  });
+  const rounds = Math.max(1, ...[50, 125, 250, 500].map(ml => Math.ceil(cubes[ml] / KAMMERN[ml])));
+  const used = {}; [50, 125, 250, 500].forEach(ml => { used[ml] = { n: cubes[ml], cap: KAMMERN[ml], rounds: Math.ceil(cubes[ml] / KAMMERN[ml]) }; });
+  const wallMin = items.length ? Math.round(activeMin * 1.0 + maxCook + 60) : 0;
+  return { items, cubes, used, rounds, liters: Math.round(liters * 10) / 10, blocks: bl, activeMin, maxCook, wallMin, warn };
+}
+function sessionNeeds(plan, byRecipe) {
+  const need = {}; const spices = new Set();
+  plan.forEach(it => {
+    const info = planItemInfo(it, byRecipe); if (!info) return;
+    const n = Math.max(1, Math.round(it.n || 1));
+    (info.ing || []).forEach(([id, g]) => { if (id === 'gewuerze' || !ZMAP[id]) return; need[id] = (need[id] || 0) + g * n; });
+    (info.spices || []).forEach(id => spices.add(id));
+  });
+  return { need, spices: [...spices] };
+}
+function prepShopping(plan, byRecipe, stock, spiceStock) {
+  const wn = sessionNeeds(plan, byRecipe); const rows = {};
+  Object.keys(wn.need).forEach(id => {
+    const z = ZMAP[id]; const have = stock[id] ? stock[id].g : 0;
+    rows[id] = { id, name: z.name, cat: z.cat, stk: z.stk, need: wn.need[id], have, buy: Math.max(0, wn.need[id] - have) };
+  });
+  const groups = {}; const covered = [];
+  Object.values(rows).forEach(it => {
+    if (it.buy <= 0.5) { covered.push(it); return; }
+    (groups[it.cat] = groups[it.cat] || []).push({ id: it.id, name: it.name, g: it.buy, stk: it.stk, need: it.need, have: it.have });
+  });
+  Object.values(groups).forEach(a => a.sort((x, y) => x.name.localeCompare(y.name, 'de')));
+  const list = KATS.filter(k => groups[k]).map(k => ({ cat: k, items: groups[k] }));
+  const sp = wn.spices.filter(id => SMAP[id]).map(id => { const s = spiceStock && spiceStock[id]; return { id, name: SMAP[id].name, state: !s || !s.own ? 'fehlt' : (s.level <= 0 ? 'leer' : (s.level === 1 ? 'fast leer' : 'da')) }; }).sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  return { list, covered: covered.sort((a, b) => a.name.localeCompare(b.name, 'de')), spices: sp, count: list.reduce((n, g) => n + g.items.length, 0), need: wn.need };
+}
+/* Ablauf: längste Garzeiten zuerst, kurze Handgriffe dazwischen (Richtwert) */
+function sessionTimeline(plan, byRecipe) {
+  const infos = plan.map(it => ({ it, info: planItemInfo(it, byRecipe) })).filter(x => x.info);
+  const long = infos.filter(x => (x.info.cook || 0) >= 40).sort((a, b) => b.info.cook - a.info.cook);
+  const mid = infos.filter(x => (x.info.cook || 0) < 40 && (x.info.cook || 0) >= 15).sort((a, b) => b.info.cook - a.info.cook);
+  const quick = infos.filter(x => (x.info.cook || 0) < 15);
+  const steps = [];
+  if (long.length) steps.push({ t: 'Zuerst', text: 'Lange Garzeiten ansetzen: ' + long.map(x => x.info.name + ' (' + x.info.cook + ' Min.' + (x.info.devices && x.info.devices.length ? ', ' + x.info.devices[0] : '') + ')').join('; ') + '. Danach läuft es von allein.' });
+  if (mid.length) steps.push({ t: 'Während es gart', text: 'Mittlere Zeiten nacheinander kochen: ' + mid.map(x => x.info.name + ' (' + x.info.cook + ' Min.)').join('; ') + '.' });
+  if (quick.length) steps.push({ t: 'Zwischendurch', text: 'Kurze Zubereitungen und Pasten: ' + quick.map(x => x.info.name).join('; ') + '.' });
+  if (infos.length) {
+    steps.push({ t: 'Abkühlen', text: 'Alles nicht länger als 2 Stunden bei Raumtemperatur stehen lassen. Reis, Getreide und Saucen flach im Behälter ausbreiten oder in ein kaltes Wasserbad stellen, damit sie schneller abkühlen. Heiß gar nicht erst in den Gefrierer.' });
+    steps.push({ t: 'Füllen', text: 'Kalte Gerichte bis knapp unter den Rand in die Silikonformen füllen, glatt streichen und flach in den Gefrierer legen. Pro Form eine Sorte, damit die Blöcke zu ordnen sind.' });
+    steps.push({ t: 'Durchfrieren', text: 'Mindestens 8 bis 12 Stunden bei −18 °C oder kälter fest frieren lassen. Erst dann aus den Formen lösen, die Formen frei machen und die nächste Runde füllen.' });
+    steps.push({ t: 'Verpacken und beschriften', text: 'Blöcke je Gericht in einen Gefrierbeutel geben, Luft herausdrücken und mit Malerkrepp beschriften: Name, ml, Anzahl Blöcke, Einfrierdatum. Dann in die passende Schublade legen, ältere Beutel nach vorn.' });
+  }
+  return steps;
+}
+/* Session abschließen: Blöcke einbuchen, Zutaten aus dem Vorrat abbuchen */
+function bookSession(plan, byRecipe, stockLots, dateIso) {
+  const need = sessionNeeds(plan, byRecipe).need;
+  const res = deductFifo(stockLots, need, dateIso);
+  const items = [];
+  plan.forEach(it => {
+    const info = planItemInfo(it, byRecipe); if (!info || info.notFreezable) return;
+    const n = Math.max(1, Math.round(it.n || 1)); const cnt = info.cubes * n;
+    const exp = addMonthsStr(dateIso, info.months);
+    const base = { id: 'i' + Date.now().toString(36) + Math.floor(Math.random() * 46656).toString(36) + items.length.toString(36), name: info.name, ml: info.ml, count: cnt, date: dateIso, months: info.months, exp, loc: 'Gefrierer', mod: info.mod };
+    if (it.k === 'b') base.bid = it.id; else base.rid = it.id;
+    items.push(base);
+  });
+  return { lots: res.lots, taken: res.taken, missing: res.missing, items };
+}
+function addMonthsStr(iso, m) { const d = new Date(iso + 'T12:00:00'); d.setMonth(d.getMonth() + m); return isoLocal(d); }
+
+/* ---------- Soll und Ist ---------- */
+function sollBestand(weeks, perWeek, guestSets) {
+  const meals = Math.max(1, Math.round(weeks * perWeek));
+  const komplett = Math.round(meals * 0.4);
+  const bau = meals - komplett;
+  const soll = { Komplett: komplett + 4 * guestSets, Protein: bau, Beilage: bau, Sauce: Math.round(bau * 0.8), 'Gemüse': Math.round(bau * 0.5), Booster: Math.round(meals * 0.6) };
+  const big = soll.Komplett + soll.Protein + soll.Beilage + soll['Gemüse'];
+  return { meals, soll, bigBlocks: big, lines: ['Komplettgerichte: ' + komplett + ' Mahlzeiten' + (guestSets ? ' plus ' + guestSets + ' Besuchs-Set' + (guestSets > 1 ? 's' : '') + ' (je 4 Blöcke zu 500 ml)' : ''), 'Baustein-Mahlzeiten: ' + bau + ' Mahlzeiten aus je Protein, Beilage, Sauce oder Gemüse und Booster'] };
+}
+function istBestand(inv) {
+  const out = { Komplett: 0, Protein: 0, Beilage: 0, Sauce: 0, 'Gemüse': 0, Booster: 0 };
+  (inv || []).forEach(i => {
+    if ((i.loc || 'Gefrierer') !== 'Gefrierer') return;
+    const key = i.mod || (i.rid && i.ml >= 250 ? 'Komplett' : null);
+    if (key && key in out) out[key] += i.count;
+  });
+  return out;
+}
+function prepRoundsFor(soll) {
+  // Wie viele Formen-Durchgänge (Runden) braucht der Soll-Bestand? Kammern je Größe: 50:18, 125:12, 250:16, 500:8
+  const need = { 50: soll.Booster, 125: soll.Sauce, 250: soll.Protein + soll.Beilage + soll['Gemüse'], 500: soll.Komplett };
+  const r = [50, 125, 250, 500].map(ml => ({ ml, n: need[ml], rounds: Math.ceil(need[ml] / KAMMERN[ml]) }));
+  return { sizes: r, rounds: Math.max(...r.map(x => x.rounds)) };
+}
+
+/* ---------- Lager und Etiketten ---------- */
+const SCHUBLADEN = {
+  5: [['1', 'Protein Geflügel und Fisch', ['Protein']], ['2', 'Protein Rind, Schwein und Vegetarisch', ['Protein']], ['3', 'Beilagen und Gemüse', ['Beilage', 'Gemüse']], ['4', 'Saucen, Suppen und Booster', ['Sauce', 'Booster']], ['5', 'Komplettgerichte und Besuchs-Sets', ['Komplett']]],
+  6: [['1', 'Protein Geflügel und Fisch', ['Protein']], ['2', 'Protein Rind, Schwein und Vegetarisch', ['Protein']], ['3', 'Beilagen', ['Beilage']], ['4', 'Gemüse und Suppen', ['Gemüse']], ['5', 'Saucen und Booster', ['Sauce', 'Booster']], ['6', 'Komplettgerichte und Besuchs-Sets', ['Komplett']]],
+  7: [['1', 'Protein Geflügel', ['Protein']], ['2', 'Protein Rind, Schwein, Fisch', ['Protein']], ['3', 'Protein Vegetarisch und Beilagen', ['Protein', 'Beilage']], ['4', 'Gemüse und Suppen', ['Gemüse']], ['5', 'Saucen', ['Sauce']], ['6', 'Booster und Würzwürfel', ['Booster']], ['7', 'Komplettgerichte und Besuchs-Sets', ['Komplett']]]
+};
+function etikett(item) {
+  const d = (item.date || '').split('-').reverse().join('.');
+  return item.name + '\n' + (item.ml ? item.ml + ' ml · ' : '') + item.count + (item.ml ? ' Blöcke' : ' Portionen') + '\n' + 'eingefroren ' + d + (item.exp ? ' · gut bis ' + item.exp.split('-').reverse().join('.') : '');
+}
+const FREEZE_REGELN = [
+  'Gefrierer bei mindestens −18 °C. Frisch gekochtes nie warm einlagern, sondern zuerst abkühlen.',
+  'Gekochtes höchstens 2 Stunden bei Raumtemperatur stehen lassen. Reis und Getreide besonders zügig abkühlen und einfrieren.',
+  'Aufgetaut wird im Kühlschrank. Aufgetautes Gekochtes innerhalb von 1 bis 2 Tagen aufbrauchen.',
+  'Fleisch, Geflügel und Hack müssen vor dem Einfrieren im Kern mindestens 70 °C erreicht haben. Beim Aufwärmen durchgehend wieder mindestens 70 °C.',
+  'Aufgetaute Gerichte nicht erneut einfrieren, außer sie wurden vorher durcherhitzt (mind. 70 °C).',
+  'Die Monate in den Bausteinen sind Qualitätsrichtwerte, keine Sicherheitsfristen. Älter Gewordenes vor dem Essen auf Aussehen und Geruch prüfen.'
+];
+const PROTOKOLL = FREEZE_REGELN;
+if (typeof module !== 'undefined') { module.exports = { BAUSTEINE, BMAP, MODULE, MOD_IDS, validateBaustein, runQABaukasten, cubePP, mealBuild, suggestMeals, sessionYield, sessionNeeds, prepShopping, sessionTimeline, bookSession, sollBestand, istBestand, prepRoundsFor, etikett, SCHUBLADEN, stylePasst, planItemInfo }; }
+
 /* ===== App: Zustand, Speicher, Hilfen, Heute (Tagebuch) ===== */
 const $ = (s, el) => (el || document).querySelector(s);
 const STORE_KEY = 'speiseplan-xxl-v1';
 const WOCHENTAG = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 function emptyWeek() { const w = {}; TAGE.forEach(t => { w[t] = { f: null, m: null, a: null, s: null }; }); return w; }
+function defaultPrep() { return { weeks: 4, perWeek: 10, guests: 1, drawers: 6, plan: [], checked: {}, log: [] }; }
 function defaultState() {
   return {
     v: 2,
     profile: { avoidAllergens: [], avoidIntol: [], excl: [], goals: { kcal: 1600, protein: 120, water: 2000 }, body: { sex: 'f', age: '', h: '', w: '', pal: 1.375, mode: 'halten', rate: 0.25 } },
     favs: [], week: emptyWeek(), shopChecked: {}, shopExtra: [], inv: [], stock: [], spices: {}, minStock: {},
-    userRecipes: [], tested: {}, cooked: {}, hideConf: true, diary: {}, fast: { start: null, goalH: 16, log: [] }
+    userRecipes: [], tested: {}, cooked: {}, hideConf: true, diary: {}, fast: { start: null, goalH: 16, log: [] },
+    prep: defaultPrep()
   };
 }
 const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
@@ -1862,17 +2386,27 @@ function mergeState(s) {
   TAGE.forEach(t => { out.week[t] = Object.assign({ f: null, m: null, a: null, s: null }, isObj(out.week[t]) ? out.week[t] : {}); });
   out.stock = out.stock.filter(l => l && ZMAP[l.ing] && l.g > 0);
   out.userRecipes = out.userRecipes.filter(r => r && r.id && r.name && Array.isArray(r.ing) && Array.isArray(r.steps));
+  const pp = isObj(s.prep) ? s.prep : {};
+  out.prep = Object.assign(defaultPrep(), pp);
+  const clampN = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, Math.round(v))) : d; };
+  out.prep.weeks = clampN(out.prep.weeks, 1, 12, 4); out.prep.perWeek = clampN(out.prep.perWeek, 1, 21, 10); out.prep.guests = clampN(out.prep.guests, 0, 5, 1);
+  out.prep.drawers = [5, 6, 7].includes(Number(out.prep.drawers)) ? Number(out.prep.drawers) : 6;
+  out.prep.plan = (Array.isArray(out.prep.plan) ? out.prep.plan : []).filter(it => it && (it.k === 'b' || it.k === 'r') && typeof it.id === 'string').map(it => ({ k: it.k, id: it.id, n: clampN(it.n, 1, 6, 1) }));
+  if (!isObj(out.prep.checked)) out.prep.checked = {};
+  if (!Array.isArray(out.prep.log)) out.prep.log = [];
+  out.prep.log = out.prep.log.slice(-40);
   out.v = 2;
   return out;
 }
 let state = defaultState();
 const ui = {
-  tab: 'heute', sub: { plan: 'plan', vorrat: 'zutaten' }, day: 'Mo', date: isoLocal(), sheet: null, sv: 0, persist: 'Wird geladen …', confirm: '',
+  tab: 'heute', sub: { plan: 'plan', vorrat: 'zutaten', prep: 'start' }, day: 'Mo', date: isoLocal(), sheet: null, sv: 0, persist: 'Wird geladen …', confirm: '',
   f: { q: '', meal: '', group: '', dev: '', cuisine: '', maxKcal: '', minP: '', mp: false, fz: false, fav: false, his: '', stock: false },
   form: { inv: { rid: '', name: '', loc: 'Gefrierer', ml: 500, count: 4, date: '', months: 3, days: 3 }, stock: { id: '', q: '', g: '', bought: '', exp: '' }, shopq: '' },
   add: { slot: 'm', mode: 'recent', q: '', qty: '1', gram: '100', quick: { name: '', kcal: '', p: '', c: '', f: '' } },
   ed: null, stockSel: null, calc: null, rv: { por: '', slot: 'm', cook: true, msg: '' },
   ai: { busy: false, ctl: null, planBusy: false, planMsg: '', vorrat: '', err: '', imp: '' },
+  pk: { mod: '', q: '' }, pb: { sel: {}, q: {}, slot: 'm' }, pa: { b: '', r: '' },
   cookMin: 0.7, seed: 1
 };
 let SAMPLE = null, DBREF = null, DOWNLOADS = null, SAMPLE_IMG = false, persistReady = false, dirty = false, saveTimer = null, qaResult = null;
@@ -1920,7 +2454,8 @@ ui.today = isoLocal();
 
 /* ---------- Zugriff und Hilfen ---------- */
 const lib = () => SEED.concat(state.userRecipes);
-const byIdMap = () => { const m = {}; lib().forEach(r => { m[r.id] = r; }); return m; };
+const byIdMap = () => { const m = {}; lib().forEach(r => { m[r.id] = r; }); BAUSTEINE.forEach(b => { m[b.id] = b; }); return m; };
+const libMap = () => { const m = {}; lib().forEach(r => { m[r.id] = r; }); return m; };
 const fmt = n => String(Math.round(n * 10) / 10).replace('.', ',');
 const todayIso = () => isoLocal();
 const stockNow = () => stockTotals(state.stock, todayIso());
@@ -1965,6 +2500,7 @@ const SVG_IC = {
   rezepte: '<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M8 17h11"/>',
   plan: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   vorrat: '<path d="M4 8l8-4 8 4v10l-8 4-8-4V8z"/><path d="M4 8l8 4 8-4M12 12v10"/>',
+  prep: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M12 3v18"/>',
   mehr: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>'
 };
 
@@ -2059,8 +2595,8 @@ function addListHtml() {
     return items.length ? items.map(z => { const n = nutriOfIng(z.id, gram); return row(z.id, z.name, gram + ' g · P ' + fmt(n.p) + ' · KH ' + fmt(n.c) + ' · F ' + fmt(n.f), n.kcal, 'addzut'); }).join('') : '<p class="note">Nichts gefunden.</p>';
   }
   if (a.mode === 'inv') {
-    const items = state.inv.filter(i => i.rid && byIdMap()[i.rid] && i.count > 0);
-    return items.length ? items.map(i => { const r = byIdMap()[i.rid], pp = calcRecipe(r).pp, por = i.ml ? Math.max(0.25, Math.round(i.ml / Math.max(60, pp.g) * 4) / 4) : 1; return row(i.id, i.name, i.count + ' im Vorrat · ' + (i.loc || 'Gefrierer') + ' · ca. ' + fmt(por) + ' Port.', Math.round(pp.kcal * por), 'addinv'); }).join('') : '<p class="note">Keine Vorratsgerichte mit Rezept. Buche im Vorrat unter „Gerichte“ welche ein.</p>';
+    const items = state.inv.filter(i => (i.rid || i.bid) && byIdMap()[i.rid || i.bid] && i.count > 0);
+    return items.length ? items.map(i => { const r = byIdMap()[i.rid || i.bid], pp = calcRecipe(r).pp, por = i.bid ? 1 : (i.ml ? Math.max(0.25, Math.round(i.ml / Math.max(60, pp.g) * 4) / 4) : 1); return row(i.id, i.name, i.count + ' im Vorrat · ' + (i.loc || 'Gefrierer') + ' · ca. ' + fmt(por) + ' Port.', Math.round(pp.kcal * por), 'addinv'); }).join('') : '<p class="note">Keine Vorratsgerichte mit Rezept. Buche im Vorrat unter „Gerichte“ welche ein.</p>';
   }
   return '';
 }
@@ -2410,7 +2946,7 @@ function viewFreezer() {
   const invHtml = inv.length ? inv.map(i => {
     const e = expiry(i), loc = i.loc || 'Gefrierer';
     return '<div class="panel stack-s"><div class="row between"><div class="grow"><h3>' + esc(i.name) + '</h3><div class="note mono">' + esc(loc) + (i.ml ? ' · ' + i.ml + ' ml' : '') + ' · eingelagert ' + esc(i.date) + '</div></div><span class="badge ' + (e.state === 'expired' ? 'bad' : (e.state === 'soon' ? 'warn' : 'ok')) + '">' + (e.state === 'expired' ? 'Qualität prüfen, ' + Math.abs(e.days) + ' T. über' : 'noch ca. ' + e.days + ' Tage') + '</span></div>' +
-      '<div class="row between"><div class="row"><button type="button" class="btn small" data-act="invdec" data-id="' + esc(i.id) + '" aria-label="Eine Einheit entnehmen">−</button><b class="mono">' + i.count + (i.ml ? ' Blöcke' : ' Portionen') + '</b><button type="button" class="btn small" data-act="invinc" data-id="' + esc(i.id) + '" aria-label="Eine Einheit hinzufügen">+</button></div><div class="row">' + (i.rid ? '<button type="button" class="btn small" data-act="inveat" data-id="' + esc(i.id) + '">Essen</button>' : '') + '<button type="button" class="btn small danger" data-act="invdel" data-id="' + esc(i.id) + '">Entfernen</button></div></div></div>';
+      '<div class="row between"><div class="row"><button type="button" class="btn small" data-act="invdec" data-id="' + esc(i.id) + '" aria-label="Eine Einheit entnehmen">−</button><b class="mono">' + i.count + (i.ml ? ' Blöcke' : ' Portionen') + '</b><button type="button" class="btn small" data-act="invinc" data-id="' + esc(i.id) + '" aria-label="Eine Einheit hinzufügen">+</button></div><div class="row">' + ((i.rid || i.bid) ? '<button type="button" class="btn small" data-act="inveat" data-id="' + esc(i.id) + '">Essen</button>' : '') + '<button type="button" class="btn small danger" data-act="invdel" data-id="' + esc(i.id) + '">Entfernen</button></div></div></div>';
   }).join('') : '<div class="panel note">Noch keine Vorratsgerichte. Trage unten dein erstes Gericht ein.</div>';
   return '<h2>Vorratsgerichte</h2><div class="panel ice stack-s"><div class="grid3"><div class="macro" style="background:var(--surface)"><b>' + st.blocks + '</b><span>Blöcke TK</span></div><div class="macro" style="background:var(--surface)"><b>' + fmt(st.liters) + '</b><span>Liter</span></div><div class="macro" style="background:var(--surface)"><b>' + st.comps + '</b><span>ab 250 ml</span></div></div>' +
     '<div class="bar"><i style="width:' + pct + '%"></i></div><p class="note" style="color:var(--ink)">Ziel Gefrierer: 40–60 größere Portionen oder Komponenten (Blöcke ab 250 ml). Aktuell ' + st.comps + '. Das Ziel passt du nach deinem Verbrauch an.</p></div>' +
@@ -2520,6 +3056,7 @@ function statusPanel() {
     '<li>Allergene und Unverträglichkeiten sind aus den Zutaten abgeleitet. Fertigprodukte können mehr enthalten: Packung prüfen.</li>' +
     '<li>Noch nicht enthalten: Monsieur-Cuisine-Connect-Varianten (kein geprüftes Programmwissen), Mealie-Austausch (nur mit echtem Export testbar), PDF-Rezeptkarten und Rezeptbuch.</li>' +
     '<li>Der Autoplan rechnet je Platz mit einer Portion und wählt nach Kalorien- und Proteinziel. Mit rund 400 kcal je Mahlzeit passt er am besten zu Zielen um 1.500 bis 1.900 kcal; Proteinziele über etwa 130 g erreicht er nur an einem Teil der Tage.</li>' +
+    '<li>Meal-Prep-Bereich: ' + BAUSTEINE.length + ' Bausteine als eigene Grundzubereitungen (Entwurf, automatisch validiert). Ausbeute und Blockanzahl je Charge sind Schätzungen aus Garverlust und Dichte, nicht gemessen; Nährwerte je Block = Summe der Zutaten geteilt durch die geschätzte Blockanzahl. Die Zeiten der Session sind Richtwerte. Keiner der Bausteine wurde von mir gekocht oder eingefroren.</li>' +
     '<li>Barcode-Scan und Kamera sind in dieser Version nicht möglich; Nährwerte aus Packungen trägst du über „Schnell“ im Tagebuch ein.</li>' +
     '<li>Speicherort: ' + esc(ui.persist) + '.</li></ul>';
 }
@@ -2537,12 +3074,12 @@ function viewMehr() {
 }
 
 /* ===== App: Render, Aktionen, Ereignisse ===== */
-const TABS = [['heute', 'Heute'], ['rezepte', 'Rezepte'], ['plan', 'Plan'], ['vorrat', 'Vorrat'], ['mehr', 'Mehr']];
+const TABS = [['heute', 'Heute'], ['rezepte', 'Rezepte'], ['plan', 'Plan'], ['vorrat', 'Vorrat'], ['prep', 'Prep'], ['mehr', 'Mehr']];
 ui.open = ui.open || {};
 function render() {
   const sub = $('#sub'); if (sub) sub.textContent = lib().length + ' Rezepte · ' + ui.persist;
   $('#tabs').innerHTML = TABS.map(([k, n]) => '<button type="button" class="tab ' + (ui.tab === k ? 'on' : '') + '" data-act="tab" data-v="' + k + '" ' + (ui.tab === k ? 'aria-current="page"' : '') + '><svg viewBox="0 0 24 24" aria-hidden="true">' + SVG_IC[k] + '</svg><span>' + n + '</span></button>').join('');
-  const views = { heute: viewHeute, rezepte: viewRezepte, plan: viewPlanTab, vorrat: viewVorrat, mehr: viewMehr };
+  const views = { heute: viewHeute, rezepte: viewRezepte, plan: viewPlanTab, vorrat: viewVorrat, prep: viewPrep, mehr: viewMehr };
   $('#view').innerHTML = (views[ui.tab] || viewHeute)();
   if (ui.tab === 'rezepte') renderList();
   renderSheet();
@@ -2551,7 +3088,7 @@ function renderSheet() {
   const sh = $('#sheet'), card = $('#sheet-card'), s = ui.sheet, cl = document.body && document.body.classList;
   if (!s) { sh.hidden = true; card.innerHTML = ''; if (cl) cl.remove('lock'); return; }
   const top = card.scrollTop;
-  const map = { recipe: () => recipeSheet(s.id), add: addSheet, editor: editorSheet, ing: () => ingSheet(s.id), stockadd: stockAddSheet };
+  const map = { recipe: () => recipeSheet(s.id), add: addSheet, editor: editorSheet, ing: () => ingSheet(s.id), stockadd: stockAddSheet, baustein: () => bausteinSheet(s.id) };
   const html = map[s.type] ? map[s.type]() : '';
   if (!html) { ui.sheet = null; sh.hidden = true; card.innerHTML = ''; if (cl) cl.remove('lock'); return; }
   card.innerHTML = html; sh.hidden = false; if (cl) cl.add('lock'); card.scrollTop = top;
@@ -2638,7 +3175,7 @@ async function runImportKI() {
 }
 
 /* ---------- Helfer für Aktionen ---------- */
-const CONFIRM_ACTS = { autoall: 'autoall', impgo: 'import', resetall: 'reset', delrecipe: 'del' };
+const CONFIRM_ACTS = { autoall: 'autoall', impgo: 'import', resetall: 'reset', delrecipe: 'del', prepdone: 'prepdone', prepclear: 'prepclear' };
 function confirmed(key) {
   if (ui.confirm === key) { ui.confirm = ''; clearTimeout(confirmed.t); return true; }
   ui.confirm = key; clearTimeout(confirmed.t);
@@ -2646,10 +3183,10 @@ function confirmed(key) {
   return false;
 }
 function logEntry(entry, iso) { dayW(iso || ui.date).e.push(entry); }
-function invPortion(i) { const r = byIdMap()[i.rid]; if (!r) return 1; const pp = calcRecipe(r).pp; return i.ml ? Math.max(0.25, Math.round(i.ml / Math.max(60, pp.g) * 4) / 4) : 1; }
+function invPortion(i) { if (i.bid) return 1; const r = byIdMap()[i.rid]; if (!r) return 1; const pp = calcRecipe(r).pp; return i.ml ? Math.max(0.25, Math.round(i.ml / Math.max(60, pp.g) * 4) / 4) : 1; }
 function eatInv(id, slot) {
   const i = state.inv.find(x => x.id === id); if (!i) return false;
-  const r = byIdMap()[i.rid]; if (!r) { toast('Zu diesem Eintrag gibt es kein Rezept'); return false; }
+  const r = byIdMap()[i.rid || i.bid]; if (!r) { toast('Zu diesem Eintrag gibt es kein Rezept'); return false; }
   logEntry(entryRecipe(r, invPortion(i), slot));
   i.count -= 1; if (i.count <= 0) state.inv = state.inv.filter(x => x.id !== i.id);
   save(); return true;
@@ -3014,6 +3551,229 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && ui.sheet) { ACT.closesheet(); return; }
   if (e.key === 'Enter' && e.target && e.target.dataset && e.target.dataset.enter && ACT[e.target.dataset.enter]) { e.preventDefault(); ACT[e.target.dataset.enter](e.target, e); }
 });
+
+/* ===== App: Modular Freezer Meal Prep (Bereich „Prep“) ===== */
+const PREP_SUBS = [['start', 'Start'], ['katalog', 'Katalog'], ['bauen', 'Bauen'], ['session', 'Session']];
+const STARTPROGRAMM = [
+  { t: 'Session 1: Geflügel und Reis', ids: [['b01', 1], ['b02', 1], ['b13', 2], ['b20', 1], ['b31', 1]], text: 'Hähnchen-Geschnetzeltes und Pulled Chicken als Eiweißbasis, dazu Basmatireis, eine Tomatensauce und Ingwer-Knoblauch-Paste.' },
+  { t: 'Session 2: Rind und Italien', ids: [['b04', 1], ['b05', 1], ['b18', 1], ['b17', 1], ['b32', 1], ['b33', 1]], text: 'Rinderhack und Gulasch, dazu Vollkornnudeln, Kartoffelpüree, Soffritto und Pesto.' },
+  { t: 'Session 3: Schwein, Fisch und Gemüse', ids: [['b06', 1], ['b09', 1], ['b14', 1], ['b26', 1], ['b23', 1]], text: 'Schweinefilet, Kabeljauragout, Vollkornreis, Ofengemüse und eine leichte Champignon-Rahmsauce.' },
+  { t: 'Session 4: Vegetarisch und Suppen', ids: [['b10', 1], ['b11', 1], ['b15', 1], ['b21', 1], ['b29', 1], ['b35', 1]], text: 'Linsen und Kichererbsen als pflanzliches Eiweiß, Bulgur, Kokos-Curry-Sauce, Kürbissuppe und Harissa.' }
+];
+function prepSt() { return state.prep; }
+function prepAllergBadges(al, intol) {
+  const a = al.map(k => '<span class="badge warn">' + esc(ALLERGENE[k] || k) + '</span>').join('');
+  const u = intol.map(k => '<span class="badge">' + esc(UNVERTR[k] || k) + '</span>').join('');
+  return (a || u) ? '<div class="badges">' + a + u + '</div>' : '<p class="note">Keine der 14 Hauptallergene aus den Zutaten abgeleitet.</p>';
+}
+function cubeLine(b) { const pp = cubePP(b); return pp.kcal + ' kcal · P ' + fmt(pp.p) + ' · KH ' + fmt(pp.c) + ' · F ' + fmt(pp.f); }
+function isUsable(b) { return !conflicts(b, state.profile).length && !recipeExclusionHits(b, state.profile.excl).length; }
+
+function viewPrep() {
+  const s = ui.sub.prep || 'start';
+  const intro = '';
+  return seg(PREP_SUBS, s, 'subprep') + intro + ({ start: prepStart, katalog: prepKatalog, bauen: prepBauen, session: prepSession })[s]();
+}
+
+/* ---------- Start: Soll und Ist, Startprogramm, Lager ---------- */
+function prepStart() {
+  const P = prepSt(), soll = sollBestand(P.weeks, P.perWeek, P.guests), ist = istBestand(state.inv), rnd = prepRoundsFor(soll.soll);
+  const rows = PREP_KEYS.map(k => {
+    const have = ist[k] || 0, want = soll.soll[k] || 0, pct = want ? Math.min(100, Math.round(have / want * 100)) : 0;
+    return '<div class="mrow"><div class="row between"><span class="lbl">' + (k === 'Komplett' ? 'Komplettgerichte' : k) + ' <span class="note">(' + KEY_ML[k] + ')</span></span><span class="mono" style="font-size:12.5px">' + have + ' / ' + want + '</span></div><div class="bar"><i class="' + (have >= want ? 'ok' : '') + '" style="width:' + pct + '%"></i></div></div>';
+  }).join('');
+  const sel = (id, k, vals, cur, fmtv) => '<div class="field"><label for="' + id + '">' + k + '</label><select id="' + id + '" data-chg="prepset" data-k="' + id + '">' + vals.map(v => '<option value="' + v + '" ' + (Number(cur) === v ? 'selected' : '') + '>' + fmtv(v) + '</option>').join('') + '</select></div>';
+  const prog = STARTPROGRAMM.map((sp, i) => {
+    const plan = sp.ids.map(([id, n]) => ({ k: 'b', id, n }));
+    const y = sessionYield(plan, libMap());
+    return '<div class="panel stack-s"><div class="row between"><h3>' + esc(sp.t) + '</h3><span class="badge ice">' + y.rounds + (y.rounds === 1 ? ' Runde' : ' Runden') + '</span></div><p class="note" style="color:var(--ink)">' + esc(sp.text) + '</p>' +
+      '<div class="note mono">' + y.blocks + ' Blöcke · ' + fmt(y.liters) + ' Liter · ca. ' + Math.round(y.wallMin / 60 * 10) / 10 + ' Std. Küchenzeit</div>' +
+      '<button type="button" class="btn" data-act="prepprog" data-i="' + i + '">In die Session übernehmen</button></div>';
+  }).join('');
+  const dr = SCHUBLADEN[P.drawers] || SCHUBLADEN[6];
+  const drawers = '<table><thead><tr><th>Fach</th><th>Inhalt</th><th class="n">Bestand</th></tr></thead><tbody>' + dr.map(([n, name, keys]) => {
+    const cnt = keys.reduce((a, k) => a + (ist[k] || 0), 0);
+    return '<tr><td>' + n + '</td><td>' + esc(name) + '</td><td class="n mono">' + cnt + '</td></tr>';
+  }).join('') + '</tbody></table>';
+  const last = P.log.length ? P.log[P.log.length - 1] : null;
+  return '<h2>Modular Freezer Meal Prep</h2>' +
+    '<div class="panel ice stack-s"><p style="color:var(--ink)">Du kochst in Chargen einzelne Bausteine (Protein, Beilage, Sauce, Gemüse, Booster), frierst sie in Blöcken ein und setzt später jede Mahlzeit in wenigen Minuten aus Blöcken zusammen. Dazu kommen komplette Gerichte für den Alltag und Besuchs-Sets.</p>' +
+    '<p class="note" style="color:var(--ink)">Module: Protein 250 ml · Beilage 250 ml · Sauce 125 ml · Gemüse 250 oder 500 ml · Booster 50 ml.</p></div>' +
+    '<div class="panel stack-s"><h3>Ziel und Bestand</h3><div class="grid3">' +
+    sel('weeks', 'Wochen', [1, 2, 3, 4, 6, 8, 12], P.weeks, v => v) +
+    sel('perWeek', 'Mahlz./Woche', [3, 5, 7, 10, 14, 21], P.perWeek, v => v) +
+    sel('guests', 'Besuchs-Sets', [0, 1, 2, 3], P.guests, v => v) + '</div>' + rows +
+    '<p class="note">Zielbestand: ' + soll.meals + ' Mahlzeiten. ' + esc(soll.lines.join('. ')) + '. Etwa ' + soll.bigBlocks + ' größere Blöcke (ab 250 ml). Dafür brauchst du rund ' + rnd.rounds + ' Formen-Runden insgesamt.</p>' +
+    '<p class="note">Der Bestand zählt Blöcke im Gefrierer, die du über eine Session einbuchst oder im Vorrat unter „Gerichte“ mit Modul-Bezug einträgst. Ältere Einträge ohne Modul zählen nur bei Rezepten ab 250 ml als Komplettgericht.</p></div>' +
+    '<h2>Startprogramm</h2><p class="note">Vier Sessions bauen einen Grundstock auf. Jede passt in ein bis drei Formen-Runden. Die Zeiten sind Richtwerte.</p>' + prog +
+    '<div class="panel stack-s"><div class="row between"><h3>Schubladen</h3><div class="row">' + [5, 6, 7].map(n => '<button type="button" class="chip ' + (P.drawers === n ? 'on' : '') + '" data-act="prepdrawers" data-v="' + n + '">' + n + ' Fächer</button>').join('') + '</div></div>' + drawers +
+    '<p class="note">Ältere Beutel nach vorn, neue nach hinten (First in, first out).</p></div>' +
+    '<details class="panel" ' + openAttr('prepprot') + '><summary><span>Sicherheit und Ablauf beim Einfrieren</span></summary><div class="stack-s"><ul class="plain">' + FREEZE_REGELN.map(r => '<li>' + esc(r) + '</li>').join('') + '</ul></div></details>' +
+    '<details class="panel" ' + openAttr('prepfmt') + '><summary><span>Formen und Etiketten</span></summary><div class="stack-s"><table><thead><tr><th>Größe</th><th class="n">Formen</th><th class="n">Kammern</th><th class="n">pro Runde</th></tr></thead><tbody>' + FORMEN_TEXT.map(x => '<tr><td>' + x.ml + ' ml</td><td class="n">' + x.formen + '</td><td class="n">' + x.kammern + '</td><td class="n">' + KAMMERN[x.ml] + '</td></tr>').join('') + '</tbody></table>' +
+    '<p><b>Etikett</b> auf Malerkrepp mit wasserfestem Marker:</p><pre class="pre label">' + esc(etikett({ name: 'Hähnchen-Geschnetzeltes', ml: 250, count: 5, date: todayIso(), exp: addMonthsStr(todayIso(), 3) })) + '</pre><p class="note">Eine Runde braucht je nach Gefrierer etwa 8 bis 12 Stunden bis zum Durchfrieren. Mehrere Runden verteilst du auf mehrere Tage oder tauschst die Formen nach dem Entnehmen.</p></div></details>' +
+    (last ? '<p class="note mono">Letzte Session: ' + esc(last.date) + ' · ' + last.blocks + ' Blöcke · ' + fmt(last.liters) + ' Liter</p>' : '');
+}
+
+/* ---------- Katalog ---------- */
+function prepKatalog() {
+  const f = ui.pk, q = norm(f.q || '');
+  const chips = [['', 'Alle']].concat(MODULE.map(m => [m.id, m.id])).map(([k, n]) => '<button type="button" class="chip ' + (f.mod === k ? 'on' : '') + '" data-act="pkmod" data-v="' + k + '">' + n + '</button>').join('');
+  let list = BAUSTEINE.filter(b => (!f.mod || b.mod === f.mod) && (!q || norm(b.name + ' ' + b.group + ' ' + b.cuisine).includes(q)));
+  if (state.hideConf) list = list.filter(isUsable);
+  const hidden = BAUSTEINE.filter(b => (!f.mod || b.mod === f.mod)).length - list.length;
+  const cards = list.map(b => {
+    const d = derive(b);
+    return '<article class="rcard" data-act="openb" data-id="' + b.id + '" tabindex="0"><div class="row between"><b>' + esc(b.name) + '</b><span class="badge ice">' + b.ml + ' ml</span></div>' +
+      '<div class="note mono">' + cubeLine(b) + ' je Block</div>' +
+      '<div class="badges"><span class="badge">' + b.mod + '</span><span class="badge">' + esc(b.group) + '</span><span class="badge">' + b.n + ' Blöcke je Charge</span>' + (b.style !== 'neutral' ? '<span class="badge">' + esc(STIL_NAME[b.style]) + '</span>' : '') + '<span class="badge">Histamin ' + d.hisLabel + '</span></div></article>';
+  }).join('');
+  return '<h2>Katalog der Bausteine</h2><div class="field"><label for="pkq">Suche</label><input type="search" id="pkq" data-inp="pkq" value="' + esc(f.q) + '" placeholder="z. B. Reis, Curry, Hähnchen"></div><div class="chips">' + chips + '</div>' +
+    '<p class="note">' + list.length + ' Bausteine. Nährwerte je Block, berechnet aus den Zutaten der ganzen Charge geteilt durch die geschätzte Blockanzahl.' + (hidden ? ' ' + hidden + ' wegen deines Profils ausgeblendet.' : '') + '</p>' +
+    '<div class="list">' + (cards || '<div class="panel note">Nichts gefunden.</div>') + '</div>';
+}
+function bausteinSheet(id) {
+  const b = BMAP[id]; if (!b) return '';
+  const cr = calcRecipe(b), d = derive(b), cf = conflicts(b, state.profile), v = validateBaustein(b, state.profile);
+  const inPlan = state.prep.plan.find(x => x.k === 'b' && x.id === id);
+  const stock = Object.keys(stockNow()).length ? stockNow() : null;
+  return '<div class="row between"><h2>' + esc(b.name) + '</h2><button type="button" class="btn small" data-act="closesheet">Schließen</button></div>' +
+    '<div class="badges"><span class="badge ' + (v.fails ? 'bad' : '') + '">' + (v.fails ? 'Prüfung nicht bestanden' : 'Entwurf · automatisch validiert') + '</span><span class="badge">' + b.mod + '</span><span class="badge">' + esc(b.group) + '</span>' + (b.cuisine ? '<span class="badge ice">' + esc(b.cuisine) + '</span>' : '') + '</div>' +
+    (cf.length ? '<div class="panel" style="background:var(--bad-bg);border-color:transparent"><b class="err">Konflikt mit deinem Profil</b><div class="note">' + cf.map(esc).join('<br>') + '</div></div>' : '') +
+    '<div><div class="lbl" style="margin-bottom:6px">Pro Block (' + b.ml + ' ml) · aus den Zutaten berechnet</div>' + nutriBlock(cr.pp) + '</div>' +
+    '<div class="note mono">Eine Charge ergibt etwa ' + b.n + ' Blöcke à ' + b.ml + ' ml (geschätzte Ausbeute ' + Math.round(b.yieldMl) + ' ml) · Vorbereitung ' + b.prep + ' Min. · Garen ' + b.cook + ' Min.</div>' +
+    '<div class="panel stack-s"><h3>Zutaten für die ganze Charge</h3><table><tbody>' + ingredientRows(b, 1, stock) + '</tbody></table>' + spiceChips(b) + '<p class="note">Mengen roh laut Zutatenstamm. Gewürze fließen nicht in die Nährwerte ein.</p></div>' +
+    '<div class="panel stack-s"><h3>Zubereitung</h3><ol class="steps">' + b.steps.map(s => '<li>' + esc(s) + '</li>').join('') + '</ol>' + (b.tips ? '<p class="note"><b>Tipp:</b> ' + esc(b.tips) + '</p>' : '') + '</div>' +
+    ((b.devices || []).length ? '<div class="panel"><div class="lbl">Geräte</div><div class="badges" style="margin-top:6px">' + b.devices.map(x => '<span class="badge">' + esc(x) + '</span>').join('') + '</div></div>' : '') +
+    '<div class="panel ice stack-s"><h3>Einfrieren, Auftauen, Erhitzen</h3><p><b>Einfrieren:</b> ' + b.ml + ' ml Blöcke, bis ca. ' + b.months + ' Monate (Qualitätsrichtwert).</p><p class="note" style="color:var(--ink)"><b>Auftauen:</b> ' + esc(b.thaw) + '</p><p class="note" style="color:var(--ink)"><b>Erhitzen:</b> ' + esc(b.reheat) + '</p><p class="note" style="color:var(--ink)">' + esc(b.storage) + '</p></div>' +
+    '<div class="panel stack-s"><h3>Allergene und Verträglichkeit</h3>' + prepAllergBadges(d.al, d.intol) + '<p class="note">Histamin-Risikoprofil: ' + d.hisLabel + (d.hisIng.length ? ' (' + esc(d.hisIng.join(', ')) + ')' : '') + '. Das ist keine Aussage „frei von“.</p></div>' +
+    '<details class="panel" ' + openAttr('bchk') + '><summary><span>Automatische Prüfung (' + v.checks.filter(c => c.level === 'ok').length + ' von ' + v.checks.length + ' bestanden)</span></summary>' + checksBlock(v) + '<p class="note">Ausbeute und Blockanzahl sind Schätzungen, nicht gemessen. Praktisch getestet ist der Baustein erst, wenn du ihn gekocht hast.</p></details>' +
+    '<div class="row"><button type="button" class="btn primary" data-act="padd" data-k="b" data-id="' + id + '">' + (inPlan ? 'Noch eine Charge in die Session' : 'In die Session') + '</button></div>';
+}
+
+/* ---------- Bauen ---------- */
+function prepBauen() {
+  const pb = ui.pb, sel = pb.sel;
+  const fields = MODULE.map(m => {
+    const opts = BAUSTEINE.filter(b => b.mod === m.id && (!state.hideConf || isUsable(b)));
+    const cur = sel[m.id] || '', qn = Number((pb.q || {})[m.id] || 1);
+    return '<div class="field"><label for="pb' + m.id + '">' + m.id + ' <span class="note">(' + m.ml + ' ml)</span></label><div class="row" style="flex-wrap:nowrap"><select id="pb' + m.id + '" data-chg="pbsel" data-k="' + m.id + '" style="flex:1;min-width:0"><option value="">– keiner –</option>' +
+      opts.map(b => '<option value="' + b.id + '" ' + (cur === b.id ? 'selected' : '') + '>' + esc(b.name) + (b.ml !== m.ml ? ' (' + b.ml + ' ml)' : '') + '</option>').join('') + '</select>' +
+      '<select aria-label="Anzahl Blöcke ' + m.id + '" data-chg="pbq" data-k="' + m.id + '" style="width:64px">' + [1, 2, 3].map(n => '<option ' + (qn === n ? 'selected' : '') + ' value="' + n + '">' + n + '×</option>').join('') + '</select></div></div>';
+  }).join('');
+  const hasSel = Object.keys(sel).some(k => sel[k]);
+  const m = mealBuild(Object.assign({}, sel, { q: pb.q }), state.profile);
+  const g = state.profile.goals;
+  const sum = !hasSel ? '<div class="panel note">Wähle oben Bausteine aus. Die Summe erscheint hier.</div>' :
+    '<div class="panel stack-s"><h3>Deine Mahlzeit</h3><div class="macros"><div class="macro"><b>' + Math.round(m.tot.kcal) + '</b><span>kcal</span></div><div class="macro"><b>' + fmt(m.tot.p) + '</b><span>Protein g</span></div><div class="macro"><b>' + fmt(m.tot.c) + '</b><span>Kohlenh. g</span></div><div class="macro"><b>' + fmt(m.tot.f) + '</b><span>Fett g</span></div></div>' +
+    '<div class="note mono">' + m.parts.reduce((a, x) => a + x.n, 0) + ' Blöcke · ' + m.tot.ml + ' ml · ' + (g.kcal ? Math.round(m.tot.kcal / g.kcal * 100) + ' % deines Tagesziels' : '') + '</div>' +
+    prepAllergBadges(m.al, m.intol) + '<p class="note">Histamin-Risikoprofil: ' + m.hisLabel + '.</p>' +
+    (m.conflicts.length ? '<div class="panel" style="background:var(--bad-bg);border-color:transparent"><b class="err">Konflikt mit deinem Profil</b><div class="note">' + m.conflicts.map(esc).join('<br>') + '</div></div>' : '') +
+    (m.notes.length ? '<div class="panel warnp"><div class="note" style="color:var(--ink)">' + m.notes.map(esc).join('<br>') + '</div></div>' : '') +
+    '<p class="note">Aufwärmen: Blöcke zusammen in einen Topf oder in ein geschlossenes Gefäß geben, auftauen und durchgehend auf mind. 70 °C erhitzen. Sauce und Booster erst zum Schluss unterrühren.</p>' +
+    '<div class="grid2"><div class="field"><label for="pbs">Eintragen als</label><select id="pbs" data-chg="pbslot">' + SLOTS.map(([k, n]) => '<option value="' + k + '" ' + (pb.slot === k ? 'selected' : '') + '>' + n + '</option>').join('') + '</select></div><div class="field"><label>&nbsp;</label><button type="button" class="btn primary" data-act="pbdiary">Ins Tagebuch</button></div></div>' +
+    '<button type="button" class="btn ghost" data-act="pbclear">Auswahl leeren</button></div>';
+  const sug = suggestMeals(state.profile).slice(0, 6).map((x, i) => '<div class="panel stack-s"><b>' + esc(x.name) + '</b><div class="note mono">' + Math.round(x.m.tot.kcal) + ' kcal · P ' + fmt(x.m.tot.p) + ' g · ' + x.m.tot.ml + ' ml</div><button type="button" class="btn small" data-act="pbuse" data-i="' + i + '">Übernehmen</button></div>').join('');
+  return '<h2>Mahlzeit bauen</h2><p class="note">Setze aus deinen Blöcken eine Mahlzeit zusammen. Die Summen kommen aus den Nährwerten der Bausteine.</p>' + fields + sum +
+    '<h3 style="margin-top:6px">Vorschläge mit viel Eiweiß</h3><p class="note">Stimmige Kombinationen aus dem Katalog, sortiert nach Eiweiß je Kalorie. Sie berücksichtigen dein Profil.</p><div class="list">' + (sug || '<div class="panel note">Mit deinem Profil gibt es keine passenden Kombinationen.</div>') + '</div>';
+}
+
+/* ---------- Session ---------- */
+function prepFreezable() { return lib().filter(r => r.freeze && r.freeze.ok && r.freeze.ok !== 'nein' && KAMMERN[r.freeze.block] && isUsable(r)); }
+function prepSession() {
+  const P = prepSt(), by = libMap(), plan = P.plan, y = sessionYield(plan, by);
+  const addB = '<div class="field"><label for="pab">Baustein hinzufügen</label><div class="row" style="flex-wrap:nowrap"><select id="pab" data-chg="pasel" data-k="b" style="flex:1;min-width:0"><option value="">– wählen –</option>' + MODULE.map(m => '<optgroup label="' + m.id + '">' + BAUSTEINE.filter(b => b.mod === m.id && (!state.hideConf || isUsable(b))).map(b => '<option value="' + b.id + '">' + esc(b.name) + '</option>').join('') + '</optgroup>').join('') + '</select><button type="button" class="btn small" data-act="padd" data-k="b" data-id="">Hinzufügen</button></div></div>';
+  const addR = '<div class="field"><label for="par">Komplettgericht hinzufügen</label><div class="row" style="flex-wrap:nowrap"><select id="par" data-chg="pasel" data-k="r" style="flex:1;min-width:0"><option value="">– wählen –</option>' + prepFreezable().map(r => '<option value="' + r.id + '">' + esc(r.name) + ' (' + r.freeze.block + ' ml)</option>').join('') + '</select><button type="button" class="btn small" data-act="padd" data-k="r" data-id="">Hinzufügen</button></div></div>';
+  const items = y.items.map(({ it, info, batches }, idx) => {
+    const pp = info.kind === 'b' ? cubePP(info.obj) : calcRecipe(info.obj).pp;
+    return '<div class="panel stack-s"><div class="row between"><div class="grow"><b>' + esc(info.name) + '</b><div class="note mono">' + (info.notFreezable ? 'nicht zum Einfrieren vorgesehen' : info.cubes * batches + ' Blöcke à ' + info.ml + ' ml · ' + pp.kcal + ' kcal · P ' + fmt(pp.p) + ' je Block') + '</div></div><button type="button" class="fav" data-act="prem" data-i="' + idx + '" aria-label="Entfernen">×</button></div>' +
+      '<div class="row"><button type="button" class="btn small sq" data-act="pdec" data-i="' + idx + '" aria-label="Weniger Chargen">−</button><b class="mono">' + batches + (batches === 1 ? ' Charge' : ' Chargen') + '</b><button type="button" class="btn small sq" data-act="pinc" data-i="' + idx + '" aria-label="Mehr Chargen">+</button></div></div>';
+  }).join('');
+  const caps = [50, 125, 250, 500].filter(ml => y.used[ml].n > 0).map(ml => '<tr><td>' + ml + ' ml</td><td class="n mono">' + y.used[ml].n + '</td><td class="n mono">' + y.used[ml].cap + '</td><td class="n mono">' + y.used[ml].rounds + '</td></tr>').join('');
+  const sum = plan.length ? '<div class="panel ice stack-s"><h3>Ausbeute dieser Session</h3><div class="grid3"><div class="macro" style="background:var(--surface)"><b>' + y.blocks + '</b><span>Blöcke</span></div><div class="macro" style="background:var(--surface)"><b>' + fmt(y.liters) + '</b><span>Liter</span></div><div class="macro" style="background:var(--surface)"><b>' + y.rounds + '</b><span>' + (y.rounds === 1 ? 'Runde' : 'Runden') + '</span></div></div>' +
+    '<table><thead><tr><th>Größe</th><th class="n">Blöcke</th><th class="n">pro Runde</th><th class="n">Runden</th></tr></thead><tbody>' + caps + '</tbody></table>' +
+    '<p class="note" style="color:var(--ink)">Küchenzeit etwa ' + Math.round(y.wallMin / 60 * 10) / 10 + ' Std. (Vorbereitung ' + y.activeMin + ' Min. plus längste Garzeit plus Abkühlen). Das ist ein Richtwert, kein Messwert. Mehr als eine Runde heißt: erst durchfrieren, Formen leeren, dann die nächste Runde füllen.</p>' +
+    (y.warn.length ? '<div class="panel warnp"><div class="note" style="color:var(--ink)">' + y.warn.map(esc).join('<br>') + '</div></div>' : '') + '</div>' : '';
+  let shop = '';
+  if (plan.length) {
+    const sp = prepShopping(plan, by, stockNow(), state.spices);
+    const rowHtml = it => { const key = 'p:' + it.id, on = !!P.checked[key]; return '<label class="check shoprow"><input type="checkbox" data-chg="pshop" data-k="' + key + '" ' + (on ? 'checked' : '') + '><span class="grow ' + (on ? 'done' : '') + '">' + esc(it.name.split(' (')[0]) + '</span><span class="mono note">' + esc(fmtGrams({ g: it.g, stk: it.stk })) + (it.have > 0 ? ' · da: ' + Math.round(it.have) + ' g' : '') + '</span></label>'; };
+    shop = '<div class="panel stack-s"><div class="row between"><h3>Einkaufsliste</h3><button type="button" class="btn small" data-act="pshopcopy">Kopieren</button></div>' +
+      (sp.list.length ? sp.list.map(g => '<div class="lbl">' + esc(g.cat) + '</div>' + g.items.map(rowHtml).join('')).join('') : '<p class="note">Alles im Vorrat vorhanden.</p>') +
+      (sp.covered.length ? '<p class="note">Im Vorrat ausreichend: ' + esc(sp.covered.map(x => x.name.split(' (')[0]).join(', ')) + '.</p>' : '') +
+      (sp.spices.length ? '<div class="lbl">Gewürze</div><div class="badges">' + sp.spices.map(s => '<span class="badge ' + (s.state === 'da' ? 'ok' : (s.state === 'fast leer' ? 'warn' : 'bad')) + '">' + esc(s.name) + (Object.keys(state.spices).length ? ' · ' + s.state : '') + '</span>').join('') + '</div>' : '') +
+      '<p class="note">Die Liste zieht deinen Zutatenvorrat ab. Gewürze musst du selbst prüfen.</p></div>';
+  }
+  const tl = plan.length ? '<div class="panel stack-s"><h3>Ablauf</h3><ol class="steps">' + sessionTimeline(plan, by).map(s => '<li><b>' + esc(s.t) + ':</b> ' + esc(s.text) + '</li>').join('') + '</ol></div>' : '';
+  const done = plan.length ? '<div class="panel stack-s"><h3>Session abschließen</h3><p class="note">Bucht alle Blöcke in den Gefrierer ein und zieht die Zutaten vom Vorrat ab, soweit vorhanden. Was fehlt, wird einfach nicht abgezogen.</p><div class="row"><button type="button" class="btn primary" data-act="prepdone">' + (ui.confirm === 'prepdone' ? 'Wirklich einbuchen?' : 'Blöcke einbuchen') + '</button><button type="button" class="btn danger" data-act="prepclear">' + (ui.confirm === 'prepclear' ? 'Wirklich leeren?' : 'Plan leeren') + '</button></div></div>' : '';
+  const log = P.log.length ? '<details class="panel" ' + openAttr('plog') + '><summary><span>Frühere Sessions (' + P.log.length + ')</span></summary><div class="stack-s">' + P.log.slice().reverse().map(l => '<div class="note mono">' + esc(l.date) + ' · ' + l.blocks + ' Blöcke · ' + fmt(l.liters) + ' Liter<br>' + esc(l.names.join(', ')) + '</div>').join('') + '</div></details>' : '';
+  return '<h2>Session planen</h2><p class="note">Stelle Chargen zusammen, kaufe ein, koche und buche die Blöcke danach in den Gefrierer ein.</p>' +
+    '<div class="panel stack-s">' + addB + addR + '</div>' +
+    (plan.length ? '<div class="list">' + items + '</div>' : '<div class="panel note">Noch leer. Füge Bausteine oder Komplettgerichte hinzu oder übernimm ein Startprogramm unter „Start“.</div>') + sum + shop + tl + done + log;
+}
+
+/* ---------- Aktionen ---------- */
+function prepToast(msg) { toast(msg); }
+Object.assign(ACT, {
+  subprep(el) { ui.sub.prep = el.dataset.v; render(); window.scrollTo(0, 0); },
+  prepdrawers(el) { state.prep.drawers = Number(el.dataset.v); save(); render(); },
+  prepprog(el) {
+    const sp = STARTPROGRAMM[Number(el.dataset.i)]; if (!sp) return;
+    sp.ids.forEach(([id, n]) => { const ex = state.prep.plan.find(x => x.k === 'b' && x.id === id); if (ex) ex.n = Math.min(6, ex.n + n); else state.prep.plan.push({ k: 'b', id, n }); });
+    save(); ui.sub.prep = 'session'; render(); window.scrollTo(0, 0); toast('Startprogramm in die Session übernommen');
+  },
+  pkmod(el) { ui.pk.mod = el.dataset.v; render(); },
+  openb(el) { openSheet({ type: 'baustein', id: el.dataset.id }); },
+  padd(el) {
+    const k = el.dataset.k; let id = el.dataset.id;
+    if (!id) { const s = $(k === 'b' ? '#pab' : '#par'); id = s ? s.value : ''; }
+    if (!id) { toast('Bitte zuerst etwas auswählen'); return; }
+    const P = state.prep, ex = P.plan.find(x => x.k === k && x.id === id);
+    if (ex) ex.n = Math.min(6, ex.n + 1); else P.plan.push({ k, id, n: 1 });
+    save(); if (ui.sheet) { ui.sheet = null; ui.sub.prep = 'session'; } render(); toast('In der Session');
+  },
+  prem(el) { const y = sessionYield(state.prep.plan, libMap()); const e = y.items[Number(el.dataset.i)]; if (e) state.prep.plan = state.prep.plan.filter(x => x !== e.it); save(); render(); },
+  pdec(el) { const y = sessionYield(state.prep.plan, libMap()); const e = y.items[Number(el.dataset.i)]; if (e && e.it.n > 1) { e.it.n -= 1; save(); render(); } },
+  pinc(el) { const y = sessionYield(state.prep.plan, libMap()); const e = y.items[Number(el.dataset.i)]; if (e && e.it.n < 6) { e.it.n += 1; save(); render(); } },
+  prepclear() { if (!confirmed('prepclear')) { render(); return; } state.prep.plan = []; state.prep.checked = {}; save(); render(); toast('Plan geleert'); },
+  pshopcopy() {
+    const P = state.prep, sp = prepShopping(P.plan, libMap(), stockNow(), state.spices);
+    const lines = ['Einkauf Meal-Prep-Session'];
+    sp.list.forEach(g => { lines.push('', g.cat + ':'); g.items.forEach(it => lines.push('- ' + it.name.split(' (')[0] + ': ' + fmtGrams({ g: it.g, stk: it.stk }))); });
+    if (sp.spices.length) lines.push('', 'Gewürze prüfen: ' + sp.spices.map(s => s.name).join(', '));
+    copyText(lines.join('\n'), 'Einkaufsliste kopiert');
+  },
+  prepdone() {
+    if (!confirmed('prepdone')) { render(); return; }
+    const P = state.prep, by = libMap(); if (!P.plan.length) return;
+    const bk = bookSession(P.plan, by, state.stock, todayIso());
+    state.stock = bk.lots;
+    bk.items.forEach(n => {
+      const ex = state.inv.find(i => i.name === n.name && (i.ml || 0) === n.ml && i.date === n.date && (i.loc || 'Gefrierer') === 'Gefrierer' && (i.bid || '') === (n.bid || '') && (i.rid || '') === (n.rid || ''));
+      if (ex) ex.count += n.count; else state.inv.push(n);
+    });
+    const y = sessionYield(P.plan, by);
+    P.log.push({ date: todayIso(), blocks: y.blocks, liters: y.liters, names: bk.items.map(i => i.name) });
+    P.log = P.log.slice(-40); P.plan = []; P.checked = {};
+    save(); render(); toast(y.blocks + ' Blöcke eingebucht');
+  },
+  pbclear() { ui.pb.sel = {}; ui.pb.q = {}; render(); },
+  pbuse(el) { const x = suggestMeals(state.profile).slice(0, 6)[Number(el.dataset.i)]; if (!x) return; ui.pb.sel = Object.assign({}, x.sel); ui.pb.q = {}; render(); window.scrollTo(0, 0); },
+  pbdiary() {
+    const pb = ui.pb, m = mealBuild(Object.assign({}, pb.sel, { q: pb.q }), state.profile);
+    if (!m.parts.length) { toast('Wähle zuerst Bausteine aus'); return; }
+    logEntry(entryQuick(mealName(pb.sel).slice(0, 80), m.tot.kcal, m.tot.p, m.tot.c, m.tot.f, pb.slot), ui.date);
+    save(); toast('Ins Tagebuch eingetragen (' + (SLOT_NAME[pb.slot] || '') + ')');
+  }
+});
+Object.assign(CHG, {
+  prepset(el) { const k = el.dataset.k; state.prep[k] = Number(el.value); save(); render(); },
+  pbsel(el) { ui.pb.sel[el.dataset.k] = el.value; render(); },
+  pbq(el) { ui.pb.q[el.dataset.k] = Number(el.value); render(); },
+  pbslot(el) { ui.pb.slot = el.value; },
+  pasel() { /* Auswahl wird beim Hinzufügen aus dem Feld gelesen */ },
+  pshop(el) { if (el.checked) state.prep.checked[el.dataset.k] = true; else delete state.prep.checked[el.dataset.k]; save(); render(); }
+});
+Object.assign(INP, { pkq(el) { ui.pk.q = el.value; render(); const i = $('#pkq'); if (i) { i.focus(); try { i.setSelectionRange(el.value.length, el.value.length); } catch (e) { /* ignorieren */ } } } });
 initRuntime();
 
 </script>
