@@ -114,6 +114,7 @@ details.panel[open] > summary { margin-bottom: 12px; }
 .sheet-card { background: var(--bg); width: 100%; max-width: 760px; max-height: 92%; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 16px max(16px, env(safe-area-inset-left, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; }
 @media (min-width: 720px) { .sheet { align-items: center; } .sheet-card { border-radius: 16px; max-height: 88%; } }
 
+.svtab { margin: 8px 0; } .svtab th, .svtab td { padding: 4px 8px; text-align: left; border-bottom: 1px solid var(--line, rgba(128,128,128,.3)); }
 table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
 th, td { text-align: left; padding: 6px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-size: 11.5px; color: var(--muted); font-weight: 500; letter-spacing: .03em; text-transform: uppercase; }
@@ -271,75 +272,75 @@ function I(id, name, cat, kcal, p, c, f, x) {
   return Object.assign({ id, name, cat, kcal, p, c, f, al: [], his: 0, lak: 0, fod: 0, hul: 0, fr: 0, stk: 0, noMacro: false }, x || {});
 }
 const ZUTATEN = [
-  I('haehnchenbrust', 'Hähnchenbrustfilet (roh)', 'Fleisch & Geflügel', 110, 23, 0, 1.5),
-  I('putenbrust', 'Putenbrustfilet (roh)', 'Fleisch & Geflügel', 107, 24, 0, 1),
-  I('rindergulasch', 'Rindergulasch (roh)', 'Fleisch & Geflügel', 125, 21, 0, 4),
+  I('haehnchenbrust', 'Hähnchenbrustfilet (roh)', 'Fleisch & Geflügel', 109, 23.3, 0, 1.8),
+  I('putenbrust', 'Putenbrustfilet (roh)', 'Fleisch & Geflügel', 105, 24.1, 0, 1),
+  I('rindergulasch', 'Rindergulasch (roh)', 'Fleisch & Geflügel', 128, 20.2, 0, 5.3),
   I('rinderhack', 'Rinderhackfleisch mager (roh)', 'Fleisch & Geflügel', 180, 20, 0, 11, { his: 1 }),
-  I('rindersteak', 'Rinderhüftsteak (roh)', 'Fleisch & Geflügel', 130, 21, 0, 5),
-  I('schweinefilet', 'Schweinefilet (roh)', 'Fleisch & Geflügel', 110, 22, 0, 2.5),
-  I('lachs', 'Lachsfilet (roh)', 'Fisch & Meeresfrüchte', 200, 20, 0, 13, { al: ['fisch'], his: 1 }),
-  I('kabeljau', 'Kabeljaufilet (roh)', 'Fisch & Meeresfrüchte', 80, 18, 0, 0.7, { al: ['fisch'], his: 1 }),
-  I('garnelen', 'Garnelen (roh, geschält)', 'Fisch & Meeresfrüchte', 85, 18, 0.5, 1, { al: ['krebs'], his: 1 }),
-  I('thunfisch', 'Thunfisch (Dose, im eigenen Saft, abgetropft)', 'Konserven', 110, 25, 0, 1, { al: ['fisch'], his: 2 }),
-  I('eier', 'Hühnerei (Größe M, ohne Schale)', 'Eier', 140, 12.5, 0.5, 9.5, { al: ['ei'], stk: 55 }),
-  I('magerquark', 'Magerquark', 'Milchprodukte', 67, 12, 4, 0.3, { al: ['milch'], lak: 1, fod: 1 }),
-  I('skyr', 'Skyr', 'Milchprodukte', 63, 11, 4, 0.2, { al: ['milch'], lak: 1, fod: 1 }),
-  I('joghurt15', 'Naturjoghurt 1,5 % Fett', 'Milchprodukte', 47, 4, 5, 1.5, { al: ['milch'], lak: 1, fod: 1 }),
+  I('rindersteak', 'Rinderhüftsteak (roh)', 'Fleisch & Geflügel', 110, 22.1, 0, 2.4),
+  I('schweinefilet', 'Schweinefilet (roh)', 'Fleisch & Geflügel', 118, 22.8, 0, 3),
+  I('lachs', 'Lachsfilet (roh)', 'Fisch & Meeresfrüchte', 180, 19.9, 0, 11.2, { al: ['fisch'], his: 1 }),
+  I('kabeljau', 'Kabeljaufilet (roh)', 'Fisch & Meeresfrüchte', 79, 17.8, 0, 0.8, { al: ['fisch'], his: 1 }),
+  I('garnelen', 'Garnelen (roh, geschält)', 'Fisch & Meeresfrüchte', 87, 18.6, 0, 1.4, { al: ['krebs'], his: 1 }),
+  I('thunfisch', 'Thunfisch (Dose, im eigenen Saft, abgetropft)', 'Konserven', 95, 22.9, 0, 0.4, { al: ['fisch'], his: 2 }),
+  I('eier', 'Hühnerei (Größe M, ohne Schale)', 'Eier', 135, 13.2, 0.3, 9, { al: ['ei'], stk: 55 }),
+  I('magerquark', 'Magerquark', 'Milchprodukte', 66, 11.9, 3.7, 0.2, { al: ['milch'], lak: 1, fod: 1 }),
+  I('skyr', 'Skyr', 'Milchprodukte', 64, 10.4, 3.2, 0.8, { al: ['milch'], lak: 1, fod: 1 }),
+  I('joghurt15', 'Naturjoghurt 1,5 % Fett', 'Milchprodukte', 62, 5, 6, 1.6, { al: ['milch'], lak: 1, fod: 1 }),
   I('joghurt10', 'Griechischer Joghurt 10 % Fett', 'Milchprodukte', 120, 5.5, 4, 10, { al: ['milch'], lak: 1, fod: 1 }),
-  I('huettenkaese', 'Hüttenkäse', 'Milchprodukte', 98, 12, 3, 4.3, { al: ['milch'], lak: 1, fod: 1 }),
-  I('feta', 'Feta', 'Milchprodukte', 260, 17, 1, 20, { al: ['milch'], his: 1 }),
-  I('mozzarella', 'Mozzarella', 'Milchprodukte', 250, 18, 1, 19, { al: ['milch'], lak: 1 }),
-  I('parmesan', 'Parmesan', 'Milchprodukte', 400, 36, 0, 28, { al: ['milch'], his: 2 }),
-  I('milch15', 'Milch 1,5 % Fett', 'Milchprodukte', 47, 3.4, 4.8, 1.5, { al: ['milch'], lak: 1, fod: 1 }),
+  I('huettenkaese', 'Hüttenkäse', 'Milchprodukte', 109, 13.3, 3.6, 4.3, { al: ['milch'], lak: 1, fod: 1 }),
+  I('feta', 'Feta', 'Milchprodukte', 284, 15.7, 0, 24.1, { al: ['milch'], his: 1 }),
+  I('mozzarella', 'Mozzarella', 'Milchprodukte', 259, 17.1, 0, 21, { al: ['milch'], lak: 1 }),
+  I('parmesan', 'Parmesan', 'Milchprodukte', 391, 35.6, 0.1, 27.4, { al: ['milch'], his: 2 }),
+  I('milch15', 'Milch 1,5 % Fett', 'Milchprodukte', 44, 3.5, 3.9, 1.5, { al: ['milch'], lak: 1, fod: 1 }),
   I('kochsahne', 'Kochsahne 15 % Fett', 'Milchprodukte', 160, 3, 4, 15, { al: ['milch'], lak: 1, fod: 1 }),
-  I('butter', 'Butter', 'Milchprodukte', 740, 0.7, 0.6, 83, { al: ['milch'] }),
-  I('olivenoel', 'Olivenöl', 'Gewürze & Öle', 880, 0, 0, 99.5),
-  I('rapsoel', 'Rapsöl', 'Gewürze & Öle', 880, 0, 0, 99.5),
-  I('haferflocken', 'Haferflocken', 'Trockenprodukte', 370, 13, 59, 7, { al: ['gluten'], fod: 1 }),
-  I('vollkornreis', 'Vollkornreis (roh)', 'Trockenprodukte', 350, 7.5, 74, 2.5),
-  I('basmatireis', 'Basmatireis (roh)', 'Trockenprodukte', 350, 8, 77, 1),
-  I('nudeln', 'Hartweizennudeln (roh)', 'Trockenprodukte', 355, 12.5, 71, 1.5, { al: ['gluten'], fod: 1 }),
-  I('vollkornnudeln', 'Vollkornnudeln (roh)', 'Trockenprodukte', 340, 13, 62, 2.5, { al: ['gluten'], fod: 1 }),
-  I('kartoffeln', 'Kartoffeln (roh)', 'Gemüse', 70, 2, 15, 0.1),
-  I('linsen', 'Rote Linsen (roh)', 'Trockenprodukte', 330, 24, 50, 1.5, { hul: 1, fod: 1 }),
-  I('kichererbsen', 'Kichererbsen (Dose, abgetropft)', 'Konserven', 120, 7, 16, 2.5, { hul: 1, fod: 1 }),
-  I('kidneybohnen', 'Kidneybohnen (Dose, abgetropft)', 'Konserven', 95, 7, 14, 0.5, { hul: 1, fod: 1 }),
-  I('weisse_bohnen', 'Weiße Bohnen (Dose, abgetropft)', 'Konserven', 95, 7, 14, 0.5, { hul: 1, fod: 1 }),
-  I('tofu', 'Tofu natur', 'Sonstiges', 120, 13, 1, 7, { al: ['soja'], hul: 1 }),
-  I('zwiebel', 'Zwiebel', 'Gemüse', 28, 1.2, 5, 0.2, { fod: 1 }),
-  I('knoblauch', 'Knoblauch', 'Gemüse', 140, 6, 28, 0.1, { fod: 1 }),
-  I('paprika', 'Paprika', 'Gemüse', 28, 1, 5, 0.3),
-  I('zucchini', 'Zucchini', 'Gemüse', 19, 1.6, 2.2, 0.4),
-  I('brokkoli', 'Brokkoli', 'Gemüse', 28, 3.5, 2.5, 0.3),
-  I('karotte', 'Karotte', 'Gemüse', 36, 0.9, 7, 0.2),
-  I('spinat', 'Blattspinat (frisch)', 'Gemüse', 19, 2.5, 1, 0.4, { his: 2 }),
-  I('tomate', 'Tomate (frisch)', 'Gemüse', 18, 0.9, 2.6, 0.2, { his: 1 }),
-  I('champignons', 'Champignons', 'Gemüse', 20, 2.7, 0.5, 0.3, { fod: 1 }),
-  I('lauch', 'Lauch', 'Gemüse', 29, 2.1, 3.3, 0.3, { fod: 1 }),
-  I('staudensellerie', 'Staudensellerie', 'Gemüse', 15, 0.9, 2, 0.1, { al: ['sellerie'] }),
-  I('gurke', 'Gurke', 'Gemüse', 12, 0.6, 1.8, 0.2),
-  I('salat', 'Blattsalat', 'Gemüse', 14, 1.3, 1.5, 0.2),
-  I('blumenkohl', 'Blumenkohl', 'Gemüse', 25, 2.5, 2.3, 0.3, { fod: 1 }),
-  I('ingwer', 'Ingwer', 'Gemüse', 80, 1.8, 17.8, 0.8),
-  I('tomaten_dose', 'Tomaten gehackt (Dose)', 'Konserven', 20, 1.2, 3.5, 0.2, { his: 1 }),
-  I('tomatenmark', 'Tomatenmark', 'Konserven', 85, 4.5, 15, 0.5, { his: 2 }),
-  I('kokosmilch', 'Kokosmilch (Dose)', 'Konserven', 170, 1.5, 3, 17),
-  I('erbsen_tk', 'Erbsen (TK)', 'Tiefkühlprodukte', 70, 6, 10, 0.5, { fod: 1 }),
-  I('beeren_tk', 'Beerenmischung (TK)', 'Tiefkühlprodukte', 45, 0.8, 8, 0.4),
-  I('apfel', 'Apfel', 'Obst', 52, 0.3, 11.5, 0.3, { fod: 1, fr: 1 }),
-  I('banane', 'Banane', 'Obst', 90, 1.1, 20, 0.2),
-  I('zitronensaft', 'Zitronensaft', 'Obst', 25, 0.4, 5.5, 0.2),
-  I('avocado', 'Avocado', 'Obst', 160, 2, 2, 15, { his: 1 }),
-  I('gemuesebruehe', 'Gemüsebrühe (zubereitet)', 'Gewürze & Öle', 4, 0.2, 0.6, 0.1, { al: ['sellerie'] }),
-  I('sojasauce', 'Sojasauce', 'Gewürze & Öle', 60, 8, 5, 0, { al: ['soja', 'gluten'], his: 2 }),
-  I('senf', 'Senf', 'Gewürze & Öle', 80, 5, 5, 4, { al: ['senf'] }),
-  I('honig', 'Honig', 'Sonstiges', 305, 0.4, 75, 0, { fod: 1, fr: 1 }),
-  I('mehl', 'Weizenmehl', 'Trockenprodukte', 340, 10, 70, 1, { al: ['gluten'], fod: 1 }),
-  I('vollkornbrot', 'Vollkornbrot', 'Trockenprodukte', 210, 7, 38, 1.5, { al: ['gluten'], fod: 1 }),
-  I('wrap', 'Weizentortilla', 'Trockenprodukte', 300, 9, 50, 7, { al: ['gluten'], fod: 1 }),
-  I('walnuesse', 'Walnüsse', 'Trockenprodukte', 690, 15, 7, 65, { al: ['schale'], his: 1 }),
-  I('mandeln', 'Mandeln', 'Trockenprodukte', 575, 21, 10, 51, { al: ['schale'] }),
-  I('erdnussmus', 'Erdnussmus', 'Trockenprodukte', 600, 25, 10, 50, { al: ['erdnuss'] }),
+  I('butter', 'Butter', 'Milchprodukte', 747, 1.2, 0.6, 82.2, { al: ['milch'] }),
+  I('olivenoel', 'Olivenöl', 'Gewürze & Öle', 899, 0, 0, 99.9),
+  I('rapsoel', 'Rapsöl', 'Gewürze & Öle', 900, 0, 0, 100),
+  I('haferflocken', 'Haferflocken', 'Trockenprodukte', 348, 13.2, 53.3, 6.7, { al: ['gluten'], fod: 1 }),
+  I('vollkornreis', 'Vollkornreis (roh)', 'Trockenprodukte', 360, 8.4, 73.4, 2.7),
+  I('basmatireis', 'Basmatireis (roh)', 'Trockenprodukte', 351, 7.9, 77.1, 0.6),
+  I('nudeln', 'Hartweizennudeln (roh)', 'Trockenprodukte', 346, 12.4, 68.8, 1.6, { al: ['gluten'], fod: 1 }),
+  I('vollkornnudeln', 'Vollkornnudeln (roh)', 'Trockenprodukte', 356, 14.3, 62.9, 2.9, { al: ['gluten'], fod: 1 }),
+  I('kartoffeln', 'Kartoffeln (roh)', 'Gemüse', 83, 1.9, 17.9, 0.1),
+  I('linsen', 'Rote Linsen (roh)', 'Trockenprodukte', 334, 25.6, 48.8, 2.2, { hul: 1, fod: 1 }),
+  I('kichererbsen', 'Kichererbsen (Dose, abgetropft)', 'Konserven', 136, 7.5, 15.5, 2.7, { hul: 1, fod: 1 }),
+  I('kidneybohnen', 'Kidneybohnen (Dose, abgetropft)', 'Konserven', 128, 8.5, 15.1, 1, { hul: 1, fod: 1 }),
+  I('weisse_bohnen', 'Weiße Bohnen (Dose, abgetropft)', 'Konserven', 130, 9, 17.7, 0.6, { hul: 1, fod: 1 }),
+  I('tofu', 'Tofu natur', 'Sonstiges', 115, 15.5, 0, 5.6, { al: ['soja'], hul: 1 }),
+  I('zwiebel', 'Zwiebel', 'Gemüse', 34, 1.2, 6, 0.2, { fod: 1 }),
+  I('knoblauch', 'Knoblauch', 'Gemüse', 97, 6.1, 3, 0.4, { fod: 1 }),
+  I('paprika', 'Paprika', 'Gemüse', 36, 1, 6.2, 0.2),
+  I('zucchini', 'Zucchini', 'Gemüse', 22, 1.3, 3, 0.3),
+  I('brokkoli', 'Brokkoli', 'Gemüse', 35, 3.6, 2.3, 0.6),
+  I('karotte', 'Karotte', 'Gemüse', 40, 0.8, 6.5, 0.4),
+  I('spinat', 'Blattspinat (frisch)', 'Gemüse', 18, 2.1, 0.9, 0.3, { his: 2 }),
+  I('tomate', 'Tomate (frisch)', 'Gemüse', 22, 1, 3.3, 0.1, { his: 1 }),
+  I('champignons', 'Champignons', 'Gemüse', 28, 3.7, 2.9, 0.3, { fod: 1 }),
+  I('lauch', 'Lauch', 'Gemüse', 36, 2.1, 5, 0.3, { fod: 1 }),
+  I('staudensellerie', 'Staudensellerie', 'Gemüse', 17, 1.2, 1.5, 0.1, { al: ['sellerie'] }),
+  I('gurke', 'Gurke', 'Gemüse', 16, 1.1, 2, 0.2),
+  I('salat', 'Blattsalat', 'Gemüse', 18, 1.5, 1.7, 0.2),
+  I('blumenkohl', 'Blumenkohl', 'Gemüse', 35, 2.4, 5.3, 0.3, { fod: 1 }),
+  I('ingwer', 'Ingwer', 'Gemüse', 48, 1.9, 6.8, 0.8),
+  I('tomaten_dose', 'Tomaten gehackt (Dose)', 'Konserven', 24, 1.2, 3.3, 0.3, { his: 1 }),
+  I('tomatenmark', 'Tomatenmark', 'Konserven', 81, 3.4, 13.2, 0.2, { his: 2 }),
+  I('kokosmilch', 'Kokosmilch (Dose)', 'Konserven', 227, 2.8, 2.1, 21.9),
+  I('erbsen_tk', 'Erbsen (TK)', 'Tiefkühlprodukte', 77, 4.9, 10, 0.7, { fod: 1 }),
+  I('beeren_tk', 'Beerenmischung (TK)', 'Tiefkühlprodukte', 47, 0.8, 6.9, 0.4),
+  I('apfel', 'Apfel', 'Obst', 58, 0.4, 11.7, 0.5, { fod: 1, fr: 1 }),
+  I('banane', 'Banane', 'Obst', 79, 1.3, 15.9, 0.4),
+  I('zitronensaft', 'Zitronensaft', 'Obst', 30, 0.6, 1.7, 0.3),
+  I('avocado', 'Avocado', 'Obst', 132, 1.4, 1.4, 12.5, { his: 1 }),
+  I('gemuesebruehe', 'Gemüsebrühe (zubereitet)', 'Gewürze & Öle', 3.9, 0.1, 0.6, 0.1, { al: ['sellerie'] }),
+  I('sojasauce', 'Sojasauce', 'Gewürze & Öle', 66, 6.3, 5.5, 0.9, { al: ['soja', 'gluten'], his: 2 }),
+  I('senf', 'Senf', 'Gewürze & Öle', 111, 5.5, 2.9, 7, { al: ['senf'] }),
+  I('honig', 'Honig', 'Sonstiges', 305, 0.4, 74.1, 0, { fod: 1, fr: 1 }),
+  I('mehl', 'Weizenmehl', 'Trockenprodukte', 348, 10.5, 71.8, 0.9, { al: ['gluten'], fod: 1 }),
+  I('vollkornbrot', 'Vollkornbrot', 'Trockenprodukte', 193, 6, 32.5, 1.8, { al: ['gluten'], fod: 1 }),
+  I('wrap', 'Weizentortilla', 'Trockenprodukte', 296, 8.9, 46.6, 7.9, { al: ['gluten'], fod: 1 }),
+  I('walnuesse', 'Walnüsse', 'Trockenprodukte', 721, 16.1, 3, 70.6, { al: ['schale'], his: 1 }),
+  I('mandeln', 'Mandeln', 'Trockenprodukte', 544, 22.3, 3.9, 46.6, { al: ['schale'] }),
+  I('erdnussmus', 'Erdnussmus', 'Trockenprodukte', 620, 29, 9.9, 49.7, { al: ['erdnuss'] }),
   I('gewuerze', 'Gewürze & Kräuter (Salz, Pfeffer, Paprika, Curry …)', 'Gewürze & Öle', 0, 0, 0, 0, { noMacro: true })
 ];
 const ZMAP = {};
@@ -381,7 +382,7 @@ const SEED = [
     steps: ['Zwiebel, Karotte und Sellerie fein würfeln, im Öl 5 Minuten anschwitzen.', 'Hackfleisch zugeben und kräftig anbraten, Tomatenmark mitrösten.', 'Tomaten und Gewürze zugeben, 40 Minuten offen köcheln lassen.', 'Nudeln nach Packungsanweisung kochen.', 'Sauce abschmecken und mit den Nudeln servieren.'],
     tips: 'Sauce in 250-ml-Blöcken einfrieren, Nudeln frisch kochen.',
     storage: 'Sauce im Kühlschrank bis zu 3 Tage.', reheat: 'Sauce im Topf oder in der Mikrowelle sehr heiß erhitzen.',
-    freeze: { ok: 'ja', block: 250, months: 3, note: 'Nur die Sauce einfrieren.' }
+    freeze: { ok: 'ja', block: 500, months: 3, note: 'Nur die Sauce einfrieren. Eine Portion Sauce sind etwa 370 ml (geschätzt), daher der 500-ml-Block.' }
   },
   {
     id: 'r05', name: 'Ofenlachs mit Brokkoli, Zucchini und Kartoffeln', meal: 'Hauptgericht', group: 'Fisch', servings: 4, prep: 15, cook: 30, level: 'leicht',
@@ -444,7 +445,7 @@ const SEED = [
     steps: ['Brühe aufkochen, Hähnchenbrust einlegen und 15–20 Minuten bei kleiner Hitze gar ziehen lassen.', 'Fleisch herausnehmen. Karotte, Sellerie, Lauch und Zwiebel klein schneiden und in der Brühe 15 Minuten garen.', 'Nudeln separat kochen.', 'Hähnchen klein zupfen und zurück in die Suppe geben.', 'Abschmecken und mit den Nudeln servieren.'],
     tips: 'Nudeln immer separat kochen, sonst quellen sie in der Suppe auf.',
     storage: 'Im Kühlschrank bis zu 3 Tage.', reheat: 'Im Topf aufkochen.',
-    freeze: { ok: 'ja', block: 500, months: 3, note: 'Suppe ohne Nudeln einfrieren.' }
+    freeze: { ok: 'ja', block: 500, months: 3, note: 'Suppe ohne Nudeln einfrieren. Eine Portion sind etwa 630 ml (geschätzt): vor dem Einfrieren ein Fünftel einkochen, beim Erwärmen mit Wasser auffüllen.' }
   },
   {
     id: 'r12', name: 'Skyr-Beeren-Bowl mit Haferflocken und Walnüssen', meal: 'Frühstück', group: 'Vegetarisch', servings: 1, prep: 5, cook: 0, level: 'leicht',
@@ -504,8 +505,8 @@ const SEED = [
     id: 'r18', name: 'Schweinefilet Sous-vide mit Rahmkartoffeln', meal: 'Hauptgericht', group: 'Schwein', servings: 4, prep: 20, cook: 120, level: 'mittel',
     devices: ['Sous-vide', 'Herd'], tags: ['Genussgericht'], mp: false,
     ing: [['schweinefilet', 600], ['kartoffeln', 600], ['kochsahne', 100], ['butter', 20], ['zwiebel', 80], ['gewuerze', 6]],
-    steps: ['Wasserbad auf 63 °C einstellen. Filet würzen, vakuumieren und etwa 1,5–2 Stunden garen (bei 4–5 cm Dicke).', 'Kartoffeln in Scheiben schneiden und in Salzwasser 10 Minuten vorgaren.', 'Zwiebel in Butter anschwitzen, Kartoffeln und Kochsahne zugeben und 8 Minuten köcheln.', 'Filet aus dem Beutel nehmen, trocken tupfen und in sehr heißer Pfanne rundum 1 Minute scharf anbraten.', 'In Scheiben schneiden und mit den Rahmkartoffeln servieren.'],
-    tips: 'Garzeit und Temperatur sind Richtwerte, Dicke des Filets beachten.',
+    steps: ['Wasserbad auf 70 °C einstellen. Filet würzen, vakuumieren und etwa 1,5–2 Stunden garen (bei 4–5 cm Dicke), bis der Kern durchgehend mindestens 70 °C hat.', 'Kartoffeln in Scheiben schneiden und in Salzwasser 10 Minuten vorgaren.', 'Zwiebel in Butter anschwitzen, Kartoffeln und Kochsahne zugeben und 8 Minuten köcheln.', 'Filet aus dem Beutel nehmen, trocken tupfen und in sehr heißer Pfanne rundum 1 Minute scharf anbraten.', 'In Scheiben schneiden und mit den Rahmkartoffeln servieren.'],
+    tips: 'Garzeit und Temperatur sind Richtwerte, Dicke des Filets beachten. Zarter wird das Filet bei niedrigerer Badtemperatur, dafür enthält die App für Schwein keine geprüfte Tabelle; deshalb gilt hier die Regel Kern 70 °C.',
     storage: 'Im Kühlschrank bis zu 2 Tage.', reheat: 'Sanft erwärmen, nicht erneut garen.',
     freeze: { ok: 'nein', block: 0, months: 0, note: 'Frisch zubereiten.' }
   },
@@ -609,7 +610,7 @@ function energyCheck(r) {
 }
 function ingredientEnergyIssues() {
   return ZUTATEN.filter(z => !z.noMacro).filter(z => {
-    const calc = 4 * z.p + 4 * z.c + 9 * z.f; const d = Math.abs(z.kcal - calc);
+    const calc = 4 * z.p + 4 * z.c + 9 * z.f + ((z.bls && z.bls.e) || 0); const d = Math.abs(z.kcal - calc);
     return !(d <= 8 || d / Math.max(1, z.kcal) <= 0.15);
   }).map(z => z.name);
 }
@@ -786,105 +787,105 @@ const ZUTATEN_PLUS = [
   // Fleisch & Geflügel
   I('haehnchenkeule', 'Hähnchenkeule ohne Haut und Knochen (roh)', 'Fleisch & Geflügel', 125, 19.5, 0, 5),
   I('putenhack', 'Putenhackfleisch (roh)', 'Fleisch & Geflügel', 140, 20, 0, 6.5),
-  I('schweinehack', 'Schweinehackfleisch (roh)', 'Fleisch & Geflügel', 215, 19, 0, 15, { his: 1 }),
-  I('schweineschulter', 'Schweineschulter (roh)', 'Fleisch & Geflügel', 165, 19, 0, 9.5),
-  I('kochschinken', 'Kochschinken', 'Fleisch & Geflügel', 110, 19, 0.5, 3.5, { his: 2 }),
-  I('speckwuerfel', 'Speckwürfel (geräuchert)', 'Fleisch & Geflügel', 340, 15, 0.5, 31, { his: 2 }),
+  I('schweinehack', 'Schweinehackfleisch (roh)', 'Fleisch & Geflügel', 271, 17.9, 0, 22.1, { his: 1 }),
+  I('schweineschulter', 'Schweineschulter (roh)', 'Fleisch & Geflügel', 135, 20.5, 0, 5.8),
+  I('kochschinken', 'Kochschinken', 'Fleisch & Geflügel', 130, 22.5, 0.7, 3.7, { his: 2 }),
+  I('speckwuerfel', 'Speckwürfel (geräuchert)', 'Fleisch & Geflügel', 304, 16.6, 0.5, 26.2, { his: 2 }),
   I('chorizo', 'Chorizo', 'Fleisch & Geflügel', 450, 24, 2, 38, { his: 2 }),
-  I('huehnerbruehe', 'Hühnerbrühe (zubereitet)', 'Gewürze & Öle', 5, 0.5, 0.3, 0.1, { al: ['sellerie'] }),
-  I('rinderbruehe', 'Rinderbrühe (zubereitet)', 'Gewürze & Öle', 5, 0.5, 0.3, 0.1, { al: ['sellerie'] }),
+  I('huehnerbruehe', 'Hühnerbrühe (zubereitet)', 'Gewürze & Öle', 4, 0.1, 0.7, 0.1, { al: ['sellerie'] }),
+  I('rinderbruehe', 'Rinderbrühe (zubereitet)', 'Gewürze & Öle', 4.1, 0.1, 0.6, 0.1, { al: ['sellerie'] }),
   // Fisch
-  I('seelachs', 'Seelachsfilet (roh)', 'Fisch & Meeresfrüchte', 80, 17, 0, 1, { al: ['fisch'], his: 1 }),
-  I('forelle', 'Forellenfilet (roh)', 'Fisch & Meeresfrüchte', 120, 20, 0, 4, { al: ['fisch'], his: 1 }),
-  I('raeucherlachs', 'Räucherlachs', 'Fisch & Meeresfrüchte', 180, 22, 0, 10, { al: ['fisch'], his: 2 }),
-  I('muscheln', 'Miesmuscheln (roh, ohne Schale)', 'Fisch & Meeresfrüchte', 75, 11, 3, 2, { al: ['weich'], his: 1 }),
+  I('seelachs', 'Seelachsfilet (roh)', 'Fisch & Meeresfrüchte', 99, 19.3, 0, 2.4, { al: ['fisch'], his: 1 }),
+  I('forelle', 'Forellenfilet (roh)', 'Fisch & Meeresfrüchte', 136, 19, 0, 6.5, { al: ['fisch'], his: 1 }),
+  I('raeucherlachs', 'Räucherlachs', 'Fisch & Meeresfrüchte', 170, 21.3, 0.2, 9.2, { al: ['fisch'], his: 2 }),
+  I('muscheln', 'Miesmuscheln (roh, ohne Schale)', 'Fisch & Meeresfrüchte', 60, 10.5, 0, 2, { al: ['weich'], his: 1 }),
   I('tintenfisch', 'Tintenfisch (roh)', 'Fisch & Meeresfrüchte', 75, 15, 1, 1, { al: ['weich'], his: 1 }),
   // Milch & Eier
-  I('joghurt35', 'Naturjoghurt 3,5 % Fett', 'Milchprodukte', 66, 3.5, 4.5, 3.8, { al: ['milch'], lak: 1, fod: 1 }),
-  I('schmand', 'Schmand', 'Milchprodukte', 240, 3, 3.5, 24, { al: ['milch'], lak: 1 }),
-  I('saure_sahne', 'Saure Sahne 10 % Fett', 'Milchprodukte', 118, 3.3, 4, 10, { al: ['milch'], lak: 1 }),
-  I('creme_fraiche', 'Crème fraîche', 'Milchprodukte', 290, 2.5, 3, 30, { al: ['milch'], lak: 1 }),
-  I('sahne', 'Schlagsahne 30 % Fett', 'Milchprodukte', 300, 2.4, 3.2, 30, { al: ['milch'], lak: 1 }),
-  I('ricotta', 'Ricotta', 'Milchprodukte', 170, 8, 3, 13, { al: ['milch'], lak: 1, fod: 1 }),
-  I('halloumi', 'Halloumi', 'Milchprodukte', 320, 22, 2, 25, { al: ['milch'], his: 1 }),
-  I('gouda_light', 'Gouda light (30 % F. i. Tr.)', 'Milchprodukte', 250, 28, 0.5, 15, { al: ['milch'], his: 2 }),
-  I('frischkaese', 'Frischkäse fettreduziert', 'Milchprodukte', 106, 8, 4, 6.5, { al: ['milch'], lak: 1 }),
+  I('joghurt35', 'Naturjoghurt 3,5 % Fett', 'Milchprodukte', 67, 4, 4.1, 3.5, { al: ['milch'], lak: 1, fod: 1 }),
+  I('schmand', 'Schmand', 'Milchprodukte', 206, 2.8, 3, 20, { al: ['milch'], lak: 1 }),
+  I('saure_sahne', 'Saure Sahne 10 % Fett', 'Milchprodukte', 119, 3.1, 4.1, 10, { al: ['milch'], lak: 1 }),
+  I('creme_fraiche', 'Crème fraîche', 'Milchprodukte', 265, 2.4, 2.6, 27, { al: ['milch'], lak: 1 }),
+  I('sahne', 'Schlagsahne 30 % Fett', 'Milchprodukte', 308, 2.3, 3.3, 31.7, { al: ['milch'], lak: 1 }),
+  I('ricotta', 'Ricotta', 'Milchprodukte', 159, 8.6, 3.4, 12.3, { al: ['milch'], lak: 1, fod: 1 }),
+  I('halloumi', 'Halloumi', 'Milchprodukte', 315, 21.5, 0.1, 25.1, { al: ['milch'], his: 1 }),
+  I('gouda_light', 'Gouda light (30 % F. i. Tr.)', 'Milchprodukte', 266, 29.6, 0, 16, { al: ['milch'], his: 2 }),
+  I('frischkaese', 'Frischkäse fettreduziert', 'Milchprodukte', 86, 11.6, 3, 2.8, { al: ['milch'], lak: 1 }),
   I('paneer', 'Paneer', 'Milchprodukte', 282, 18, 3, 22, { al: ['milch'], lak: 1 }),
-  I('sojadrink', 'Sojadrink ungesüßt', 'Milchprodukte', 38, 3.3, 1, 1.8, { al: ['soja'] }),
+  I('sojadrink', 'Sojadrink ungesüßt', 'Milchprodukte', 30, 3.2, 0.4, 1.3, { al: ['soja'] }),
   // Gemüse und Kräuter
-  I('rotkohl', 'Rotkohl', 'Gemüse', 25, 1.5, 4, 0.2, { fod: 1 }),
-  I('weisskohl', 'Weißkohl', 'Gemüse', 25, 1.3, 4, 0.2, { fod: 1 }),
-  I('wirsing', 'Wirsing', 'Gemüse', 28, 3, 3, 0.4, { fod: 1 }),
-  I('kohlrabi', 'Kohlrabi', 'Gemüse', 24, 1.7, 3.7, 0.1),
-  I('fenchel', 'Fenchelknolle', 'Gemüse', 28, 2, 3, 0.3, { fod: 1 }),
-  I('aubergine', 'Aubergine', 'Gemüse', 22, 1.2, 2.5, 0.3, { his: 1 }),
-  I('kuerbis', 'Hokkaido-Kürbis', 'Gemüse', 33, 1.5, 6, 0.3, { fod: 1 }),
-  I('mais_dose', 'Mais (Dose, abgetropft)', 'Konserven', 78, 2.8, 14, 1.2, { fod: 1 }),
-  I('rote_bete', 'Rote Bete (gegart, vakuumiert)', 'Gemüse', 42, 1.7, 8, 0.1, { fod: 1 }),
-  I('pastinake', 'Pastinake', 'Gemüse', 62, 1.5, 12, 0.5, { fod: 1 }),
-  I('sellerieknolle', 'Knollensellerie', 'Gemüse', 22, 1.5, 2.3, 0.3, { al: ['sellerie'] }),
-  I('fruehlingszwiebel', 'Frühlingszwiebel', 'Gemüse', 28, 1.8, 4.5, 0.3, { fod: 1 }),
-  I('rucola', 'Rucola', 'Gemüse', 26, 2.6, 2, 0.7),
-  I('chinakohl', 'Chinakohl', 'Gemüse', 12, 1.2, 1.3, 0.2),
-  I('pak_choi', 'Pak Choi', 'Gemüse', 12, 1.5, 1.2, 0.2),
-  I('sprossen', 'Mungbohnensprossen', 'Gemüse', 30, 3, 4, 0.2),
-  I('spargel', 'Spargel (grün oder weiß)', 'Gemüse', 19, 2, 2, 0.2, { fod: 1 }),
-  I('gruene_bohnen', 'Grüne Bohnen', 'Gemüse', 30, 2.3, 4, 0.2, { fod: 1 }),
+  I('rotkohl', 'Rotkohl', 'Gemüse', 28, 1.6, 3.7, 0.2, { fod: 1 }),
+  I('weisskohl', 'Weißkohl', 'Gemüse', 32, 1.4, 4.5, 0.2, { fod: 1 }),
+  I('wirsing', 'Wirsing', 'Gemüse', 37, 2.8, 4.1, 0.3, { fod: 1 }),
+  I('kohlrabi', 'Kohlrabi', 'Gemüse', 28, 1.9, 3.9, 0.2),
+  I('fenchel', 'Fenchelknolle', 'Gemüse', 27, 1.4, 3.4, 0.2, { fod: 1 }),
+  I('aubergine', 'Aubergine', 'Gemüse', 19, 0.6, 3, 0.2, { his: 1 }),
+  I('kuerbis', 'Hokkaido-Kürbis', 'Gemüse', 30, 1.4, 5.3, 0.2, { fod: 1 }),
+  I('mais_dose', 'Mais (Dose, abgetropft)', 'Konserven', 79, 2.7, 10.8, 1.9, { fod: 1 }),
+  I('rote_bete', 'Rote Bete (gegart, vakuumiert)', 'Gemüse', 58, 1.6, 11, 0.3, { fod: 1 }),
+  I('pastinake', 'Pastinake', 'Gemüse', 59, 2.7, 9.7, 0.4, { fod: 1 }),
+  I('sellerieknolle', 'Knollensellerie', 'Gemüse', 30, 1.6, 2.8, 0.3, { al: ['sellerie'] }),
+  I('fruehlingszwiebel', 'Frühlingszwiebel', 'Gemüse', 27, 1.9, 3, 0.2, { fod: 1 }),
+  I('rucola', 'Rucola', 'Gemüse', 21, 3.6, 0, 0.4),
+  I('chinakohl', 'Chinakohl', 'Gemüse', 18, 1.8, 1.4, 0.2),
+  I('pak_choi', 'Pak Choi', 'Gemüse', 16, 1.8, 1, 0.2),
+  I('sprossen', 'Mungbohnensprossen', 'Gemüse', 19, 3.2, 0.3, 0.3),
+  I('spargel', 'Spargel (grün oder weiß)', 'Gemüse', 28, 2, 4, 0.2, { fod: 1 }),
+  I('gruene_bohnen', 'Grüne Bohnen', 'Gemüse', 28, 2.2, 3.4, 0.2, { fod: 1 }),
   I('chili_frisch', 'Chilischote (frisch)', 'Gemüse', 36, 2, 6, 0.4),
-  I('shiitake', 'Shiitake-Pilze', 'Gemüse', 38, 2.2, 6.8, 0.5),
-  I('petersilie', 'Petersilie (frisch)', 'Gemüse', 35, 3, 4, 0.8),
+  I('shiitake', 'Shiitake-Pilze', 'Gemüse', 30, 2.5, 2.4, 0.2),
+  I('petersilie', 'Petersilie (frisch)', 'Gemüse', 33, 4.1, 1.3, 0.4),
   I('koriander_frisch', 'Koriander (frisch)', 'Gemüse', 25, 2.1, 3.7, 0.5),
-  I('basilikum', 'Basilikum (frisch)', 'Gemüse', 38, 3, 5, 0.6),
+  I('basilikum', 'Basilikum (frisch)', 'Gemüse', 23, 3.2, 0.3, 0.6),
   I('minze', 'Minze (frisch)', 'Gemüse', 42, 3.7, 5, 0.7),
   I('dill', 'Dill (frisch)', 'Gemüse', 40, 3.5, 4.5, 1.1),
-  I('schnittlauch', 'Schnittlauch (frisch)', 'Gemüse', 27, 3, 2, 0.7),
-  I('erdbeeren', 'Erdbeeren', 'Obst', 30, 0.7, 5.5, 0.4, { his: 1 }),
-  I('birne', 'Birne', 'Obst', 55, 0.5, 12.5, 0.3, { fod: 1, fr: 1 }),
-  I('orange', 'Orange', 'Obst', 42, 1, 9, 0.2),
-  I('mango', 'Mango', 'Obst', 61, 0.5, 14, 0.3, { fod: 1, fr: 1 }),
-  I('limettensaft', 'Limettensaft', 'Obst', 25, 0.4, 5.5, 0.2),
-  I('rosinen', 'Rosinen', 'Trockenprodukte', 300, 3, 66, 0.5, { fod: 1, fr: 1, al: ['sulfit'] }),
+  I('schnittlauch', 'Schnittlauch (frisch)', 'Gemüse', 29, 2.6, 1.5, 0.7),
+  I('erdbeeren', 'Erdbeeren', 'Obst', 38, 0.8, 5.9, 0.4, { his: 1 }),
+  I('birne', 'Birne', 'Obst', 58, 0.3, 13.2, 0.3, { fod: 1, fr: 1 }),
+  I('orange', 'Orange', 'Obst', 49, 1, 8.9, 0.2),
+  I('mango', 'Mango', 'Obst', 60, 0.7, 12, 0.5, { fod: 1, fr: 1 }),
+  I('limettensaft', 'Limettensaft', 'Obst', 24, 0.5, 1.5, 0.2),
+  I('rosinen', 'Rosinen', 'Trockenprodukte', 288, 2.7, 61.8, 1, { fod: 1, fr: 1, al: ['sulfit'] }),
   // Konserven, Saucen, Würzmittel
-  I('oliven', 'Oliven (Glas, abgetropft)', 'Konserven', 143, 1, 1, 15, { his: 1 }),
-  I('kapern', 'Kapern', 'Konserven', 25, 2, 2, 0.6),
-  I('tomaten_getrocknet', 'Tomaten getrocknet (ohne Öl)', 'Trockenprodukte', 243, 14, 40, 3, { his: 1 }),
-  I('passata', 'Tomaten passiert (Passata)', 'Konserven', 23, 1.3, 4, 0.2, { his: 1 }),
-  I('sauerkraut', 'Sauerkraut (abgetropft)', 'Konserven', 16, 1.2, 2, 0.3, { his: 2, fod: 1 }),
-  I('schwarze_bohnen', 'Schwarze Bohnen (Dose, abgetropft)', 'Konserven', 90, 6.5, 14, 0.5, { hul: 1, fod: 1 }),
-  I('linsen_dose', 'Linsen (Dose, abgetropft)', 'Konserven', 112, 9, 17, 0.5, { hul: 1, fod: 1 }),
-  I('edamame', 'Edamame (TK, geschält)', 'Tiefkühlprodukte', 121, 11, 8, 5, { al: ['soja'], hul: 1 }),
+  I('oliven', 'Oliven (Glas, abgetropft)', 'Konserven', 132, 1.2, 0, 13.6, { his: 1 }),
+  I('kapern', 'Kapern', 'Konserven', 22, 2.1, 0, 0.4),
+  I('tomaten_getrocknet', 'Tomaten getrocknet (ohne Öl)', 'Trockenprodukte', 276, 12.2, 41.7, 1.4, { his: 1 }),
+  I('passata', 'Tomaten passiert (Passata)', 'Konserven', 29, 1.2, 3.9, 0.1, { his: 1 }),
+  I('sauerkraut', 'Sauerkraut (abgetropft)', 'Konserven', 34, 1.2, 2.4, 0.4, { his: 2, fod: 1 }),
+  I('schwarze_bohnen', 'Schwarze Bohnen (Dose, abgetropft)', 'Konserven', 130, 9, 17.7, 0.6, { hul: 1, fod: 1 }),
+  I('linsen_dose', 'Linsen (Dose, abgetropft)', 'Konserven', 119, 9, 15.4, 0.7, { hul: 1, fod: 1 }),
+  I('edamame', 'Edamame (TK, geschält)', 'Tiefkühlprodukte', 146, 13, 6.2, 6.8, { al: ['soja'], hul: 1 }),
   I('tempeh', 'Tempeh', 'Sonstiges', 200, 19, 9, 11, { al: ['soja'], hul: 1 }),
   I('fischsauce', 'Fischsauce', 'Gewürze & Öle', 36, 5, 4, 0, { al: ['fisch'], his: 2 }),
-  I('misopaste', 'Misopaste', 'Gewürze & Öle', 202, 12, 25, 6, { al: ['soja'], his: 2 }),
-  I('essig', 'Essig (Apfel- oder Weißweinessig)', 'Gewürze & Öle', 18, 0, 4, 0),
-  I('balsamico', 'Balsamicoessig', 'Gewürze & Öle', 82, 0.5, 19, 0, { al: ['sulfit'], his: 1 }),
-  I('sambal', 'Chilipaste (Sambal Oelek)', 'Gewürze & Öle', 47, 1.5, 8, 1),
+  I('misopaste', 'Misopaste', 'Gewürze & Öle', 174, 10.6, 6.2, 10.5, { al: ['soja'], his: 2 }),
+  I('essig', 'Essig (Apfel- oder Weißweinessig)', 'Gewürze & Öle', 18, 0.2, 0.1, 0),
+  I('balsamico', 'Balsamicoessig', 'Gewürze & Öle', 95, 0, 20, 0, { al: ['sulfit'], his: 1 }),
+  I('sambal', 'Chilipaste (Sambal Oelek)', 'Gewürze & Öle', 55, 1.5, 9.4, 0.4),
   I('currypaste', 'Thai-Currypaste (enthält oft Garnelenpaste)', 'Gewürze & Öle', 117, 3, 15, 5, { al: ['krebs'] }),
   I('harissa', 'Harissa', 'Gewürze & Öle', 71, 3, 8, 3),
-  I('ajvar', 'Ajvar', 'Gewürze & Öle', 92, 1.5, 8, 6),
-  I('tahini', 'Tahini (Sesammus)', 'Trockenprodukte', 598, 18, 10, 54, { al: ['sesam'] }),
-  I('sesam', 'Sesam', 'Trockenprodukte', 562, 18, 10, 50, { al: ['sesam'] }),
-  I('erdnuesse', 'Erdnüsse (ungesalzen)', 'Trockenprodukte', 590, 26, 8, 50, { al: ['erdnuss'] }),
-  I('cashews', 'Cashewkerne', 'Trockenprodukte', 588, 18, 30, 44, { al: ['schale'], fod: 1 }),
-  I('pinienkerne', 'Pinienkerne', 'Trockenprodukte', 684, 14, 4, 68, { al: ['schale'] }),
-  I('sonnenblumenkerne', 'Sonnenblumenkerne', 'Trockenprodukte', 576, 21, 15, 48),
+  I('ajvar', 'Ajvar', 'Gewürze & Öle', 68, 0.9, 5, 4.4),
+  I('tahini', 'Tahini (Sesammus)', 'Trockenprodukte', 595, 18, 0.7, 56, { al: ['sesam'] }),
+  I('sesam', 'Sesam', 'Trockenprodukte', 565, 20.9, 1.4, 50.4, { al: ['sesam'] }),
+  I('erdnuesse', 'Erdnüsse (ungesalzen)', 'Trockenprodukte', 620, 29, 9.9, 49.7, { al: ['erdnuss'] }),
+  I('cashews', 'Cashewkerne', 'Trockenprodukte', 618, 21, 26, 47.1, { al: ['schale'], fod: 1 }),
+  I('pinienkerne', 'Pinienkerne', 'Trockenprodukte', 660, 16.4, 6.2, 61.9, { al: ['schale'] }),
+  I('sonnenblumenkerne', 'Sonnenblumenkerne', 'Trockenprodukte', 564, 26.1, 4.8, 47.6),
   I('zucker', 'Zucker', 'Trockenprodukte', 400, 0, 100, 0),
-  I('speisestaerke', 'Speisestärke', 'Trockenprodukte', 340, 0.3, 85, 0),
-  I('semmelbroesel', 'Semmelbrösel', 'Trockenprodukte', 346, 12, 70, 2, { al: ['gluten'], fod: 1 }),
+  I('speisestaerke', 'Speisestärke', 'Trockenprodukte', 348, 0.4, 85.9, 0.1),
+  I('semmelbroesel', 'Semmelbrösel', 'Trockenprodukte', 364, 11.6, 67.5, 4, { al: ['gluten'], fod: 1 }),
   // Getreide und Beilagen
-  I('couscous', 'Couscous (roh)', 'Trockenprodukte', 350, 12, 72, 1.5, { al: ['gluten'], fod: 1 }),
-  I('bulgur', 'Bulgur (roh)', 'Trockenprodukte', 345, 12, 68, 1.5, { al: ['gluten'], fod: 1 }),
-  I('quinoa', 'Quinoa (roh)', 'Trockenprodukte', 355, 14, 60, 6),
-  I('polenta', 'Polenta / Maisgrieß (roh)', 'Trockenprodukte', 345, 8, 75, 1.2),
-  I('reisnudeln', 'Reisnudeln (roh)', 'Trockenprodukte', 352, 6, 80, 0.6),
-  I('glasnudeln', 'Glasnudeln (roh)', 'Trockenprodukte', 346, 0.2, 86, 0.1),
-  I('lasagneplatten', 'Lasagneplatten (roh)', 'Trockenprodukte', 355, 12.5, 71, 1.5, { al: ['gluten', 'ei'], fod: 1 }),
+  I('couscous', 'Couscous (roh)', 'Trockenprodukte', 350, 11.7, 68.9, 1.7, { al: ['gluten'], fod: 1 }),
+  I('bulgur', 'Bulgur (roh)', 'Trockenprodukte', 353, 12.4, 68, 2, { al: ['gluten'], fod: 1 }),
+  I('quinoa', 'Quinoa (roh)', 'Trockenprodukte', 361, 12.6, 59.7, 6.3),
+  I('polenta', 'Polenta / Maisgrieß (roh)', 'Trockenprodukte', 330, 8.7, 62.8, 2.8),
+  I('reisnudeln', 'Reisnudeln (roh)', 'Trockenprodukte', 365, 7.2, 81.9, 0.6),
+  I('glasnudeln', 'Glasnudeln (roh)', 'Trockenprodukte', 350, 0.2, 85.9, 0.1),
+  I('lasagneplatten', 'Lasagneplatten (roh)', 'Trockenprodukte', 346, 12.4, 68.8, 1.6, { al: ['gluten', 'ei'], fod: 1 }),
   I('spaetzle', 'Spätzle (frisch, Kühlregal)', 'Trockenprodukte', 152, 6, 28, 1.8, { al: ['gluten', 'ei'], fod: 1, stk: 0 }),
-  I('gnocchi', 'Gnocchi (Kühlregal)', 'Trockenprodukte', 143, 3.5, 31, 0.5, { al: ['gluten'], fod: 1 }),
-  I('pita', 'Pitabrot', 'Trockenprodukte', 262, 9, 52, 2, { al: ['gluten'], fod: 1 }),
-  I('baguette', 'Baguette', 'Trockenprodukte', 256, 8.5, 52, 1.5, { al: ['gluten'], fod: 1 }),
-  I('risottoreis', 'Rundkornreis (Risotto, Paella; roh)', 'Trockenprodukte', 345, 7, 78, 0.6),
-  I('sushireis', 'Sushireis / Rundkornreis (roh)', 'Trockenprodukte', 345, 7, 78, 0.6)
+  I('gnocchi', 'Gnocchi (Kühlregal)', 'Trockenprodukte', 152, 3.9, 31.9, 0.6, { al: ['gluten'], fod: 1 }),
+  I('pita', 'Pitabrot', 'Trockenprodukte', 248, 8.2, 47, 2.3, { al: ['gluten'], fod: 1 }),
+  I('baguette', 'Baguette', 'Trockenprodukte', 253, 8.3, 50, 1.3, { al: ['gluten'], fod: 1 }),
+  I('risottoreis', 'Rundkornreis (Risotto, Paella; roh)', 'Trockenprodukte', 351, 7.9, 77.1, 0.6),
+  I('sushireis', 'Sushireis / Rundkornreis (roh)', 'Trockenprodukte', 351, 7.9, 77.1, 0.6)
 ];
 ZUTATEN_PLUS.forEach(z => { ZUTATEN.push(z); ZMAP[z.id] = z; });
 
@@ -907,6 +908,223 @@ const SPICES = [
 ].map(s => Object.assign({ al: [], fod: 0 }, s));
 const SMAP = {};
 SPICES.forEach(s => { SMAP[s.id] = s; });
+
+/* ===== Quellen der Nährwerte je Zutat (automatisch erzeugt aus der BLS-Prüfung) =====
+   Bundeslebensmittelschlüssel BLS 4.0 (Max Rubner-Institut, 2025), Werte je 100 g essbarer Anteil, DOI 10.25826/Data20251217-134202-0.
+   m = bls (1:1 übernommen) | naeh (Näherung, anderer Eintrag der BLS) | mix (Mittel mehrerer Einträge) | abl (abgeleitet) | own (eigener Packungs- oder Richtwert, kein BLS-Eintrag)
+   c = BLS-Code, n = Hinweis, e = Energie aus Ballaststoffen, Säuren und Alkohol (kcal je 100 g, in der BLS enthalten, aber nicht in Eiweiß/KH/Fett), o = früherer eigener Wert (kcal, Eiweiß, Kohlenhydrate, Fett) ===== */
+const BLS_REF = {
+  "haehnchenbrust": { m: "bls", c: "V416100", n: "", e: 0.0, o: [110, 23, 0, 1.5] },
+  "putenbrust": { m: "bls", c: "V486100", n: "", e: 0.0, o: [107, 24, 0, 1] },
+  "rindergulasch": { m: "bls", c: "U261100", n: "Rind Bug/Schulter", e: 0.0, o: [125, 21, 0, 4] },
+  "rinderhack": { m: "own", c: "", n: "Mageres Hack (ca. 10 % Fett, Packungsangabe). BLS kennt nur Hackfleisch roh (224 kcal, 16,4 g Fett) und Tatar (115 kcal, 3 g Fett); der Wert liegt dazwischen.", e: 0, o: [180, 20, 0, 11] },
+  "rindersteak": { m: "bls", c: "U284100", n: "Rind Hüfte", e: 0.0, o: [130, 21, 0, 5] },
+  "schweinefilet": { m: "bls", c: "U611100", n: "Schwein Filet/Lende", e: 0.0, o: [110, 22, 0, 2.5] },
+  "lachs": { m: "bls", c: "T410100", n: "", e: 0.0, o: [200, 20, 0, 13] },
+  "kabeljau": { m: "bls", c: "T204100", n: "Dorsch/Kabeljau", e: 0.0, o: [80, 18, 0, 0.7] },
+  "garnelen": { m: "bls", c: "T753100", n: "", e: 0.0, o: [85, 18, 0.5, 1] },
+  "thunfisch": { m: "bls", c: "T121902", n: "", e: 0.0, o: [110, 25, 0, 1] },
+  "eier": { m: "bls", c: "E111100", n: "Hühnerei roh", e: 0.0, o: [140, 12.5, 0.5, 9.5] },
+  "magerquark": { m: "bls", c: "M713100", n: "", e: 2.7, o: [67, 12, 4, 0.3] },
+  "skyr": { m: "bls", c: "M710100", n: "", e: 2.1, o: [63, 11, 4, 0.2] },
+  "joghurt15": { m: "bls", c: "M141200", n: "", e: 3.7, o: [47, 4, 5, 1.5] },
+  "joghurt10": { m: "own", c: "", n: "Griechischer Joghurt: BLS hat nur Sahnejoghurt 10 % (Eiweiß 3,3 g), daher Packungswert.", e: 0, o: [120, 5.5, 4, 10] },
+  "huettenkaese": { m: "naeh", c: "M711300", n: "Körniger Frischkäse mind. 20 % Fett i. Tr.", e: 2.8, o: [98, 12, 3, 4.3] },
+  "feta": { m: "bls", c: "M012200", n: "", e: 4.2, o: [260, 17, 1, 20] },
+  "mozzarella": { m: "bls", c: "M032100", n: "Vollfett; Light-Sorten weichen ab", e: 1.2, o: [250, 18, 1, 19] },
+  "parmesan": { m: "bls", c: "M306400", n: "", e: 2.0, o: [400, 36, 0, 28] },
+  "milch15": { m: "bls", c: "M111200", n: "", e: 0.2, o: [47, 3.4, 4.8, 1.5] },
+  "kochsahne": { m: "own", c: "", n: "Kochsahne 15 % Fett: kein BLS-Eintrag, Packungswert.", e: 0, o: [160, 3, 4, 15] },
+  "butter": { m: "bls", c: "Q611000", n: "", e: 0.3, o: [740, 0.7, 0.6, 83] },
+  "olivenoel": { m: "bls", c: "Q120000", n: "", e: 0.0, o: [880, 0, 0, 99.5] },
+  "rapsoel": { m: "bls", c: "Q180000", n: "", e: 0.0, o: [880, 0, 0, 99.5] },
+  "haferflocken": { m: "bls", c: "C133000", n: "", e: 22.0, o: [370, 13, 59, 7] },
+  "vollkornreis": { m: "bls", c: "C351000", n: "Reis unpoliert", e: 8.0, o: [350, 7.5, 74, 2.5] },
+  "basmatireis": { m: "naeh", c: "C352000", n: "Reis poliert (kein Basmati-Eintrag)", e: 5.0, o: [350, 8, 77, 1] },
+  "nudeln": { m: "bls", c: "E401000", n: "Teigwaren eifrei", e: 6.8, o: [355, 12.5, 71, 1.5] },
+  "vollkornnudeln": { m: "bls", c: "E510000", n: "", e: 20.4, o: [340, 13, 62, 2.5] },
+  "kartoffeln": { m: "bls", c: "K110100", n: "geschält", e: 2.8, o: [70, 2, 15, 0.1] },
+  "linsen": { m: "bls", c: "H730000", n: "Linse rot", e: 17.0, o: [330, 24, 50, 1.5] },
+  "kichererbsen": { m: "bls", c: "H720902", n: "Konserve abgetropft", e: 19.6, o: [120, 7, 16, 2.5] },
+  "kidneybohnen": { m: "bls", c: "H742902", n: "Konserve abgetropft", e: 22.5, o: [95, 7, 14, 0.5] },
+  "weisse_bohnen": { m: "naeh", c: "H740902", n: "Gartenbohne reif, Konserve abgetropft", e: 14.3, o: [95, 7, 14, 0.5] },
+  "tofu": { m: "bls", c: "H861000", n: "", e: 2.6, o: [120, 13, 1, 7] },
+  "zwiebel": { m: "bls", c: "G480100", n: "", e: 3.6, o: [28, 1.2, 5, 0.2] },
+  "knoblauch": { m: "bls", c: "G490100", n: "Kohlenhydrate niedrig, da BLS Fruktane als Ballaststoffe zählt", e: 57.3, o: [140, 6, 28, 0.1] },
+  "paprika": { m: "naeh", c: "G543100", n: "rot", e: 5.4, o: [28, 1, 5, 0.3] },
+  "zucchini": { m: "bls", c: "G582100", n: "", e: 2.2, o: [19, 1.6, 2.2, 0.4] },
+  "brokkoli": { m: "bls", c: "G312100", n: "", e: 7.0, o: [28, 3.5, 2.5, 0.3] },
+  "karotte": { m: "bls", c: "G620100", n: "", e: 7.1, o: [36, 0.9, 7, 0.2] },
+  "spinat": { m: "bls", c: "G211100", n: "", e: 3.8, o: [19, 2.5, 1, 0.4] },
+  "tomate": { m: "bls", c: "G561100", n: "", e: 3.8, o: [18, 0.9, 2.6, 0.2] },
+  "champignons": { m: "bls", c: "K701100", n: "", e: 4.2, o: [20, 2.7, 0.5, 0.3] },
+  "lauch": { m: "bls", c: "G470100", n: "Porree", e: 5.1, o: [29, 2.1, 3.3, 0.3] },
+  "staudensellerie": { m: "bls", c: "G220100", n: "Bleichsellerie", e: 5.1, o: [15, 0.9, 2, 0.1] },
+  "gurke": { m: "bls", c: "G520100", n: "", e: 2.6, o: [12, 0.6, 1.8, 0.2] },
+  "salat": { m: "naeh", c: "G105100", n: "Kopfsalat", e: 3.4, o: [14, 1.3, 1.5, 0.2] },
+  "blumenkohl": { m: "bls", c: "G311100", n: "", e: 6.6, o: [25, 2.5, 2.3, 0.3] },
+  "ingwer": { m: "bls", c: "R211200", n: "", e: 6.2, o: [80, 1.8, 17.8, 0.8] },
+  "tomaten_dose": { m: "naeh", c: "G568900", n: "Tomate geschält, Konserve", e: 3.0, o: [20, 1.2, 3.5, 0.2] },
+  "tomatenmark": { m: "bls", c: "R160000", n: "", e: 13.0, o: [85, 4.5, 15, 0.5] },
+  "kokosmilch": { m: "bls", c: "H154000", n: "Fettgehalt der Dosen schwankt, Light-Sorten haben deutlich weniger", e: 10.0, o: [170, 1.5, 3, 17] },
+  "erbsen_tk": { m: "bls", c: "G760200", n: "", e: 11.4, o: [70, 6, 10, 0.5] },
+  "beeren_tk": { m: "mix", c: "F302100+F304100+F301100", n: "Mittel aus Himbeere, Heidelbeere, Erdbeere (roh)", e: 12.5, o: [45, 0.8, 8, 0.4] },
+  "apfel": { m: "bls", c: "F110100", n: "", e: 6.0, o: [52, 0.3, 11.5, 0.3] },
+  "banane": { m: "bls", c: "F503100", n: "", e: 6.8, o: [90, 1.1, 20, 0.2] },
+  "zitronensaft": { m: "bls", c: "F601600", n: "", e: 18.3, o: [25, 0.4, 5.5, 0.2] },
+  "avocado": { m: "bls", c: "F502100", n: "", e: 8.2, o: [160, 2, 2, 15] },
+  "gemuesebruehe": { m: "abl", c: "R821000", n: "2 g Brühpulver je 100 ml", e: 0.2, o: [4, 0.2, 0.6, 0.1] },
+  "sojasauce": { m: "bls", c: "R143000", n: "", e: 11.4, o: [60, 8, 5, 0] },
+  "senf": { m: "bls", c: "R132000", n: "mittelscharf", e: 14.2, o: [80, 5, 5, 4] },
+  "honig": { m: "bls", c: "S120000", n: "", e: 0.0, o: [305, 0.4, 75, 0] },
+  "mehl": { m: "bls", c: "C214100", n: "Type 405", e: 10.6, o: [340, 10, 70, 1] },
+  "vollkornbrot": { m: "naeh", c: "B121000", n: "Roggenvollkornbrot", e: 22.2, o: [210, 7, 38, 1.5] },
+  "wrap": { m: "bls", c: "B783012", n: "", e: 3.1, o: [300, 9, 50, 7] },
+  "walnuesse": { m: "bls", c: "H120100", n: "", e: 9.2, o: [690, 15, 7, 65] },
+  "mandeln": { m: "bls", c: "H210100", n: "", e: 20.0, o: [575, 21, 10, 51] },
+  "erdnussmus": { m: "bls", c: "H110800", n: "", e: 16.8, o: [600, 25, 10, 50] },
+  "gewuerze": { m: "own", c: "", n: "Gewürze: Menge gering, keine Nährwerte angesetzt.", e: 0, o: [0, 0, 0, 0] },
+  "haehnchenkeule": { m: "own", c: "", n: "Ohne Haut und Knochen: BLS kennt nur Keulenteile mit Haut (151 bis 212 kcal), Wert liegt plausibel darunter.", e: 0, o: [125, 19.5, 0, 5] },
+  "putenhack": { m: "own", c: "", n: "Kein BLS-Eintrag; liegt zwischen Putenbrust (105 kcal) und Putenfleisch mit Haut (157 kcal).", e: 0, o: [140, 20, 0, 6.5] },
+  "schweinehack": { m: "bls", c: "U020100", n: "Hackfleisch Schwein roh", e: 0.0, o: [215, 19, 0, 15] },
+  "schweineschulter": { m: "bls", c: "U665100", n: "Dünner Bug ohne Fett und Schwarte", e: 0.0, o: [165, 19, 0, 9.5] },
+  "kochschinken": { m: "bls", c: "W424000", n: "", e: 3.8, o: [110, 19, 0.5, 3.5] },
+  "speckwuerfel": { m: "naeh", c: "W415000", n: "Frühstücksspeck geräuchert", e: 0.0, o: [340, 15, 0.5, 31] },
+  "chorizo": { m: "own", c: "", n: "Kein BLS-Eintrag für Chorizo, Packungswert.", e: 0, o: [450, 24, 2, 38] },
+  "huehnerbruehe": { m: "abl", c: "R822000", n: "2 g Brühpulver je 100 ml", e: 0.1, o: [5, 0.5, 0.3, 0.1] },
+  "rinderbruehe": { m: "abl", c: "R811000", n: "2 g Brühpulver je 100 ml", e: 0.2, o: [5, 0.5, 0.3, 0.1] },
+  "seelachs": { m: "bls", c: "T207100", n: "Köhler/Seelachs", e: 0.0, o: [80, 17, 0, 1] },
+  "forelle": { m: "bls", c: "T422112", n: "Regenbogenforelle, Filet mit Haut", e: 1.4, o: [120, 20, 0, 4] },
+  "raeucherlachs": { m: "bls", c: "T410600", n: "", e: 2.0, o: [180, 22, 0, 10] },
+  "muscheln": { m: "bls", c: "T792100", n: "", e: 0.0, o: [75, 11, 3, 2] },
+  "tintenfisch": { m: "own", c: "", n: "Kein BLS-Eintrag, Richtwert.", e: 0, o: [75, 15, 1, 1] },
+  "joghurt35": { m: "bls", c: "M141300", n: "", e: 3.2, o: [66, 3.5, 4.5, 3.8] },
+  "schmand": { m: "bls", c: "M172700", n: "", e: 2.7, o: [240, 3, 3.5, 24] },
+  "saure_sahne": { m: "bls", c: "M172500", n: "", e: 0.6, o: [118, 3.3, 4, 10] },
+  "creme_fraiche": { m: "bls", c: "M176800", n: "30 % Fett", e: 1.9, o: [290, 2.5, 3, 30] },
+  "sahne": { m: "bls", c: "M173800", n: "", e: 0.4, o: [300, 2.4, 3.2, 30] },
+  "ricotta": { m: "bls", c: "M741600", n: "", e: 0.7, o: [170, 8, 3, 13] },
+  "halloumi": { m: "bls", c: "M524500", n: "", e: 3.3, o: [320, 22, 2, 25] },
+  "gouda_light": { m: "bls", c: "M402400", n: "mind. 30 % Fett i. Tr.", e: 3.3, o: [250, 28, 0.5, 15] },
+  "frischkaese": { m: "naeh", c: "M820200", n: "Frischkäsezubereitung Natur mind. 10 % Fett i. Tr.", e: 2.7, o: [106, 8, 4, 6.5] },
+  "paneer": { m: "own", c: "", n: "Kein BLS-Eintrag, Packungswert.", e: 0, o: [282, 18, 3, 22] },
+  "sojadrink": { m: "bls", c: "H841100", n: "", e: 3.5, o: [38, 3.3, 1, 1.8] },
+  "rotkohl": { m: "bls", c: "G341100", n: "", e: 5.5, o: [25, 1.5, 4, 0.2] },
+  "weisskohl": { m: "bls", c: "G342100", n: "", e: 6.6, o: [25, 1.3, 4, 0.2] },
+  "wirsing": { m: "bls", c: "G343100", n: "", e: 6.4, o: [28, 3, 3, 0.4] },
+  "kohlrabi": { m: "bls", c: "G331100", n: "", e: 3.9, o: [24, 1.7, 3.7, 0.1] },
+  "fenchel": { m: "bls", c: "G430100", n: "Gemüsefenchel", e: 6.6, o: [28, 2, 3, 0.3] },
+  "aubergine": { m: "bls", c: "G510100", n: "", e: 3.3, o: [22, 1.2, 2.5, 0.3] },
+  "kuerbis": { m: "bls", c: "G581000", n: "Hokkaido", e: 1.6, o: [33, 1.5, 6, 0.3] },
+  "mais_dose": { m: "bls", c: "G570902", n: "Zuckermais Konserve abgetropft", e: 7.6, o: [78, 2.8, 14, 1.2] },
+  "rote_bete": { m: "naeh", c: "G613132", n: "gekocht (vakuumiert gegart)", e: 5.4, o: [42, 1.7, 8, 0.1] },
+  "pastinake": { m: "bls", c: "G640100", n: "", e: 5.7, o: [62, 1.5, 12, 0.5] },
+  "sellerieknolle": { m: "bls", c: "G660100", n: "", e: 9.7, o: [22, 1.5, 2.3, 0.3] },
+  "fruehlingszwiebel": { m: "bls", c: "G482100", n: "", e: 5.9, o: [28, 1.8, 4.5, 0.3] },
+  "rucola": { m: "bls", c: "G130100", n: "", e: 3.4, o: [26, 2.6, 2, 0.7] },
+  "chinakohl": { m: "bls", c: "G321100", n: "", e: 3.8, o: [12, 1.2, 1.3, 0.2] },
+  "pak_choi": { m: "bls", c: "G324100", n: "", e: 3.8, o: [12, 1.5, 1.2, 0.2] },
+  "sprossen": { m: "bls", c: "H650100", n: "", e: 2.5, o: [30, 3, 4, 0.2] },
+  "spargel": { m: "bls", c: "G450100", n: "", e: 3.3, o: [19, 2, 2, 0.2] },
+  "gruene_bohnen": { m: "bls", c: "G710100", n: "", e: 3.8, o: [30, 2.3, 4, 0.2] },
+  "chili_frisch": { m: "own", c: "", n: "Kein BLS-Eintrag, Richtwert (kleine Menge).", e: 0, o: [36, 2, 6, 0.4] },
+  "shiitake": { m: "bls", c: "K724100", n: "", e: 8.3, o: [38, 2.2, 6.8, 0.5] },
+  "petersilie": { m: "bls", c: "G250100", n: "", e: 8.5, o: [35, 3, 4, 0.8] },
+  "koriander_frisch": { m: "own", c: "", n: "Kein BLS-Eintrag, Richtwert (kleine Menge).", e: 0, o: [25, 2.1, 3.7, 0.5] },
+  "basilikum": { m: "bls", c: "G061000", n: "", e: 3.2, o: [38, 3, 5, 0.6] },
+  "minze": { m: "own", c: "", n: "Kein BLS-Eintrag, Richtwert (kleine Menge).", e: 0, o: [42, 3.7, 5, 0.7] },
+  "dill": { m: "own", c: "", n: "Kein BLS-Eintrag, Richtwert (kleine Menge).", e: 0, o: [40, 3.5, 4.5, 1.1] },
+  "schnittlauch": { m: "bls", c: "G081100", n: "", e: 6.0, o: [27, 3, 2, 0.7] },
+  "erdbeeren": { m: "bls", c: "F301100", n: "", e: 7.0, o: [30, 0.7, 5.5, 0.4] },
+  "birne": { m: "bls", c: "F130100", n: "", e: 6.7, o: [55, 0.5, 12.5, 0.3] },
+  "orange": { m: "bls", c: "F603100", n: "", e: 7.8, o: [42, 1, 9, 0.2] },
+  "mango": { m: "bls", c: "F516100", n: "", e: 4.7, o: [61, 0.5, 14, 0.3] },
+  "limettensaft": { m: "bls", c: "F602600", n: "", e: 14.7, o: [25, 0.4, 5.5, 0.2] },
+  "rosinen": { m: "bls", c: "F840100", n: "", e: 22.6, o: [300, 3, 66, 0.5] },
+  "oliven": { m: "naeh", c: "H510802", n: "grün, gesäuert, abgetropft", e: 4.7, o: [143, 1, 1, 15] },
+  "kapern": { m: "bls", c: "G012902", n: "", e: 9.8, o: [25, 2, 2, 0.6] },
+  "tomaten_getrocknet": { m: "bls", c: "G560400", n: "", e: 48.3, o: [243, 14, 40, 3] },
+  "passata": { m: "bls", c: "R161200", n: "", e: 7.2, o: [23, 1.3, 4, 0.2] },
+  "sauerkraut": { m: "bls", c: "G345902", n: "Konserve abgetropft", e: 16.6, o: [16, 1.2, 2, 0.3] },
+  "schwarze_bohnen": { m: "naeh", c: "H740902", n: "Gartenbohne reif, Konserve abgetropft (kein Eintrag für schwarze Bohnen)", e: 14.3, o: [90, 6.5, 14, 0.5] },
+  "linsen_dose": { m: "bls", c: "H730902", n: "", e: 14.9, o: [112, 9, 17, 0.5] },
+  "edamame": { m: "naeh", c: "G750100", n: "Sojabohne unreif roh (kein TK-Eintrag)", e: 8.4, o: [121, 11, 8, 5] },
+  "tempeh": { m: "own", c: "", n: "Kein BLS-Eintrag, Packungswert.", e: 0, o: [200, 19, 9, 11] },
+  "fischsauce": { m: "own", c: "", n: "Kein BLS-Eintrag, Packungswert.", e: 0, o: [36, 5, 4, 0] },
+  "misopaste": { m: "bls", c: "H862200", n: "", e: 12.0, o: [202, 12, 25, 6] },
+  "essig": { m: "bls", c: "R123100", n: "Apfelessig", e: 17.1, o: [18, 0, 4, 0] },
+  "balsamico": { m: "bls", c: "R125000", n: "Fett in BLS leer, 0 gesetzt", e: 15.2, o: [82, 0.5, 19, 0] },
+  "sambal": { m: "bls", c: "R146100", n: "", e: 7.6, o: [47, 1.5, 8, 1] },
+  "currypaste": { m: "own", c: "", n: "Thai-Currypaste: kein BLS-Eintrag, Packungswert.", e: 0, o: [117, 3, 15, 5] },
+  "harissa": { m: "own", c: "", n: "Kein BLS-Eintrag, Packungswert.", e: 0, o: [71, 3, 8, 3] },
+  "ajvar": { m: "bls", c: "G898400", n: "", e: 4.9, o: [92, 1.5, 8, 6] },
+  "tahini": { m: "bls", c: "Q901000", n: "", e: 16.4, o: [598, 18, 10, 54] },
+  "sesam": { m: "bls", c: "H420100", n: "", e: 22.4, o: [562, 18, 10, 50] },
+  "erdnuesse": { m: "naeh", c: "H110600", n: "Erdnuss geröstet", e: 16.8, o: [590, 26, 8, 50] },
+  "cashews": { m: "bls", c: "H170100", n: "", e: 6.0, o: [588, 18, 30, 44] },
+  "pinienkerne": { m: "bls", c: "H320100", n: "", e: 12.8, o: [684, 14, 4, 68] },
+  "sonnenblumenkerne": { m: "bls", c: "H430100", n: "", e: 11.6, o: [576, 21, 15, 48] },
+  "zucker": { m: "bls", c: "S111000", n: "", e: 0.0, o: [400, 0, 100, 0] },
+  "speisestaerke": { m: "naeh", c: "C446000", n: "Maisstärke", e: 2.0, o: [340, 0.3, 85, 0] },
+  "semmelbroesel": { m: "bls", c: "B821000", n: "", e: 11.6, o: [346, 12, 70, 2] },
+  "couscous": { m: "bls", c: "C119200", n: "", e: 12.3, o: [350, 12, 72, 1.5] },
+  "bulgur": { m: "bls", c: "C119100", n: "", e: 13.4, o: [345, 12, 68, 1.5] },
+  "quinoa": { m: "bls", c: "C118000", n: "", e: 15.2, o: [355, 14, 60, 6] },
+  "polenta": { m: "naeh", c: "C346000", n: "Mais Grieß", e: 18.8, o: [345, 8, 75, 1.2] },
+  "reisnudeln": { m: "bls", c: "C559000", n: "", e: 3.2, o: [352, 6, 80, 0.6] },
+  "glasnudeln": { m: "bls", c: "H030400", n: "", e: 5.3, o: [346, 0.2, 86, 0.1] },
+  "lasagneplatten": { m: "naeh", c: "E401000", n: "Teigwaren eifrei roh", e: 6.8, o: [355, 12.5, 71, 1.5] },
+  "spaetzle": { m: "own", c: "", n: "Spätzle aus dem Kühlregal: BLS kennt nur selbstgemachte, rohe Spätzle (220 kcal); Packungswert.", e: 0, o: [152, 6, 28, 1.8] },
+  "gnocchi": { m: "bls", c: "K270000", n: "", e: 3.7, o: [143, 3.5, 31, 0.5] },
+  "pita": { m: "naeh", c: "B782100", n: "Weizenfladenbrot", e: 6.7, o: [262, 9, 52, 2] },
+  "baguette": { m: "bls", c: "B781200", n: "Weizenbaguette", e: 7.3, o: [256, 8.5, 52, 1.5] },
+  "risottoreis": { m: "naeh", c: "C352000", n: "Reis poliert", e: 5.0, o: [345, 7, 78, 0.6] },
+  "sushireis": { m: "naeh", c: "C352000", n: "Reis poliert", e: 5.0, o: [345, 7, 78, 0.6] },
+};
+ZUTATEN.forEach(z => { if (BLS_REF[z.id]) z.bls = BLS_REF[z.id]; });
+
+const BLS_CITE = 'Bundeslebensmittelschlüssel (BLS) 4.0, Max Rubner-Institut, Karlsruhe 2025, DOI 10.25826/Data20251217-134202-0';
+const BLS_MODE_TXT = { bls: 'BLS-Eintrag, Wert übernommen', naeh: 'BLS-Näherung (ähnlicher Eintrag)', mix: 'Mittel mehrerer BLS-Einträge', abl: 'aus BLS-Brühpulver abgeleitet', own: 'eigener Packungs- oder Richtwert, kein BLS-Eintrag' };
+function blsStats() {
+  const s = { bls: 0, naeh: 0, mix: 0, abl: 0, own: 0, total: ZUTATEN.length };
+  ZUTATEN.forEach(z => { const m = z.bls && z.bls.m; if (m && s[m] !== undefined) s[m]++; });
+  s.fromBls = s.bls + s.naeh + s.mix + s.abl;
+  return s;
+}
+function blsLine(z) {
+  if (!z || !z.bls) return z && z.noMacro ? 'Keine Nährwerte angesetzt (geringe Mengen).' : '';
+  const b = z.bls; let t = BLS_MODE_TXT[b.m] || '';
+  if (b.c) t += ' (Code ' + b.c.replace('+', ', ') + ')';
+  if (b.n) t += '. ' + b.n + (/[.!?]$/.test(b.n) ? '' : '.');
+  return t;
+}
+
+/* ===== Sous-vide: nur belegte Werte =====
+   Quelle Geflügel: Anova Culinary, Pasteurisierungsleitfaden (auf Basis USDA, 7-log-Reduktion von Salmonellen, 5 % Fett),
+   Haltezeiten gelten AB dem Erreichen der Kerntemperatur. Zeilen unter 63 °C nimmt die App bewusst nicht auf.
+   Für Schwein, Rind, Fisch und Hack gibt es hier KEINE Tabelle: die App rechnet dort mit der BfR-Regel (Kern 70 °C, 2 Minuten, an allen Stellen). */
+const SOUSVIDE = {
+  stand: 'Oktober 2026',
+  quelle: 'Anova Culinary, Sous-vide pasteurization guide (USDA-Daten); Safefood Irland 2019 (unter 60 °C nicht verzehrfertig); BfR Küchenhygiene (70 °C für 2 Minuten)',
+  gefluegel: [
+    { temp: 63, huhn: '9 Minuten', pute: '10,5 Minuten' },
+    { temp: 66, huhn: '3 Minuten', pute: '4 Minuten' },
+    { temp: 68, huhn: '48 Sekunden', pute: '1,2 Minuten' },
+    { temp: 71, huhn: '15 Sekunden', pute: '26 Sekunden' }
+  ],
+  regeln: [
+    'Die Haltezeit zählt erst, wenn der Kern die Badtemperatur erreicht hat. Das dauert bei dicken Stücken bis etwa 45 Minuten; plane bei Start aus dem Kühlschrank 1 Stunde, aus dem Gefrierer 2 Stunden zusätzlich ein.',
+    'Gegen Listerien die Haltezeit verdreifachen.',
+    'Nichts unter 60 °C garen und als verzehrfertig behandeln (Safefood 2019: Listerien überlebten alle Tests unter 60 °C).',
+    'Für Schwangere, kleine Kinder, ältere und immungeschwächte Menschen gilt weiter die BfR-Regel: Kern 70 °C für 2 Minuten.',
+    'Schwein, Rind, Fisch und Hack: keine Tabelle in der App, daher Badtemperatur mindestens 70 °C.'
+  ]
+};
+function svMinTemp(group) { return group === 'Geflügel' ? SOUSVIDE.gefluegel[0].temp : 70; }
+function svTabelleHtml() {
+  const rows = SOUSVIDE.gefluegel.map(r => '<tr><td>' + r.temp + ' °C</td><td>' + r.huhn + '</td><td>' + r.pute + '</td></tr>').join('');
+  return '<table class="svtab"><thead><tr><th>Bad</th><th>Hähnchen</th><th>Pute</th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
 
 /* ===== Rezeptcharge 1: Deutschland, Italien, Indien (eigene Fassungen klassischer Gerichte) ===== */
 let _rid = 19;
@@ -982,7 +1200,7 @@ SEED2.push(
     spices: ['salz', 'pfeffer', 'kuemmel', 'majoran', 'lorbeer', 'nelken'],
     steps: ['Backofen auf 170 °C Ober-/Unterhitze vorheizen. Schulter mit Salz, Pfeffer, Kümmel und Majoran einreiben.', 'Öl im Dutch Oven erhitzen, den Braten rundum 10 Minuten kräftig anbraten, herausnehmen. Zwiebelspalten kurz anrösten.', 'Braten zurücklegen, die Hälfte der Brühe angießen, Deckel schließen und 90 Minuten im Ofen schmoren.', 'Rotkohl fein hobeln, mit Apfelwürfeln, Essig, Honig, Lorbeer, Nelken und restlicher Brühe in einem zweiten Topf 45 Minuten weich schmoren. Kartoffeln in Salzwasser garen.', 'Braten ruhen lassen, aufschneiden, mit der Sauce, dem Rotkohl und den Kartoffeln servieren.'],
     tips: 'Kern des Bratens mindestens 70 °C, für zarte Schulter eher 85–90 °C. Mit der Kruste nach oben ohne Deckel die letzten 20 Minuten bräunen.',
-    storage: 'Im Kühlschrank bis zu 3 Tage.', freeze: { ok: 'ja', block: 500, months: 3, note: 'Fleisch in Scheiben mit Sauce einfrieren, Rotkohl separat.' },
+    storage: 'Im Kühlschrank bis zu 3 Tage.', freeze: { ok: 'ja', block: 250, months: 3, note: 'Fleisch in Scheiben mit Sauce einfrieren, Rotkohl separat. Eine Portion sind etwa 265 ml (geschätzt), der 250-ml-Block ist knapp gefüllt.' },
     dutch: { size: 'ca. 5–6 Liter', heat: 'Indirekt: Backofen 170 °C Ober-/Unterhitze', time: 'Anbraten 10 Min., Schmoren 90–120 Min. geschlossen', check: 'Nach 60 Minuten Flüssigkeit prüfen, Gabel muss leicht ins Fleisch gleiten.', alt: 'Herd: kleinste Stufe, Deckel geschlossen, ca. 2,5 Std., gelegentlich wenden.' }
   }),
   R({
@@ -1047,7 +1265,7 @@ SEED2.push(
     spices: ['salz', 'pfeffer', 'oregano'],
     steps: ['Lauch in Ringe, Karotte, Kartoffeln und Zucchini in kleine Würfel, Bohnen in Stücke schneiden.', 'Olivenöl erhitzen und Lauch, Karotte und Kartoffeln 5 Minuten anschwitzen.', 'Brühe und Tomaten zugeben, 12 Minuten köcheln, dann Zucchini, grüne Bohnen und Oregano zufügen.', 'Nach 5 Minuten Bohnen aus der Dose und Nudeln einrühren und nach Packungsanweisung gar ziehen lassen.', 'Mit Pfeffer und Salz abschmecken, mit Basilikum und Parmesan servieren.'],
     tips: 'Reste von Gemüse aus dem Kühlschrank passen immer hinein.',
-    freeze: { ok: 'ja', block: 500, months: 3, note: 'Besser ohne Nudeln einfrieren.' }
+    freeze: { ok: 'ja', block: 500, months: 3, note: 'Besser ohne Nudeln einfrieren. Eine Portion sind etwa 570 ml (geschätzt): vor dem Einfrieren etwas einkochen, beim Erwärmen mit Wasser auffüllen.' }
   }),
   R({
     name: 'Bruschetta pomodoro mit Mozzarella', cuisine: 'Italien', meal: 'Snack', group: 'Vegetarisch', servings: 2, prep: 10, cook: 5,
@@ -1268,7 +1486,7 @@ SEED2.push(
     spices: ['kreuzkuemmel', 'salz', 'paprika_suess'],
     steps: ['Kichererbsen abspülen, einige zur Dekoration beiseitelegen.', 'Mit Tahini, Zitronensaft, Knoblauch, Kreuzkümmel, Salz und 4 EL Eiswasser mindestens 3 Minuten cremig pürieren.', 'In eine Schale streichen, mit Olivenöl, Paprikapulver und den Kichererbsen garnieren.', 'Gemüse in Sticks schneiden und dazu servieren.'],
     tips: 'Das Eiswasser und die lange Mixzeit machen den Hummus besonders cremig.', storage: 'Im Kühlschrank bis zu 4 Tage.', reheat: 'Nicht erforderlich.',
-    freeze: { ok: 'ja', block: 125, months: 2, note: 'Ohne Gemüse in 125-ml-Blöcken einfrieren, nach dem Auftauen kräftig rühren.' }
+    freeze: { ok: 'ja', block: 125, months: 2, note: 'Ohne Gemüse in 125-ml-Blöcken einfrieren, nach dem Auftauen kräftig rühren. Eine Portion sind etwa 160 ml, also 1 bis 2 Blöcke.' }
   }),
 
   /* ---------- Spanien ---------- */
@@ -1355,7 +1573,7 @@ SEED2.push(
     steps: ['Reis waschen und mit Brühe und Ingwerscheiben aufkochen, dann 35–40 Minuten bei kleiner Hitze unter gelegentlichem Rühren garen, bis ein dicker Brei entsteht.', 'Hähnchenbrust in dünnen Streifen die letzten 8 Minuten im Brei gar ziehen lassen (Kern mindestens 70 °C).', 'Eier getrennt 6–7 Minuten kochen und pellen.', 'Congee mit Sojasauce und Pfeffer abschmecken.', 'Mit halbiertem Ei, Frühlingszwiebeln und Sesam servieren.'],
     tips: 'Congee lässt sich im Multikocher über Nacht auf niedriger Stufe zubereiten. Reisreste rasch kühlen.', storage: 'Im Kühlschrank bis zu 2 Tage.',
     reheat: 'Mit etwas Wasser unter Rühren durchgehend sehr heiß erhitzen (mind. 70 °C).',
-    freeze: { ok: 'ja', block: 250, months: 2, note: 'Ohne Ei in 250-ml-Blöcken einfrieren.' }
+    freeze: { ok: 'ja', block: 500, months: 2, note: 'Ohne Ei einfrieren. Eine Portion sind etwa 590 ml (geschätzt): dicker eingekocht (ca. 20 % weniger Flüssigkeit) in 500-ml-Blöcken einfrieren, beim Erwärmen mit Wasser verdünnen.' }
   }),
   R({
     name: 'Edamame mit Meersalz', cuisine: 'Japan', meal: 'Snack', group: 'Vegetarisch', servings: 1, prep: 2, cook: 5,
@@ -2366,7 +2584,7 @@ function defaultState() {
     profile: { avoidAllergens: [], avoidIntol: [], excl: [], goals: { kcal: 1600, protein: 120, water: 2000 }, body: { sex: 'f', age: '', h: '', w: '', pal: 1.375, mode: 'halten', rate: 0.25 } },
     favs: [], week: emptyWeek(), shopChecked: {}, shopExtra: [], inv: [], stock: [], spices: {}, minStock: {},
     userRecipes: [], tested: {}, cooked: {}, hideConf: true, diary: {}, fast: { start: null, goalH: 16, log: [] },
-    prep: defaultPrep()
+    prep: defaultPrep(), removed: []
   };
 }
 const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
@@ -2386,6 +2604,7 @@ function mergeState(s) {
   TAGE.forEach(t => { out.week[t] = Object.assign({ f: null, m: null, a: null, s: null }, isObj(out.week[t]) ? out.week[t] : {}); });
   out.stock = out.stock.filter(l => l && ZMAP[l.ing] && l.g > 0);
   out.userRecipes = out.userRecipes.filter(r => r && r.id && r.name && Array.isArray(r.ing) && Array.isArray(r.steps));
+  out.removed = (Array.isArray(s.removed) ? s.removed : []).filter(id => typeof id === 'string').slice(0, 500);
   const pp = isObj(s.prep) ? s.prep : {};
   out.prep = Object.assign(defaultPrep(), pp);
   const clampN = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, Math.round(v))) : d; };
@@ -2401,7 +2620,7 @@ function mergeState(s) {
 let state = defaultState();
 const ui = {
   tab: 'heute', sub: { plan: 'plan', vorrat: 'zutaten', prep: 'start' }, day: 'Mo', date: isoLocal(), sheet: null, sv: 0, persist: 'Wird geladen …', confirm: '',
-  f: { q: '', meal: '', group: '', dev: '', cuisine: '', maxKcal: '', minP: '', mp: false, fz: false, fav: false, his: '', stock: false },
+  f: { q: '', meal: '', group: '', dev: '', cuisine: '', maxKcal: '', minP: '', mp: false, fz: false, fav: false, his: '', stock: false, src: '' },
   form: { inv: { rid: '', name: '', loc: 'Gefrierer', ml: 500, count: 4, date: '', months: 3, days: 3 }, stock: { id: '', q: '', g: '', bought: '', exp: '' }, shopq: '' },
   add: { slot: 'm', mode: 'recent', q: '', qty: '1', gram: '100', quick: { name: '', kcal: '', p: '', c: '', f: '' } },
   ed: null, stockSel: null, calc: null, rv: { por: '', slot: 'm', cook: true, msg: '' },
@@ -2453,7 +2672,8 @@ if (typeof document !== 'undefined') {
 ui.today = isoLocal();
 
 /* ---------- Zugriff und Hilfen ---------- */
-const lib = () => SEED.concat(state.userRecipes);
+const seedLib = () => state.removed.length ? SEED.filter(r => !state.removed.includes(r.id)) : SEED;
+const lib = () => seedLib().concat(state.userRecipes);
 const byIdMap = () => { const m = {}; lib().forEach(r => { m[r.id] = r; }); BAUSTEINE.forEach(b => { m[b.id] = b; }); return m; };
 const libMap = () => { const m = {}; lib().forEach(r => { m[r.id] = r; }); return m; };
 const fmt = n => String(Math.round(n * 10) / 10).replace('.', ',');
@@ -2629,6 +2849,8 @@ function filtered() {
     if (f.group && r.group !== f.group) return false;
     if (f.dev && !(r.devices || []).includes(f.dev)) return false;
     if (f.cuisine && r.cuisine !== f.cuisine) return false;
+    if (f.src === 'eigen' && !(r.user || r.ai)) return false;
+    if (f.src === 'mit' && (r.user || r.ai)) return false;
     const pp = calcRecipe(r).pp;
     if (f.maxKcal && pp.kcal > Number(f.maxKcal)) return false;
     if (f.minP && pp.p < Number(f.minP)) return false;
@@ -2646,7 +2868,7 @@ function filtered() {
   });
 }
 function activeFilterCount() {
-  const f = ui.f; return ['group', 'dev', 'cuisine', 'maxKcal', 'minP', 'his'].filter(k => f[k] !== '').length + (f.mp ? 1 : 0) + (f.fz ? 1 : 0) + (f.fav ? 1 : 0) + (f.stock ? 1 : 0);
+  const f = ui.f; return ['group', 'dev', 'cuisine', 'maxKcal', 'minP', 'his', 'src'].filter(k => f[k] !== '').length + (f.mp ? 1 : 0) + (f.fz ? 1 : 0) + (f.fav ? 1 : 0) + (f.stock ? 1 : 0);
 }
 function recipeCard(r) {
   const pp = calcRecipe(r).pp, d = derive(r), cf = conflicts(r, state.profile), fav = state.favs.includes(r.id);
@@ -2684,6 +2906,7 @@ function viewRezepte() {
     '<details class="panel" id="fdet" ' + (ui.fopen ? 'open' : '') + '><summary><span>Filter' + (activeFilterCount() ? ' (' + activeFilterCount() + ' aktiv)' : '') + '</span></summary><div class="stack-s">' +
     '<div class="grid2"><div class="field"><label for="fg">Fleisch/Fisch/Veg.</label><select id="fg" data-chg="flt" data-k="group">' + opt(GRUPPEN, f.group, 'Alle') + '</select></div>' +
     '<div class="field"><label for="fc">Küche</label><select id="fc" data-chg="flt" data-k="cuisine">' + opt(cuisines(), f.cuisine, 'Alle') + '</select></div></div>' +
+    '<div class="field"><label for="fs">Herkunft des Rezepts</label><select id="fs" data-chg="flt" data-k="src"><option value="">Alle</option><option value="eigen" ' + (f.src === 'eigen' ? 'selected' : '') + '>Nur eigene und importierte</option><option value="mit" ' + (f.src === 'mit' ? 'selected' : '') + '>Nur mitgelieferte</option></select></div>' +
     '<div class="grid2"><div class="field"><label for="fd">Gerät</label><select id="fd" data-chg="flt" data-k="dev">' + opt(GERAETE, f.dev, 'Alle') + '</select></div>' +
     '<div class="field"><label for="fh">Histamin bis</label><select id="fh" data-chg="flt" data-k="his"><option value="">egal</option><option value="0" ' + (f.his === '0' ? 'selected' : '') + '>niedrig</option><option value="1" ' + (f.his === '1' ? 'selected' : '') + '>mittel</option></select></div></div>' +
     '<div class="grid2"><div class="field"><label for="fk">max. kcal</label><input type="number" id="fk" inputmode="numeric" data-chg="flt" data-k="maxKcal" value="' + esc(f.maxKcal) + '" placeholder="z. B. 500"></div>' +
@@ -2770,11 +2993,11 @@ function recipeSheet(id) {
     '<details class="panel"><summary><span>Nährwert-Rechnung</span></summary><div class="scroll-x"><table><thead><tr><th>Zutat</th><th class="n">g</th><th class="n">kcal</th><th class="n">P</th><th class="n">KH</th><th class="n">F</th></tr></thead><tbody>' +
     cr.rows.map(x => '<tr><td>' + esc(x.name) + (x.noMacro ? ' <span class="note">(nicht gerechnet)</span>' : '') + '</td><td class="n">' + x.g + '</td><td class="n">' + Math.round(x.kcal) + '</td><td class="n">' + fmt(x.p) + '</td><td class="n">' + fmt(x.c) + '</td><td class="n">' + fmt(x.f) + '</td></tr>').join('') +
     '<tr><td><b>Gesamt (' + r.servings + ' Port.)</b></td><td class="n">' + cr.tot.g + '</td><td class="n">' + Math.round(cr.tot.kcal) + '</td><td class="n">' + fmt(cr.tot.p) + '</td><td class="n">' + fmt(cr.tot.c) + '</td><td class="n">' + fmt(cr.tot.f) + '</td></tr></tbody></table></div>' +
-    '<p class="note" style="margin-top:8px">Quelle: Richtwerte je 100 g aus dem App-eigenen Zutatenstamm (allgemeine Referenzwerte, nicht gegen den Bundeslebensmittelschlüssel geprüft). Gewürze, Kräuter in kleinen Mengen und Wasser sind nicht eingerechnet. Rundung: kcal ganzzahlig, Makros auf 0,1 g. Markenprodukte weichen ab.</p></details>' +
+    '<p class="note" style="margin-top:8px">Quelle: Nährwerte je 100 g nach Bundeslebensmittelschlüssel BLS 4.0 (Max Rubner-Institut, ' + blsStats().fromBls + ' von ' + blsStats().total + ' Zutaten), sonst eigene Packungs- oder Richtwerte; die Herkunft steht in der Zutatenansicht. Gewürze, Kräuter in kleinen Mengen und Wasser sind nicht eingerechnet. Rundung: kcal ganzzahlig, Makros auf 0,1 g. Markenprodukte weichen ab.</p></details>' +
     '<details class="panel"><summary><span>Automatische Prüfung und Herkunft</span></summary>' + checksBlock(v) + '<p class="note" style="margin-top:8px">Herkunft: ' + esc(r.src || '–') + (r.origin ? ' · ' + esc(r.origin) : '') + '. Ein automatischer Test ersetzt keinen Kochtest.</p></details>' +
     '<div class="row">' + (fz.ok && fz.ok !== 'nein' ? '<button type="button" class="btn" data-act="freezefrom" data-id="' + esc(r.id) + '">Einfrieren planen</button>' : '') +
     '<button type="button" class="btn" data-act="reccopy" data-id="' + esc(r.id) + '">Als Text kopieren</button>' +
-    (r.user || r.ai ? '<button type="button" class="btn" data-act="editrec" data-id="' + esc(r.id) + '">Bearbeiten</button><button type="button" class="btn danger" data-act="delrecipe" data-id="' + esc(r.id) + '">Löschen</button>' : '') + '</div>';
+    (r.user || r.ai ? '<button type="button" class="btn" data-act="editrec" data-id="' + esc(r.id) + '">Bearbeiten</button><button type="button" class="btn danger" data-act="delrecipe" data-id="' + esc(r.id) + '">' + (ui.confirm === 'del' ? 'Nochmal tippen: löschen' : 'Löschen') + '</button>' : '<button type="button" class="btn danger" data-act="rmseed" data-id="' + esc(r.id) + '">' + (ui.confirm === 'del' ? 'Nochmal tippen: entfernen' : 'Aus der Bibliothek entfernen') + '</button>') + '</div>';
 }
 
 /* ---------- Rezept-Editor (eigene Rezepte) ---------- */
@@ -3003,6 +3226,7 @@ function ingSheet(id) {
   const tot = stockNow()[id];
   return '<div class="row between"><h2>' + esc(z.name) + '</h2><button type="button" class="btn small" data-act="closesheet">Schließen</button></div>' +
     '<div class="note mono">' + (tot ? Math.round(tot.g) + ' g nutzbar' : '0 g nutzbar') + ' · ' + esc(lagerort(z)) + '</div>' +
+    '<div class="note">Je 100 g: ' + z.kcal + ' kcal · Eiweiß ' + z.p + ' g · Kohlenhydrate ' + z.c + ' g · Fett ' + z.f + ' g. Quelle: ' + esc(blsLine(z)) + '</div>' +
     '<div class="panel stack-s">' + (lots.length ? lots.map(l => { const ls = lotState(l, todayIso()); return '<div class="lotrow"><div class="grow"><div class="row"><input type="text" inputmode="decimal" class="gin" data-chg="lotg" data-id="' + esc(l.id) + '" value="' + l.g + '" aria-label="Gramm"> g ' + expBadge(ls.days, ls.state) + '</div><div class="note mono">gekauft ' + esc(l.bought) + ' · bis ' + esc(l.exp) + '</div></div><button type="button" class="fav" data-act="lotdel" data-id="' + esc(l.id) + '" aria-label="Charge entfernen">×</button></div>'; }).join('') : '<p class="note">Keine Chargen.</p>') + '</div>' +
     '<div class="panel stack-s"><h3>Mindestbestand</h3><div class="row"><input type="text" inputmode="decimal" id="mn" class="gin" style="width:110px" data-chg="minstock" data-id="' + id + '" value="' + (state.minStock[id] || '') + '" placeholder="g"> <span class="note">Fällt der Bestand darunter, steht die Zutat auf der Einkaufsliste. Leer lassen = kein Mindestbestand.</span></div></div>' +
     '<button type="button" class="btn" data-act="stockadd2" data-id="' + id + '">Weitere Charge einbuchen</button>';
@@ -3029,7 +3253,7 @@ function infoPanel() {
     row('Reste und Reis', 'Gekochte Speisen rasch abkühlen und nicht länger als 2 Stunden bei Raumtemperatur lassen (Reis: Sporen von Bacillus cereus). Im Kühlschrank (unter 7 °C, optimal 1–5 °C) höchstens 2–3 Tage aufbewahren. Beim Aufwärmen gleichmäßig auf mind. 70 °C bringen (AGES nennt mind. 65 °C; die App wählt den höheren Wert). Warmhalten nur ab 60 °C. Quellen: ADAC (Fried-Rice-Syndrom), AGES.') +
     row('Einfrieren', 'Gefrierer bei mindestens −18 °C. Auftauen im Kühlschrank in geschlossenem Behälter. Aufgetautes rohes Fleisch oder Fisch nur dann erneut einfrieren, wenn es vorher auf mind. 70 °C für 2 Minuten durcherhitzt wurde. Die Monate in den Rezepten sind Qualitätsrichtwerte der App, keine Sicherheitsfristen. Quelle: AGES.') +
     row('Gemeinschaftsverpflegung', 'Fachregel für Küchen (HACCP): Kerntemperatur 70 °C für 10 Minuten oder 80 °C für 3 Minuten. Das ist strenger als nötig für zuhause und hier nur zur Orientierung genannt. Quelle: DGE „Nachweis der Kerntemperaturen“.') +
-    row('Sous-vide', 'Die App enthält keine geprüfte Zeit-Temperatur-Tabelle. Das Sous-vide-Rezept ist deshalb nur ein Entwurf. Für Geflügel und Hack ohne geprüfte Tabelle nicht niedrig garen.') +
+    row('Sous-vide', 'Belegt ist nur Geflügel: Haltezeit ab Erreichen der Kerntemperatur (7-log-Reduktion von Salmonellen, Anova nach USDA). ' + svTabelleHtml() + '<ul class="plain">' + SOUSVIDE.regeln.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>Quellen: ' + esc(SOUSVIDE.quelle) + '. Stand: ' + SOUSVIDE.stand + '.') +
     row('Dutch Oven, Airfryer, Kontaktgrill', 'Zeiten und Temperaturen in den Rezepten sind Richtwerte und hängen von Gerät, Menge und Schnittgröße ab. Immer Kerntemperatur oder Garpunkt prüfen. Ein Kochtest durch dich ersetzt jede Tabelle.') +
     '<p class="note">Diese Hinweise sind allgemeine Verbraucherinformationen und ersetzen keine individuelle Beratung. Stand der Recherche: Oktober 2026.</p></div>';
 }
@@ -3048,17 +3272,25 @@ function profilePanel() {
     '<div class="row" style="flex-wrap:nowrap"><input type="text" id="ex" placeholder="Weitere Zutat ausschließen" style="flex:1" data-enter="excladd"><button type="button" class="btn" data-act="excladd">Hinzufügen</button></div><p class="note">Gilt für Rezepte, Zutaten, Zubereitungstexte, Tags, Importe, Tagebuch-Schnelleinträge und die Einkaufsliste. Thermomix wird bewusst nicht berücksichtigt.</p></div>';
 }
 function statusPanel() {
-  const n = lib().length, nb = SEED.length, nz = ZUTATEN.length;
+  const n = lib().length, nb = seedLib().length, nz = ZUTATEN.length;
   const doneCooked = Object.keys(state.tested).length;
   return '<ul class="note statuslist"><li>Rezepte: ' + n + ' von 240 geplanten (' + nb + ' mitgeliefert, ' + state.userRecipes.length + ' eigene). Status der mitgelieferten: „Entwurf, automatisch validiert“. Die Fassungen sind eigene Formulierungen klassischer Gerichte, kalorienbewusst angepasst.</li>' +
     '<li>Praktisch getestet: ' + doneCooked + ' Rezepte (durch dich bestätigt). Von mir wurde kein Rezept gekocht.</li>' +
-    '<li>Nährwerte: Richtwerte aus dem eigenen Zutatenstamm (' + nz + ' Zutaten), nicht gegen den Bundeslebensmittelschlüssel geprüft. Wer eine BLS-Datei besitzt, kann sie später einspielen lassen.</li>' +
+    '<li>Nährwerte: ' + blsStats().fromBls + ' von ' + nz + ' Zutaten nach ' + BLS_CITE + '; ' + blsStats().own + ' Zutaten ohne BLS-Eintrag haben eigene Packungs- oder Richtwerte. Mahlzeiten sind aus diesen Werten berechnet, Markenprodukte weichen ab.</li>' +
     '<li>Allergene und Unverträglichkeiten sind aus den Zutaten abgeleitet. Fertigprodukte können mehr enthalten: Packung prüfen.</li>' +
     '<li>Noch nicht enthalten: Monsieur-Cuisine-Connect-Varianten (kein geprüftes Programmwissen), Mealie-Austausch (nur mit echtem Export testbar), PDF-Rezeptkarten und Rezeptbuch.</li>' +
     '<li>Der Autoplan rechnet je Platz mit einer Portion und wählt nach Kalorien- und Proteinziel. Mit rund 400 kcal je Mahlzeit passt er am besten zu Zielen um 1.500 bis 1.900 kcal; Proteinziele über etwa 130 g erreicht er nur an einem Teil der Tage.</li>' +
     '<li>Meal-Prep-Bereich: ' + BAUSTEINE.length + ' Bausteine als eigene Grundzubereitungen (Entwurf, automatisch validiert). Ausbeute und Blockanzahl je Charge sind Schätzungen aus Garverlust und Dichte, nicht gemessen; Nährwerte je Block = Summe der Zutaten geteilt durch die geschätzte Blockanzahl. Die Zeiten der Session sind Richtwerte. Keiner der Bausteine wurde von mir gekocht oder eingefroren.</li>' +
     '<li>Barcode-Scan und Kamera sind in dieser Version nicht möglich; Nährwerte aus Packungen trägst du über „Schnell“ im Tagebuch ein.</li>' +
     '<li>Speicherort: ' + esc(ui.persist) + '.</li></ul>';
+}
+function libPanel() {
+  const sl = seedLib(), un = state.userRecipes.length, byG = GRUPPEN.map(g => [g, sl.filter(r => r.group === g).length]).filter(x => x[1] > 0);
+  const rm = state.removed.length, armed = ui.confirm === 'rmseedall';
+  return '<div class="stack-s"><p class="note">Mitgelieferte Rezepte: <b class="mono">' + sl.length + '</b> aktiv' + (rm ? ', <b class="mono">' + rm + '</b> entfernt' : '') + '. Eigene und importierte Rezepte: <b class="mono">' + un + '</b>. Entfernte Rezepte verschwinden aus Rezepten, Plan, Einkauf und Autoplan. Sie lassen sich hier wiederherstellen.</p>' +
+    '<p class="note">Einzelne Rezepte entfernst du im Rezeptdetail, ganze Gruppen hier. Deine eigenen und importierten Rezepte bleiben immer erhalten.</p>' +
+    (byG.length ? '<div class="lbl">Gruppe entfernen</div><div class="chips" style="flex-wrap:wrap">' + byG.map(([g, n]) => '<button type="button" class="chip ' + (armed && ui.rmGroup === g ? 'on' : '') + '" data-act="rmseedgroup" data-v="' + esc(g) + '">' + (armed && ui.rmGroup === g ? 'Nochmal tippen: ' : '') + esc(g) + ' (' + n + ')</button>').join('') + '</div>' : '') +
+    '<div class="row"><button type="button" class="btn danger" data-act="rmseedall" ' + (sl.length ? '' : 'disabled') + '>' + (armed && !ui.rmGroup ? 'Nochmal tippen: alle ' + sl.length + ' entfernen' : 'Alle mitgelieferten entfernen') + '</button><button type="button" class="btn" data-act="restoreseed" ' + (rm ? '' : 'disabled') + '>Wiederherstellen</button></div></div>';
 }
 function viewMehr() {
   const g = state.profile.goals;
@@ -3068,6 +3300,7 @@ function viewMehr() {
     '<details class="panel" ' + openAttr('calc') + '><summary><span>Kalorienrechner</span></summary>' + calcPanel() + '</details>' +
     '<details class="panel" ' + openAttr('prof') + '><summary><span>Allergene, Unverträglichkeiten, Ausschlüsse</span></summary>' + profilePanel() + '</details>' +
     '<details class="panel" ' + openAttr('info') + '><summary><span>Garen, Lagern, Sicherheit</span></summary>' + infoPanel() + '</details>' +
+    '<details class="panel" ' + openAttr('lib') + '><summary><span>Rezept-Bibliothek verwalten</span></summary>' + libPanel() + '</details>' +
     '<details class="panel" ' + openAttr('data') + '><summary><span>Daten und Sicherung</span></summary>' + backupPanel() + '</details>' +
     '<details class="panel" ' + openAttr('qa') + '><summary><span>Prüfbericht der Bibliothek</span></summary><div class="stack-s">' + qa + '<button type="button" class="btn" data-act="runqa">Prüfung ausführen</button></div></details>' +
     '<details class="panel" ' + openAttr('status') + '><summary><span>Status und Grenzen</span></summary>' + statusPanel() + '</details>';
@@ -3175,12 +3408,18 @@ async function runImportKI() {
 }
 
 /* ---------- Helfer für Aktionen ---------- */
-const CONFIRM_ACTS = { autoall: 'autoall', impgo: 'import', resetall: 'reset', delrecipe: 'del', prepdone: 'prepdone', prepclear: 'prepclear' };
+const CONFIRM_ACTS = { autoall: 'autoall', impgo: 'import', resetall: 'reset', delrecipe: 'del', rmseed: 'del', rmseedall: 'rmseedall', rmseedgroup: 'rmseedall', prepdone: 'prepdone', prepclear: 'prepclear' };
 function confirmed(key) {
   if (ui.confirm === key) { ui.confirm = ''; clearTimeout(confirmed.t); return true; }
   ui.confirm = key; clearTimeout(confirmed.t);
   confirmed.t = setTimeout(() => { if (ui.confirm === key) { ui.confirm = ''; render(); } }, 5000);
   return false;
+}
+function dropRecipeRefs(ids) {
+  state.favs = state.favs.filter(x => !ids.includes(x));
+  TAGE.forEach(t => SLOTS.forEach(([k]) => { const s = state.week[t][k]; if (s && ids.includes(s.rid)) state.week[t][k] = null; }));
+  state.inv.forEach(i => { if (ids.includes(i.rid)) i.rid = ''; });
+  if (state.prep) state.prep.plan = state.prep.plan.filter(x => !(x.k === 'r' && ids.includes(x.id)));
 }
 function logEntry(entry, iso) { dayW(iso || ui.date).e.push(entry); }
 function invPortion(i) { if (i.bid) return 1; const r = byIdMap()[i.rid]; if (!r) return 1; const pp = calcRecipe(r).pp; return i.ml ? Math.max(0.25, Math.round(i.ml / Math.max(60, pp.g) * 4) / 4) : 1; }
@@ -3272,7 +3511,7 @@ const ACT = {
     save(); if (ui.tab === 'rezepte') renderList(); if (ui.sheet) renderSheet();
   },
   meal(el) { ui.f.meal = el.dataset.v; render(); },
-  resetf() { ui.f = { q: '', meal: '', group: '', dev: '', cuisine: '', maxKcal: '', minP: '', mp: false, fz: false, fav: false, his: '', stock: false }; render(); },
+  resetf() { ui.f = { q: '', meal: '', group: '', dev: '', cuisine: '', maxKcal: '', minP: '', mp: false, fz: false, fav: false, his: '', stock: false, src: '' }; render(); },
   svdec() { ui.sv = Math.max(1, ui.sv - 1); renderSheet(); },
   svinc() { ui.sv = Math.min(24, ui.sv + 1); renderSheet(); },
   cook(el) {
@@ -3312,13 +3551,32 @@ const ACT = {
   newrec() { ui.ed = newEd(); openSheet({ type: 'editor' }); },
   editrec(el) { const r = state.userRecipes.find(x => x.id === el.dataset.id); if (!r) return; ui.ed = edFrom(r); openSheet({ type: 'editor' }); },
   delrecipe(el) {
-    if (!confirmed('del')) { toast('Nochmal tippen zum Löschen'); return; }
+    if (!confirmed('del')) { render(); return; }
     const id = el.dataset.id;
-    state.userRecipes = state.userRecipes.filter(r => r.id !== id); state.favs = state.favs.filter(x => x !== id);
-    TAGE.forEach(t => SLOTS.forEach(([k]) => { const s = state.week[t][k]; if (s && s.rid === id) state.week[t][k] = null; }));
-    state.inv.forEach(i => { if (i.rid === id) i.rid = ''; });
+    state.userRecipes = state.userRecipes.filter(r => r.id !== id); dropRecipeRefs([id]);
     ui.sheet = null; save(); render(); toast('Rezept gelöscht');
   },
+  rmseed(el) {
+    if (!confirmed('del')) { render(); return; }
+    const id = el.dataset.id; if (!SEED.some(r => r.id === id)) return;
+    if (!state.removed.includes(id)) state.removed.push(id);
+    dropRecipeRefs([id]); ui.sheet = null; save(); render(); toast('Aus der Bibliothek entfernt. Wiederherstellen unter „Mehr“.');
+  },
+  rmseedall() {
+    if (ui.rmGroup) { ui.rmGroup = ''; ui.confirm = ''; }
+    if (!confirmed('rmseedall')) { render(); return; }
+    const ids = SEED.map(r => r.id); state.removed = ids.slice(); dropRecipeRefs(ids);
+    save(); render(); toast('Alle mitgelieferten Rezepte entfernt');
+  },
+  rmseedgroup(el) {
+    const g = el.dataset.v; const ids = seedLib().filter(r => r.group === g).map(r => r.id);
+    if (!ids.length) { toast('Keine mitgelieferten Rezepte in dieser Gruppe'); return; }
+    if (!confirmed('rmseedall')) { ui.open.lib = true; ui.rmGroup = g; render(); return; }
+    if (ui.rmGroup !== g) { ui.rmGroup = g; ui.confirm = ''; confirmed('rmseedall'); render(); return; }
+    ids.forEach(id => { if (!state.removed.includes(id)) state.removed.push(id); }); dropRecipeRefs(ids);
+    ui.rmGroup = ''; save(); render(); toast(ids.length + ' mitgelieferte Rezepte entfernt');
+  },
+  restoreseed() { state.removed = []; save(); render(); toast('Mitgelieferte Rezepte wiederhergestellt'); },
   /* Editor */
   edpick(el) {
     const e = ui.ed, id = el.dataset.id; if (!ZMAP[id]) return;
