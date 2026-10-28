@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-28 20:50 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-28 21:04 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -79,17 +79,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **192** von 240 geplanten |
-| Verteilung nach Gruppe | Geflügel: 48, Rind: 46, Schwein: 33, Fisch: 23, Vegetarisch: 42 |
-| Verteilung nach Mahlzeit | Hauptgericht: 118, Suppe/Eintopf: 45, Salat/Bowl: 3, Frühstück: 12, Snack: 2, Dessert: 12 |
-| Einfrierbar: ja / eingeschränkt | 105 / 37 |
-| Zutaten im Stamm (davon mit Nährwerten) | 192 (191) |
+| Mitgelieferte Rezepte | **207** von 240 geplanten |
+| Verteilung nach Gruppe | Geflügel: 48, Rind: 47, Schwein: 35, Fisch: 24, Vegetarisch: 53 |
+| Verteilung nach Mahlzeit | Hauptgericht: 123, Suppe/Eintopf: 45, Salat/Bowl: 3, Frühstück: 12, Snack: 2, Dessert: 22 |
+| Einfrierbar: ja / eingeschränkt | 111 / 37 |
+| Zutaten im Stamm (davon mit Nährwerten) | 197 (196) |
 | Gewürze | 47 |
 | Bausteine (Meal-Prep) | **71** (Protein: 12, Beilage: 8, Sauce: 23, Gemüse: 5, Booster: 23) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven |
 | Feste Ausschlüsse | Ananas, Süßkartoffel, Batate |
-| Größe `dist/index.html` | 1028 KB |
+| Größe `dist/index.html` | 1068 KB |
 
 ---
 
@@ -117,7 +117,7 @@ Eine einzige HTML-Datei mit eingebettetem JavaScript, **zusammengesetzt durch Ve
 | `logic2.js` | Datum, Zutaten-Chargen (FIFO), Einkauf, Tagebuch, Ziele, Fasten, Autoplan, Import/Export | 
 | `data_bausteine.js` | Meal-Prep-Bausteine (`MODULE`, `STIL_PASST`, `BAUSTEINE`, `BMAP`) | 
 | `logic3.js` | Meal-Prep-Logik: Blockzahl, Prüfung, Mahlzeit bauen, Vorschläge, Session, Einbuchen, Soll/Ist, Schubladen, Etikett | 
-| `data_saison.js` | Saisonkalender als eigene Daten (`SAISON`: 45 Zutaten mit 12-Monats-Muster, `SAISON_NEUTRAL`: bewusst nicht bewertet); unabhängig von jeder Quelldatei | 
+| `data_saison.js` | Saisonkalender als eigene Daten (`SAISON`: 47 Zutaten mit 12-Monats-Muster, `SAISON_NEUTRAL`: bewusst nicht bewertet); unabhängig von jeder Quelldatei | 
 | `logic4.js` | Saison-Logik: Rezept-Score je Monat, Monatsübersicht, Einkaufsstatus, Wochenanteil, eigene Korrekturen, Prüfbericht (`runQASaison`) | 
 | `look.js` | Darstellung je Gerät: Palettenrechnung mit Kontrastprüfung, Farbmodus, Akzent, Schriftgröße, Dichte, Layout (`lookApply`, `lookPanel`); eigener Speicherschlüssel `speiseplan-look-v1` | 
 | `app_a.js` | Zustand (`defaultState`, `mergeState`), Speicher, Hilfen, Ansicht Heute, Hinzufügen-Blatt | 
@@ -238,7 +238,7 @@ Kategorie `Dessert` in `MEALS`, Platz `d` in `SLOTS`, angezeigt nur bei `state.d
 - Neu aufsetzen: `speiseplan-projekt.zip` entpacken, `node build.js`, `node make_zip.js` (führt alle Tests aus und packt neu), den Inhalt von `speiseplan-app.zip` auf GitHub hochladen.
 
 ### 4.10 Saison (Stand 28.10.2026)
-`data_saison.js` hält 45 Zutaten mit einem 12-Monats-Muster (F frisch aus Deutschland, G Gewächshaus/Zucht, L Lager, I Import, – keine Frischware; Herkunft k/e, im Kalender mit * für eigene Einschätzung) und `SAISON_NEUTRAL` (bewusst nicht bewertet, mit Begründung). `logic4.js` rechnet den Saison-Score je Rezept und Monat (gewichtetes Mittel mit Wurzel der Grammzahl; frisch 1, Lager 0,75, Gewächshaus 0,5, Import und – 0; nur bei mindestens zwei bewertbaren Zutaten mit mindestens 15 % Mengenanteil; ab 0,8 „Saison“, ab 0,5 „teils“). `app_f.js` zeigt Plan → Saison (Monatswahl, Heatmap, Korrekturmodus), Abzeichen und Filter in den Rezepten, die Karte „Jetzt frisch“ auf Heute, Hinweise in Einkauf und Wochenplan, und Mehr → Saison. Der Auto-Plan nutzt Saison nur mit eingeschalteter Vorliebe (`opts.seasonFn`, weicher Abzug im Punktewert). Tests: `test_saison.js`, `smoke5.js`. Die Daten sind Orientierung und nicht gegen die Originalquellen geprüft.
+`data_saison.js` hält 47 Zutaten mit einem 12-Monats-Muster (F frisch aus Deutschland, G Gewächshaus/Zucht, L Lager, I Import, – keine Frischware; Herkunft k/e, im Kalender mit * für eigene Einschätzung) und `SAISON_NEUTRAL` (bewusst nicht bewertet, mit Begründung). `logic4.js` rechnet den Saison-Score je Rezept und Monat (gewichtetes Mittel mit Wurzel der Grammzahl; frisch 1, Lager 0,75, Gewächshaus 0,5, Import und – 0; nur bei mindestens zwei bewertbaren Zutaten mit mindestens 15 % Mengenanteil; ab 0,8 „Saison“, ab 0,5 „teils“). `app_f.js` zeigt Plan → Saison (Monatswahl, Heatmap, Korrekturmodus), Abzeichen und Filter in den Rezepten, die Karte „Jetzt frisch“ auf Heute, Hinweise in Einkauf und Wochenplan, und Mehr → Saison. Der Auto-Plan nutzt Saison nur mit eingeschalteter Vorliebe (`opts.seasonFn`, weicher Abzug im Punktewert). Tests: `test_saison.js`, `smoke5.js`. Die Daten sind Orientierung und nicht gegen die Originalquellen geprüft.
 
 ### 4.8 Wichtige Logik-Bausteine (Namen zum Auffinden)
 - Nährwerte und Prüfung: `calcRecipe`, `derive`, `conflicts`, `energyCheck`, `validateRecipe`, `runQA`, `exclusionHits`.
@@ -277,7 +277,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 192 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 207 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 71 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 148 von 166 Zutaten nach BLS 4.0 (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), 18 Zutaten ohne BLS-Eintrag mit eigenem Packungs- oder Richtwert (begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
@@ -382,6 +382,8 @@ Weitere Hinweise zu den Tests:
 - **Charge 30 (28.10.2026, IDs r244 bis r252): 9 Eintöpfe und Suppen** nach zehn übermittelten Links (sieben Chefkoch, drei BBC Good Food). Eigene Fassungen von Claude, nicht von Perplexity: Blumenkohleintopf mit Putenhack und Kartoffeln, Low-Carb-Bauerntopf mit Rinderhack und Weißkohl, Deftige Erbsensuppe mit Kochschinken, Szegediner Gulasch mit Sauerkraut und Kartoffeln, Grüner-Bohnen-Eintopf mit Schweineschulter, Burgunder-Fleischtopf mit Rind, Schwein und Kartoffeln, Kartoffel-Lauch-Suppe mit Hack und Käse, Winter-Rindereintopf mit Käse-Muffin-Haube (BBC „muffin-topped-winter-beef-stew“) und Rind-Stout-Eintopf mit Karotten (BBC „beef-stout-stew-carrots“). **Übersprungen:** BBC „beef-vegetable-casserole“ gibt es bereits als r121 (Link dort schon hinterlegt), es wurde kein zweites Rezept angelegt. Alle Seiten sind für Claudes Werkzeuge gesperrt und wurden nicht gelesen; die Zutaten der Originale sind unbekannt, Mengen und Zeiten sind Richtwerte, nicht getestet. Je Portion 419 bis 508 kcal und 37 bis 45 g Eiweiß (Zielbereich 400 bis 650 kcal, mindestens 30 g Eiweiß). Fleisch wird bei allen Rezepten bis mindestens 70 °C im Kern gegart. Abweichungen vom vermutlichen Original stehen im Tipp: Erbsensuppe mit magerem Kochschinken statt Wurst, Bohnenkraut durch Thymian und Majoran ersetzt (Bohnenkraut ist in der App nicht hinterlegt), Burgunder-Topf gemischt aus Rind und Schwein, um ihn vom bestehenden Boeuf Bourguignon abzugrenzen. Rotwein und Stout enthalten Alkohol, der bei der Garzeit nur teilweise ausgekocht wird; das steht im Tipp. Neue Zutaten aus der BLS 4.0: **Erbsen, getrocknet** (G760400 „Erbse reif“, 311 kcal, 23,0 g Eiweiß, 40,5 g Kohlenhydrate, 1,4 g Fett; Energie mit Ballaststoffanteil geprüft) und **Rotwein, trocken** (P2A3000). Die Links stehen in den Externen Rezeptreferenzen (Art A bzw. B, als „nicht geprüft“ gekennzeichnet) und in `gesperrte_links.txt` (Chefkoch 36, BBC 41). Testzähler: volle Bibliothek 247, ausgelieferte 176, `test_quellen.js` 146 Einträge mit Link, 32 ohne, `test_bls.js` 9 Prüfungen.
 - **Charge 31 (28.10.2026, IDs r253 bis r256): 4 weitere Eintöpfe** nach vier BBC-Good-Food-Links: Bohnen-Halloumi-Eintopf mit Paprika und Spinat („bean-halloumi-stew“, Adresse bbcgoodfoodme.com), Geschmorter Rinder-Topf mit Zwiebeln, Paprika und Tomaten („braised-beef-onepot“), Slow-Cooker-Rindereintopf mit Champignons und Pastinaken („slow-cooker-beef-stew“, mit Hinweis zur Mindesttemperatur im Slow Cooker) und Tomaten-Paprika-Bohnentopf mit Ei und Feta („tomato-pepper-bean-one-pot“, Eier bis zum gestockten Eiweiß, für Risikogruppen bis zum festen Eigelb). Eigene Fassungen von Claude, nicht von Perplexity; die Seite ist gesperrt und wurde nicht gelesen, Zutaten der Originale unbekannt. Je Portion 411 bis 543 kcal und 32 bis 43 g Eiweiß. **Übersprungen:** Der Auftraggeber schickte auch die zehn Links aus Charge 30 erneut; sie sind bereits als r244 bis r252 (und r121) in der App. „spicy-root-lentil-casserole“ gibt es schon als r197. Testzähler: volle Bibliothek 251, ausgelieferte 180, `test_quellen.js` 150 Einträge mit Link.
 - **Charge 32 und drei Pakete: Ausrüstung, Darstellung, Dessert (28.10.2026):** (1) Souper-Cubes-Ausrüstung editierbar (4.11). (2) Einstellungsbereich Darstellung mit Farbmodus, sechs Akzenten, Schrift, Dichte und PC-Layout mit Seitenleiste und Zwei-Spalten-Ansicht (4.12), neue Datei `look.js`, Tests `test_look.js` (99) und `smoke6.js` (69). (3) Kategorie Dessert mit Plan-Platz, Tagebuch-Platz und Auto-Plan-Unterstützung (4.13) sowie 12 neue Desserts r257 bis r268 (Skyr-Mousse mit Beeren, Schoko-Quark-Creme, Vanillepudding mit Quark, Bratapfel mit Skyr, Beerengrütze mit Vanille-Skyr, Frozen Joghurt mit Beeren, Schoko-Bananen-Eis mit Skyr, Chia-Pudding mit Mango und Skyr, Quarkauflauf mit Birnen, Leichter Kaiserschmarrn mit Skyr, Zitronen-Ricotta-Creme mit Erdbeeren, Schoko-Quark-Muffins mit Haferflocken), alle eigene Fassungen ohne externe Vorlage, Zeiten Richtwerte, nicht praktisch getestet. Neue Zutaten mit BLS-4.0-Werten: Kakao (S711000) und Chiasamen (H480100). Zähler: Bibliothek 263, mitgelieferte Rezepte 192, „Eigene Fassung …“ 174 (vorher 162), Quellen-Links unverändert 150 verlinkt und 160 Schlüssel. Die Einstellungen der Darstellung sind je Gerät und nicht in der Sicherung.
+- **Charge 33 (28.10.2026, IDs r269 bis r278): 10 Desserts** nach Titeln von zehn übermittelten Links, davon vier Chefkoch (Dessert mit isländischem Frischkäse und Weintrauben, Himbeerdessert mit Spekulatius, Himbeerkuchen, Birnen in Rotwein an Vanilleeis) und sechs BBC (Best apple crumble, Luscious lemon baked cheesecake, Lemon syllabub, Best-ever chocolate brownies, No-bake strawberry unter bbc.co.uk/food, No-cook chocolate tart). **Alle zehn Seiten waren gesperrt (SITE_BLOCKED), keine wurde gelesen oder umgangen.** Die App-Fassungen sind eigene Rezepte nach dem Titel und allgemeinem Kochwissen, an die Vorgaben angepasst (120 bis 350 kcal, mindestens 10 g Eiweiß je Portion, daher Quark und Skyr statt Sahne-Frischkäse-Mengen und viel Zucker): Skyr-Dessert mit Weintrauben und Mandeln, Himbeer-Spekulatius-Schichtdessert, Himbeer-Quarkkuchen mit Haferflocken, Rotwein-Birnen mit Vanille-Skyr und Vanilleeis, Apfel-Crumble mit Haferflocken und Vanille-Skyr, Zitronen-Käsekuchen mit Quark und Haferboden, Zitronen-Syllabub mit Skyr, Saftige Schoko-Brownies mit Quark, Erdbeer-Cheesecake im Glas ohne Backen, Schoko-Tarte ohne Backen mit Quarkcreme. Sie weichen von den Originalen ab und sind **nicht praktisch getestet**. Die Links hängen als „Übermittelter Link, für Claude gesperrt, nicht gelesen“ an den Rezepten (Art A Chefkoch, Art B BBC) und stehen in `gesperrte_links.txt` (Abschnitte A und B). Fünf neue Zutaten aus BLS 4.0: Himbeeren (F302100), Weintrauben (F310100), Spekulatius (D730600), Zartbitterschokolade (S560000), Vanilleeis (S241000); Himbeeren und Weintrauben stehen auch im Saisonkalender (47 bewertete Zutaten, beide mit eigener Einschätzung, jetzt 10 Einträge mit Herkunft e). Der Rotwein in den Rotwein-Birnen ist auf 150 g begrenzt, weil die Energie-Plausibilität den Alkoholanteil sonst nicht mehr deckt; Syllabub und Rotwein-Birnen enthalten Alkohol (Hinweis im Tipp). Zähler: Bibliothek 273, ausgelieferte Rezepte 202, „Eigene Fassung …“ 184, Quellen-Links 160 verlinkt und 170 Schlüssel.
+- **Charge 34 (28.10.2026, IDs r279 bis r283): 5 Kontaktgrill-Gerichte** nach fünf übermittelten Links. **Gelesen** wurden drei Seiten von lecker.de: „Surf & Turf“-Gemüsepuffer, Blitzschneller Portobello-Burger, Gegrilltes Steak mit Bandnudeln und Pfefferrahmsoße. Sie sind in eigenen Worten und für die App angepasst (die Originale liegen bei 771 kcal und 35 g Eiweiß, 592 kcal und 17 g Eiweiß bzw. deutlich größeren Fleisch- und Nudelmengen): Gemüsepuffer vom Kontaktgrill mit Räucherlachs und Schinken (Skyr statt Schmand, ohne Parmaschinken), Pilz-Burger vom Kontaktgrill mit Halloumi und Ajvar-Creme (Halloumi statt Cheddar, Skyr-Creme statt Salatcreme, damit die 30 g Eiweiß erreicht werden), Rumpsteak vom Kontaktgrill mit Vollkornbandnudeln und Pfefferrahmsauce (150 g Steak und 60 g Nudeln roh je Portion). **Nicht gelesen** wurden essen-und-trinken.de (robots.txt verbietet den Abruf; der Link führt zu einem Sammelartikel, gesucht war das Panini mit Tomate und Rucola) und Serious Eats (gesperrt, Cuban Sandwich): beide sind eigene Fassungen nach dem Titel (Panini mit Mozzarella, Tomate, Rucola und Schinken; Cuban Sandwich mit Schweinefilet und Gouda vom Kontaktgrill), die Zutaten der Originale sind unbekannt. Alle fünf sind **nicht praktisch getestet**, Zeiten sind Richtwerte. Die Quellenhinweise tragen Art G (lecker.de, gelesen), H (essen-und-trinken.de) und D (Serious Eats); die beiden nicht gelesenen Links stehen in `gesperrte_links.txt` (Abschnitte D und G). Keine neuen Zutaten. Zähler: Bibliothek 278, ausgelieferte Rezepte 207, „Eigene Fassung …“ 189, Quellen-Links 165 verlinkt und 175 Schlüssel.
 - **Zutaten-Recherche für Lücken der BLS (28.10.2026), 9 weitere Einträge:** Stout (BLS P177000) und Marsala (Näherung mit BLS Sherry medium dry P462000) stammen aus der BLS. Außerhalb der BLS, als eigene Werte mit Quelle im Hinweistext: Austernsauce (USDA SR Legacy 174529: 51 kcal), Hoisinsauce (USDA, NDB 6175: 220 kcal), Tilapia (USDA 175176: 96 kcal), Tamarinde (USDA 167763: 239 kcal), Maistortilla (USDA 175036: 218 kcal), Reiswein (Näherung mit Sake nach USDA 167723: 134 kcal) und Mirin (Packungsangabe eines Händlers, 236 kcal je 100 g; ein zweiter Händler nennt 239 kcal je 100 ml). Die USDA-Werte wurden von den Datenseiten der Tabelle abgelesen, nicht gegen die Originaldatenbank geprüft. **Verworfen:** Reiswein-Werte der ReciPal-Seite (stammen aus Wikipedia, 0 g Kohlenhydrate, unbrauchbar); Chilibohnenpaste (Doubanjiang): zwei Aggregatorseiten nennen widersprüchliche Makros (92 kcal mit 8 g Eiweiß gegen 3 g Eiweiß), keine Herstellerangabe, daher nicht aufgenommen. Allergene sind bei Austernsauce, Hoisin, Reiswein und Stout vorsorglich gesetzt (Weichtiere, Soja, Weizen bzw. Gerste), weil die Zusammensetzung je Marke schwankt. `test_bls.js` ist grün (9 Prüfungen). Sicherungen: `*.bak_recherche`.
 - **8 Öl-Marinaden als Bausteine (28.10.2026, jetzt 56 Bausteine, davon 14 Marinaden):** Aus der Zusendung des Auftraggebers (Textdatei mit acht Rezepten): Premium Trüffel, Schwarzer Knoblauch, Buttrige Kräuter, Fresh Lemon, Scharfe Schote, Smoky Whiskey, Sweet Bacon, Alter Pfeffer. Alle als Booster-Würfel (50 ml, 4 bis 5 Würfel je Ansatz, Typ „Marinade“), nur zum Einfrieren gedacht. Neue Zutaten dafür: Whisky (BLS P733000, für den Bourbon) und Trüffel roh (BLS K702100); neue Gewürze Estragon, weißer und grüner Pfeffer. Als Näherung gerechnet und im Tipp genannt: Trüffelöl wie Rapsöl, schwarzer Knoblauch wie rohe Knoblauchzehe, brauner Zucker wie Zucker. Weggelassen (zu geringe Mengen): Zitronenschale, Hefeextrakt, Tomatenpulver, Flüssigrauch. **Abweichung von der Vorlage:** Die Vorlage nennt 1 bis 2 Wochen Kühlschrank für Marinaden mit frischem Knoblauch, Kräutern, Zitrone oder Chili in Öl; wegen des Botulismus-Risikos steht in den Tipps stattdessen „sofort einfrieren, im Kühlschrank höchstens wenige Tage“. Die Nährwerte gelten für den ganzen Würfel (335 bis 446 kcal); ein Teil des Öls bleibt beim Braten zurück. Generator: `_add_marinaden.js`, Sicherungen `*.bak_marinaden`. Testzähler: 56 Bausteine, 14 Marinaden.
 - **Rezepte auf die recherchierten Zutaten umgestellt (28.10.2026):** r98, r135 und r207 (Austernsauce 30 bis 40 g, Sojasauce entsprechend gekürzt; r207 heißt jetzt „Schwein mit grünen Bohnen in Austernsauce“), r99 (Mirin 45 g, Honig gekürzt), r102 und r203 (Reiswein 5 bzw. 30 g), r105 (Marsala 100 g), r111 und r131 (Hoisinsauce 30 g, Honig gekürzt), r136 (Stout 330 g, Brühe 600 auf 450 g), r115 (Maistortilla statt Weizentortilla, 462 kcal, 39,8 g Eiweiß), r204 (Sichuanpfeffer als Gewürz in Schritt 4). Alkohol ist voll eingerechnet.
@@ -463,12 +465,14 @@ Diese Links stammen aus dem Chatverlauf (die meisten hat der Auftraggeber geschi
 Öffne jeden der folgenden Rezept-Links. Gib pro Rezept in eigenen Worten (nicht wörtlich abschreiben) aus: Titel, Portionen, Zutaten mit Mengen in Gramm bzw. Milliliter (metrisch), Zubereitungsschritte mit Zeiten und Temperaturen, Garzeit und Gerät (Backofen, Airfryer, Herd, Multikocher, Sous-vide, Kontaktgrill oder Dutch Oven), Lagerung und ob einfrierbar. Keine Süßkartoffel, Bataten und Ananas verwenden: wenn das Original sie enthält, schreibe es dazu und nenne einen Ersatz. Wenn du einen Link nicht öffnen kannst, schreibe das deutlich dazu und erfinde nichts. Das Importformat (JSON) steht in der Datei perplexity-prompt-rezepte.txt im Projektpaket.
 === ENDE PROMPT ===
 
---- A. Chefkoch, Link liegt vor (36) ---
+--- A. Chefkoch, Link liegt vor (40) ---
 https://www.chefkoch.de/rezepte/1594721266741395/Gong-Bao-Chicken.html
+https://www.chefkoch.de/rezepte/1617001268903549/Himbeerkuchen.html
 https://www.chefkoch.de/rezepte/1674221275400259/Roros-Griessnockerlsuppe.html
 https://www.chefkoch.de/rezepte/1708381279716392/Gruene-Bohnen-Eintopf.html
 https://www.chefkoch.de/rezepte/1759701285679844/Kartoffel-Rindfleisch-Suppe.html
 https://www.chefkoch.de/rezepte/1772141287238724/Bacon-Tomaten-Frischkaesehaeppchen.html
+https://www.chefkoch.de/rezepte/1816341294440474/Himbeerdessert-mit-Spekulatius.html
 https://www.chefkoch.de/rezepte/1831471296897945/Schmand-Kraeuter-Dressing.html
 https://www.chefkoch.de/rezepte/1891401307954679/Gruenkohlchips.html
 https://www.chefkoch.de/rezepte/2017081326788424/Huehnersuppe-mit-Haehnchenschenkel.html
@@ -487,6 +491,7 @@ https://www.chefkoch.de/rezepte/2898441442181393/Ahornsirup-Senfdressing.html
 https://www.chefkoch.de/rezepte/3033411456059781/Low-Carb-Bauerntopf.html
 https://www.chefkoch.de/rezepte/3043751457044725/Chinesische-Teigtaschen-Jiaozi-Dumplings-Pot-Sticker-Version.html
 https://www.chefkoch.de/rezepte/3114051464352730/Indisches-Mango-Chicken-Curry-fuer-den-Monsieur-Cuisine.html
+https://www.chefkoch.de/rezepte/3196001475688526/Dessert-mit-islaendischem-Frischkaese-und-Weintrauben.html
 https://www.chefkoch.de/rezepte/320561113912263/Szegediner-Gulasch.html
 https://www.chefkoch.de/rezepte/3214781339456653/Bacon-Tomaten-Frischkaesehaeppchen.html
 https://www.chefkoch.de/rezepte/3214781339456653/Bananenbrot-ohne-extra-Fett-und-Zucker.html
@@ -499,9 +504,11 @@ https://www.chefkoch.de/rezepte/4000651613940765/Schweinebraten-sous-vide.html
 https://www.chefkoch.de/rezepte/4340011730639098/Rindfleisch-mit-Paprika-und-Zwiebeln-nach-chinesischer-Art.html
 https://www.chefkoch.de/rezepte/588501158230051/Burgunder-Fleischtopf.html
 https://www.chefkoch.de/rezepte/761551178884059/Deftige-Erbsensuppe.html
+https://www.chefkoch.de/rezepte/817681186299057/Birnen-in-Rotwein-an-Vanilleeis.html
 https://www.chefkoch.de/rezepte/982031203667502/Kaese-Lauch-Suppe-mit-Hackfleisch.html
 
---- B. BBC Good Food, Link liegt vor (46) ---
+--- B. BBC Good Food / BBC Food, Link liegt vor (52) ---
+https://www.bbc.co.uk/food/recipes/no-bake_strawberry_30276
 https://www.bbcgoodfood.com/recipes/20minute-seafood-pasta
 https://www.bbcgoodfood.com/recipes/air-fryer-chicken-breasts
 https://www.bbcgoodfood.com/recipes/air-fryer-chicken-nuggets
@@ -515,6 +522,8 @@ https://www.bbcgoodfood.com/recipes/american-pancakes
 https://www.bbcgoodfood.com/recipes/arrabbiata-sauce
 https://www.bbcgoodfood.com/recipes/beef-stout-stew-carrots
 https://www.bbcgoodfood.com/recipes/beef-vegetable-casserole
+https://www.bbcgoodfood.com/recipes/best-apple-crumble
+https://www.bbcgoodfood.com/recipes/best-ever-chocolate-brownies-recipe
 https://www.bbcgoodfood.com/recipes/braised-beef-onepot
 https://www.bbcgoodfood.com/recipes/braised-pork-plums
 https://www.bbcgoodfood.com/recipes/cheese-sauce
@@ -525,9 +534,12 @@ https://www.bbcgoodfood.com/recipes/easy-roast-pork-shoulder
 https://www.bbcgoodfood.com/recipes/ham-mushroom-spinach-frittata
 https://www.bbcgoodfood.com/recipes/healthy-shakshuka
 https://www.bbcgoodfood.com/recipes/lemon-coriander-hummus
+https://www.bbcgoodfood.com/recipes/lemon-syllabub
+https://www.bbcgoodfood.com/recipes/luscious-lemon-baked-cheesecake
 https://www.bbcgoodfood.com/recipes/muffin-topped-winter-beef-stew
 https://www.bbcgoodfood.com/recipes/mushroom-sauce
 https://www.bbcgoodfood.com/recipes/mustardy-pork-apples
+https://www.bbcgoodfood.com/recipes/no-cook-chocolate-tart
 https://www.bbcgoodfood.com/recipes/nutty-chicken-satay-strips
 https://www.bbcgoodfood.com/recipes/nutty-chicken-sate-strips
 https://www.bbcgoodfood.com/recipes/peppercorn-sauce
@@ -612,6 +624,12 @@ https://www.allrecipes.com/recipe/9023/baked-teriyaki-chicken/
 https://www.allrecipes.com/recipe/9027/kung-pao-chicken/
 https://www.allrecipes.com/recipe/91499/general-tsaos-chicken-ii/
 https://www.allrecipes.com/the-best-easy-pork-tenderloin-recipe-7485158
+
+--- D. Serious Eats, Link liegt vor (1) ---
+https://www.seriouseats.com/cuban-sandwich-recipe
+
+--- G. essen-und-trinken.de, laut robots.txt nicht abrufbar (Sammelartikel, gesucht ist das Rezept „Panini mit Tomate und Rucola“) (1) ---
+https://www.essen-und-trinken.de/vergleich/kontaktgrill-test/
 
 --- E. BBC Good Food / Serious Eats, Pfad aus dem Quellenvermerk der App rekonstruiert (bitte beim Öffnen prüfen) (10) ---
 https://www.bbcgoodfood.com/recipes/pork-stroganoff

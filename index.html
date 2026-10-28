@@ -1008,6 +1008,12 @@ const ZUTATEN_PLUS = [
   // Ergänzt 28.10.2026 für die Dessert-Rezepte (BLS 4.0)
   I('kakao', 'Kakaopulver (schwach entölt)', 'Trockenprodukte', 365, 22.6, 10.9, 19.8, { his: 2 }),
   I('chiasamen', 'Chiasamen', 'Trockenprodukte', 479, 22.1, 3.7, 32.8),
+  // Ergänzt 28.10.2026 für die Dessert-Rezepte der Charge 33 (BLS 4.0)
+  I('himbeeren', 'Himbeeren (frisch oder tiefgekühlt)', 'Obst', 43, 1, 5.2, 0.3, { his: 1 }),
+  I('weintrauben', 'Weintrauben', 'Obst', 61, 0.75, 12.18, 0.28, { fod: 1, fr: 1, his: 1 }),
+  I('spekulatius', 'Spekulatius', 'Trockenprodukte', 486, 8.73, 53.9, 25.41, { al: ['gluten', 'milch'] }),
+  I('zartbitter', 'Zartbitterschokolade', 'Trockenprodukte', 534, 6.62, 49.6, 32.26, { al: ['milch'], his: 2 }),
+  I('vanilleeis', 'Vanilleeis', 'Milchprodukte', 194, 2.38, 22.64, 10.16, { al: ['milch'], lak: 1 }),
 ];
 ZUTATEN_PLUS.forEach(z => { ZUTATEN.push(z); ZMAP[z.id] = z; });
 
@@ -1228,6 +1234,11 @@ const BLS_REF = {
   "erbsen_trocken": { m: "bls", c: "G760400", n: "Erbse reif (getrocknet)", e: 44.1 },
   "kakao": { m: "bls", c: "S711000", n: "Kakaopulver schwach entölt", e: 52.6 },
   "chiasamen": { m: "bls", c: "H480100", n: "Chia-Samen", e: 80.5 },
+  "himbeeren": { m: "bls", c: "F302100", n: "Himbeere roh", e: 15.8 },
+  "weintrauben": { m: "bls", c: "F310100", n: "Weintraube roh", e: 7.2 },
+  "spekulatius": { m: "bls", c: "D730600", n: "Spekulatius (Mürbeteig)", e: 7.1 },
+  "zartbitter": { m: "bls", c: "S560000", n: "Zartbitter-/Halbbitterschokolade", e: 18.5 },
+  "vanilleeis": { m: "bls", c: "S241000", n: "Vanilleeis", e: 2.4 },
 };
 ZUTATEN.forEach(z => { if (BLS_REF[z.id]) z.bls = BLS_REF[z.id]; });
 
@@ -18605,6 +18616,1149 @@ SEED2.push(
    "origin": "International"
   })
 );
+
+/* ===== Rezeptcharge 33: Desserts mit gesperrten Chefkoch- und BBC-Links (10), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Skyr-Dessert mit Weintrauben und Mandeln",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Island",
+   "servings": 4,
+   "prep": 10,
+   "cook": 5,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "ohne Backen",
+    "proteinreich",
+    "Dessert",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "skyr",
+     500
+    ],
+    [
+     "weintrauben",
+     250
+    ],
+    [
+     "mandeln",
+     30
+    ],
+    [
+     "honig",
+     20
+    ],
+    [
+     "zitronensaft",
+     10
+    ]
+   ],
+   "spices": [
+    "vanille",
+    "zimt"
+   ],
+   "steps": [
+    "Die Mandeln grob hacken und in einer trockenen Pfanne bei mittlerer Hitze 3 bis 4 Minuten goldbraun rösten, dann abkühlen lassen.",
+    "Die Trauben waschen, halbieren und bei Bedarf entkernen.",
+    "Skyr mit Honig, Zitronensaft, Vanille und einer Prise Zimt glatt rühren.",
+    "Skyr und Trauben abwechselnd in vier Gläser schichten, mit den Mandeln bestreuen und mindestens 20 Minuten kühlen."
+   ],
+   "tips": "Skyr ist ein isländischer Frischkäse und liefert hier viel Eiweiß bei wenig Fett. Kernlose Trauben sparen Arbeit. Enthält Milch und Mandeln (Schalenfrüchte). Trauben enthalten Fruchtzucker.",
+   "storage": "Im Kühlschrank bis zu 2 Tage, abgedeckt (Mandeln erst kurz vor dem Servieren darüber).",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Skyr wird nach dem Auftauen körnig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Island"
+  }),
+  R({
+   "name": "Himbeer-Spekulatius-Schichtdessert",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 4,
+   "prep": 15,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Backen",
+    "proteinreich",
+    "Dessert",
+    "Winter"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "himbeeren",
+     250
+    ],
+    [
+     "magerquark",
+     250
+    ],
+    [
+     "skyr",
+     250
+    ],
+    [
+     "spekulatius",
+     40
+    ],
+    [
+     "honig",
+     20
+    ]
+   ],
+   "spices": [
+    "vanille",
+    "zimt"
+   ],
+   "steps": [
+    "Die Himbeeren (frisch oder aufgetaut) mit einer Gabel leicht zerdrücken, einige schöne zum Garnieren zurücklegen.",
+    "Quark und Skyr mit Honig, Vanille und einer Prise Zimt glatt rühren.",
+    "Den Spekulatius in einem Gefrierbeutel mit dem Nudelholz grob zerbröseln.",
+    "In vier Gläser abwechselnd Brösel, Creme und Himbeeren schichten, mit Bröseln und den zurückgelegten Himbeeren abschließen.",
+    "Vor dem Servieren mindestens 30 Minuten durchziehen lassen, damit der Spekulatius leicht weich wird."
+   ],
+   "tips": "Spekulatius ist ein Mürbegebäck mit Gluten und Milch; wer mehr Knusper möchte, streut die Brösel erst direkt vor dem Servieren darüber. Enthält Milch und Gluten. Tiefgekühlte Himbeeren funktionieren ganzjährig.",
+   "storage": "Im Kühlschrank bis zu 1 Tag, abgedeckt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Creme wird nach dem Auftauen wässrig und körnig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Himbeer-Quarkkuchen mit Haferflocken",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 8,
+   "prep": 15,
+   "cook": 40,
+   "level": "mittel",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "Meal-Prep",
+    "proteinreich",
+    "Dessert",
+    "Kuchen"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "magerquark",
+     500
+    ],
+    [
+     "eier",
+     165
+    ],
+    [
+     "haferflocken",
+     80
+    ],
+    [
+     "honig",
+     50
+    ],
+    [
+     "speisestaerke",
+     20
+    ],
+    [
+     "backpulver",
+     5
+    ],
+    [
+     "butter",
+     30
+    ],
+    [
+     "himbeeren",
+     250
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 175 °C Ober-/Unterhitze vorheizen. Eine Springform (20 cm) mit Backpapier auslegen. Die Butter schmelzen.",
+    "Die Haferflocken fein mahlen (Mixer) und mit Butter, Backpulver und 20 g Honig mischen. Die Masse als Boden fest in die Form drücken.",
+    "Quark, Eier, restlichen Honig, Speisestärke und Vanille glatt rühren und auf den Boden gießen.",
+    "Die Himbeeren darauf verteilen und leicht eindrücken.",
+    "35 bis 40 Minuten backen, bis die Mitte nur noch leicht wackelt (Kern mindestens 70 °C). Im ausgeschalteten Ofen bei leicht geöffneter Tür 15 Minuten ruhen lassen, dann ganz auskühlen lassen."
+   ],
+   "tips": "Der Kuchen ist eher ein Quarkkuchen als ein klassischer Rührkuchen: saftig, nicht besonders süß. Vollständig auskühlen lassen, dann lässt er sich sauber schneiden. Enthält Milch, Ei und Gluten (Hafer kann Spuren von Gluten enthalten).",
+   "storage": "Im Kühlschrank bis zu 4 Tage, abgedeckt.",
+   "reheat": "Kalt servieren oder 10 Sekunden in der Mikrowelle.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 3,
+    "note": "In Stücken einzeln einfrieren; über Nacht im Kühlschrank auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Rotwein-Birnen mit Vanille-Skyr und Vanilleeis",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Frankreich",
+   "servings": 4,
+   "prep": 10,
+   "cook": 25,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "warm",
+    "Winter",
+    "Dessert",
+    "Wein"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "birne",
+     600
+    ],
+    [
+     "rotwein",
+     150
+    ],
+    [
+     "zucker",
+     30
+    ],
+    [
+     "skyr",
+     400
+    ],
+    [
+     "vanilleeis",
+     100
+    ]
+   ],
+   "spices": [
+    "zimt",
+    "nelken",
+    "vanille"
+   ],
+   "steps": [
+    "Die Birnen schälen, halbieren und das Kerngehäuse mit einem Löffel entfernen.",
+    "Rotwein mit Zucker, einer Zimtstange oder einer Prise Zimt und 2 Nelken in einem Topf aufkochen.",
+    "Die Birnen hineinlegen (bei Bedarf 50 ml Wasser ergänzen, damit sie fast bedeckt sind) und zugedeckt bei kleiner Hitze 15 bis 20 Minuten ziehen lassen, bis sie weich sind. Zwischendurch wenden.",
+    "Die Birnen herausnehmen, den Sud ohne Deckel auf etwa die Hälfte einkochen.",
+    "Skyr mit Vanille glatt rühren. Birnenhälften warm oder lauwarm mit Skyr, etwas Sud und je einer kleinen Kugel Vanilleeis anrichten."
+   ],
+   "tips": "Der Alkohol des Weins ist nach dem Einkochen größtenteils verdampft, ein Rest bleibt; für Kinder, Schwangere und bei Alkoholverzicht Traubensaft verwenden. Rotwein enthält Sulfite und Histamin. Enthält Milch. Feste, nicht ganz reife Birnen halten am besten die Form.",
+   "storage": "Im Kühlschrank bis zu 3 Tage (Birnen im Sud, Eis und Skyr getrennt).",
+   "reheat": "Birnen im Sud kurz erwärmen oder kalt essen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Birnen werden nach dem Auftauen matschig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Frankreich"
+  }),
+  R({
+   "name": "Apfel-Crumble mit Haferflocken und Vanille-Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 6,
+   "prep": 15,
+   "cook": 35,
+   "level": "leicht",
+   "devices": [
+    "Backofen",
+    "Airfryer"
+   ],
+   "tags": [
+    "warm",
+    "Backen",
+    "Dessert",
+    "Herbst"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "apfel",
+     700
+    ],
+    [
+     "zitronensaft",
+     15
+    ],
+    [
+     "honig",
+     40
+    ],
+    [
+     "haferflocken",
+     80
+    ],
+    [
+     "mandeln",
+     40
+    ],
+    [
+     "butter",
+     40
+    ],
+    [
+     "skyr",
+     450
+    ]
+   ],
+   "spices": [
+    "zimt",
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen (Airfryer 170 °C). Die Äpfel schälen, in Stücke schneiden und mit Zitronensaft, 20 g Honig und Zimt mischen.",
+    "Die Äpfel in eine Auflaufform (oder mehrere kleine Förmchen) geben.",
+    "Haferflocken, gehackte Mandeln, restlichen Honig und die kalte Butter in Flocken mit den Fingern zu groben Streuseln verkneten.",
+    "Die Streusel auf den Äpfeln verteilen und 30 bis 35 Minuten backen (Airfryer 20 bis 25 Minuten), bis die Oberfläche goldbraun ist und die Äpfel weich sind.",
+    "Skyr mit Vanille glatt rühren und zum warmen Crumble servieren."
+   ],
+   "tips": "Der Crumble kommt ohne Mehl und mit wenig Zucker aus; die Süße stammt hauptsächlich von den Äpfeln. Säuerliche Sorten wie Boskoop halten die Form. Enthält Milch, Mandeln (Schalenfrüchte) und Gluten (Hafer kann Spuren von Gluten enthalten).",
+   "storage": "Im Kühlschrank bis zu 3 Tage (Skyr getrennt).",
+   "reheat": "10 Minuten im Backofen bei 160 °C oder 3 Minuten im Airfryer bei 160 °C.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 3,
+    "note": "Den fertigen Crumble ohne Skyr einfrieren; im Backofen direkt aus dem Gefrierfach aufbacken."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Zitronen-Käsekuchen mit Quark und Haferboden",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "International",
+   "servings": 8,
+   "prep": 20,
+   "cook": 45,
+   "level": "mittel",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "Meal-Prep",
+    "proteinreich",
+    "Dessert",
+    "Kuchen"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "haferflocken",
+     60
+    ],
+    [
+     "butter",
+     20
+    ],
+    [
+     "magerquark",
+     500
+    ],
+    [
+     "frischkaese",
+     200
+    ],
+    [
+     "eier",
+     165
+    ],
+    [
+     "speisestaerke",
+     30
+    ],
+    [
+     "honig",
+     50
+    ],
+    [
+     "zitronensaft",
+     40
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 160 °C Ober-/Unterhitze vorheizen. Eine Springform (20 cm) mit Backpapier auslegen. Butter schmelzen.",
+    "Die Haferflocken fein mahlen, mit der Butter mischen und als Boden fest in die Form drücken. 8 Minuten vorbacken.",
+    "Quark, Frischkäse, Eier, Honig, Speisestärke, Zitronensaft und Vanille mit dem Schneebesen glatt rühren (nicht zu lange schlagen, sonst reißt der Kuchen).",
+    "Die Masse auf den Boden geben und 40 bis 45 Minuten backen, bis die Mitte nur noch leicht wackelt (Kern mindestens 70 °C).",
+    "Im ausgeschalteten Ofen bei leicht geöffneter Tür 20 Minuten ruhen lassen, dann vollständig auskühlen und mindestens 3 Stunden kühlen."
+   ],
+   "tips": "Der Kuchen ist deutlich leichter als ein klassischer Käsekuchen mit Sahne und Zucker. Frische Zitronenschale (abgerieben, bio) bringt mehr Aroma, ist aber nicht eingerechnet. Enthält Milch, Ei und Gluten (Hafer kann Spuren von Gluten enthalten).",
+   "storage": "Im Kühlschrank bis zu 4 Tage, abgedeckt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 3,
+    "note": "In Stücken einzeln einfrieren; über Nacht im Kühlschrank auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "International"
+  }),
+  R({
+   "name": "Zitronen-Syllabub mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 15,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Backen",
+    "proteinreich",
+    "Dessert",
+    "Wein"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "skyr",
+     400
+    ],
+    [
+     "sahne",
+     100
+    ],
+    [
+     "weisswein",
+     60
+    ],
+    [
+     "zitronensaft",
+     50
+    ],
+    [
+     "zucker",
+     40
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Weißwein, Zitronensaft und Zucker verrühren und etwa 10 Minuten ziehen lassen, bis sich der Zucker gelöst hat.",
+    "Die Sahne steif schlagen.",
+    "Skyr mit Vanille glatt rühren, dann die Weinmischung einrühren.",
+    "Die Sahne vorsichtig unterheben und die Creme in vier Gläser füllen.",
+    "Mindestens 1 Stunde kühlen. Die Creme wird beim Stehen etwas fester."
+   ],
+   "tips": "Syllabub ist ein klassisches englisches Weindessert. Der Wein wird nicht erhitzt, der Alkohol bleibt also erhalten: nicht für Kinder und Schwangere, bei Alkoholverzicht durch Apfelsaft ersetzen. Weißwein enthält Sulfite. Enthält Milch.",
+   "storage": "Im Kühlschrank bis zu 2 Tage, abgedeckt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Creme trennt sich nach dem Auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Saftige Schoko-Brownies mit Quark",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "USA",
+   "servings": 9,
+   "prep": 15,
+   "cook": 25,
+   "level": "leicht",
+   "devices": [
+    "Backofen",
+    "Airfryer"
+   ],
+   "tags": [
+    "Backen",
+    "Meal-Prep",
+    "proteinreich",
+    "Dessert"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "eier",
+     165
+    ],
+    [
+     "magerquark",
+     250
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "kakao",
+     40
+    ],
+    [
+     "haferflocken",
+     60
+    ],
+    [
+     "honig",
+     60
+    ],
+    [
+     "zartbitter",
+     40
+    ],
+    [
+     "butter",
+     20
+    ],
+    [
+     "backpulver",
+     5
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen (Airfryer 170 °C). Eine quadratische Form (20 x 20 cm) mit Backpapier auslegen.",
+    "Schokolade und Butter über dem Wasserbad oder kurz in der Mikrowelle schmelzen, kurz abkühlen lassen.",
+    "Haferflocken fein mahlen. Eier, Quark, Skyr und Honig glatt verrühren, die Schokoladenmasse einrühren.",
+    "Kakao, Haferflockenmehl, Backpulver und Vanille mischen und kurz unterheben, bis kein Mehl mehr sichtbar ist.",
+    "Den Teig in die Form streichen und 22 bis 25 Minuten backen (Airfryer 18 bis 20 Minuten). Die Mitte soll noch leicht feucht sein, der Kern erreicht mindestens 70 °C.",
+    "In der Form vollständig auskühlen lassen, dann in neun Stücke schneiden."
+   ],
+   "tips": "Die Brownies sind weich und feucht, eher wie ein dichter Schokokuchen. Quark und Skyr ersetzen einen Großteil der Butter und des Zuckers. Kakao und Schokolade enthalten Histamin. Enthält Milch, Ei und Gluten (Hafer kann Spuren von Gluten enthalten).",
+   "storage": "Im Kühlschrank bis zu 4 Tage, abgedeckt.",
+   "reheat": "10 Sekunden in der Mikrowelle oder 2 Minuten im Airfryer bei 160 °C.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 3,
+    "note": "Einzeln in Backpapier wickeln und einfrieren; über Nacht im Kühlschrank auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "USA"
+  }),
+  R({
+   "name": "Erdbeer-Cheesecake im Glas ohne Backen",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "USA",
+   "servings": 4,
+   "prep": 20,
+   "cook": 5,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "ohne Backen",
+    "proteinreich",
+    "Dessert",
+    "Sommer"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haferflocken",
+     50
+    ],
+    [
+     "butter",
+     15
+    ],
+    [
+     "honig",
+     15
+    ],
+    [
+     "erdbeeren",
+     300
+    ],
+    [
+     "magerquark",
+     300
+    ],
+    [
+     "frischkaese",
+     150
+    ],
+    [
+     "sahne",
+     50
+    ],
+    [
+     "honig",
+     30
+    ],
+    [
+     "zitronensaft",
+     10
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Haferflocken, Butter und 15 g Honig in einer Pfanne bei mittlerer Hitze 4 bis 5 Minuten rösten, bis sie leicht knusprig sind. Abkühlen lassen.",
+    "Die Hälfte der Erdbeeren fein pürieren oder zerdrücken, den Rest in kleine Stücke schneiden.",
+    "Quark, Frischkäse, restlichen Honig, Zitronensaft und Vanille glatt verrühren. Die Sahne steif schlagen und unterheben.",
+    "In vier Gläser abwechselnd Haferknusper, Creme und Erdbeeren schichten und mit Erdbeeren abschließen.",
+    "Mindestens 1 Stunde kühlen."
+   ],
+   "tips": "Die Creme bleibt weich-cremig und wird nicht schnittfest, deshalb im Glas servieren. Außerhalb der Erdbeersaison funktionieren TK-Beeren (aufgetaut und abgetropft). Enthält Milch und Gluten (Hafer kann Spuren von Gluten enthalten).",
+   "storage": "Im Kühlschrank bis zu 2 Tage, abgedeckt (Knusper erst kurz vor dem Servieren).",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Creme wird nach dem Auftauen wässrig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "USA"
+  }),
+  R({
+   "name": "Schoko-Tarte ohne Backen mit Quarkcreme",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Frankreich",
+   "servings": 8,
+   "prep": 25,
+   "cook": 5,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "ohne Backen",
+    "proteinreich",
+    "Dessert"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "haferflocken",
+     80
+    ],
+    [
+     "mandeln",
+     30
+    ],
+    [
+     "butter",
+     30
+    ],
+    [
+     "honig",
+     25
+    ],
+    [
+     "zartbitter",
+     70
+    ],
+    [
+     "magerquark",
+     500
+    ],
+    [
+     "kakao",
+     15
+    ],
+    [
+     "honig",
+     30
+    ]
+   ],
+   "spices": [
+    "vanille",
+    "zimt"
+   ],
+   "steps": [
+    "Eine Tarteform (22 cm) mit Backpapier auslegen. Haferflocken und Mandeln fein mahlen.",
+    "Butter mit 25 g Honig schmelzen, mit der Haferflocken-Mandel-Mischung und einer Prise Zimt verkneten und als Boden fest in die Form drücken. 20 Minuten kalt stellen.",
+    "Die Schokolade über dem Wasserbad schmelzen und kurz abkühlen lassen (sie soll noch flüssig, aber nicht heiß sein).",
+    "Quark (zimmerwarm), Kakao, restlichen Honig und Vanille glatt rühren, dann die Schokolade zügig einrühren, damit keine Klümpchen entstehen.",
+    "Die Creme auf den Boden streichen und mindestens 3 Stunden, besser über Nacht, kühlen, bis sie fest ist."
+   ],
+   "tips": "Die Tarte wird fest, aber weich; mit einem in heißes Wasser getauchten Messer lässt sie sich sauber schneiden. Kalter Quark verklumpt mit der Schokolade, deshalb vorher aus dem Kühlschrank nehmen. Enthält Milch, Mandeln (Schalenfrüchte) und Gluten (Hafer kann Spuren von Gluten enthalten). Kakao und Schokolade enthalten Histamin.",
+   "storage": "Im Kühlschrank bis zu 4 Tage, abgedeckt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 2,
+    "note": "In Stücken einfrieren; über Nacht im Kühlschrank auftauen, die Creme bleibt dabei meist ausreichend glatt."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity und ohne externe Vorlage (Quelle gesperrt, nicht abgerufen); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Frankreich"
+  })
+);
+
+/* ===== Rezeptcharge 34: Kontaktgrill, lecker.de gelesen (3), E&T und Serious Eats gesperrt (2), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Gemüsepuffer vom Kontaktgrill mit Räucherlachs und Schinken",
+   "meal": "Hauptgericht",
+   "group": "Fisch",
+   "cuisine": "Deutschland",
+   "servings": 2,
+   "prep": 20,
+   "cook": 12,
+   "level": "leicht",
+   "devices": [
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "schnell",
+    "proteinreich",
+    "Kontaktgrill"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "kartoffeln",
+     350
+    ],
+    [
+     "karotte",
+     150
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "mehl",
+     40
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "senf",
+     10
+    ],
+    [
+     "schnittlauch",
+     10
+    ],
+    [
+     "raeucherlachs",
+     100
+    ],
+    [
+     "kochschinken",
+     80
+    ],
+    [
+     "rapsoel",
+     10
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer",
+    "muskat"
+   ],
+   "steps": [
+    "Kartoffeln und Karotte schälen und grob raspeln, die Zwiebel fein reiben. Die Masse in einem Küchentuch gut ausdrücken, damit die Puffer knusprig werden.",
+    "Mit Ei, Mehl, Salz, Pfeffer und Muskat zu einer bindenden Masse verrühren.",
+    "Den Kontaktgrill vorheizen und dünn mit Öl einpinseln. Je etwa 2 Esslöffel der Masse als flache Häufchen auflegen, den Deckel schließen und rund 5 Minuten grillen, bis die Puffer goldbraun und durchgegart sind (Kern mindestens 70 °C wegen des Eis). In zwei Durchgängen arbeiten und die fertigen Puffer warm halten.",
+    "Skyr mit Senf, Salz und Pfeffer glatt rühren, den Schnittlauch in Röllchen unterheben.",
+    "Die Puffer mit der Skyr-Creme bestreichen, mit Räucherlachs und Schinken belegen und mit Schnittlauch bestreuen."
+   ],
+   "tips": "Wer es schärfer mag, rührt 1 bis 2 Teelöffel Meerrettich aus dem Glas in die Creme (nicht eingerechnet). Räucherlachs und Schinken bleiben kalt und werden nicht mitgegrillt. Schwangere und Menschen mit geschwächter Abwehr verzichten auf rohen Räucherlachs. Enthält Fisch, Ei, Gluten, Milch und Senf. Räucherlachs und Schinken enthalten Histamin.",
+   "storage": "Im Kühlschrank bis zu 2 Tage. Puffer und Belag getrennt aufbewahren.",
+   "reheat": "Kurz auf dem Kontaktgrill oder in der Pfanne erwärmen, bis alles durch und mindestens 70 °C heiß ist.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohe Kartoffelmasse verfärbt sich, fertige Puffer werden nach dem Auftauen weich; frisch zubereiten."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf lecker.de gelesene Rezept „„Surf & Turf“-Gemüsepuffer (Kontaktgrill)“ (https://www.lecker.de/surf-und-turf-gemuesepuffer-129071.html), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Pilz-Burger vom Kontaktgrill mit Halloumi und Ajvar-Creme",
+   "meal": "Hauptgericht",
+   "group": "Vegetarisch",
+   "cuisine": "International",
+   "servings": 2,
+   "prep": 15,
+   "cook": 12,
+   "level": "leicht",
+   "devices": [
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "schnell",
+    "proteinreich",
+    "vegetarisch",
+    "Kontaktgrill"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "champignons",
+     400
+    ],
+    [
+     "halloumi",
+     140
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "tomate",
+     160
+    ],
+    [
+     "skyr",
+     100
+    ],
+    [
+     "ajvar",
+     15
+    ],
+    [
+     "spinat",
+     50
+    ],
+    [
+     "sprossen",
+     30
+    ],
+    [
+     "avocado",
+     60
+    ],
+    [
+     "olivenoel",
+     20
+    ]
+   ],
+   "spices": [
+    "rauchpaprika",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Rauchpaprika, Salz, Pfeffer und Öl zu einem Würzöl verrühren. Die großen Champignons putzen und die Stiele entfernen.",
+    "Den Kontaktgrill vorheizen. Die Pilze mit Würzöl einpinseln und etwa 7 Minuten grillen, bis sie weich sind und Saft ziehen.",
+    "Die Zwiebel in 5 mm dicke Ringe schneiden, die Tomaten in 1 cm dicke Scheiben, den Halloumi in dicke Scheiben. Alles mit etwas Würzöl bestreichen und auf dem Kontaktgrill grillen: Zwiebel etwa 2 Minuten, Tomate 1 Minute, Halloumi 3 bis 4 Minuten, bis er goldbraun ist.",
+    "Skyr mit Ajvar, Salz und Pfeffer verrühren. Den Spinat waschen, die Avocado in Scheiben schneiden.",
+    "Je zwei Pilze als „Brötchen“ nehmen: Einen mit Creme bestreichen, mit Spinat, Tomate, Halloumi, Zwiebel, Avocado und Sprossen belegen und mit dem zweiten Pilz abdecken."
+   ],
+   "tips": "Der Burger kommt ohne Brötchen aus; wer mag, serviert ein Vollkornbrötchen dazu (nicht eingerechnet). Halloumi ist salzig, deshalb vorsichtig salzen. Enthält Milch. Pilze, Tomaten, Ajvar und Sprossen können bei Histaminempfindlichkeit Beschwerden machen.",
+   "storage": "Im Kühlschrank bis zu 2 Tage. Zutaten getrennt, Burger frisch zusammensetzen.",
+   "reheat": "Pilze und Halloumi kurz auf dem Kontaktgrill erwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Pilze und Avocado werden nach dem Auftauen matschig."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf lecker.de gelesene Rezept „Blitzschneller Portobello-Burger“ (https://www.lecker.de/blitzschneller-portobello-burger-129069.html), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "International"
+  }),
+  R({
+   "name": "Rumpsteak vom Kontaktgrill mit Vollkornbandnudeln und Pfefferrahmsauce",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "International",
+   "servings": 2,
+   "prep": 15,
+   "cook": 25,
+   "level": "mittel",
+   "devices": [
+    "Kontaktgrill",
+    "Herd"
+   ],
+   "tags": [
+    "proteinreich",
+    "Kontaktgrill",
+    "Pfannengericht"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "rindersteak",
+     300
+    ],
+    [
+     "vollkornnudeln",
+     120
+    ],
+    [
+     "champignons",
+     300
+    ],
+    [
+     "zwiebel",
+     60
+    ],
+    [
+     "knoblauch",
+     8
+    ],
+    [
+     "tomatenmark",
+     10
+    ],
+    [
+     "mehl",
+     10
+    ],
+    [
+     "rinderbruehe",
+     250
+    ],
+    [
+     "sahne",
+     50
+    ],
+    [
+     "olivenoel",
+     20
+    ]
+   ],
+   "spices": [
+    "gruener_pfeffer",
+    "salz",
+    "pfeffer",
+    "majoran"
+   ],
+   "steps": [
+    "Zwiebel fein würfeln, Knoblauch hacken, Champignons vierteln, die grünen Pfefferkörner grob hacken. Nudeln in reichlich Salzwasser nach Packungsangabe garen.",
+    "Zwei Drittel des Öls in einer Pfanne erhitzen, die Champignons etwa 5 Minuten kräftig anbraten. Zwiebel, Knoblauch und Pfeffer kurz mitbraten, salzen.",
+    "Tomatenmark und Mehl einrühren und kurz anschwitzen. Nach und nach die Brühe zugeben, aufkochen und 5 Minuten köcheln lassen, dann die Sahne einrühren und abschmecken.",
+    "Währenddessen den Kontaktgrill vorheizen. Die Steaks mit dem restlichen Öl bestreichen und je nach Dicke etwa 3 bis 4 Minuten für medium grillen (Kerntemperatur 56 bis 58 °C; für durchgegartes Fleisch länger grillen, bis der Kern mindestens 70 °C erreicht), dann 5 Minuten abgedeckt ruhen lassen.",
+    "Die Steaks salzen, pfeffern und in Streifen schneiden. Mit Nudeln und Sauce anrichten und mit Majoran bestreuen."
+   ],
+   "tips": "Das Originalrezept nutzt deutlich mehr Fleisch und Nudeln je Person; hier sind es 150 g Steak und 60 g Vollkornnudeln roh, damit Kalorien und Eiweiß zu den Vorgaben passen. Schwangere und Menschen mit geschwächter Abwehr garen das Steak durch (Kern mindestens 70 °C). Enthält Milch, Gluten.",
+   "storage": "Im Kühlschrank bis zu 2 Tage. Steak, Nudeln und Sauce getrennt.",
+   "reheat": "Sauce und Nudeln im Topf erwärmen, bis sie mindestens 70 °C erreichen; das Steak nur kurz in der heißen Sauce durchwärmen, nicht kochen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 500,
+    "months": 2,
+    "note": "Nur Sauce mit Nudeln einfrieren; Steak frisch grillen. Nach dem Auftauen gründlich auf mindestens 70 °C erhitzen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf lecker.de gelesene Rezept „Gegrilltes Steak mit Bandnudeln und Pfefferrahmsoße (Optigrill/Kontaktgrill)“ (https://www.lecker.de/gegrilltes-steak-mit-bandnudeln-und-pfefferrahmsosse-optigrill-kontaktgrill-128002.html), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "International"
+  }),
+  R({
+   "name": "Panini mit Mozzarella, Tomate, Rucola und Schinken",
+   "meal": "Hauptgericht",
+   "group": "Schwein",
+   "cuisine": "Italien",
+   "servings": 2,
+   "prep": 10,
+   "cook": 6,
+   "level": "leicht",
+   "devices": [
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "schnell",
+    "proteinreich",
+    "Kontaktgrill"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "baguette",
+     160
+    ],
+    [
+     "mozzarella",
+     160
+    ],
+    [
+     "kochschinken",
+     80
+    ],
+    [
+     "tomate",
+     160
+    ],
+    [
+     "rucola",
+     30
+    ],
+    [
+     "olivenoel",
+     10
+    ],
+    [
+     "balsamico",
+     10
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer",
+    "oregano"
+   ],
+   "steps": [
+    "Das Baguette in zwei Stücke teilen und waagerecht aufschneiden. Den Mozzarella abtropfen lassen und in Scheiben schneiden, die Tomaten in dünne Scheiben.",
+    "Die Schnittflächen mit Olivenöl und Balsamico beträufeln. Auf die untere Hälfte Mozzarella, Schinken und Tomaten schichten, mit Salz, Pfeffer und Oregano würzen.",
+    "Rucola obenauf geben, mit der oberen Hälfte schließen und leicht andrücken.",
+    "Den Kontaktgrill vorheizen. Die Panini 4 bis 6 Minuten grillen, bis die Kruste knusprig ist und der Käse geschmolzen ist. Schräg halbieren und warm essen."
+   ],
+   "tips": "Für die vegetarische Variante den Schinken weglassen und 50 g mehr Mozzarella verwenden. Den Rucola bei Wunsch erst nach dem Grillen einlegen, dann bleibt er frisch. Enthält Gluten und Milch. Tomaten, Schinken und Balsamico enthalten Histamin.",
+   "storage": "Im Kühlschrank bis zu 2 Tage. Besser frisch essen, die Kruste wird weich.",
+   "reheat": "Kurz auf dem Kontaktgrill oder in der Pfanne erwärmen, bis alles durch und mindestens 70 °C heiß ist.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Füllung wird nach dem Auftauen wässrig; frisch zubereiten."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.essen-und-trinken.de/vergleich/kontaktgrill-test/ (essen-und-trinken.de, Panini mit Tomate und Rucola im Sammelartikel „Kontaktgrill-Test“; die Seite wird laut robots.txt nicht abgerufen); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Italien"
+  }),
+  R({
+   "name": "Cuban Sandwich mit Schweinefilet und Gouda vom Kontaktgrill",
+   "meal": "Hauptgericht",
+   "group": "Schwein",
+   "cuisine": "Kuba",
+   "servings": 2,
+   "prep": 25,
+   "cook": 20,
+   "level": "mittel",
+   "devices": [
+    "Kontaktgrill",
+    "Herd"
+   ],
+   "tags": [
+    "proteinreich",
+    "Kontaktgrill",
+    "Sandwich"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "schweinefilet",
+     200
+    ],
+    [
+     "orange",
+     100
+    ],
+    [
+     "limettensaft",
+     20
+    ],
+    [
+     "knoblauch",
+     8
+    ],
+    [
+     "olivenoel",
+     10
+    ],
+    [
+     "baguette",
+     160
+    ],
+    [
+     "kochschinken",
+     80
+    ],
+    [
+     "gouda_light",
+     60
+    ],
+    [
+     "senf",
+     20
+    ],
+    [
+     "gurke",
+     80
+    ],
+    [
+     "essig",
+     10
+    ],
+    [
+     "butter",
+     5
+    ]
+   ],
+   "spices": [
+    "oregano",
+    "kreuzkuemmel",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Orange auspressen (etwa 40 ml Saft), mit Limettensaft, gehacktem Knoblauch, Öl, Oregano, Kreuzkümmel, Salz und Pfeffer zur Marinade verrühren. Das Schweinefilet darin mindestens 30 Minuten, besser 2 Stunden, im Kühlschrank ziehen lassen.",
+    "Die Gurke in dünne Scheiben schneiden und mit Essig, einer Prise Salz und einer Prise Zucker kurz einlegen.",
+    "Das Filet abtupfen und auf dem vorgeheizten Kontaktgrill oder in der Pfanne rundum braten, bis die Kerntemperatur 63 °C erreicht (je nach Dicke etwa 8 bis 12 Minuten), 3 Minuten ruhen lassen und in dünne Scheiben schneiden.",
+    "Das Baguette in zwei Stücke teilen, aufschneiden und innen mit Senf bestreichen. Mit Filetscheiben, Schinken, Gouda und der abgetropften Gurke belegen.",
+    "Die Außenseite dünn mit Butter bestreichen, die Sandwiches auf dem Kontaktgrill 4 bis 5 Minuten pressen, bis die Kruste knusprig und der Käse geschmolzen ist. Schräg halbieren."
+   ],
+   "tips": "Das klassische Cuban Sandwich nutzt geschmortes oder gebratenes Schweinefleisch, Schinken, Schweizer Käse, Gurken und Senf; diese Fassung ist eine schlankere Version aus dem Kontaktgrill. Rohes Schweinefleisch nicht mit der Marinade des fertigen Sandwiches in Kontakt bringen. Enthält Gluten, Milch und Senf. Schinken und Käse enthalten Histamin.",
+   "storage": "Im Kühlschrank bis zu 2 Tage. Fleisch und Brot getrennt aufbewahren.",
+   "reheat": "Kurz auf dem Kontaktgrill oder in der Pfanne erwärmen, bis alles durch und mindestens 70 °C heiß ist.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Brot und Gurke werden nach dem Auftauen weich; das gebratene Filet allein ist 2 Monate haltbar."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.seriouseats.com/cuban-sandwich-recipe (seriouseats.com, The Best Cuban Sandwich (Titel aus der Adresse abgeleitet)); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Kuba"
+  })
+);
 [SEED, SEED2].forEach(a => { for (let i = a.length - 1; i >= 0; i--) { if (RETIRED[a[i].id]) a.splice(i, 1); } });
 
 /* ===== Bibliothek ab r77 (Entscheidung des Auftraggebers, 28.10.2026, aktualisiert) =====
@@ -19945,6 +21099,8 @@ S('apfel', 'Obst', 'Apfel', 'LLLLLIIFFFLL', 'k');
 S('birne', 'Obst', 'Birne', 'LLIIIIIFFFLL', 'k');
 S('erdbeeren', 'Obst', 'Erdbeeren', 'IIIGFFFGIIII', 'k');
 S('pflaume', 'Obst', 'Pflaume / Zwetschge', 'IIIIIIFFFIII', 'k');
+S('himbeeren', 'Obst', 'Himbeeren', 'IIIIGFFFFFII', 'e');
+S('weintrauben', 'Obst', 'Weintrauben', 'IIIIIIIIFFII', 'e');
 /* Zutaten ohne Saisonbewertung (zählen im Rezept weder dafür noch dagegen) */
 const SAISON_NEUTRAL = {
   banane: 'Importware, ganzjährig im Handel', avocado: 'Importware, ganzjährig im Handel', orange: 'Importware, Hauptsaison im Winter, ganzjährig im Handel',
@@ -21744,6 +22900,51 @@ const QUELLEN_REFERENZEN = {
   ],
   "r256": [
     {"url": "https://www.bbcgoodfood.com/recipes/tomato-pepper-bean-one-pot", "site": "bbcgoodfood.com", "title": "Tomato, pepper and bean one-pot", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r269": [
+    {"url": "https://www.chefkoch.de/rezepte/3196001475688526/Dessert-mit-islaendischem-Frischkaese-und-Weintrauben.html", "site": "chefkoch.de", "title": "Dessert mit isländischem Frischkäse und Weintrauben", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r270": [
+    {"url": "https://www.chefkoch.de/rezepte/1816341294440474/Himbeerdessert-mit-Spekulatius.html", "site": "chefkoch.de", "title": "Himbeerdessert mit Spekulatius", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r271": [
+    {"url": "https://www.chefkoch.de/rezepte/1617001268903549/Himbeerkuchen.html", "site": "chefkoch.de", "title": "Himbeerkuchen", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r272": [
+    {"url": "https://www.chefkoch.de/rezepte/817681186299057/Birnen-in-Rotwein-an-Vanilleeis.html", "site": "chefkoch.de", "title": "Birnen in Rotwein an Vanilleeis", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r273": [
+    {"url": "https://www.bbcgoodfood.com/recipes/best-apple-crumble", "site": "bbcgoodfood.com", "title": "Best apple crumble", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r274": [
+    {"url": "https://www.bbcgoodfood.com/recipes/luscious-lemon-baked-cheesecake", "site": "bbcgoodfood.com", "title": "Luscious lemon baked cheesecake", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r275": [
+    {"url": "https://www.bbcgoodfood.com/recipes/lemon-syllabub", "site": "bbcgoodfood.com", "title": "Lemon syllabub", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r276": [
+    {"url": "https://www.bbcgoodfood.com/recipes/best-ever-chocolate-brownies-recipe", "site": "bbcgoodfood.com", "title": "Best-ever chocolate brownies", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r277": [
+    {"url": "https://www.bbc.co.uk/food/recipes/no-bake_strawberry_30276", "site": "bbc.co.uk", "title": "No-bake strawberry (Titel aus der Adresse abgeleitet)", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r278": [
+    {"url": "https://www.bbcgoodfood.com/recipes/no-cook-chocolate-tart", "site": "bbcgoodfood.com", "title": "No-cook chocolate tart", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r279": [
+    {"url": "https://www.lecker.de/surf-und-turf-gemuesepuffer-129071.html", "site": "lecker.de", "title": "„Surf & Turf“-Gemüsepuffer (Kontaktgrill)", "kind": "G", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r280": [
+    {"url": "https://www.lecker.de/blitzschneller-portobello-burger-129069.html", "site": "lecker.de", "title": "Blitzschneller Portobello-Burger", "kind": "G", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r281": [
+    {"url": "https://www.lecker.de/gegrilltes-steak-mit-bandnudeln-und-pfefferrahmsosse-optigrill-kontaktgrill-128002.html", "site": "lecker.de", "title": "Gegrilltes Steak mit Bandnudeln und Pfefferrahmsoße (Optigrill/Kontaktgrill)", "kind": "G", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r282": [
+    {"url": "https://www.essen-und-trinken.de/vergleich/kontaktgrill-test/", "site": "essen-und-trinken.de", "title": "Kontaktgrill-Test (Sammelartikel mit Panini mit Tomate und Rucola)", "kind": "H", "note": "Übermittelter Link zu einem Sammelartikel; laut robots.txt nicht abgerufen, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r283": [
+    {"url": "https://www.seriouseats.com/cuban-sandwich-recipe", "site": "seriouseats.com", "title": "Cuban sandwich", "kind": "D", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
   ]
 };
 
