@@ -331,23 +331,25 @@ const FORMEN_TEXT = [
 /* Ausrüstung: Souper-Cubes-Formen. KAMMERN bleibt die Liste der gültigen Blockgrößen (Standardwerte);
    die tatsächliche Kapazität kommt aus state.equip (Formen je Größe mal Kammern je Form). */
 const BLOCK_ML = [50, 120, 125, 250, 500];
-const EQUIP_STD = { formen: { 50: 2, 120: 0, 125: 2, 250: 4, 500: 4 }, kammern: { 50: 9, 120: 6, 125: 6, 250: 4, 500: 2 } };
+const EQUIP_STD = { formen: { 50: 2, 120: 0, 125: 2, 250: 4, 500: 4 }, kammern: { 50: 9, 120: 6, 125: 6, 250: 4, 500: 2 }, aus: { 50: 0, 120: 0, 125: 0, 250: 0, 500: 0 } };
 function equipClean(e) {
-  const out = { formen: {}, kammern: {} }, src = e && typeof e === 'object' ? e : {};
+  const out = { formen: {}, kammern: {}, aus: {} }, src = e && typeof e === 'object' ? e : {};
   const num = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, Math.round(v))) : d; };
   BLOCK_ML.forEach(ml => {
     out.formen[ml] = num(src.formen && src.formen[ml], 0, 24, EQUIP_STD.formen[ml]);
     out.kammern[ml] = num(src.kammern && src.kammern[ml], 1, 30, EQUIP_STD.kammern[ml]);
+    out.aus[ml] = num(src.aus && src.aus[ml], 0, out.formen[ml] * out.kammern[ml], 0);   // vorübergehend nicht verfügbare Cubes (Kammern) dieser Größe
   });
   return out;
 }
 function equipNow() { return (typeof state !== 'undefined' && state && state.equip) ? state.equip : EQUIP_STD; }
-function kap(ml, eq) { eq = eq || equipNow(); return (eq.formen[ml] || 0) * (eq.kammern[ml] || 0); }   // Blöcke pro Durchgang (0 = keine Form dieser Größe)
+function kapAlle(ml, eq) { eq = eq || equipNow(); return (eq.formen[ml] || 0) * (eq.kammern[ml] || 0); }   // Cubes insgesamt vorhanden
+function kap(ml, eq) { eq = eq || equipNow(); return Math.max(0, kapAlle(ml, eq) - ((eq.aus && eq.aus[ml]) || 0)); }   // Blöcke pro Durchgang = vorhandene minus vorübergehend deaktivierte Cubes (0 = keine Form / alle deaktiviert)
 function kapN(ml, eq) { return Math.max(1, kap(ml, eq)); }                                              // für Divisionen
 function equipTotals(eq) {
-  eq = eq || equipNow(); let forms = 0, chambers = 0, ml = 0;
-  BLOCK_ML.forEach(m => { const n = kap(m, eq); forms += eq.formen[m] || 0; chambers += n; ml += n * m; });
-  return { forms, chambers, liters: Math.round(ml / 100) / 10 };
+  eq = eq || equipNow(); let forms = 0, chambers = 0, ml = 0, off = 0;
+  BLOCK_ML.forEach(m => { const n = kap(m, eq); forms += eq.formen[m] || 0; chambers += n; ml += n * m; off += kapAlle(m, eq) - n; });
+  return { forms, chambers, liters: Math.round(ml / 100) / 10, off };
 }
 const TAGE = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 const TAGE_LANG = { Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag', Sa: 'Samstag', So: 'Sonntag' };
@@ -23331,6 +23333,606 @@ SEED2.push(
    "origin": "Mexiko"
   })
 );
+
+/* ===== Rezeptcharge 41: 10 Eis-Desserts, lecker.de gelesen (1), bbcgoodfoodme.com gelesen (1), bbcgoodfood.com und chefkoch.de gesperrt (8), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Erdnussbutter-Eis mit Erdbeerschicht (PB&J)",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "USA",
+   "servings": 4,
+   "prep": 25,
+   "cook": 5,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "erdnussmus",
+     40
+    ],
+    [
+     "skyr",
+     400
+    ],
+    [
+     "milch15",
+     100
+    ],
+    [
+     "zucker",
+     20
+    ],
+    [
+     "erdbeeren",
+     200
+    ],
+    [
+     "erdnuesse",
+     20
+    ]
+   ],
+   "spices": [
+    "vanille",
+    "salz"
+   ],
+   "steps": [
+    "Die Erdbeeren putzen, mit 10 g Zucker 5 Minuten leise köcheln, bis sie weich sind, grob zerdrücken und abkühlen lassen (das ist die „Jelly“-Schicht).",
+    "Erdnussmus, restlichen Zucker (10 g), Vanille und eine Prise Salz verrühren, nach und nach die Milch, dann den Skyr unterrühren, bis die Masse glatt ist.",
+    "Ein Drittel der Eismasse in eine gefrierfeste Form (Kastenform, 1 l) füllen und 1,5 Stunden einfrieren. Dann ein Drittel der Erdbeermasse darauf verteilen, ein weiteres Drittel Eismasse daraufgeben und erneut 1,5 Stunden einfrieren. Mit den Resten der Erdbeeren und der Eismasse ebenso abschließen.",
+    "Nach mindestens 4 Stunden fest. Vor dem Servieren 20 Minuten antauen lassen, in vier Portionen schneiden und mit gehackten Erdnüssen bestreuen."
+   ],
+   "tips": "Das gelesene Rezept arbeitet mit 250 g Erdnussbutter, 400 ml Sahne und 300 g Erdbeerkonfitüre; hier sind es 40 g Erdnussmus, Skyr statt Sahne und frisch gekochte Erdbeeren statt Konfitüre, damit Kalorien und Eiweiß zu den Dessert-Vorgaben passen. Das Eis wird dadurch fester und weniger cremig; vor dem Servieren gut antauen lassen. Enthält Erdnüsse und Milch.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren 20 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "Scheiben einzeln in 250-ml-Blöcken einfrieren; 20 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf lecker.de gelesene Rezept „Peanut Butter & Jelly Eis“ (https://www.lecker.de/peanut-butter-jelly-eis-79968.html), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "USA"
+  }),
+  R({
+   "name": "Himbeer-Schoko-Eisterrine mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 6,
+   "prep": 25,
+   "cook": 5,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "skyr",
+     500
+    ],
+    [
+     "magerquark",
+     200
+    ],
+    [
+     "zucker",
+     40
+    ],
+    [
+     "himbeeren",
+     225
+    ],
+    [
+     "zitronensaft",
+     15
+    ],
+    [
+     "zartbitter",
+     80
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Eine Kastenform (1 l) mit zwei überlappenden Lagen Backpapier oder Frischhaltefolie auskleiden. 125 g Himbeeren mit 10 g Zucker und dem Zitronensaft 3 Minuten aufkochen, pürieren, abkühlen lassen.",
+    "Skyr, Quark, restlichen Zucker (30 g) und Vanille glatt verrühren, das Himbeerpüree locker unterziehen, sodass ein Marmormuster bleibt.",
+    "Die Schokolade über dem Wasserbad schmelzen und leicht abkühlen lassen.",
+    "Die restlichen Himbeeren (100 g) auf den Boden legen, ein Drittel der Creme daraufgeben und ein Drittel der Schokolade darüberträufeln. Wiederholen und mit der restlichen Creme abschließen.",
+    "Mit überstehendem Papier abdecken und mindestens 8 Stunden, am besten über Nacht, einfrieren. Vor dem Servieren 10 Minuten antauen lassen, stürzen und in sechs Scheiben schneiden; das Messer vorher in heißes Wasser tauchen."
+   ],
+   "tips": "Das gelesene Rezept besteht aus 400 ml Sahne, 275 g gezuckerter Kondensmilch und 200 g dunkler Schokolade; hier ersetzen Skyr und Quark Sahne und Kondensmilch, die Schokolade ist auf 80 g reduziert. Das Eis wird fester als das Original. Enthält Milch; Schokolade kann Spuren von Nüssen enthalten.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "Scheiben einzeln in 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf bbcgoodfoodme.com gelesene Rezept „Raspberry & dark chocolate cheat's ice cream terrine“ (https://www.bbcgoodfoodme.com/recipes/raspberry-dark-chocolate-cheats-ice-cream-terrine/), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Bananen-Eis aus gefrorenen Bananen mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 2,
+   "prep": 10,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "banane",
+     300
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "zitronensaft",
+     10
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Die Bananen schälen, in Scheiben schneiden und mindestens 4 Stunden, besser über Nacht, einfrieren.",
+    "Die gefrorenen Bananen mit Skyr, Zitronensaft und einer Prise Zimt im Standmixer oder mit dem Stabmixer 1 bis 2 Minuten pürieren, dabei mit dem Stößel nachschieben, bis eine cremige Eismasse entsteht.",
+    "Sofort als Softeis servieren oder für festeres Eis 1 Stunde in einer Schale einfrieren und mit dem Portionierer ausstechen."
+   ],
+   "tips": "Je reifer die Bananen, desto süßer das Eis; mit Zucker oder Honig ist es nicht nötig. Der Skyr bringt Eiweiß und macht die Masse cremiger. Enthält Milch. Bananen sind fruktosereich.",
+   "storage": "Am besten sofort essen; im Gefrierer bis zu 2 Wochen.",
+   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 1,
+    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.chefkoch.de/rezepte/1484001253619546/Bananen-Eis.html (chefkoch.de, Bananen-Eis); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Spaghettieis-Dessert mit Skyr, Erdbeersauce und Schokoraspeln",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 2,
+   "prep": 20,
+   "cook": 0,
+   "level": "mittel",
+   "devices": [],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "vanilleeis",
+     80
+    ],
+    [
+     "skyr",
+     240
+    ],
+    [
+     "erdbeeren",
+     100
+    ],
+    [
+     "zartbitter",
+     5
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Vanilleeis, Skyr und Vanille verrühren, in einen Behälter streichen und 3 bis 4 Stunden fest einfrieren.",
+    "Die Erdbeeren pürieren und kalt stellen.",
+    "10 Minuten vor dem Servieren die Eismasse antauen lassen (sie soll fest, aber pressbar sein) und portionsweise durch die Spätzle- oder Kartoffelpresse direkt auf zwei gekühlte Teller drücken.",
+    "Die Erdbeersauce darübergeben und die Schokolade darüberraspeln. Sofort servieren."
+   ],
+   "tips": "Das klassische Spaghettieis besteht aus Vanilleeis, Erdbeersauce und weißer Schokolade; hier ist ein Teil des Eises durch Skyr ersetzt (Eiweiß), die Masse ist deshalb fester und lässt sich schwerer pressen. Gelingt es nicht, in Kugeln servieren. Die Presse vorher kühlen. Enthält Milch.",
+   "storage": "Nicht aufbewahren; frisch essen.",
+   "reheat": "Nicht aufwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die gepresste Form hält nicht, nur die Eismasse vor dem Pressen lässt sich einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.chefkoch.de/rezepte/1152361221481605/Spaghetti-Eis-Dessert.html (chefkoch.de, Spaghetti-Eis-Dessert); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Cremiges Vanilleeis mit Skyr, Quark und Sahne",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 20,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "skyr",
+     300
+    ],
+    [
+     "magerquark",
+     150
+    ],
+    [
+     "sahne",
+     100
+    ],
+    [
+     "zucker",
+     45
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Skyr, Quark, Zucker und das Mark einer Vanilleschote (oder Vanille) glatt verrühren, bis sich der Zucker aufgelöst hat.",
+    "Die Sahne steif schlagen und mit dem Schneebesen vorsichtig unterheben, damit die Masse locker bleibt.",
+    "In eine flache Schale füllen und 4 bis 5 Stunden einfrieren; in den ersten 2 Stunden alle 30 Minuten kräftig durchrühren, damit keine Eiskristalle entstehen.",
+    "Vor dem Servieren 10 Minuten antauen lassen und in Kugeln stechen."
+   ],
+   "tips": "Das klassische Vanilleeis ist eine gekochte Eiercreme mit viel Sahne; hier ist es ein einfaches Eis ohne Ei, mit Skyr und Quark als Hauptbestandteil (das Original der gesperrten Seite ist unbekannt). Es wird fester und weniger cremig als Eiercreme-Eis, deshalb gut antauen lassen. Enthält Milch.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/ultimate-vanilla-ice-cream (bbcgoodfood.com, Ultimate vanilla ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "No-Churn-Eis mit Skyr und Baiserschaum",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 25,
+   "cook": 10,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "eiklar",
+     66
+    ],
+    [
+     "zucker",
+     40
+    ],
+    [
+     "skyr",
+     400
+    ],
+    [
+     "sahne",
+     60
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Eiklar und Zucker in einer hitzefesten Schüssel über einem Wasserbad (siedend, die Schüssel berührt das Wasser nicht) 3 bis 4 Minuten schlagen, bis die Masse 70 bis 75 °C erreicht und der Zucker gelöst ist.",
+    "Vom Wasserbad nehmen und mit dem Handrührgerät 5 bis 6 Minuten zu einem festen, glänzenden Schaum schlagen, bis er abgekühlt ist.",
+    "Die Sahne separat halbsteif schlagen. Skyr mit Vanille glatt rühren, die Sahne unterheben, dann den Baiserschaum in zwei Portionen vorsichtig unterziehen.",
+    "In eine Kastenform füllen, abdecken und mindestens 6 Stunden einfrieren. Ein Rühren ist nicht nötig. Vor dem Servieren 10 Minuten antauen lassen."
+   ],
+   "tips": "Das klassische No-Churn-Eis arbeitet mit geschlagener Sahne und gezuckerter Kondensmilch; hier steckt das Volumen im erhitzten Baiserschaum (kein rohes Eiklar). Weniger Sahne, mehr Skyr: das Eis wird fester als das Original. Enthält Milch und Ei.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 2,
+    "note": "In 125-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/no-churn-ice-cream (bbcgoodfood.com, No-churn ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Schokoladeneis mit Skyr und Zartbitter",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 15,
+   "cook": 8,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "milch15",
+     250
+    ],
+    [
+     "kakao",
+     20
+    ],
+    [
+     "zartbitter",
+     40
+    ],
+    [
+     "zucker",
+     40
+    ],
+    [
+     "skyr",
+     300
+    ]
+   ],
+   "spices": [
+    "vanille",
+    "salz"
+   ],
+   "steps": [
+    "Milch, Kakao und Zucker in einem Topf unter Rühren erhitzen, bis der Kakao gelöst ist und die Milch leicht köchelt (2 Minuten).",
+    "Vom Herd nehmen, die gehackte Schokolade zugeben und glatt rühren. Vanille und eine Prise Salz zugeben, abkühlen lassen.",
+    "Den Skyr unterrühren, bis die Masse glatt ist. In eine flache Schale füllen und 4 bis 5 Stunden einfrieren; in den ersten 2 Stunden alle 30 Minuten durchrühren.",
+    "Vor dem Servieren 10 Minuten antauen lassen und in Kugeln stechen."
+   ],
+   "tips": "Das Original ist unbekannt (Seite gesperrt): Dies ist ein einfaches Schokoladeneis ohne Ei, das mit Skyr statt Sahne gebaut ist. Kakao und Schokolade enthalten Histamin. Enthält Milch; Schokolade kann Spuren von Nüssen enthalten.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/chocolate-ice-cream (bbcgoodfood.com, Chocolate ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Himbeer-Ripple-Eis mit Skyr und Quark",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 20,
+   "cook": 5,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "skyr",
+     400
+    ],
+    [
+     "magerquark",
+     100
+    ],
+    [
+     "zucker",
+     40
+    ],
+    [
+     "himbeeren",
+     250
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Die Himbeeren mit 15 g Zucker 4 bis 5 Minuten köcheln, bis sie zerfallen, durch ein Sieb streichen und abkühlen lassen.",
+    "Skyr, Quark, restlichen Zucker (25 g) und Vanille glatt verrühren.",
+    "Die Eismasse in eine Schale füllen, das Himbeerpüree darüber verteilen und mit einer Gabel in wenigen Zügen locker durchziehen, damit Schlieren bleiben.",
+    "5 bis 6 Stunden einfrieren. Vor dem Servieren 10 Minuten antauen lassen und in Kugeln stechen."
+   ],
+   "tips": "Das Original ist unbekannt (Seite gesperrt): Dies ist ein Himbeer-Ripple-Eis nach dem Titel, mit Skyr und Quark statt Sahne. Die Kerne der Himbeeren sind fein; bei Bedarf das Püree sieben. Enthält Milch.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/raspberry-ripple-ice-cream (bbcgoodfood.com, Raspberry ripple ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Buntes Beeren-Bananen-Eis am Stiel mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 3,
+   "prep": 15,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "skyr",
+     300
+    ],
+    [
+     "beeren_tk",
+     150
+    ],
+    [
+     "banane",
+     100
+    ],
+    [
+     "honig",
+     15
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Beeren leicht antauen lassen, Banane in Stücke brechen.",
+    "Alles mit Skyr und Honig im Standmixer zu einer glatten Masse pürieren.",
+    "In drei kleine Becher oder Eisförmchen füllen, Holzstiele einstecken und mindestens 5 Stunden einfrieren.",
+    "Zum Lösen die Förmchen kurz in warmes Wasser tauchen."
+   ],
+   "tips": "Das Original (Silly Twits ice cream) ist unbekannt, die Seite ist gesperrt: Dies ist ein einfaches buntes Eis am Stiel nach dem Titel, ohne Zucker außer dem Honig. Für kleine Kinder passt Honig nicht (unter 1 Jahr nicht geben): dann durch Ahornsirup ersetzen. Enthält Milch.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Essen 2 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "Fertige Eis am Stiel einzeln in 250-ml-Blöcken einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/silly-twits-ice-cream (bbcgoodfood.com, Silly Twits ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Veganes Schokoladeneis mit Tofu und Banane",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 3,
+   "prep": 15,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Gefrierer",
+    "vegan"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "sojadrink",
+     250
+    ],
+    [
+     "tofu",
+     150
+    ],
+    [
+     "kakao",
+     25
+    ],
+    [
+     "banane",
+     120
+    ],
+    [
+     "ahornsirup",
+     40
+    ],
+    [
+     "erdnussmus",
+     15
+    ]
+   ],
+   "spices": [
+    "vanille",
+    "salz"
+   ],
+   "steps": [
+    "Die Banane in Scheiben schneiden. Alle Zutaten in einen Standmixer geben und 1 bis 2 Minuten sehr fein pürieren, bis keine Tofustückchen mehr zu spüren sind.",
+    "Abschmecken, bei Bedarf mit etwas Ahornsirup nachsüßen.",
+    "In eine flache Schale füllen und 4 bis 5 Stunden einfrieren; in den ersten 2 Stunden alle 30 Minuten kräftig durchrühren.",
+    "Vor dem Servieren 10 Minuten antauen lassen und in Kugeln stechen."
+   ],
+   "tips": "Das Original ist unbekannt (Seite gesperrt): Dies ist ein veganes Schokoladeneis nach dem Titel; der Tofu liefert Eiweiß und Cremigkeit (nach dem Mixen kaum zu schmecken). Enthält Soja und Erdnüsse (Erdnussmus). Kakao enthält Histamin.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/vegan-chocolate-ice-cream (bbcgoodfood.com, Vegan chocolate ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  })
+);
 [SEED, SEED2].forEach(a => { for (let i = a.length - 1; i >= 0; i--) { if (RETIRED[a[i].id]) a.splice(i, 1); } });
 
 /* ===== Bibliothek ab r77 (Entscheidung des Auftraggebers, 28.10.2026, aktualisiert) =====
@@ -23760,7 +24362,7 @@ function diaryCsv(diary) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    ZUTATEN, ZMAP, RETIRED, SMAP, SPICES, SEED, ALLERGENE, UNVERTR, KATS, GERAETE, MEALS, MAIN_MEALS, GRUPPEN, ZIEL_VERTEILUNG, KAMMERN, BLOCK_ML, EQUIP_STD, equipClean, kap, kapN, equipTotals, TAGE, SLOTS, FIXE_AUSSCHLUESSE, FIXE_BEDINGT, EXCL_HAUPT_KEYS, isHauptRezept,
+    ZUTATEN, ZMAP, RETIRED, SMAP, SPICES, SEED, ALLERGENE, UNVERTR, KATS, GERAETE, MEALS, MAIN_MEALS, GRUPPEN, ZIEL_VERTEILUNG, KAMMERN, BLOCK_ML, EQUIP_STD, equipClean, kap, kapAlle, kapN, equipTotals, TAGE, SLOTS, FIXE_AUSSCHLUESSE, FIXE_BEDINGT, EXCL_HAUPT_KEYS, isHauptRezept,
     calcRecipe, derive, conflicts, validateRecipe, runQA, distribution, dayTotals, shoppingList, fmtAmount, expiry, invStats, exclusionHits, recipeExclusionHits, energyCheck, slotFits, normalizeAIRecipe, ingredientEnergyIssues,
     isoLocal, addDaysIso, diffDays, fmtDate, newLot, lotState, stockTotals, deductFifo, recipeNeed, coverage, spiceCheck, whatCanICook, expiringSoon, lowStock,
     weekNeed, shopPlan, fmtGrams, emptyDay, dayOf, nutriOfIng, entryRecipe, entryIng, entryQuick, diaryTotals, macroGoals, weekStats, streak, weightSeries, recentFoods,
@@ -26642,7 +27244,7 @@ const QUELLEN_REFERENZEN = {
     {"url": "https://www.bbcgoodfood.com/recipes/chicken-caesar-salad", "site": "bbcgoodfood.com", "title": "Chicken Caesar salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
   ],
   "r323": [
-    {"url": "https://www.bbcgoodfood.com/recipes/greek-salad", "site": "bbcgoodfood.com", "title": "Greek salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+    {"url": "https://www.bbcgoodfood.com/recipes/greek-salad", "site": "bbcgoodfood.com", "title": "Greek salad", "kind": "B", "note": "Übermittelter Link. Für Claude gesperrt, von Claude nicht gelesen; der Abgleich vom 29.10.2026 stammt aus einer externen Zuarbeit (ChatGPT) und ist von Claude nicht nachprüfbar. Die App-Fassung ist eine eigene Anpassung."}
   ],
   "r324": [
     {"url": "https://www.bbcgoodfood.com/recipes/chicken-satay-salad", "site": "bbcgoodfood.com", "title": "Chicken satay salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
@@ -26676,6 +27278,36 @@ const QUELLEN_REFERENZEN = {
   ],
   "r334": [
     {"url": "https://www.bbcgoodfood.com/recipes/homemade-chicken-nachos", "site": "bbcgoodfood.com", "title": "Homemade chicken nachos", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r335": [
+    {"url": "https://www.lecker.de/peanut-butter-jelly-eis-79968.html", "site": "lecker.de", "title": "Peanut Butter & Jelly Eis", "kind": "G", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r336": [
+    {"url": "https://www.bbcgoodfoodme.com/recipes/raspberry-dark-chocolate-cheats-ice-cream-terrine/", "site": "bbcgoodfoodme.com", "title": "Raspberry & dark chocolate cheats ice cream terrine", "kind": "B", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r337": [
+    {"url": "https://www.chefkoch.de/rezepte/1484001253619546/Bananen-Eis.html", "site": "chefkoch.de", "title": "Bananen-Eis", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r338": [
+    {"url": "https://www.chefkoch.de/rezepte/1152361221481605/Spaghetti-Eis-Dessert.html", "site": "chefkoch.de", "title": "Spaghetti-Eis-Dessert", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r339": [
+    {"url": "https://www.bbcgoodfood.com/recipes/ultimate-vanilla-ice-cream", "site": "bbcgoodfood.com", "title": "Ultimate vanilla ice cream", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r340": [
+    {"url": "https://www.bbcgoodfood.com/recipes/no-churn-ice-cream", "site": "bbcgoodfood.com", "title": "No-churn ice cream", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r341": [
+    {"url": "https://www.bbcgoodfood.com/recipes/chocolate-ice-cream", "site": "bbcgoodfood.com", "title": "Chocolate ice cream", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r342": [
+    {"url": "https://www.bbcgoodfood.com/recipes/raspberry-ripple-ice-cream", "site": "bbcgoodfood.com", "title": "Raspberry ripple ice cream", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r343": [
+    {"url": "https://www.bbcgoodfood.com/recipes/silly-twits-ice-cream", "site": "bbcgoodfood.com", "title": "Silly Twits ice cream", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r344": [
+    {"url": "https://www.bbcgoodfood.com/recipes/vegan-chocolate-ice-cream", "site": "bbcgoodfood.com", "title": "Vegan chocolate ice cream", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
   ]
 };
 
@@ -26688,9 +27320,191 @@ function quellenBlock(id) {
     return '<li>' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(title) + ' ↗</a>' : '<span>' + esc(ref.site || '') + ': ' + esc(title) + ' — kein Link</span>') +
       '<div class="note">' + esc(ref.note || '') + '</div></li>';
   }).join('');
-  return '<details class="panel"><summary>Externe Rezeptreferenzen (' + refs.length + ')</summary>' +
+  const q = typeof QUELLEN_REZEPTABGLEICH !== 'undefined' && QUELLEN_REZEPTABGLEICH[id];
+  const info = q ? '<p class="note" style="margin:8px 0"><strong>Quelle am 29.10.2026 gelesen und Rezeptfassung daran abgeglichen.</strong> ' + esc(q.basis) + ' Die Mengen und Schritte in der App sind eine eigenständige Anpassung, nicht das Original.</p>' : '<p class="note" style="margin:8px 0">Originalzutaten und -schritte dieser Referenz wurden für die App-Fassung noch nicht vollständig abgeglichen.</p>';
+  return '<details class="panel"><summary>Externe Rezeptreferenzen (' + refs.length + ')</summary>' + info +
     '<p class="note" style="margin:8px 0">Die oben angezeigte Fassung ist eine eigenständige App-Zubereitung. Die folgenden externen Rezepte können andere Mengen, Zutaten, Zubereitungsarten und Allergene verwenden. Sie sind keine Belege für die Nährwerte der App.</p>' +
     '<ul class="stack-s" style="padding-left:20px">' + rows + '</ul></details>';
+}
+
+/* Quellenabgleich 29.10.2026: nur selbst eingesehene Rezeptseiten.
+   Bewusst KEINE wortgetreue Übernahme. Bestehende IDs unverändert;
+   Varianten mit Beilagen/Protein-Ergänzungen sind als Anpassungen ausgewiesen.
+   Originale allrecipes.com werden gemäß Projektprompt nicht als Arbeitsquellen genutzt.
+   Diese Einträge werden weder als praktisch getestet noch als 1:1-Originale bezeichnet. */
+const QUELLEN_REZEPTABGLEICH = {
+ r167: {url:'https://www.bbcgoodfood.com/recipes/air-fryer-chicken-breasts', basis:'180 °C, rund 18–20 Minuten; Kartoffeln und Brokkoli sind App-Beilagen.'},
+ r168: {url:'https://www.bbcgoodfood.com/recipes/air-fryer-roast-chicken', basis:'Die Originalseite verwendet ein ganzes Hähnchen; die App nimmt ausdrücklich entbeinte Teilstücke mit eigener Garzeit.'},
+ r169: {url:'https://www.bbcgoodfood.com/recipes/air-fryer-chicken-thighs', basis:'Das Original verwendet Schenkel mit Knochen und Haut (180 °C, 20–25 Minuten); App-Version mit entbeinten Schenkeln, Salat und Reis.'},
+ r170: {url:'https://www.bbcgoodfood.com/recipes/air-fryer-salmon', basis:'Kräuter-Lachs bei 180 °C für 8–10 Minuten; Beilagen aus App-Konzept.'},
+ r172: {url:'https://www.bbcgoodfood.com/recipes/air-fryer-chicken-nuggets', basis:'Dreistufige Panade und 200 °C für rund 10–12 Minuten; gemüsereiche App-Mahlzeit ergänzt.'},
+ r211: {url:'https://www.chefkoch.de/rezepte/1594721266741395/Gong-Bao-Chicken.html', basis:'Quelle verwendet Hähnchen, Erdnüsse, Zwiebeln, Chili, Essig, Wein und süße Sojasauce; App-Version ist eine 4-Portionen-Anpassung.'},
+ r219: {url:'https://www.chefkoch.de/rezepte/1891401307954679/Gruenkohlchips.html', basis:'Grünkohl, Öl, optional Essig, 180 °C, ungefähr 10–15 Minuten im Backofen.'},
+ r220: {url:'https://www.chefkoch.de/rezepte/3393031505036823/Gesundes-Bananenbrot.html', basis:'Hafermehl, gemahlene Mandeln, Mehl, Quark, Eier und Bananen; 180 °C Umluft ungefähr 40–50 Minuten.'},
+ r221: {url:'https://www.chefkoch.de/rezepte/2733891425739452/Bananenbrot-ohne-extra-Fett-und-Zucker.html', basis:'Geriebener Apfel, reife Bananen, Eier, Mehl und Walnüsse; 180 °C Ober-/Unterhitze, rund 45 Minuten. Skyr als App-Beilage.'},
+ r222: {url:'https://www.chefkoch.de/rezepte/1772141287238724/Bacon-Tomaten-Frischkaesehaeppchen.html', basis:'Das Original verwendet Bacon-Scheiben, getrocknete Tomaten und Backofen (220 °C, 15–20 Minuten). App nutzt Speckwürfel aus Zutatenstamm als vereinfachte Variante.'},
+ r223: {url:'https://www.bbcgoodfood.com/recipes/nutty-chicken-sate-strips', basis:'Erdnussmus-Marinade mit Curry, Knoblauch, Sojasauce und Limette; Ofen 200 °C Ober-/Unterhitze für 8–10 Minuten. Reis ist App-Beilage.'},
+ r323: {url:'https://www.bbcgoodfood.com/recipes/greek-salad', basis:'Original aus Tomate, Gurke, Zwiebel, Kalamata-Oliven, Feta und Olivenöl. App ergänzt Kichererbsen und Eier für mehr Protein.'}
+};
+const REZEPT_PATCHES = {
+ r167: {
+   prep:15,cook:30,devices:['Airfryer','Herd'],
+   ing:[['haehnchenbrust',700],['rapsoel',18],['kartoffeln',700],['brokkoli',400]],
+   spices:['salz','pfeffer','paprika_suess','knoblauchpulver','thymian'],
+   steps:[
+     'Die Hähnchenbrust trocken tupfen, dünn mit Öl bestreichen und mit Paprika, getrocknetem Knoblauch, Kräutern, Salz und Pfeffer bestreuen.',
+     'Kartoffeln in Spalten schneiden und im Airfryer bei 200 °C etwa 20–25 Minuten garen; zwischendurch den Korb schütteln. Anschließend warm halten.',
+     'Die Hähnchenbrüste nebeneinander bei 180 °C etwa 18–20 Minuten airfryen und nach 10 Minuten wenden. Am dicksten Punkt mindestens 70 °C für zwei Minuten erreichen lassen.',
+     'Brokkoli in wenig Wasser 5–7 Minuten dünsten, mit dem Hähnchen und den Kartoffeln servieren.'
+   ],
+   tips:'Die Quelle beschreibt gewürzte Hähnchenbrust ohne Beilagen. Kartoffeln und Brokkoli machen daraus eine vollständige App-Mahlzeit.'
+ },
+ r168: {
+   steps:[
+     'Hähnchenkeule und Hähnchenbrust trocken tupfen und mit der Hälfte des Öls, Paprika, Knoblauch, Salz und Kräutern einreiben.',
+     'Kartoffeln und Karotten in mundgerechte Stücke schneiden, mit restlichem Öl mischen und im Airfryer bei 190 °C ungefähr 20–25 Minuten rösten; einmal durchschütteln.',
+     'Die Geflügelstücke bei 180 °C, möglichst mit Abstand, je nach Dicke ungefähr 18–25 Minuten garen und nach der Hälfte wenden. Im Kern mindestens 70 °C für zwei Minuten prüfen.',
+     'Die Stücke kurz ruhen lassen und zusammen mit dem gerösteten Gemüse aufteilen.'
+   ],
+   tips:'Wichtige Abweichung: Das BBC-Original gart ein ganzes Hähnchen erst bei 180 °C und bräunt anschließend bei 200 °C. Für die hier verwendeten Teilstücke gelten andere Garzeiten.'
+ },
+ r169: {
+   steps:[
+     'Die entbeinten Hähnchenschenkel mit etwas Olivenöl, Paprika, Knoblauch, Salz und Pfeffer einreiben. Die BBC-Vorlage verwendet dagegen Hähnchenschenkel mit Knochen und Haut.',
+     'Reis in einem Topf nach Packungsangabe garen. In der Zwischenzeit Tomate, Gurke und Zwiebel schneiden; aus Joghurt und Zitronensaft ein Dressing rühren.',
+     'Die Hähnchenstücke im Airfryer bei 180 °C ungefähr 18–22 Minuten garen und zwischendurch wenden. Der Kern muss mindestens 70 °C für zwei Minuten erreichen.',
+     'Hähnchen, Reis und Salat zusammen anrichten und das Joghurtdressing darübergeben.'
+   ],
+   tips:'Angepasste Version: Knochenlose Stücke können früher gar sein als die 20–25 Minuten des BBC-Originals mit Knochen.'
+ },
+ r170: {
+   name:'Kräuter-Lachs aus dem Airfryer mit Kartoffeln und Bohnen',
+   prep:10,cook:25,devices:['Airfryer','Herd'],
+   ing:[['lachs',600],['olivenoel',15],['zitronensaft',20],['kartoffeln',600],['gruene_bohnen',400]],
+   spices:['salz','pfeffer','thymian','knoblauchpulver'],
+   steps:[
+     'Kartoffeln in Salzwasser 20 Minuten kochen. Grüne Bohnen in einem zweiten Topf garen, bis sie weich sind.',
+     'Lachsfilets mit einem Teil des Öls einstreichen und mit Kräutern, Knoblauch, Salz und Pfeffer würzen.',
+     'Die Filets bei 180 °C im Airfryer nebeneinander etwa 8–10 Minuten garen. Bei dickeren Stücken schrittweise verlängern, bis der Fisch sicher durchgegart ist.',
+     'Mit Kartoffeln und Bohnen anrichten und mit etwas Zitronensaft abschmecken.'
+   ],
+   tips:'Die vorherige Senf-Honig-Kruste gehörte nicht zum verlinkten BBC-Original; diese Fassung verwendet jetzt dessen Kräuterprinzip plus App-Beilagen.'
+ },
+ r172: {
+   prep:25,cook:20,devices:['Airfryer','Herd'],
+   ing:[['haehnchenbrust',600],['semmelbroesel',120],['eier',110],['mehl',50],['joghurt15',180],['senf',15],['karotte',250],['gurke',250],['kartoffeln',400]],
+   spices:['salz','pfeffer','rauchpaprika','knoblauchpulver'],
+   steps:[
+     'Hähnchen in etwa gleich große Würfel schneiden. Mehl mit Paprika, Knoblauch, Salz und Pfeffer vermischen; Eier aufschlagen und die Brösel auf einen dritten Teller geben.',
+     'Die Fleischstücke nacheinander in gewürztem Mehl, Ei und Bröseln wenden und einzeln ablegen.',
+     'Kartoffeln als Spalten im Airfryer bei 200 °C etwa 18–20 Minuten garen und warm halten.',
+     'Nuggets bei 200 °C etwa 10–12 Minuten in einer Lage goldbraun backen, gegebenenfalls chargenweise. Mindestens 70 °C Kerntemperatur für zwei Minuten sicherstellen.',
+     'Joghurt und Senf zu einem Dip mischen, Gurken und Karotten in Stifte schneiden und mit Nuggets und Kartoffeln servieren.'
+   ],
+   tips:'Die BBC-Rezeptur verwendet Panko; in der App kommen vorhandene Semmelbrösel zum Einsatz. Dip, Kartoffeln und Rohkost sind eigene Ergänzungen.'
+ },
+ r211: {
+   name:'Gong Bao Chicken aus Chongqing mit Erdnüssen und Zwiebeln',
+   prep:25,cook:15,devices:['Herd'],
+   ing:[['haehnchenkeule',600],['erdnuesse',70],['zwiebel',170],['fruehlingszwiebel',75],['knoblauch',16],['ingwer',8],['chili_frisch',20],['mehl',20],['sojasauce',45],['essig',20],['zucker',20],['weisswein',60],['rapsoel',25],['basmatireis',240]],
+   spices:['sichuanpfeffer','salz','pfeffer'],
+   steps:[
+     'Den Reis garen. Hähnchenfleisch klein schneiden und leicht mit Mehl bestäuben. Zwiebeln, Lauchzwiebeln, Knoblauch, Ingwer und Chili vorbereiten.',
+     'Einen Wok stark erhitzen, etwas Öl zugeben und das Hähnchen in Portionen rundum anbraten. Herausnehmen und die Erdnüsse kurz im Wok anrösten.',
+     'Zwiebeln, Knoblauch, Chili und Lauchzwiebeln im verbliebenen Öl unter Rühren braten. Zucker kurz schmelzen lassen, ohne ihn dunkel werden zu lassen.',
+     'Hähnchen und Erdnüsse wieder zugeben, mit Weißwein ablöschen und mit Essig, Sojasauce, Ingwer und wenig gemahlenem Szechuanpfeffer würzen. Unter Rühren so lange garen, bis das Geflügel mindestens 70 °C für zwei Minuten erreicht.',
+     'Die kräftige Wokmischung mit Reis servieren; bei Bedarf mit etwas Wasser weniger intensiv abschmecken.'
+   ],
+   tips:'Nach der Chefkoch-Seite aus Chongqing interpretiert. Im Original wird süße Sojasauce (Ketjap Manis) verwendet; die App verwendet normale Sojasauce und Zucker als Ersatz.'
+ },
+ r219: {
+   prep:10,cook:15,devices:['Backofen'],
+   ing:[['gruenkohl',250],['olivenoel',20],['essig',5]],
+   spices:['salz'],
+   steps:[
+     'Backofen auf 180 °C Ober-/Unterhitze vorheizen und ein Blech mit Backpapier belegen.',
+     'Grünkohl von den dicken Rippen befreien, in größere Stücke zupfen, waschen und anschließend gründlich trocknen.',
+     'Blätter mit Öl und optional etwas Essig benetzen und mit Abstand auf dem Blech verteilen.',
+     'Etwa 10–15 Minuten im Ofen knusprig werden lassen und nach rund 5 Minuten einmal wenden. Gegen Ende häufig prüfen, damit nichts braun wird.',
+     'Sofort mit wenig Salz bestreuen und frisch verzehren.'
+   ],
+   storage:'Am besten sofort essen; luftdicht und trocken höchstens bis zum nächsten Tag.',
+   freeze:{ok:'nein',block:0,months:0,note:'Beim Einfrieren geht die Knusprigkeit verloren.'}
+ },
+ r220: {
+   name:'Gesundes Bananenbrot mit Haferflocken, Mandeln und Quark',
+   prep:15,cook:50,devices:['Backofen'],
+   ing:[['haferflocken',80],['mandeln',50],['mehl',50],['magerquark',100],['eier',110],['banane',300],['backpulver',5],['skyr',400]],
+   spices:['vanille'],
+   steps:[
+     'Backofen auf 180 °C Umluft vorheizen. Haferflocken im Mixer zu grobem Mehl zerkleinern und mit gemahlenen Mandeln, Weizenmehl und Backpulver vermengen.',
+     'Bananen zerdrücken und mit Eiern sowie Quark verrühren. Die trockenen Zutaten einarbeiten, ohne lange zu schlagen.',
+     'Den Teig in eine kleine mit Backpapier ausgekleidete Kastenform füllen und auf Wunsch einige Bananenscheiben obenauflegen.',
+     'Etwa 40–50 Minuten backen und mit einem Holzstäbchen kontrollieren, ob noch flüssiger Teig haftet. Anschließend rund 30 Minuten abkühlen lassen.',
+     'In vier Mahlzeiten schneiden und jeweils mit einer Portion Skyr servieren.'
+   ],
+   tips:'Das Chefkoch-Rezept enthält Mandeln, Haferflocken, Mehl, Quark und Banane. Der Skyr ist eine zusätzliche Beilage zur Proteinergänzung.'
+ },
+ r221: {
+   prep:15,cook:45,devices:['Backofen'],
+   ing:[['banane',300],['apfel',100],['eier',110],['mehl',200],['walnuesse',50],['backpulver',7],['skyr',400]],
+   spices:['zimt'],
+   steps:[
+     'Den Ofen auf 180 °C Ober-/Unterhitze vorheizen. Apfel fein reiben und mit reifen, zerdrückten Bananen und den Eiern verrühren.',
+     'Mehl, Backpulver und Zimt mischen, nur kurz unter die Obstmasse heben und gehackte Walnüsse zugeben.',
+     'Die Masse in eine mit Backpapier vorbereitete Kastenform streichen und etwa 45 Minuten backen. Gegen Ende die Stäbchenprobe durchführen.',
+     'Vor dem Schneiden vollständig auskühlen lassen. Das Brot in vier große Frühstücksportionen aufteilen und jeweils mit Skyr ergänzen.'
+   ],
+   tips:'Kein zusätzlicher Zucker und kein zusätzliches Fett im Teig. Die Quelle rechnet mit zwölf dünnen Scheiben; die App bündelt diese mit Skyr zu vier Frühstücksportionen.'
+ },
+ r222: {
+   prep:20,cook:20,devices:['Backofen'],
+   ing:[['vollkornbrot',100],['frischkaese',100],['speckwuerfel',65],['tomaten_getrocknet',60],['knoblauch',5],['schnittlauch',7],['petersilie',7]],
+   spices:['salz','pfeffer'],
+   steps:[
+     'Den Backofen auf 220 °C Ober-/Unterhitze vorheizen. Getrocknete Tomaten klein schneiden und mit Frischkäse, Knoblauch, Kräutern und Pfeffer vermengen.',
+     'Aus den Brotscheiben acht kleine Quadrate schneiden und die Frischkäsecreme gleichmäßig darauf verstreichen.',
+     'Speckwürfel auf jedem Häppchen verteilen; die Chefkoch-Vorlage nutzt hierfür dünne Bacon-Scheiben statt Würfel.',
+     'Die Häppchen auf ein Blech setzen und ungefähr 15–20 Minuten backen, bis der Speck gut durchgegart und der Rand knusprig ist (mindestens 70 °C im Belag).',
+     'Heiß als Snack servieren.'
+   ],
+   storage:'Im Kühlschrank höchstens 2 Tage lagern; knuspriger sind sie frisch.',
+   freeze:{ok:'eingeschränkt',block:125,months:1,note:'Durchgebacken einfrieren, beim Erhitzen wird die Brotkrume weicher.'},
+   tips:'Die Originalvorlage verwendet Toast, Crème fraîche und Bacon-Scheiben. Diese App-Variante ist mit Zutaten aus dem vorhandenen Stamm angepasst.'
+ },
+ r223: {
+   prep:15,cook:22,devices:['Backofen','Herd'],
+   ing:[['haehnchenbrust',600],['erdnussmus',45],['knoblauch',8],['sojasauce',15],['limettensaft',15],['basmatireis',240],['gurke',240]],
+   spices:['curry','salz','pfeffer'],
+   steps:[
+     'Den Backofen auf 200 °C Ober-/Unterhitze vorheizen. Erdnussmus mit Knoblauch, Curry, Sojasauce und Limettensaft cremig rühren, bei Bedarf etwas Wasser zufügen.',
+     'Hähnchenbrust in breite Streifen schneiden und mit der Marinade sorgfältig umhüllen.',
+     'Die Streifen auf einem mit Backpapier ausgelegten Blech verteilen und etwa 8–10 Minuten garen. Mindestens 70 °C im Innern für zwei Minuten sicherstellen.',
+     'Inzwischen Reis in leicht gesalzenem Wasser kochen und Gurke in Stifte schneiden.',
+     'Alles gemeinsam servieren und die Restmarinade nicht roh über das fertige Fleisch geben.'
+   ],
+   storage:'Im Kühlschrank bis zu 2 Tage aufbewahren.',
+   tips:'Das BBC-Original ist ein schneller Ofen-Snack; mit Reis wird daraus eine sättigende Mahlzeit. Es verwendet Madras-Currypulver und dazu Gurke.'
+ },
+ r323: {
+   prep:20,cook:10,devices:['Herd'],
+   ing:[['feta',120],['kichererbsen',200],['eier',165],['gurke',220],['tomate',400],['zwiebel',70],['oliven',45],['olivenoel',20],['essig',10]],
+   spices:['oregano','salz','pfeffer'],
+   steps:[
+     'Eier in kochendem Wasser etwa 9–10 Minuten hart kochen, kalt abschrecken und halbieren.',
+     'Tomaten in grobe Stücke, Gurke in Scheiben und Zwiebel in feine Ringe schneiden. Kichererbsen abspülen und abtropfen lassen.',
+     'Das Gemüse mit Oliven und Kichererbsen vermengen; Olivenöl, etwas Essig, Oregano, Salz und Pfeffer untermischen.',
+     'Feta in Würfeln darübergeben und die Eier daraufsetzen. Möglichst direkt servieren.'
+   ],
+   tips:'Das BBC-Original ist ein einfacher griechischer Salat ohne Eier und Kichererbsen. Diese beiden Zutaten sind die bewusst ergänzte, proteinreichere App-Variante.'
+ }
+};
+for (const [id,patch] of Object.entries(REZEPT_PATCHES)) {
+ const r=SEED.find(x=>x.id===id);
+ if(!r) throw new Error('Rezept zum Quellenabgleich nicht vorhanden: '+id);
+ Object.assign(r,patch);
+ r.src='Quellenabgleich 29.10.2026: eigene, teilweise proteinangereicherte Fassung nach '+(QUELLEN_REZEPTABGLEICH[id].url.includes('chefkoch')?'Chefkoch':'BBC Good Food')+'; Originalrezept eingesehen, Abweichungen siehe Quellenhinweis';
+ r.quellenGeprueft='2026-10-29';
 }
 
 /* ===== App: Rezepte, Rezeptdetail, Rezept-Editor ===== */
@@ -27160,20 +27974,21 @@ function libPanel() {
 function equipTable(roundLabel) {
   const eq = equipNow(), t = equipTotals(eq);
   return '<table><thead><tr><th>Größe</th><th class="n">Formen</th><th class="n">Kammern</th><th class="n">' + esc(roundLabel) + '</th></tr></thead><tbody>' +
-    BLOCK_ML.slice().reverse().map(ml => '<tr><td>' + ml + ' ml</td><td class="n">' + eq.formen[ml] + '</td><td class="n">' + eq.kammern[ml] + '</td><td class="n">' + kap(ml, eq) + ' Blöcke</td></tr>').join('') +
-    '</tbody></table><p class="note mono">' + t.forms + ' Formen · ' + t.chambers + ' Kammern · ' + fmt(t.liters) + ' Liter gleichzeitig</p>';
+    BLOCK_ML.slice().reverse().map(ml => '<tr><td>' + ml + ' ml</td><td class="n">' + eq.formen[ml] + '</td><td class="n">' + eq.kammern[ml] + '</td><td class="n">' + kap(ml, eq) + ' Blöcke' + ((eq.aus && eq.aus[ml]) ? ' <small>(' + eq.aus[ml] + ' deaktiviert)</small>' : '') + '</td></tr>').join('') +
+    '</tbody></table><p class="note mono">' + t.forms + ' Formen · ' + t.chambers + ' Kammern · ' + fmt(t.liters) + ' Liter gleichzeitig' + (t.off ? ' · ' + t.off + ' Cubes vorübergehend nicht verfügbar' : '') + '</p>';
 }
 function equipPanel() {
   const eq = equipNow(), t = equipTotals(eq), std = JSON.stringify(equipClean(eq)) === JSON.stringify(equipClean(null));
   const num = (k, ml, v, lo, hi, lbl) => '<input type="number" inputmode="numeric" min="' + lo + '" max="' + hi + '" step="1" aria-label="' + esc(lbl) + '" data-chg="equip" data-k="' + k + '" data-ml="' + ml + '" value="' + v + '" style="width:72px">';
-  const rows = BLOCK_ML.slice().reverse().map(ml => '<tr><td>' + ml + ' ml</td><td class="n">' + num('formen', ml, eq.formen[ml], 0, 24, 'Anzahl Formen ' + ml + ' ml') + '</td><td class="n">' + num('kammern', ml, eq.kammern[ml], 1, 30, 'Kammern je Form ' + ml + ' ml') + '</td><td class="n mono">' + kap(ml, eq) + '</td></tr>').join('');
+  const rows = BLOCK_ML.slice().reverse().map(ml => '<tr><td>' + ml + ' ml</td><td class="n">' + num('formen', ml, eq.formen[ml], 0, 24, 'Anzahl Formen ' + ml + ' ml') + '</td><td class="n">' + num('kammern', ml, eq.kammern[ml], 1, 30, 'Kammern je Form ' + ml + ' ml') + '</td><td class="n">' + num('aus', ml, (eq.aus && eq.aus[ml]) || 0, 0, kapAlle(ml, eq), 'Cubes ' + ml + ' ml vorübergehend nicht verfügbar') + '</td><td class="n mono">' + kap(ml, eq) + '</td></tr>').join('');
   const none = BLOCK_ML.filter(ml => ml !== 120 && kap(ml, eq) === 0); // 120 ml ist optional (Standard 0 Formen), daher keine Warnung
   return '<div class="stack-s"><p class="note">Trage ein, welche Silikonformen du wirklich hast. Die App rechnet damit die Durchgänge beim Einlagern, im Prep-Plan und beim Zielbestand. Standard ist das Set aus dem Projekt: 12 Formen mit 54 Kammern.</p>' +
-    '<table class="eqt"><thead><tr><th>Größe</th><th class="n">Formen</th><th class="n">Kammern je Form</th><th class="n">Blöcke je Durchgang</th></tr></thead><tbody>' + rows + '</tbody></table>' +
-    '<p class="note mono">' + t.forms + ' Formen · ' + t.chambers + ' Kammern · ' + fmt(t.liters) + ' Liter gleichzeitig</p>' +
-    (none.length ? '<p class="note" style="color:var(--warn)">Keine Form für ' + none.join(', ') + ' ml: Die Rechnung nimmt dort einen Block pro Durchgang an, die Zahl der Durchgänge ist dann sehr hoch. Trage die Formen ein oder plane diese Größe nicht.</p>' : '') +
-    '<p class="note">Die fünf Blockgrößen (50, 120, 125, 250, 500 ml) sind fest, weil die Rezepte und Bausteine in diesen Größen eingeteilt sind. Die Größe 120 ml ist zusätzlich möglich (Standardbestand 0 Formen); Rezepte und Bausteine planen weiterhin mit 125 ml, 120 ml lässt sich für eigene Gefrierer-Einträge und als Block im Rezept wählen. Zulässig sind 0 bis 24 Formen und 1 bis 30 Kammern je Form.</p>' +
-    '<div class="row"><button type="button" class="btn" data-act="equipreset" ' + (std ? 'disabled' : '') + '>Auf Standard zurücksetzen</button></div></div>';
+    '<table class="eqt"><thead><tr><th>Größe</th><th class="n">Formen</th><th class="n">Kammern je Form</th><th class="n">Davon nicht verfügbar</th><th class="n">Blöcke je Durchgang</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<p class="note mono">' + t.forms + ' Formen · ' + t.chambers + ' Kammern · ' + fmt(t.liters) + ' Liter gleichzeitig' + (t.off ? ' · ' + t.off + ' Cubes vorübergehend nicht verfügbar' : '') + '</p>' +
+    '<p class="note">Sind einzelne Cubes gerade nicht da (in Benutzung, verliehen, defekt, in der Spülmaschine), trage sie unter „Davon nicht verfügbar“ ein. Dein eigentlicher Bestand bleibt unverändert; die Rechnung nimmt nur die verfügbaren Cubes. Wenn sie wieder da sind, auf 0 setzen oder „Alle wieder verfügbar“ tippen.</p>' +
+    (none.length ? '<p class="note" style="color:var(--warn)">Keine verfügbare Form für ' + none.join(', ') + ' ml (nicht vorhanden oder alle Cubes deaktiviert): Die Rechnung nimmt dort einen Block pro Durchgang an, die Zahl der Durchgänge ist dann sehr hoch. Trage die Formen ein oder plane diese Größe nicht.</p>' : '') +
+    '<p class="note">Die fünf Blockgrößen (50, 120, 125, 250, 500 ml) sind fest, weil die Rezepte und Bausteine in diesen Größen eingeteilt sind. Die Größe 120 ml ist zusätzlich möglich (Standardbestand 0 Formen); Rezepte und Bausteine planen weiterhin mit 125 ml, 120 ml lässt sich für eigene Gefrierer-Einträge und als Block im Rezept wählen. Zulässig sind 0 bis 24 Formen und 1 bis 30 Kammern je Form; „nicht verfügbar“ höchstens so viele, wie vorhanden sind.</p>' +
+    '<div class="row"><button type="button" class="btn" data-act="equipall" ' + (t.off ? '' : 'disabled') + '>Alle wieder verfügbar</button><button type="button" class="btn" data-act="equipreset" ' + (std ? 'disabled' : '') + '>Auf Standard zurücksetzen</button></div></div>';
 }
 function viewMehr() {
   const g = state.profile.goals;
@@ -27354,6 +28169,7 @@ const ACT = {
   lookdens(el) { lookSet('density', el.dataset.v); ui.open.look = true; render(); },
   looklayout(el) { lookSet('layout', el.dataset.v); ui.open.look = true; render(); },
   lookreset() { lookReset(); ui.open.look = true; render(); toast('Darstellung zurückgesetzt'); },
+  equipall() { state.equip = equipClean(state.equip); BLOCK_ML.forEach(ml => { state.equip.aus[ml] = 0; }); save(); render(); toast('Alle Cubes wieder verfügbar'); },
   equipreset() { state.equip = equipClean(null); save(); render(); toast('Standard-Ausrüstung wiederhergestellt'); },
   fastgoal(el) { state.fast.goalH = Number(el.dataset.v); save(); render(); },
   faststart() { state.fast.start = new Date().toISOString(); save(); render(); },
@@ -27678,8 +28494,8 @@ const CHG = {
     if (n >= lim[0] && n <= lim[1]) { state.profile.goals[k] = Math.round(n); save(); render(); } else { toast('Bitte einen Wert zwischen ' + lim[0] + ' und ' + lim[1] + ' angeben'); render(); }
   },
   equip(el) {
-    const ml = Number(el.dataset.ml), k = el.dataset.k, n = cleanNum(el.value, NaN), lim = k === 'formen' ? [0, 24] : [1, 30];
-    if (BLOCK_ML.includes(ml) && (k === 'formen' || k === 'kammern') && n >= lim[0] && n <= lim[1]) { state.equip[k][ml] = Math.round(n); save(); render(); }
+    const ml = Number(el.dataset.ml), k = el.dataset.k, n = cleanNum(el.value, NaN), lim = k === 'formen' ? [0, 24] : k === 'aus' ? [0, kapAlle(ml)] : [1, 30];
+    if (BLOCK_ML.includes(ml) && (k === 'formen' || k === 'kammern' || k === 'aus') && n >= lim[0] && n <= lim[1]) { state.equip = equipClean(state.equip); state.equip[k][ml] = Math.round(n); state.equip = equipClean(state.equip); save(); render(); }
     else { toast('Bitte einen Wert zwischen ' + lim[0] + ' und ' + lim[1] + ' angeben'); render(); }
   },
   body(el) { const k = el.dataset.k; state.profile.body[k] = (k === 'pal' || k === 'rate') ? Number(el.value) : el.value; save(); },
