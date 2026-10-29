@@ -323,15 +323,15 @@ const MEALS = ['Hauptgericht', 'Suppe/Eintopf', 'Salat/Bowl', 'Frühstück', 'Sn
 const MAIN_MEALS = ['Hauptgericht', 'Suppe/Eintopf', 'Salat/Bowl'];
 const GRUPPEN = ['Geflügel', 'Rind', 'Schwein', 'Fisch', 'Vegetarisch'];
 const ZIEL_VERTEILUNG = { 'Geflügel': 36, 'Rind': 30, 'Schwein': 18, 'Fisch': 18, 'Vegetarisch': 18 }; // je 120 Hauptmahlzeiten
-const KAMMERN = { 50: 18, 125: 12, 250: 16, 500: 8 }; // Kammern je Größe (4x4, 4x2, 2x6, 2x9 Formen)
+const KAMMERN = { 50: 18, 120: 6, 125: 12, 250: 16, 500: 8 }; // gültige Blockgrößen; Werte = Kammern bei Standardbestand (120 ml: eine Form à 6 Kammern als Richtwert; 120 ml ist eine zusätzliche Größe des Auftraggebers vom 28.10.2026, Standardbestand 0 Formen)
 const FORMEN_TEXT = [
   { ml: 500, formen: 4, kammern: 2 }, { ml: 250, formen: 4, kammern: 4 },
   { ml: 125, formen: 2, kammern: 6 }, { ml: 50, formen: 2, kammern: 9 }
 ];
 /* Ausrüstung: Souper-Cubes-Formen. KAMMERN bleibt die Liste der gültigen Blockgrößen (Standardwerte);
    die tatsächliche Kapazität kommt aus state.equip (Formen je Größe mal Kammern je Form). */
-const BLOCK_ML = [50, 125, 250, 500];
-const EQUIP_STD = { formen: { 50: 2, 125: 2, 250: 4, 500: 4 }, kammern: { 50: 9, 125: 6, 250: 4, 500: 2 } };
+const BLOCK_ML = [50, 120, 125, 250, 500];
+const EQUIP_STD = { formen: { 50: 2, 120: 0, 125: 2, 250: 4, 500: 4 }, kammern: { 50: 9, 120: 6, 125: 6, 250: 4, 500: 2 } };
 function equipClean(e) {
   const out = { formen: {}, kammern: {} }, src = e && typeof e === 'object' ? e : {};
   const num = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, Math.round(v))) : d; };
@@ -352,8 +352,12 @@ function equipTotals(eq) {
 const TAGE = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 const TAGE_LANG = { Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag', Sa: 'Samstag', So: 'Sonntag' };
 const SLOTS = [['f', 'Frühstück'], ['m', 'Mittag'], ['a', 'Abend'], ['s', 'Snack'], ['d', 'Dessert']]; // 'd' ist im Plan nur sichtbar, wenn der Dessert-Platz eingeschaltet ist
-const FIXE_AUSSCHLUESSE = ['Ananas', 'Süßkartoffel', 'Batate'];
-const EXCL_KEYS = ['ananas', 'pineapple', 'suesskartoffel', 'sueskartoffel', 'batate', 'sweetpotato'];
+const FIXE_AUSSCHLUESSE = [];
+const EXCL_KEYS = [];
+// Ananas und Süßkartoffel (Batate) sind erlaubt, aber nicht als Hauptgericht: blockiert in Hauptgericht, Suppe/Eintopf, Salat/Bowl und in Meal-Prep-Bausteinen (Stand 28.10.2026; Süßkartoffel zuvor ganz ausgeschlossen)
+const FIXE_BEDINGT = ['Ananas', 'Süßkartoffel', 'Batate'];
+const EXCL_HAUPT_KEYS = ['ananas', 'pineapple', 'suesskartoffel', 'sueskartoffel', 'batate', 'sweetpotato'];
+const AUSSCHLUSS_HINWEIS_ANANAS = 'Ananas, Süßkartoffel und Batate sind nur in Frühstück, Snack und Dessert erlaubt';
 const EXCL_COMPOUND = ['suesskartoffel', 'sueskartoffel', 'sweetpotato'];
 
 function I(id, name, cat, kcal, p, c, f, x) {
@@ -618,10 +622,10 @@ function norm(s) {
 }
 function round1(x) { return Math.round(x * 10) / 10; }
 
-function exclusionHits(text, extra) {
+function exclusionHits(text, extra, haupt) {
   const n = norm(text);
   const sqLines = n.split('\n').map(l => l.replace(/[\s\-_.]/g, ''));
-  const keys = EXCL_KEYS.concat((extra || []).map(k => norm(k).trim()).filter(Boolean));
+  const keys = EXCL_KEYS.concat(haupt ? EXCL_HAUPT_KEYS : []).concat((extra || []).map(k => norm(k).trim()).filter(Boolean));
   const hits = [];
   keys.forEach(k => {
     const kk = k.replace(/[\s\-_.]/g, '');
@@ -642,7 +646,8 @@ function recipeTexts(r) {
   if (r.dutch) Object.values(r.dutch).forEach(v => parts.push(v));
   return parts.join(' \n ');
 }
-function recipeExclusionHits(r, extra) { return exclusionHits(recipeTexts(r), extra); }
+function isHauptRezept(r) { return !!r && (!!r.mod || MAIN_MEALS.includes(r.meal)); } // Bausteine (mod) sind Bestandteile von Hauptmahlzeiten
+function recipeExclusionHits(r, extra) { return exclusionHits(recipeTexts(r), extra, isHauptRezept(r)); }
 
 function calcRecipe(r) {
   const tot = { kcal: 0, p: 0, c: 0, f: 0, g: 0 };
@@ -716,7 +721,7 @@ function validateRecipe(r, library, profile, targets) {
   const badAmt = (r.ing || []).filter(([id, g]) => !(g > 0 && g <= 3000));
   add('Mengen positiv & plausibel', badAmt.length === 0, badAmt.length ? 'Auffällige Menge bei: ' + badAmt.map(x => x[0]).join(', ') : '');
   const ex = recipeExclusionHits(r, profile && profile.excl);
-  add('Persönliche Ausschlüsse', ex.length === 0, ex.length ? 'Treffer: ' + ex.join(', ') : 'Keine Treffer (Ananas, Süßkartoffel, Batate + Varianten)');
+  add('Persönliche Ausschlüsse', ex.length === 0, ex.length ? 'Treffer: ' + ex.join(', ') + (ex.some(k => EXCL_HAUPT_KEYS.includes(k)) ? ' (' + AUSSCHLUSS_HINWEIS_ANANAS + ')' : '') : 'Keine Treffer (Ananas, Süßkartoffel, Batate + Varianten nur außerhalb von Hauptgerichten erlaubt)');
   const en = energyCheck(r);
   add('Energie-Plausibilität', en.ok, en.kcal + ' kcal vs. ' + en.calc + ' kcal aus Makros');
   const gw = cr.pp.g;
@@ -741,7 +746,7 @@ function validateRecipe(r, library, profile, targets) {
     if (targets.minP) add('Ziel: min. Protein/Portion', cr.pp.p >= targets.minP, cr.pp.p + ' g (Ziel ≥ ' + targets.minP + ')', cr.pp.p >= targets.minP ? 'ok' : 'warn');
   }
   const fz = r.freeze || {};
-  const fzOk = !fz.ok || fz.ok === 'nein' || (KAMMERN[fz.block] && fz.months > 0);
+  const fzOk = !fz.ok || fz.ok === 'nein' || (KAMMERN[fz.block] !== undefined && fz.months > 0);
   add('Gefrierangaben', fzOk, fz.ok === 'nein' || !fz.ok ? 'Nicht zum Einfrieren vorgesehen' : (fz.block + ' ml, ' + fz.months + ' Monate'));
   if (profile) {
     const cf = conflicts(r, profile);
@@ -863,7 +868,7 @@ function normalizeAIRecipe(o) {
     ing: Array.isArray(o.ing) ? o.ing.map(x => [String(x[0]), num(x[1], 0)]) : [],
     steps: Array.isArray(o.steps) ? o.steps.map(s => String(s)).slice(0, 12) : [],
     tips: String(o.tips || ''), storage: String(o.storage || ''), reheat: String(o.reheat || ''),
-    freeze: { ok: ['ja', 'eingeschränkt', 'nein'].includes(fz.ok) ? fz.ok : 'nein', block: [50, 125, 250, 500].includes(Number(fz.block)) ? Number(fz.block) : 0, months: Math.round(num(fz.months, 0)), note: String(fz.note || '') },
+    freeze: { ok: ['ja', 'eingeschränkt', 'nein'].includes(fz.ok) ? fz.ok : 'nein', block: [50, 120, 125, 250, 500].includes(Number(fz.block)) ? Number(fz.block) : 0, months: Math.round(num(fz.months, 0)), note: String(fz.note || '') },
     ai: true, created: new Date().toISOString().slice(0, 10)
   };
   if (r.freeze.ok !== 'nein' && !r.freeze.block) { r.freeze.block = 500; }
@@ -1014,6 +1019,22 @@ const ZUTATEN_PLUS = [
   I('spekulatius', 'Spekulatius', 'Trockenprodukte', 486, 8.73, 53.9, 25.41, { al: ['gluten', 'milch'] }),
   I('zartbitter', 'Zartbitterschokolade', 'Trockenprodukte', 534, 6.62, 49.6, 32.26, { al: ['milch'], his: 2 }),
   I('vanilleeis', 'Vanilleeis', 'Milchprodukte', 194, 2.38, 22.64, 10.16, { al: ['milch'], lak: 1 }),
+  // Ergänzt 28.10.2026: Ananas ist erlaubt, aber nicht als Hauptgericht (BLS 4.0)
+  I('ananas', 'Ananas (roh)', 'Obst', 46, 0.5, 9.4, 0.1, { his: 1 }),
+  // Ergänzt 28.10.2026 für die Dessert-Rezepte der Charge 36 (BLS 4.0)
+  I('cornflakes', 'Cornflakes (gesüßt)', 'Trockenprodukte', 366, 6.24, 79.35, 1.75, { al: ['gluten'] }),
+  // Ergänzt 28.10.2026 für die chinesischen Desserts der Charge 37 (BLS 4.0)
+  I('reismehl', 'Reismehl / Klebreismehl (Nährwerte nach BLS Reismehl)', 'Trockenprodukte', 347, 7.198, 77.1, 0.65),
+  I('datteln', 'Datteln (getrocknet, entsteint)', 'Trockenprodukte', 356, 2.64, 79.3, 0.36, { fod: 1, fr: 1 }),
+  I('litschi', 'Litschi (roh, geschält)', 'Obst', 83, 0.86, 18.4, 0.3, { fod: 1, fr: 1 }),
+  I('eiklar', 'Eiklar (flüssig)', 'Eier', 42, 9.9, 0.41, 0.03, { al: ['ei'], stk: 33 }),
+  // Ergänzt 28.10.2026 für die Smoothies der Charge 38 (BLS 4.0)
+  I('passionsfrucht', 'Passionsfrucht (Fruchtfleisch)', 'Obst', 57, 0.71, 9.54, 0.2, { fod: 0, fr: 0 }),
+  I('kiwi', 'Kiwi (geschält)', 'Obst', 61, 0.9, 10.1, 0.5, { his: 1 }),
+  I('heidelbeeren', 'Heidelbeeren', 'Obst', 61, 0.5, 9.7, 0.6),
+  I('orangensaft', 'Orangensaft (Direktsaft)', 'Obst', 41, 0.75, 8.5, 0.1),
+  // Ergänzt 28.10.2026 für die Snack-Rezepte der Charge 40 (BLS 4.0)
+  I('suesskirschen', 'Süßkirschen (entsteint)', 'Obst', 70, 0.9, 15.33, 0.31, { fod: 1, fr: 1 }),
 ];
 ZUTATEN_PLUS.forEach(z => { ZUTATEN.push(z); ZMAP[z.id] = z; });
 
@@ -1239,6 +1260,17 @@ const BLS_REF = {
   "spekulatius": { m: "bls", c: "D730600", n: "Spekulatius (Mürbeteig)", e: 7.1 },
   "zartbitter": { m: "bls", c: "S560000", n: "Zartbitter-/Halbbitterschokolade", e: 18.5 },
   "vanilleeis": { m: "bls", c: "S241000", n: "Vanilleeis", e: 2.4 },
+  "ananas": { m: "bls", c: "F501100", n: "Ananas roh", e: 5.1 },
+  "cornflakes": { m: "bls", c: "C515000", n: "Cornflakes gesüßt", e: 8.4 },
+  "reismehl": { m: "bls", c: "C453000", n: "Reismehl", e: 4.0 },
+  "datteln": { m: "bls", c: "F504400", n: "Dattel getrocknet", e: 26.1 },
+  "litschi": { m: "bls", c: "F515100", n: "Litschi roh", e: 4.0 },
+  "eiklar": { m: "bls", c: "E113100", n: "Hühnerei Eiklar roh", e: 0.0 },
+  "passionsfrucht": { m: "bls", c: "F508100", n: "Maracuja/Passionsfrucht roh", e: 14.5 },
+  "kiwi": { m: "bls", c: "F514100", n: "Kiwi roh", e: 12.3 },
+  "heidelbeeren": { m: "bls", c: "F304100", n: "Heidelbeere roh", e: 14.6 },
+  "orangensaft": { m: "bls", c: "F603600", n: "Orangensaft", e: 3.7 },
+  "suesskirschen": { m: "bls", c: "F211100", n: "Süßkirsche roh", e: 5.5 },
 };
 ZUTATEN.forEach(z => { if (BLS_REF[z.id]) z.bls = BLS_REF[z.id]; });
 
@@ -19759,6 +19791,3546 @@ SEED2.push(
    "origin": "Kuba"
   })
 );
+
+/* ===== Rezeptcharge 35: Smoothies, lecker.de gelesen (2), BBC gesperrt (7), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Erdbeer-Bananen-Smoothie mit Milch und Magerquark",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "erdbeeren",
+     150
+    ],
+    [
+     "banane",
+     120
+    ],
+    [
+     "milch15",
+     250
+    ],
+    [
+     "magerquark",
+     100
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Die Erdbeeren (gefroren kurz antauen lassen) putzen, die Banane schälen und in Stücke brechen.",
+    "Alles mit Milch, Magerquark und einer Prise Vanille im Standmixer 45 bis 60 Sekunden cremig pürieren.",
+    "Mit 3 bis 4 Eiswürfeln mixen oder sofort in ein Glas füllen und trinken."
+   ],
+   "tips": "Das Rezept ergibt ein großes Glas; für zwei Gläser alle Mengen verdoppeln. Der Quark erhöht das Eiweiß deutlich gegenüber der reinen Milchversion. Enthält Milch. Bananen und Erdbeeren können bei Histaminempfindlichkeit Beschwerden machen.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf lecker.de gelesene Rezept „Erdbeer-Bananen-Smoothie“ (https://www.lecker.de/erdbeer-bananen-smoothie-61714.html), in eigenen Worten und für die App angepasst (eine Portion, mehr Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Erdbeer-Minze-Smoothie mit Soja und Tofu (vegan)",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "International",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell",
+    "vegan"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "erdbeeren",
+     300
+    ],
+    [
+     "minze",
+     5
+    ],
+    [
+     "sojadrink",
+     200
+    ],
+    [
+     "tofu",
+     100
+    ],
+    [
+     "ahornsirup",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Erdbeeren waschen und putzen, die Minzblätter von den Stielen zupfen.",
+    "Erdbeeren, Minze, Sojadrink, Tofu und Ahornsirup im Standmixer 60 Sekunden sehr fein pürieren.",
+    "Abschmecken, bei Bedarf mit etwas Sojadrink verdünnen, und gut gekühlt trinken."
+   ],
+   "tips": "Der Tofu liefert hier das Eiweiß und macht den Smoothie cremig (ohne Eigengeschmack, wenn er fein püriert wird). Das Original nutzt Sojajoghurt, der im Zutatenstamm nicht vorkommt. Enthält Soja. Tofu und Ahornsirup sind vegan.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf lecker.de gelesene Rezept „Erdbeer-Smoothie (mit Minze)“ (https://www.lecker.de/erdbeer-smoothie-rezept-71307.html), in eigenen Worten und für die App angepasst (eine Portion, mehr Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "International"
+  }),
+  R({
+   "name": "Zwei-Minuten-Frühstücks-Smoothie mit Banane und Haferflocken",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "banane",
+     120
+    ],
+    [
+     "haferflocken",
+     30
+    ],
+    [
+     "magerquark",
+     120
+    ],
+    [
+     "milch15",
+     200
+    ],
+    [
+     "honig",
+     10
+    ],
+    [
+     "walnuesse",
+     10
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Die Banane schälen und in Stücke brechen.",
+    "Alles mit Haferflocken, Magerquark, Milch, Honig, Walnüssen und einer Prise Zimt in den Mixer geben.",
+    "Auf höchster Stufe 60 Sekunden mixen, bis keine Haferflockenstücke mehr zu spüren sind, und sofort trinken."
+   ],
+   "tips": "Die Haferflocken fein mixen, damit der Smoothie nicht körnig bleibt; wer es dicker mag, lässt ihn 5 Minuten stehen, dann quellen die Flocken. Enthält Milch, Gluten (Hafer) und Walnüsse (Schalenfrüchte).",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/two-minute-breakfast-smoothie (bbcgoodfood.com, Two-minute breakfast smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Frühstücks-Smoothie mit Beeren, Banane und Chia",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "beeren_tk",
+     150
+    ],
+    [
+     "banane",
+     100
+    ],
+    [
+     "skyr",
+     150
+    ],
+    [
+     "milch15",
+     150
+    ],
+    [
+     "chiasamen",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die tiefgekühlten Beeren 5 Minuten antauen lassen, die Banane in Stücke brechen.",
+    "Alles mit Skyr, Milch und Chiasamen in den Mixer geben.",
+    "45 bis 60 Sekunden mixen und sofort trinken; die Chiasamen quellen beim Stehen und machen den Smoothie dicker."
+   ],
+   "tips": "Chiasamen liefern Ballaststoffe und Fett; sie sind fein gemixt kaum zu bemerken. Mit mehr Milch wird der Smoothie flüssiger. Enthält Milch.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/breakfast-smoothie (bbcgoodfood.com, Breakfast smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Erdbeer-Joghurt-Smoothie mit Orange und Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "erdbeeren",
+     200
+    ],
+    [
+     "orange",
+     100
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "milch15",
+     100
+    ],
+    [
+     "honig",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Erdbeeren waschen und putzen, die Orange schälen und in Stücke teilen (Kerne entfernen).",
+    "Alles mit Skyr, Milch und Honig im Mixer 45 Sekunden pürieren.",
+    "Sofort trinken oder mit 2 bis 3 Eiswürfeln mixen."
+   ],
+   "tips": "Die Orange bringt Säure und Frische und ersetzt Fruchtsaft. Außerhalb der Erdbeersaison funktionieren aufgetaute TK-Erdbeeren. Enthält Milch.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/strawberry-smoothie (bbcgoodfood.com, Strawberry smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Sonnenschein-Smoothie mit Mango, Orange und Karotte",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mango",
+     120
+    ],
+    [
+     "orange",
+     120
+    ],
+    [
+     "karotte",
+     80
+    ],
+    [
+     "skyr",
+     180
+    ],
+    [
+     "ingwer",
+     5
+    ],
+    [
+     "zitronensaft",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Karotte schälen und klein schneiden, die Mango würfeln, die Orange schälen und in Stücke teilen. Den Ingwer schälen.",
+    "Alles mit Skyr und Zitronensaft im Hochleistungsmixer 60 bis 90 Sekunden sehr fein pürieren, damit die Karotte vollständig zerkleinert ist.",
+    "Bei Bedarf einen Schluck Wasser zugeben und sofort trinken."
+   ],
+   "tips": "Die Karotte macht den Smoothie süß und liefert Beta-Carotin, ohne dass man sie schmeckt. Mit einem schwächeren Mixer die Karotte vorher raspeln. Enthält Milch. Mango ist fruktosereich.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/sunshine-smoothie (bbcgoodfood.com, Sunshine smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Erdnuss-Bananen-Smoothie mit Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "USA",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "erdnussmus",
+     20
+    ],
+    [
+     "banane",
+     120
+    ],
+    [
+     "skyr",
+     150
+    ],
+    [
+     "milch15",
+     150
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Die Banane in Stücke brechen.",
+    "Erdnussmus, Banane, Skyr, Milch und eine Prise Zimt in den Mixer geben.",
+    "45 Sekunden mixen, bis die Masse glatt ist, und sofort trinken."
+   ],
+   "tips": "Eine gefrorene Banane macht den Smoothie dick wie ein Milchshake. Ungesüßtes Erdnussmus (100 % Erdnüsse) verwenden. Enthält Erdnüsse (Allergen) und Milch.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/peanut-butter-smoothie (bbcgoodfood.com, Peanut butter smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "USA"
+  }),
+  R({
+   "name": "Mango-Bananen-Smoothie mit Skyr und Limette",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "International",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mango",
+     150
+    ],
+    [
+     "banane",
+     100
+    ],
+    [
+     "skyr",
+     150
+    ],
+    [
+     "milch15",
+     100
+    ],
+    [
+     "limettensaft",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Mango schälen und würfeln, die Banane in Stücke brechen.",
+    "Alles mit Skyr, Milch und Limettensaft im Mixer 45 bis 60 Sekunden pürieren.",
+    "Sofort trinken; mit gefrorenen Mangowürfeln wird er kälter und dicker."
+   ],
+   "tips": "Tiefgekühlte Mango ist ganzjährig eine einfache Wahl und macht Eiswürfel überflüssig. Enthält Milch. Mango und Banane sind fruktosereich.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/mango-banana-smoothie (bbcgoodfood.com, Mango banana smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "International"
+  }),
+  R({
+   "name": "Grünkohl-Apfel-Smoothie mit Skyr und Ingwer",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "gruenkohl",
+     40
+    ],
+    [
+     "apfel",
+     120
+    ],
+    [
+     "banane",
+     80
+    ],
+    [
+     "skyr",
+     180
+    ],
+    [
+     "ingwer",
+     5
+    ],
+    [
+     "zitronensaft",
+     15
+    ],
+    [
+     "milch15",
+     100
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Den Grünkohl waschen und die harten Stiele entfernen, den Apfel entkernen und würfeln, die Banane in Stücke brechen. Den Ingwer schälen.",
+    "Zuerst Grünkohl, Milch und Zitronensaft 30 Sekunden mixen, dann die übrigen Zutaten zugeben.",
+    "45 bis 60 Sekunden fein pürieren und sofort trinken."
+   ],
+   "tips": "Roh ist Grünkohl kräftig im Geschmack und schwer verdaulich; deshalb nur 40 g und sehr fein mixen. Wer eine Schilddrüsenerkrankung hat, klärt rohen Kohl in größeren Mengen mit dem Arzt ab. Alternativ junger Spinat. Enthält Milch. Apfel und Banane sind fruktosereich.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/kale-smoothie (bbcgoodfood.com, Kale smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  })
+);
+
+/* ===== Rezeptcharge 36: Desserts, bbcgoodfoodme.com gelesen (3), bbcgoodfood.com gesperrt (4), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Crème brûlée mit weniger Sahne",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Frankreich",
+   "servings": 4,
+   "prep": 15,
+   "cook": 35,
+   "level": "mittel",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "proteinreich",
+    "Dessert",
+    "Wasserbad"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "eier",
+     220
+    ],
+    [
+     "sahne",
+     100
+    ],
+    [
+     "milch15",
+     300
+    ],
+    [
+     "zucker",
+     60
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 150 °C Ober-/Unterhitze vorheizen. Vier feuerfeste Förmchen (etwa 175 ml) in eine tiefe Form stellen und einen Kessel Wasser aufsetzen.",
+    "Sahne und Milch mit dem Vanillemark (oder Vanille) erhitzen, bis sie kurz vor dem Kochen steht, dann vom Herd nehmen.",
+    "Die Eier mit 40 g Zucker hell und leicht schaumig schlagen. Die heiße Milchsahne unter ständigem Rühren in dünnem Strahl zugießen, durch ein feines Sieb passieren und den Schaum abschöpfen.",
+    "Die Creme in die Förmchen füllen und heißes Wasser so in die große Form gießen, dass es etwa 1,5 cm hoch an den Förmchen steht. Lose mit Backpapier oder einem Blech abdecken und 30 bis 35 Minuten garen, bis die Creme am Rand fest ist und in der Mitte nur noch leicht wackelt.",
+    "Aus dem Wasserbad nehmen, abkühlen lassen und mindestens 4 Stunden, besser über Nacht, kalt stellen.",
+    "Kurz vor dem Servieren den restlichen Zucker (20 g) gleichmäßig daraufstreuen und mit einem Flambierbrenner oder unter dem sehr heißen Backofengrill goldbraun karamellisieren; 1 Minute fest werden lassen."
+   ],
+   "tips": "Das Original arbeitet mit Eigelben und deutlich mehr Sahne; hier sind es ganze Eier, mehr Milch und weniger Sahne, damit Kalorien und Eiweiß zu den Vorgaben passen. Die Creme gart durch das Wasserbad schonend und bleibt glatt. Enthält Milch und Ei. Schwangere und Menschen mit geschwächter Abwehr essen nur gut gestockte Creme.",
+   "storage": "Im Kühlschrank bis zu 2 Tage, abgedeckt; den Zucker erst unmittelbar vor dem Servieren karamellisieren.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Creme wird nach dem Auftauen wässrig."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf bbcgoodfoodme.com gelesene Rezept „Ultimate crème brûlée“ (https://www.bbcgoodfoodme.com/recipes/ultimate-creme-brulee/), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Frankreich"
+  }),
+  R({
+   "name": "Cornflakes-Tarte mit Himbeer-Quark und Haferboden",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 6,
+   "prep": 25,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Backofen",
+    "Herd"
+   ],
+   "tags": [
+    "Backen",
+    "proteinreich",
+    "Dessert",
+    "Tarte"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haferflocken",
+     60
+    ],
+    [
+     "butter",
+     40
+    ],
+    [
+     "honig",
+     65
+    ],
+    [
+     "magerquark",
+     500
+    ],
+    [
+     "himbeeren",
+     125
+    ],
+    [
+     "cornflakes",
+     40
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen. Eine Tarteform (22 cm) mit Backpapier auslegen. 25 g Butter schmelzen.",
+    "Die Haferflocken fein mahlen, mit der geschmolzenen Butter und 20 g Honig mischen und als Boden fest in die Form drücken. 12 Minuten backen, dann vollständig auskühlen lassen.",
+    "Die restliche Butter (15 g) mit 25 g Honig in einer Pfanne schmelzen. Die Cornflakes zugeben und 2 bis 3 Minuten unter Rühren rösten, bis sie überzogen und leicht karamellisiert sind. Auf einem Teller abkühlen lassen.",
+    "Den Quark mit 20 g Honig und Vanille glatt rühren, die Himbeeren leicht zerdrücken und unterheben (einige zum Garnieren zurücklegen).",
+    "Die Quark-Himbeer-Creme auf den ausgekühlten Boden streichen, kurz vor dem Servieren die Cornflakes darauf verteilen und mit den restlichen Himbeeren garnieren. Mindestens 1 Stunde kühlen."
+   ],
+   "tips": "Das Original besteht aus Mürbeteig, Marmelade und einer Cornflakes-Sirup-Schicht mit Vanillesauce; diese Fassung ersetzt Teig, Zucker und Sirup durch Haferboden, Quarkcreme und Honig. Die Cornflakes erst kurz vor dem Servieren aufstreuen, sonst werden sie weich. Enthält Milch und Gluten (Hafer, Cornflakes).",
+   "storage": "Im Kühlschrank bis zu 2 Tage (Cornflakes getrennt aufbewahren).",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Creme wird nach dem Auftauen wässrig, die Cornflakes weich."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf bbcgoodfoodme.com gelesene Rezept „Easy cornflake tart“ (https://www.bbcgoodfoodme.com/recipes/easy-cornflake-tart/), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Brownie-Kuchen mit weißen Bohnen und Quark",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 8,
+   "prep": 15,
+   "cook": 30,
+   "level": "leicht",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "Meal-Prep",
+    "proteinreich",
+    "Dessert",
+    "Kuchen"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "weisse_bohnen",
+     240
+    ],
+    [
+     "eier",
+     165
+    ],
+    [
+     "magerquark",
+     200
+    ],
+    [
+     "kakao",
+     30
+    ],
+    [
+     "honig",
+     60
+    ],
+    [
+     "zartbitter",
+     60
+    ],
+    [
+     "butter",
+     20
+    ],
+    [
+     "mandeln",
+     40
+    ],
+    [
+     "backpulver",
+     3
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen. Eine Springform (20 cm) einfetten und mit Backpapier auslegen. Die Bohnen in einem Sieb gründlich abspülen und abtropfen lassen.",
+    "Schokolade und Butter über dem Wasserbad schmelzen und kurz abkühlen lassen. Die Mandeln fein mahlen.",
+    "Bohnen, Eier, Quark, Honig und Vanille mit dem Stabmixer vollkommen glatt pürieren, bis keine Bohnenhäute mehr zu sehen sind.",
+    "Die Schokoladenmasse unterrühren, dann Kakao, Mandeln und Backpulver kurz unterheben.",
+    "Den Teig in die Form füllen und 28 bis 30 Minuten backen (Kern mindestens 70 °C). Die Mitte soll noch leicht feucht wirken. In der Form vollständig auskühlen lassen, dann in acht Stücke schneiden."
+   ],
+   "tips": "Das Original ist ein klassischer Butter-Zucker-Mehl-Kuchen (Portionen: 8); diese Fassung ersetzt Mehl und den größten Teil von Butter und Zucker durch Bohnen, Quark und Mandeln und schmeckt nicht nach Bohnen, wenn sie ganz glatt püriert werden. Enthält Milch, Ei, Mandeln (Schalenfrüchte). Kakao und Schokolade enthalten Histamin; Bohnen sind Hülsenfrüchte und können blähen.",
+   "storage": "Im Kühlschrank bis zu 4 Tage, abgedeckt.",
+   "reheat": "Kalt oder 10 Sekunden in der Mikrowelle.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 3,
+    "note": "Einzeln in Backpapier wickeln und einfrieren; über Nacht im Kühlschrank auftauen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf bbcgoodfoodme.com gelesene Rezept „Chocolate brownie cake“ (https://www.bbcgoodfoodme.com/recipes/chocolate-brownie-cake/), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Schoko-Lavakuchen mit Quark",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Frankreich",
+   "servings": 4,
+   "prep": 15,
+   "cook": 12,
+   "level": "mittel",
+   "devices": [
+    "Backofen",
+    "Airfryer"
+   ],
+   "tags": [
+    "Backen",
+    "warm",
+    "proteinreich",
+    "Dessert"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "zartbitter",
+     60
+    ],
+    [
+     "butter",
+     20
+    ],
+    [
+     "eier",
+     165
+    ],
+    [
+     "honig",
+     30
+    ],
+    [
+     "mehl",
+     25
+    ],
+    [
+     "kakao",
+     10
+    ],
+    [
+     "magerquark",
+     100
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Vier Förmchen (etwa 150 ml) mit Butter einfetten und mit Kakao ausstäuben. Den Backofen auf 200 °C Ober-/Unterhitze vorheizen (Airfryer 180 °C).",
+    "Schokolade und Butter über dem Wasserbad schmelzen und kurz abkühlen lassen.",
+    "Eier mit Honig 3 Minuten schaumig schlagen, Quark und Vanille unterrühren, dann die Schokoladenmasse zugeben. Mehl und restlichen Kakao darübersieben und kurz unterheben.",
+    "Den Teig in die Förmchen füllen und 10 bis 12 Minuten backen (Airfryer 8 bis 10 Minuten), bis der Rand fest ist und die Mitte noch weich wackelt.",
+    "Kurz ruhen lassen, auf Teller stürzen und sofort servieren."
+   ],
+   "tips": "Der flüssige Kern ist nicht durchgegart: Kinder, Schwangere und Menschen mit geschwächter Abwehr sollten länger backen (bis die Mitte fest ist), dann entsteht kein Lavakern. Die Zeit hängt stark von Förmchen und Ofen ab; erst mit einem Probekuchen herantasten. Enthält Milch, Ei und Gluten. Schokolade und Kakao enthalten Histamin.",
+   "storage": "Am besten frisch essen; im Kühlschrank bis zu 1 Tag.",
+   "reheat": "15 bis 20 Sekunden in der Mikrowelle, dann ist der Kern wieder weich.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Der flüssige Kern gelingt nach dem Auftauen nicht zuverlässig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/easy-chocolate-molten-cakes (bbcgoodfood.com, Easy chocolate molten cakes); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Frankreich"
+  }),
+  R({
+   "name": "Zitronen-Baiser-Becher mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 25,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd",
+    "Backofen"
+   ],
+   "tags": [
+    "Dessert",
+    "proteinreich",
+    "ohne Boden"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "eier",
+     220
+    ],
+    [
+     "zucker",
+     80
+    ],
+    [
+     "zitronensaft",
+     60
+    ],
+    [
+     "speisestaerke",
+     20
+    ],
+    [
+     "milch15",
+     150
+    ],
+    [
+     "skyr",
+     250
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Die Eier trennen. Eigelb, Zitronensaft, Milch, Speisestärke und 40 g Zucker in einem Topf glatt verrühren.",
+    "Unter ständigem Rühren aufkochen und etwa 1 Minute sprudelnd kochen lassen, bis die Creme dick wird (das Ei ist dann durchgegart). Vom Herd nehmen und in einer Schüssel mit aufgelegter Folie auf der Oberfläche vollständig abkühlen lassen.",
+    "Den Skyr mit Vanille glatt rühren und unter die kalte Creme ziehen. In vier Gläser füllen und kalt stellen.",
+    "Für die Baiserhaube Eiweiß mit den restlichen 40 g Zucker in einer Schüssel über dem Wasserbad unter Rühren auf etwa 70 °C erwärmen, bis sich der Zucker löst, und dann mit dem Handrührer steif schlagen, bis sie glänzt und etwas abkühlt.",
+    "Das Baiser auf die Cremes spritzen oder löffeln. Mit dem Flambierbrenner oder 2 bis 3 Minuten unter dem heißen Backofengrill leicht bräunen und sofort servieren."
+   ],
+   "tips": "Statt einer Teigschale im klassischen Pie sitzt die Creme im Glas; dadurch spart das Dessert Kalorien und braucht keine Backzeit für den Boden. Das Baiser wird über dem Wasserbad auf 70 °C erhitzt und ist so auch für Schwangere unbedenklich. Enthält Milch und Ei. Zitronensaft frisch pressen.",
+   "storage": "Im Kühlschrank bis zu 1 Tag; das Baiser wird mit der Zeit weich.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Creme und Baiser leiden stark beim Einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/ultimate-lemon-meringue-pie (bbcgoodfood.com, Ultimate lemon meringue pie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Sofort-Beereneis aus dem Mixer mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "International",
+   "servings": 2,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Backen",
+    "proteinreich",
+    "Dessert",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "beeren_tk",
+     300
+    ],
+    [
+     "skyr",
+     150
+    ],
+    [
+     "magerquark",
+     100
+    ],
+    [
+     "honig",
+     25
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Die gefrorenen Beeren aus dem Gefrierfach nehmen und 2 Minuten bei Raumtemperatur stehen lassen, damit der Mixer sie leichter zerkleinert.",
+    "Skyr, Quark, Honig und Vanille in den Mixer geben, die gefrorenen Beeren darauf schichten.",
+    "Mit dem Stößel oder in Pulsen mixen, bis eine cremige, eisartige Masse entsteht (30 bis 60 Sekunden, bei Bedarf einen Schluck Milch zugeben).",
+    "Sofort servieren; für festeres Eis 30 Minuten ins Gefrierfach stellen."
+   ],
+   "tips": "Das Eis schmeckt am besten direkt aus dem Mixer. Mit gefrorenen Mangowürfeln oder Banane lässt es sich abwandeln. Enthält Milch. Beeren können bei Histaminempfindlichkeit Beschwerden machen.",
+   "storage": "Am besten sofort essen.",
+   "reheat": "Nicht erwärmen.",
+   "freeze": {
+    "ok": "eingeschränkt",
+    "block": 250,
+    "months": 1,
+    "note": "Lässt sich einfrieren, wird aber sehr fest; vor dem Servieren 15 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt (bbcgoodfood.com, Instant frozen berry yogurt); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "International"
+  }),
+  R({
+   "name": "Schoko-Käsekuchen mit Haferboden",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "USA",
+   "servings": 8,
+   "prep": 20,
+   "cook": 40,
+   "level": "mittel",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "Meal-Prep",
+    "proteinreich",
+    "Dessert",
+    "Kuchen"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "haferflocken",
+     50
+    ],
+    [
+     "butter",
+     20
+    ],
+    [
+     "magerquark",
+     400
+    ],
+    [
+     "frischkaese",
+     150
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "kakao",
+     25
+    ],
+    [
+     "zartbitter",
+     40
+    ],
+    [
+     "honig",
+     50
+    ],
+    [
+     "speisestaerke",
+     20
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 160 °C Ober-/Unterhitze vorheizen. Eine Springform (20 cm) mit Backpapier auslegen. Butter und Schokolade über dem Wasserbad schmelzen.",
+    "Die Haferflocken fein mahlen, mit der Hälfte der Butter-Schokoladen-Mischung verkneten und als Boden fest in die Form drücken. 8 Minuten vorbacken.",
+    "Quark, Frischkäse, Eier, Honig, Speisestärke, Kakao und Vanille mit dem Schneebesen glatt rühren, die restliche Schokoladenmischung unterheben.",
+    "Auf den Boden gießen und 35 bis 40 Minuten backen, bis die Mitte nur noch leicht wackelt (Kern mindestens 70 °C).",
+    "Im ausgeschalteten Ofen bei leicht geöffneter Tür 20 Minuten ruhen lassen, dann vollständig auskühlen und mindestens 3 Stunden kühlen."
+   ],
+   "tips": "Nicht zu lange rühren, damit der Kuchen nicht reißt. Der Kuchen wird beim Kühlen fester und lässt sich dann sauber schneiden. Enthält Milch, Ei und Gluten (Hafer kann Spuren von Gluten enthalten). Kakao und Schokolade enthalten Histamin.",
+   "storage": "Im Kühlschrank bis zu 4 Tage, abgedeckt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 3,
+    "note": "In Stücken einzeln einfrieren; über Nacht im Kühlschrank auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/chocolate-cheesecake (bbcgoodfood.com, Chocolate cheesecake); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "USA"
+  })
+);
+
+/* ===== Rezeptcharge 37: 15 chinesische Desserts, foodnetwork.com gelesen (6), essen-und-trinken.de, bbcgoodfood.com, seriouseats.com und chefkoch.de gesperrt (9), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Mangopudding mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 2,
+   "prep": 15,
+   "cook": 8,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Pudding",
+    "proteinreich",
+    "Dessert",
+    "ohne Backen",
+    "Chinesisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mango",
+     250
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "milch15",
+     100
+    ],
+    [
+     "speisestaerke",
+     10
+    ],
+    [
+     "zucker",
+     10
+    ],
+    [
+     "limettensaft",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Mango schälen, das Fruchtfleisch vom Stein schneiden und mit dem Limettensaft fein pürieren.",
+    "Milch, Speisestärke und Zucker in einem kleinen Topf glatt verrühren und unter ständigem Rühren aufkochen, bis die Masse eindickt (etwa 2 Minuten). Vom Herd nehmen und 10 Minuten abkühlen lassen.",
+    "Den Skyr mit dem lauwarmen Pudding glatt verrühren, dann das Mangopüree unterziehen.",
+    "In zwei Gläser oder Schälchen füllen und mindestens 2 Stunden kalt stellen. Mit ein paar Mangowürfeln garnieren."
+   ],
+   "tips": "Die Stärke bindet nur die Milch, der Skyr kommt erst in die abgekühlte Masse, damit er nicht ausflockt. Statt frischer Mango passt auch aufgetaute Tiefkühlmango. Enthält Milch.",
+   "storage": "Im Kühlschrank bis zu 2 Tage, abgedeckt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Der Pudding wird nach dem Auftauen wässrig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.essen-und-trinken.de/rezepte/31493-rzpt-mangopudding (essen-und-trinken.de, Mangopudding); die Seite darf von automatischen Werkzeugen laut robots.txt nicht abgerufen werden und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Glückskekse mit Eiklar und Erdbeer-Skyr-Dip",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 25,
+   "cook": 20,
+   "level": "mittel",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "proteinreich",
+    "Dessert",
+    "Gebäck",
+    "Chinesisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "eiklar",
+     66
+    ],
+    [
+     "mehl",
+     40
+    ],
+    [
+     "zucker",
+     30
+    ],
+    [
+     "rapsoel",
+     10
+    ],
+    [
+     "skyr",
+     600
+    ],
+    [
+     "erdbeeren",
+     400
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen und ein Blech mit Backpapier auslegen. Auf kleine Zettel vier bis acht kurze Sprüche schreiben.",
+    "Eiklar, Zucker, Öl, Vanille und 1 EL Wasser mit dem Schneebesen kurz verrühren, dann das Mehl unterrühren, bis ein glatter, dünnflüssiger Teig entsteht.",
+    "Pro Keks einen gestrichenen Teelöffel Teig auf das Blech geben und mit dem Löffelrücken zu einem Kreis von etwa 8 cm ziehen. Höchstens vier Kreise pro Blech backen, sonst werden die Kekse zu schnell hart.",
+    "8 bis 10 Minuten backen, bis der Rand goldbraun ist. Sofort einen Spruchzettel in die Mitte legen, den Kreis zur Hälfte klappen, über der Tischkante oder einem Glasrand zum Halbmond biegen und in einer Muffinform festhalten, bis er hart wird. Mit dem restlichen Teig ebenso verfahren.",
+    "Für den Dip die Erdbeeren putzen, die Hälfte fein pürieren, mit dem Skyr verrühren und die übrigen Erdbeeren in Stücken dazu servieren. Je Portion zwei Kekse zum Dippen reichen."
+   ],
+   "tips": "Der Teig muss sehr schnell geformt werden, solange die Kekse heiß und biegsam sind; Küchenhandschuhe aus Baumwolle schützen die Finger. Wird ein Keks zu fest, kurz 30 Sekunden zurück in den heißen Ofen. Mit Eiklar statt ganzer Eier bleiben Kalorien und Fett niedrig. Enthält Gluten, Ei und Milch.",
+   "storage": "Kekse trocken und luftdicht bis zu 3 Tage; den Dip Im Kühlschrank bis zu 2 Tage.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Kekse werden durch Feuchtigkeit weich, der Dip trennt sich."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.essen-und-trinken.de/rezepte/glueckskekse-12086190.html (essen-und-trinken.de, Glückskekse); die Seite darf von automatischen Werkzeugen laut robots.txt nicht abgerufen werden und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Litschi-Ingwer-Eis mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 15,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "ohne Backen",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "litschi",
+     400
+    ],
+    [
+     "skyr",
+     400
+    ],
+    [
+     "ingwer",
+     10
+    ],
+    [
+     "zucker",
+     30
+    ],
+    [
+     "limettensaft",
+     20
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Litschis entsteinen (bei Dosenfrüchten gut abtropfen lassen), den Ingwer fein reiben.",
+    "Litschis, Ingwer, Zucker und Limettensaft fein pürieren, dann den Skyr unterrühren und abschmecken.",
+    "In eine flache Schale füllen und 4 bis 5 Stunden einfrieren; in den ersten 2 Stunden alle 30 Minuten kräftig durchrühren. Mit Eismaschine nach Herstelleranleitung gefrieren.",
+    "Vor dem Servieren 10 Minuten antauen lassen und mit einem Eisportionierer in Kugeln stechen."
+   ],
+   "tips": "Das Original ist ein Sorbet ohne Milchprodukt; hier ersetzt Skyr einen Teil der Frucht, damit das Dessert mindestens 10 g Eiweiß je Portion erreicht. Die Nährwerte beziehen sich auf rohe Litschis. Dosenlitschis bringen Zuckersirup mit: dann den Zucker weglassen. Enthält Milch.",
+   "storage": "Im Gefrierer bis zu 2 Monate.",
+   "reheat": "Vor dem Servieren antauen lassen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/lychee-ginger-sorbet (bbcgoodfood.com, Lychee & ginger sorbet); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Tanghulu mit Skyr-Dip",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 2,
+   "prep": 15,
+   "cook": 10,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Karamell",
+    "proteinreich",
+    "Dessert",
+    "Obst",
+    "Chinesisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "erdbeeren",
+     150
+    ],
+    [
+     "weintrauben",
+     100
+    ],
+    [
+     "orange",
+     100
+    ],
+    [
+     "zucker",
+     40
+    ],
+    [
+     "skyr",
+     250
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Erdbeeren und Trauben waschen und sehr gründlich trocknen, die Orange in Spalten teilen und die Haut entfernen. Das Obst abwechselnd auf vier Holzspieße stecken. Ein Backpapier und eine Schüssel Eiswasser bereitstellen.",
+    "Den Zucker mit 20 ml Wasser in einen kleinen Topf geben und ohne Rühren aufkochen, bis der Sirup 150 bis 155 °C erreicht (Zuckerthermometer); er ist dann hellgelb.",
+    "Den Topf vom Herd nehmen. Die Spieße rasch durch den Sirup drehen, kurz abtropfen lassen und auf das Backpapier legen. Den Zucker nach 2 Minuten fest werden lassen, für noch mehr Glasur kurz in Eiswasser tauchen und wieder abtrocknen.",
+    "Den Skyr mit Vanille glatt rühren und zum Dippen reichen. Sofort essen."
+   ],
+   "tips": "Vorsicht: Heißer Zucker verursacht schwere Verbrennungen. Kinder fernhalten, eine Schüssel mit Eiswasser bereitstellen und den Topf nicht anfassen. Feuchtigkeit lässt die Glasur kleben, deshalb ist trockenes Obst entscheidend. Die Nährwerte rechnen mit dem ganzen Zucker, tatsächlich bleibt ein Teil im Topf. Enthält Milch.",
+   "storage": "Nicht aufbewahren; die Zuckerglasur wird nach wenigen Minuten klebrig.",
+   "reheat": "Nicht aufwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Zuckerglasur zerläuft beim Auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/tanghulu (bbcgoodfood.com, Tanghulu); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Mondkuchen mit Walnuss und roter Bohnenfüllung",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 40,
+   "cook": 25,
+   "level": "mittel",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "proteinreich",
+    "Dessert",
+    "Gebäck",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "mehl",
+     90
+    ],
+    [
+     "magerquark",
+     120
+    ],
+    [
+     "rapsoel",
+     20
+    ],
+    [
+     "kidneybohnen",
+     200
+    ],
+    [
+     "walnuesse",
+     30
+    ],
+    [
+     "zucker",
+     25
+    ],
+    [
+     "eier",
+     25
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Mehl, Quark und Öl zu einem geschmeidigen Teig verkneten, in Frischhaltefolie wickeln und 30 Minuten kühlen.",
+    "Für die Füllung die abgetropften Bohnen mit dem Zucker und dem Zimt fein pürieren, in einer beschichteten Pfanne 5 bis 8 Minuten unter Rühren eindicken lassen, bis die Masse formbar ist. Die gehackten Walnüsse unterrühren und abkühlen lassen.",
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen. Den Teig in vier Stücke teilen, jeweils flach drücken, ein Viertel der Füllung daraufgeben, den Teig darüber schließen und zu einer Kugel formen.",
+    "Die Kugeln in eine bemehlte Mondkuchenform drücken oder mit einer Gabel eindrücken und mit etwas Ei bestreichen. Auf einem Blech mit Backpapier 20 bis 25 Minuten backen, bis sie goldbraun sind.",
+    "Auf einem Gitter auskühlen lassen. Die Kuchen sind am zweiten Tag weicher und aromatischer."
+   ],
+   "tips": "Die Füllung ist eine Abwandlung: Die klassische süße Bohnenpaste wird aus Azukibohnen gekocht, die nicht in der Nährwert-Datenbank stehen; hier sind es Kidneybohnen aus der Dose (BLS), die weniger süß schmecken. Der Quark im Teig ersetzt Sirup und viel Fett, das macht den Teig fester. Enthält Gluten, Milch, Ei und Walnüsse.",
+   "storage": "Luftdicht bei Zimmertemperatur bis zu 3 Tage, Im Kühlschrank bis zu 5 Tage.",
+   "reheat": "Bei Zimmertemperatur essen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 3,
+    "note": "Einzeln in Frischhaltefolie einfrieren; über Nacht im Kühlschrank auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.seriouseats.com/sweet-chinese-mooncakes-with-walnut-red-bean (seriouseats.com, Sweet Chinese mooncakes with walnut and red bean); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Ingwer-Milchpudding",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 2,
+   "prep": 10,
+   "cook": 5,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Pudding",
+    "proteinreich",
+    "Dessert",
+    "ohne Backen",
+    "Chinesisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "milch15",
+     600
+    ],
+    [
+     "ingwer",
+     40
+    ],
+    [
+     "zucker",
+     24
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Den Ingwer fein reiben, in ein Tuch geben und den Saft über einem Messbecher auspressen; Sie brauchen etwa 2 Esslöffel Saft. Den Saft gleichmäßig auf zwei Schälchen verteilen.",
+    "Die Milch mit dem Zucker unter Rühren auf etwa 75 bis 80 °C erhitzen (sie darf dampfen, aber nicht kochen).",
+    "Die heiße Milch aus etwa 20 cm Höhe in einem Schwung auf den Ingwersaft gießen, nicht mehr rühren und die Schälchen 10 bis 15 Minuten ruhig und zugedeckt stehen lassen.",
+    "Wenn die Oberfläche beim vorsichtigen Antippen nicht mehr nachgibt, ist der Pudding gestockt. Warm oder gekühlt essen."
+   ],
+   "tips": "Das Gerinnen hängt vom Ingwersaft und von der Milchtemperatur ab; mit 1,5-%-Milch wird der Pudding weicher als mit Vollmilch. Bleibt er flüssig, die Milch erneut erhitzen und mit frischem Saft wiederholen. Als Notlösung schmeckt er als warme Ingwermilch. Enthält Milch.",
+   "storage": "Im Kühlschrank bis zu 1 Tag, abgedeckt.",
+   "reheat": "Warm oder kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Der Pudding wird nach dem Auftauen wässrig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.seriouseats.com/chinese-ginger-milk-curd-recipe-11868260 (seriouseats.com, Chinese ginger milk curd); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Tangyuan mit Erdnussfüllung in warmem Sojadrink",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 45,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Dämpfen",
+    "proteinreich",
+    "Dessert",
+    "Klebreis",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "reismehl",
+     120
+    ],
+    [
+     "erdnuesse",
+     80
+    ],
+    [
+     "zucker",
+     20
+    ],
+    [
+     "sojadrink",
+     800
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Die Erdnüsse in einer Pfanne ohne Fett goldgelb rösten, abkühlen lassen und mit dem Zucker und einer Prise Salz in der Küchenmaschine zu einer groben Paste mahlen. 30 Minuten ins Gefrierfach stellen, dann zu 24 kleinen Kugeln rollen.",
+    "Das Reismehl in eine Schüssel geben, nach und nach etwa 90 ml kochendes Wasser einarbeiten und zu einem weichen Teig kneten, der nicht klebt (bei Bedarf Wasser oder Mehl ergänzen). Mit einem feuchten Tuch abdecken.",
+    "Den Teig in 24 Stücke teilen, jedes flach drücken, um eine Erdnusskugel schließen und zu einer glatten Kugel rollen.",
+    "In einem großen Topf Wasser knapp unter dem Siedepunkt halten, die Tangyuan portionsweise hineingeben und 5 bis 7 Minuten garen, bis sie oben schwimmen.",
+    "Den Sojadrink erhitzen (nicht kochen), die Tangyuan mit einer Schaumkelle direkt hineinheben und je sechs Bällchen mit 200 ml Sojadrink servieren."
+   ],
+   "tips": "Gegenüber dem gelesenen Rezept wurde die Butter in der Füllung weggelassen und der Zucker reduziert; die Bällchen werden in warmem Sojadrink statt in Wasser serviert, das bringt Eiweiß. Klebreismehl hat in der Datenbank denselben Nährwert wie Reismehl. Vorsicht: Die Bällchen sind für kleine Kinder wegen des Erstickungsrisikos zu zäh. Enthält Erdnüsse und Soja.",
+   "storage": "Die Bällchen roh Im Kühlschrank bis zu 1 Tag; gekocht am selben Tag essen.",
+   "reheat": "In warmem Sojadrink kurz erwärmen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 2,
+    "note": "Rohe, geformte Bällchen auf einem Blech vorfrieren, dann in einem Block lagern; ungetaut in siedendes Wasser geben und 2 Minuten länger garen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Tangyuan mit Erdnussfüllung“ (https://www.foodnetwork.com/recipes/food-network-kitchen/tangyuan-with-peanut-filling-9557702), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Schwarze Sesam-Süßsuppe mit Reisbällchen",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 25,
+   "cook": 20,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Suppe",
+    "proteinreich",
+    "Dessert",
+    "Sesam",
+    "Chinesisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "sesam",
+     80
+    ],
+    [
+     "reismehl",
+     90
+    ],
+    [
+     "zucker",
+     40
+    ],
+    [
+     "sojadrink",
+     800
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Den Sesam mit 40 g Reismehl in einem großen Topf bei mittlerer Hitze unter ständigem Rühren 4 bis 5 Minuten rösten, bis es duftet und das Mehl leicht goldfarben ist. Mit dem Sojadrink im Mixer 1 bis 2 Minuten sehr fein mixen.",
+    "Die Masse zurück in den Topf geben, mit dem Zucker und einer Prise Salz bei mittlerer Hitze unter Rühren 5 bis 6 Minuten erhitzen, bis sie dicklich ist. Warm halten.",
+    "Die übrigen 50 g Reismehl mit etwa 45 ml kochendem Wasser zu einem Teig verkneten, zu einer Rolle formen und in 12 Stücke schneiden. Zu Kugeln rollen.",
+    "Die Kugeln in einem Topf mit siedendem Wasser 4 bis 5 Minuten garen, bis sie oben schwimmen, und abtropfen lassen.",
+    "Die Suppe nochmals glatt rühren, in vier Schalen füllen und je drei Reisbällchen daraufsetzen. Sofort servieren."
+   ],
+   "tips": "Das gelesene Rezept röstet deutlich mehr Sesam und kocht mit Wasser; hier ist die Sesammenge halbiert und die Suppe mit Sojadrink gemixt, damit Kalorien und Eiweiß zu den Vorgaben passen. Die Nährwerte beziehen sich auf hellen Sesam (BLS); mit schwarzem Sesam schmeckt die Suppe kräftiger. Enthält Sesam und Soja.",
+   "storage": "Im Kühlschrank bis zu 2 Tage; die Bällchen frisch zubereiten.",
+   "reheat": "Unter Rühren erwärmen, bei Bedarf mit etwas Sojadrink verdünnen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Suppe trennt sich beim Auftauen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Schwarze Sesam-Süßsuppe“ (https://www.foodnetwork.com/recipes/food-network-kitchen/black-sesame-sweet-soup-24373893), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Fa Gao: gedämpfte Glückskuchen mit Quark",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 20,
+   "cook": 30,
+   "level": "mittel",
+   "devices": [
+    "Multikocher",
+    "Herd"
+   ],
+   "tags": [
+    "Dämpfen",
+    "proteinreich",
+    "Dessert",
+    "Kuchen",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "zucker",
+     70
+    ],
+    [
+     "rapsoel",
+     20
+    ],
+    [
+     "mehl",
+     100
+    ],
+    [
+     "reismehl",
+     25
+    ],
+    [
+     "backpulver",
+     8
+    ],
+    [
+     "eier",
+     55
+    ],
+    [
+     "magerquark",
+     200
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Acht kleine Förmchen (etwa 7 cm, hitzefest) einölen. Einen Dämpfeinsatz in Topf oder Multikocher mit etwa 5 cm Wasser vorbereiten, das Wasser zum Kochen bringen.",
+    "Zucker, Öl und 100 ml heißes Wasser etwa 1 Minute verquirlen, bis sich der Zucker löst, und 10 Minuten abkühlen lassen.",
+    "Ei und Quark unterrühren. Mehl, Reismehl und Backpulver mischen, in drei Portionen darübersieben und jeweils glatt unterrühren.",
+    "Die Förmchen bis zum Rand füllen. In zwei Durchgängen je 4 Förmchen bei geschlossenem Deckel etwa 15 Minuten dämpfen, bis die Küchlein aufgehen und an der Oberfläche einreißen. Den Deckel währenddessen nicht öffnen.",
+    "Auf einem Gitter abkühlen lassen und erst kurz vor dem Essen aus den Förmchen lösen. Je Portion zwei Küchlein."
+   ],
+   "tips": "Gegenüber dem gelesenen Rezept sind Ei und Quark ergänzt, damit das Dessert mindestens 10 g Eiweiß je Portion erreicht; die Küchlein werden dadurch etwas dichter. Die Dampfschicht muss heiß sein, bevor der Teig hineinkommt. Enthält Gluten, Ei und Milch.",
+   "storage": "Im Kühlschrank bis zu 3 Tage, abgedeckt.",
+   "reheat": "Etwa 5 Minuten über Dampf erwärmen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 2,
+    "note": "Einzeln einfrieren; über Dampf aufwärmen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Fa Gao (Fortune Cake)“ (https://www.foodnetwork.com/recipes/food-network-kitchen/fa-gao-9858871), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Süße rote Bohnensuppe (Hong Dou Tang)",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 10,
+   "cook": 30,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Suppe",
+    "proteinreich",
+    "Dessert",
+    "Hülsenfrüchte",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "kidneybohnen",
+     400
+    ],
+    [
+     "zucker",
+     70
+    ],
+    [
+     "speisestaerke",
+     20
+    ],
+    [
+     "orange",
+     30
+    ],
+    [
+     "sojadrink",
+     400
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Die Bohnen abspülen und abtropfen lassen. Von der Orange die Schale in feinen Streifen abziehen (nur das Orange, nicht das Weiße).",
+    "Bohnen, Orangenschale, 400 ml Wasser und eine Prise Salz aufkochen und zugedeckt 20 Minuten leise köcheln.",
+    "Etwa ein Viertel der Bohnen mit einer Gabel zerdrücken, den Zucker unterrühren. Die Stärke mit 50 ml kaltem Wasser anrühren, einrühren und 3 bis 5 Minuten köcheln, bis die Suppe leicht sämig und die Stärke durchsichtig ist.",
+    "Den Sojadrink erhitzen und die Suppe damit auf vier Schalen verteilen. Heiß servieren."
+   ],
+   "tips": "Das gelesene Rezept kocht getrocknete Azukibohnen über Nacht eingeweicht und verdickt mit Tapiokaperlen. Azukibohnen stehen nicht in der Nährwert-Datenbank; hier sind es Kidneybohnen aus der Dose, deshalb braucht die Suppe keine Einweichzeit, schmeckt aber weniger süß-nussig. Dosenbohnen immer abspülen, sie sind gesalzen. Blähend (Hülsenfrüchte). Enthält Soja.",
+   "storage": "Im Kühlschrank bis zu 3 Tage.",
+   "reheat": "Mit etwas Wasser oder Sojadrink im Topf erwärmen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 3,
+    "note": "Ohne Sojadrink einfrieren; über Nacht im Kühlschrank auftauen und beim Erhitzen den Sojadrink zugeben."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Hong Dou Tang (Süße rote Bohnensuppe)“ (https://www.foodnetwork.com/recipes/food-network-kitchen/hong-dou-tang-9858870), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Orangen-Ingwer-Sauce mit Skyr (zu Nian Gao)",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 2,
+   "prep": 15,
+   "cook": 15,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Kompott",
+    "proteinreich",
+    "Dessert",
+    "Obst",
+    "Chinesisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "orange",
+     400
+    ],
+    [
+     "ingwer",
+     8
+    ],
+    [
+     "zucker",
+     10
+    ],
+    [
+     "skyr",
+     300
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Von zwei der Orangen die Schale und das Weiße abschneiden und die Filets zwischen den Trennhäuten herauslösen, dabei den Saft auffangen.",
+    "Die beiden anderen Orangen auspressen. Den Saft mit dem fein gehackten Ingwer und dem Zucker in einem Topf auf etwa die Hälfte einkochen (8 bis 10 Minuten).",
+    "Die Orangenfilets samt aufgefangenem Saft dazugeben und 1 Minute ziehen lassen.",
+    "Den Skyr auf zwei Schalen verteilen und die warme Sauce darübergeben."
+   ],
+   "tips": "Das gelesene Rezept gibt 120 ml Grand Marnier in die Sauce und reicht sie zu gedämpftem Nian Gao (Klebreiskuchen); hier ist der Orangenlikör weggelassen (Kalorien) und der Skyr bringt das Eiweiß. Wer Likör mag: 1 bis 2 EL erst am Schluss untermischen. Enthält Milch.",
+   "storage": "Die Sauce Im Kühlschrank bis zu 2 Tage.",
+   "reheat": "Sauce kurz erwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Orangenfilets werden nach dem Auftauen matschig."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Orange-Grand-Marnier-Sauce für Nian Gao“ (https://www.foodnetwork.com/recipes/orange-grand-marnier-sauce-for-nian-gao-recipe-1924985), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Ba Bao Fan: Achtschätze-Reis mit Skyr",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 40,
+   "cook": 50,
+   "level": "mittel",
+   "devices": [
+    "Multikocher",
+    "Herd"
+   ],
+   "tags": [
+    "Dämpfen",
+    "proteinreich",
+    "Dessert",
+    "Klebreis",
+    "Chinesisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "sushireis",
+     160
+    ],
+    [
+     "kidneybohnen",
+     120
+    ],
+    [
+     "zucker",
+     35
+    ],
+    [
+     "datteln",
+     40
+    ],
+    [
+     "rosinen",
+     20
+    ],
+    [
+     "sonnenblumenkerne",
+     20
+    ],
+    [
+     "speisestaerke",
+     6
+    ],
+    [
+     "skyr",
+     200
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Den Reis waschen und mindestens 4 Stunden (besser über Nacht) in Wasser einweichen, dann abgießen. Die Datteln entsteinen und in Streifen schneiden.",
+    "Die Bohnen mit 20 g Zucker und dem Zimt fein pürieren und in einer Pfanne 5 Minuten eindicken, bis sie formbar sind. Abkühlen lassen.",
+    "Den Reis in einem Dämpfeinsatz (mit feuchtem Tuch ausgelegt) etwa 40 Minuten dämpfen, bis er weich und klebrig ist.",
+    "Vier hitzefeste Schälchen leicht einölen und den Boden mit Datteln, Rosinen und Sonnenblumenkernen dekorativ auslegen. Die Hälfte des Reises darauf festdrücken, die Bohnenpaste darübergeben, mit dem restlichen Reis abdecken und fest andrücken. 10 Minuten nachdämpfen.",
+    "Die Stärke mit dem restlichen Zucker (15 g) und 100 ml Wasser aufkochen, bis der Sirup klar eindickt. Die Schälchen auf Teller stürzen, den Sirup darüberträufeln und je 50 g Skyr dazu servieren."
+   ],
+   "tips": "Die Zutaten sind vereinfacht: Das gelesene Rezept nutzt Klebreis, Lotussamen, Goji, Jujuben und Kirschen. Hier steht Sushireis (klebt weniger), die rote Bohnenpaste ist aus Kidneybohnen (Azukibohnen stehen nicht in der Datenbank) und Datteln ersetzen die Jujuben; der Skyr bringt Eiweiß. Enthält Milch, Sulfit (Rosinen) und Sonnenblumenkerne.",
+   "storage": "Im Kühlschrank bis zu 3 Tage, abgedeckt.",
+   "reheat": "Etwa 5 Minuten über Dampf erwärmen.",
+   "freeze": {
+    "ok": "eingeschränkt",
+    "block": 250,
+    "months": 2,
+    "note": "Ohne Skyr einfrieren; Reis wird beim Auftauen fester, über Dampf wieder weich machen."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Ba Bao Fan (Achtschätzereis)“ (https://www.foodnetwork.com/recipes/food-network-kitchen/ba-bao-fan-9858846), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Gebackenes Skyr-Eis im Cornflakes-Mantel",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 25,
+   "cook": 3,
+   "level": "mittel",
+   "devices": [
+    "Airfryer"
+   ],
+   "tags": [
+    "Eis",
+    "proteinreich",
+    "Dessert",
+    "Airfryer",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "skyr",
+     400
+    ],
+    [
+     "zucker",
+     30
+    ],
+    [
+     "eier",
+     55
+    ],
+    [
+     "cornflakes",
+     40
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Skyr, Zucker und Vanille glatt verrühren, in eine Schale füllen und 3 bis 4 Stunden einfrieren, bis die Masse fest ist.",
+    "Mit einem Eisportionierer 8 Kugeln abstechen, auf ein Tablett mit Backpapier legen und 1 Stunde hart gefrieren.",
+    "Die Cornflakes grob zerdrücken. Das Ei verquirlen. Jede gefrorene Kugel erst im Ei, dann in den Cornflakes wenden, fest andrücken und das Ganze wieder 30 Minuten einfrieren.",
+    "Den Airfryer auf 200 °C vorheizen. Die Kugeln im Korb 1 bis 2 Minuten backen, bis die Hülle goldgelb ist. Sofort servieren, je Portion zwei Kugeln."
+   ],
+   "tips": "Das Original (Chinesisches flambiertes Eis) wird frittiert und flambiert. Hier backt der Airfryer die Hülle kurz und es wird nicht flambiert, das spart Fett und vermeidet Stichflammen. Das Ei in der Hülle wird nur kurz erhitzt: für Schwangere und Menschen mit geschwächter Abwehr nicht geeignet, dafür die Hülle ohne Ei machen. Enthält Milch, Ei und Gluten.",
+   "storage": "Fertig panierte Kugeln im Gefrierer bis zu 4 Wochen.",
+   "reheat": "Direkt gefroren in den Airfryer.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 1,
+    "note": "Panierte Kugeln einzeln vorfrieren, dann in einem Behälter lagern; gefroren backen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html (chefkoch.de, Chinesisches flambiertes Eis); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Gedämpfte Dattelklößchen mit Quark",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 4,
+   "prep": 25,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Multikocher",
+    "Herd"
+   ],
+   "tags": [
+    "Dämpfen",
+    "proteinreich",
+    "Dessert",
+    "Klößchen",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "magerquark",
+     300
+    ],
+    [
+     "mehl",
+     80
+    ],
+    [
+     "eier",
+     55
+    ],
+    [
+     "datteln",
+     60
+    ],
+    [
+     "walnuesse",
+     20
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Die Datteln entsteinen und mit den Walnüssen und dem Zimt fein hacken, daraus 12 kleine Kugeln formen.",
+    "Quark, Ei und Mehl zu einem weichen, leicht klebrigen Teig verrühren; mit bemehlten Händen in 12 Portionen teilen.",
+    "Jede Teigportion flach drücken, eine Dattelkugel einschließen und zu glatten Klößchen formen.",
+    "Die Klößchen mit Abstand auf ein Backpapier oder in einen geölten Dämpfeinsatz legen und über kochendem Wasser 12 bis 15 Minuten bei geschlossenem Deckel dämpfen. Warm servieren, je Portion drei Klößchen."
+   ],
+   "tips": "Eine Abwandlung: Der Teig ist ein Quarkteig mit wenig Mehl (die Zutaten des Chefkoch-Originals sind unbekannt). Er bleibt weich und gart durch das Dämpfen schonend. Je mehr Mehl, desto fester. Enthält Gluten, Milch, Ei und Walnüsse.",
+   "storage": "Im Kühlschrank bis zu 2 Tage.",
+   "reheat": "Etwa 5 Minuten über Dampf erwärmen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 2,
+    "note": "Gedämpft einzeln einfrieren; über Nacht auftauen und über Dampf erwärmen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.chefkoch.de/rezepte/654001166948846/Gedaempfte-Dattelkloesschen.html (chefkoch.de, Gedämpfte Dattelklößchen); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Chinesische Pfannkuchen mit Pflaumensauce",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 2,
+   "prep": 15,
+   "cook": 20,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Pfannkuchen",
+    "proteinreich",
+    "Dessert",
+    "Obst",
+    "Chinesisch"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "eier",
+     110
+    ],
+    [
+     "mehl",
+     40
+    ],
+    [
+     "milch15",
+     120
+    ],
+    [
+     "rapsoel",
+     8
+    ],
+    [
+     "pflaume",
+     200
+    ],
+    [
+     "zucker",
+     15
+    ],
+    [
+     "ingwer",
+     4
+    ],
+    [
+     "sojasauce",
+     5
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Für die Sauce die Pflaumen entsteinen und klein schneiden, mit Zucker, Ingwer, Sojasauce und 50 ml Wasser 10 bis 12 Minuten leise köcheln, bis sie weich sind. Mit dem Stabmixer pürieren und warm halten.",
+    "Eier, Milch und Mehl zu einem glatten, dünnen Teig verrühren und 10 Minuten quellen lassen.",
+    "Eine beschichtete Pfanne mit wenig Öl bei mittlerer Hitze erhitzen. Pro Pfannkuchen eine kleine Kelle Teig dünn verteilen und von jeder Seite 1 bis 2 Minuten backen.",
+    "Die Pfannkuchen mit der Pflaumensauce bestreichen, zusammenrollen oder falten und warm servieren (etwa 3 Pfannkuchen je Portion)."
+   ],
+   "tips": "Eine Abwandlung nach dem Titel: Das Original ist unbekannt; die Sauce ist herzhaft-süß mit Sojasauce und Ingwer. Frische Pflaumen im Herbst; sonst gehen TK-Pflaumen. Enthält Gluten, Ei, Milch und Soja.",
+   "storage": "Pfannkuchen Im Kühlschrank bis zu 2 Tage, Sauce bis zu 4 Tage.",
+   "reheat": "Pfannkuchen kurz in der Pfanne erwärmen.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 3,
+    "note": "Pfannkuchen mit Backpapier dazwischen einfrieren; Sauce getrennt dazulegen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.essen-und-trinken.de/rezepte/53951-rzpt-chinesische-pfannkuchen-mit-pflaumensauce (essen-und-trinken.de, Chinesische Pfannkuchen mit Pflaumensauce); die Seite darf von automatischen Werkzeugen laut robots.txt nicht abgerufen werden und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "China"
+  })
+);
+
+/* ===== Rezeptcharge 38: 6 Smoothies, bbcgoodfoodme.com gelesen (1), bbcgoodfood.com gesperrt (5), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Avocado-Erdbeer-Smoothie mit Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "avocado",
+     50
+    ],
+    [
+     "erdbeeren",
+     150
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "milch15",
+     100
+    ],
+    [
+     "honig",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Avocado halbieren, den Stein entfernen und das Fruchtfleisch herauslöffeln. Die Erdbeeren putzen (gefrorene kurz antauen lassen).",
+    "Alle Zutaten im Standmixer 45 bis 60 Sekunden sehr fein pürieren, bis keine Stückchen mehr zu sehen sind.",
+    "Abschmecken, bei Bedarf mit einem Schuss Milch verdünnen und sofort trinken."
+   ],
+   "tips": "Die Avocado macht den Smoothie cremig und liefert ungesättigte Fette; 50 g reichen, mehr treibt die Kalorien hoch. Reife Avocados mixen sich feiner. Enthält Milch. Avocado ist reich an Histamin.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/avocado-strawberry-smoothie (bbcgoodfood.com, Avocado & strawberry smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Tropischer Frühstücks-Smoothie mit Passionsfrucht, Mango und Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "passionsfrucht",
+     40
+    ],
+    [
+     "banane",
+     80
+    ],
+    [
+     "mango",
+     100
+    ],
+    [
+     "orangensaft",
+     120
+    ],
+    [
+     "skyr",
+     200
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Das Fruchtfleisch der Passionsfrüchte aus der Schale löffeln (für 40 g etwa 2 bis 3 Früchte), die Banane in Stücke brechen und die Mango würfeln.",
+    "Alles mit Orangensaft und Skyr im Standmixer 45 bis 60 Sekunden glatt pürieren.",
+    "Auf Wunsch die Kerne der Passionsfrucht durch ein Sieb streichen, mit Eiswürfeln servieren und sofort trinken."
+   ],
+   "tips": "Das gelesene Rezept hat keine Eiweißquelle und rechnet auf drei Gläser (300 ml Orangensaft für alle); hier ist es auf ein Glas umgerechnet und mit Skyr ergänzt, damit der Smoothie mindestens 20 g Eiweiß erreicht. Die Kerne der Passionsfrucht sind essbar. Enthält Milch. Der Smoothie enthält viel Fruchtzucker.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf bbcgoodfoodme.com gelesene Rezept „Tropical breakfast smoothie“ (https://www.bbcgoodfoodme.com/recipes/tropical-breakfast-smoothie/), in eigenen Worten und für die App angepasst (eine Portion, mehr Eiweiß durch Skyr, Zutaten der App); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Heidelbeer-Smoothie mit Haferflocken und Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "heidelbeeren",
+     120
+    ],
+    [
+     "banane",
+     70
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "haferflocken",
+     20
+    ],
+    [
+     "milch15",
+     100
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Die Heidelbeeren (gefroren kurz antauen lassen) und die in Stücke gebrochene Banane bereitstellen.",
+    "Alle Zutaten mit einer Prise Zimt in den Mixer geben und 60 Sekunden fein pürieren, bis die Haferflocken nicht mehr körnig sind.",
+    "Bei Bedarf mit etwas Milch verdünnen und sofort trinken."
+   ],
+   "tips": "Die Haferflocken sorgen für Sättigung; 5 Minuten stehen lassen macht den Smoothie dicker. Heidelbeeren färben stark, am besten sofort trinken. Enthält Milch und Gluten (Hafer).",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/blueberry-smoothie-recipe (bbcgoodfood.com, Blueberry smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Kiwi-Spinat-Smoothie mit Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "kiwi",
+     150
+    ],
+    [
+     "banane",
+     60
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "spinat",
+     30
+    ],
+    [
+     "milch15",
+     100
+    ],
+    [
+     "limettensaft",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Kiwis schälen und vierteln, die Banane in Stücke brechen, den Spinat waschen und abtropfen lassen.",
+    "Zuerst Spinat, Milch und Limettensaft 30 Sekunden mixen, dann die übrigen Zutaten zugeben.",
+    "45 bis 60 Sekunden fein pürieren und sofort trinken."
+   ],
+   "tips": "Der Spinat färbt den Smoothie grün, schmeckt aber nicht durch. Kiwi enthält ein Enzym, das Milchprodukte mit der Zeit bitter werden lässt: deshalb frisch trinken. Enthält Milch. Kiwi kann bei Birken- und Latexallergie Kreuzreaktionen auslösen.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/kiwi-fruit-smoothie (bbcgoodfood.com, Kiwi fruit smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Mango-Kokos-Smoothie mit Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mango",
+     150
+    ],
+    [
+     "kokosmilch",
+     40
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "milch15",
+     100
+    ],
+    [
+     "limettensaft",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Mango schälen und vom Stein schneiden. Die Kokosmilch vor dem Öffnen der Dose gut durchschütteln.",
+    "Alle Zutaten im Standmixer 45 bis 60 Sekunden cremig pürieren.",
+    "Abschmecken und sofort trinken; für einen kühleren Smoothie 2 bis 3 Eiswürfel mitmixen."
+   ],
+   "tips": "Mit nur 40 g Kokosmilch bleibt der Smoothie cremig und die Kalorien im Rahmen; die Kokosmilch ist reich an gesättigtem Fett. Statt frischer Mango passt aufgetaute Tiefkühlmango. Enthält Milch.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/creamy-mango-coconut-smoothie (bbcgoodfood.com, Creamy mango & coconut smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Orangen-Karotten-Ingwer-Smoothie mit Skyr",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 1,
+   "prep": 5,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "Getränk",
+    "proteinreich",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "orange",
+     150
+    ],
+    [
+     "karotte",
+     80
+    ],
+    [
+     "ingwer",
+     8
+    ],
+    [
+     "skyr",
+     200
+    ],
+    [
+     "zitronensaft",
+     10
+    ],
+    [
+     "honig",
+     10
+    ]
+   ],
+   "spices": [
+    "kurkuma"
+   ],
+   "steps": [
+    "Die Orange schälen und die Spalten entkernen, die Karotte schälen und klein schneiden, den Ingwer schälen.",
+    "Karotte, Orange, Ingwer, Zitronensaft und Honig mit einer Prise Kurkuma zuerst 60 Sekunden mixen, damit die Karotte fein wird.",
+    "Den Skyr zugeben, nochmals 30 Sekunden mixen und sofort trinken."
+   ],
+   "tips": "Ein Kraftpaket aus Vitamin C und Ingwer, aber ohne Heilversprechen: Die Wirkung auf die Abwehr ist nicht belegt. Kurkuma kann Zähne und Mixer färben. Rohe Karotte braucht einen kräftigen Mixer. Enthält Milch.",
+   "storage": "Frisch trinken; im Kühlschrank in einer verschlossenen Flasche bis zu 12 Stunden, vor dem Trinken schütteln.",
+   "reheat": "Wird kalt getrunken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Als fertiger Smoothie nicht einfrieren; Obstportionen für den Mixer lassen sich dagegen einzeln einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/immune-boosting-smoothie (bbcgoodfood.com, Immune-boosting smoothie); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  })
+);
+
+/* ===== Rezeptcharge 39: 10 Salate, bbcgoodfoodme.com gelesen (1), bbcgoodfood.com gesperrt (8), essen-und-trinken.de gesperrt (1), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Blattsalat mit Honig-Senf-Dressing und gebratener Hähnchenbrust",
+   "meal": "Salat/Bowl",
+   "group": "Geflügel",
+   "cuisine": "Deutschland",
+   "servings": 2,
+   "prep": 15,
+   "cook": 12,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "schnell",
+    "Pfanne"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haehnchenbrust",
+     300
+    ],
+    [
+     "salat",
+     150
+    ],
+    [
+     "tomate",
+     200
+    ],
+    [
+     "gurke",
+     150
+    ],
+    [
+     "karotte",
+     100
+    ],
+    [
+     "vollkornbrot",
+     80
+    ],
+    [
+     "honig",
+     15
+    ],
+    [
+     "senf",
+     20
+    ],
+    [
+     "essig",
+     20
+    ],
+    [
+     "rapsoel",
+     25
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Honig, Senf, Essig und 15 g Öl mit 2 EL Wasser zu einem Dressing verrühren und mit Salz und Pfeffer abschmecken.",
+    "Salat waschen und zupfen, Tomaten achteln, Gurke in Scheiben schneiden, Karotte raspeln.",
+    "Die Hähnchenbrust salzen und pfeffern. Das restliche Öl in einer Pfanne erhitzen und das Fleisch bei mittlerer Hitze von jeder Seite 5 bis 6 Minuten braten, bis die Mitte durchgegart ist (Kern mindestens 75 °C). 3 Minuten ruhen lassen und in Streifen schneiden.",
+    "Salat und Gemüse mit dem Dressing mischen, die Hähnchenstreifen darauflegen und das Vollkornbrot dazu reichen."
+   ],
+   "tips": "Das Dressing bindet dank Senf ohne Sahne; Honig kann durch Ahornsirup ersetzt werden. Enthält Senf und Gluten (Brot). Das Fleisch kann auch auf dem Kontaktgrill gegart werden.",
+   "storage": "Im Kühlschrank bis zu 1 Tag; Dressing und Fleisch getrennt aufbewahren.",
+   "reheat": "Das Fleisch kalt oder kurz in der Pfanne erwärmen; Salat frisch anmachen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat und Dressing sind nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.essen-und-trinken.de/rezepte/salat-mit-honig-senf-dressing-12066152.html (essen-und-trinken.de, Salat mit Honig-Senf-Dressing); die Seite darf von automatischen Werkzeugen laut robots.txt nicht abgerufen werden und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Hähnchen-Caesar-Salat mit Skyr-Dressing",
+   "meal": "Salat/Bowl",
+   "group": "Geflügel",
+   "cuisine": "USA",
+   "servings": 2,
+   "prep": 20,
+   "cook": 15,
+   "level": "leicht",
+   "devices": [
+    "Herd",
+    "Airfryer"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "Airfryer",
+    "Pfanne"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haehnchenbrust",
+     300
+    ],
+    [
+     "salat",
+     250
+    ],
+    [
+     "parmesan",
+     30
+    ],
+    [
+     "baguette",
+     60
+    ],
+    [
+     "skyr",
+     120
+    ],
+    [
+     "zitronensaft",
+     20
+    ],
+    [
+     "senf",
+     10
+    ],
+    [
+     "knoblauch",
+     5
+    ],
+    [
+     "kapern",
+     10
+    ],
+    [
+     "olivenoel",
+     15
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Das Baguette in Würfel schneiden, mit 5 g Öl vermengen und im Airfryer bei 180 °C 4 bis 5 Minuten knusprig rösten (oder im Backofen bei 200 °C 8 Minuten).",
+    "Skyr, Zitronensaft, Senf, den fein gehackten Knoblauch, die gehackten Kapern und die Hälfte des Parmesans zum Dressing verrühren; mit Salz und Pfeffer abschmecken.",
+    "Das Hähnchen salzen und pfeffern, im restlichen Öl bei mittlerer Hitze von jeder Seite 5 bis 6 Minuten braten (Kern mindestens 75 °C), 3 Minuten ruhen lassen und in Scheiben schneiden.",
+    "Den Salat in Streifen zupfen, mit dem Dressing mischen, auf zwei Teller geben und mit Hähnchen, Croûtons und dem restlichen Parmesan belegen."
+   ],
+   "tips": "Das klassische Caesar-Dressing arbeitet mit rohem Eigelb, Sardellen und viel Öl; hier ersetzt Skyr den größten Teil, das spart Kalorien und Rohei. Parmesan ist nicht vegetarisch (Lab). Enthält Milch, Gluten und Senf.",
+   "storage": "Im Kühlschrank bis zu 1 Tag; Croûtons erst vor dem Essen zugeben.",
+   "reheat": "Hähnchen kalt essen oder kurz erwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat und Dressing sind nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/chicken-caesar-salad (bbcgoodfood.com, Chicken Caesar salad); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "USA"
+  }),
+  R({
+   "name": "Griechischer Salat mit Kichererbsen, Feta und Ei",
+   "meal": "Salat/Bowl",
+   "group": "Vegetarisch",
+   "cuisine": "Griechenland",
+   "servings": 2,
+   "prep": 20,
+   "cook": 10,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "vegetarisch",
+    "ohne Fleisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "feta",
+     120
+    ],
+    [
+     "kichererbsen",
+     200
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "gurke",
+     200
+    ],
+    [
+     "tomate",
+     250
+    ],
+    [
+     "paprika",
+     100
+    ],
+    [
+     "zwiebel",
+     50
+    ],
+    [
+     "oliven",
+     40
+    ],
+    [
+     "skyr",
+     100
+    ],
+    [
+     "essig",
+     15
+    ],
+    [
+     "olivenoel",
+     10
+    ]
+   ],
+   "spices": [
+    "oregano",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die Eier 9 Minuten hart kochen, abschrecken, pellen und vierteln.",
+    "Gurke, Tomaten und Paprika in grobe Stücke schneiden, die Zwiebel in dünne Ringe, die Kichererbsen abspülen und abtropfen lassen.",
+    "Skyr, Essig, Öl und Oregano zum Dressing verrühren, mit Salz und Pfeffer abschmecken.",
+    "Gemüse, Kichererbsen und Oliven mit dem Dressing mischen, den Feta in Würfeln darauf verteilen und mit den Eierspalten belegen."
+   ],
+   "tips": "Skyr statt Öl-Dressing hält die Kalorien niedrig; Kichererbsen und Ei bringen das Eiweiß, das Fleisch ersetzt. Feta ist salzig, deshalb vorsichtig nachsalzen. Enthält Milch und Ei. Kichererbsen sind blähend.",
+   "storage": "Im Kühlschrank bis zu 1 Tag, Dressing getrennt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat ist nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/greek-salad (bbcgoodfood.com, Greek salad); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Griechenland"
+  }),
+  R({
+   "name": "Hähnchen-Satay-Salat mit Erdnussdressing",
+   "meal": "Salat/Bowl",
+   "group": "Geflügel",
+   "cuisine": "Indonesien",
+   "servings": 2,
+   "prep": 20,
+   "cook": 12,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "Pfanne",
+    "Asiatisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haehnchenbrust",
+     300
+    ],
+    [
+     "chinakohl",
+     200
+    ],
+    [
+     "karotte",
+     100
+    ],
+    [
+     "gurke",
+     150
+    ],
+    [
+     "erdnussmus",
+     30
+    ],
+    [
+     "sojasauce",
+     20
+    ],
+    [
+     "limettensaft",
+     20
+    ],
+    [
+     "ingwer",
+     5
+    ],
+    [
+     "honig",
+     5
+    ],
+    [
+     "sambal",
+     5
+    ],
+    [
+     "erdnuesse",
+     20
+    ],
+    [
+     "rapsoel",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Für das Dressing Erdnussmus, Sojasauce, Limettensaft, geriebenen Ingwer, Honig und Sambal mit 3 bis 4 EL warmem Wasser glatt rühren.",
+    "Die Hähnchenbrust in Streifen schneiden, mit der Hälfte des Dressings vermengen und 10 Minuten marinieren, dann im heißen Öl in einer Pfanne 6 bis 8 Minuten rundum goldbraun braten (Kern mindestens 75 °C).",
+    "Chinakohl in feine Streifen schneiden, die Karotte in Stifte und die Gurke in Halbmonde.",
+    "Das Gemüse mit dem restlichen Dressing mischen, die warmen Hähnchenstreifen darauflegen und mit gehackten Erdnüssen bestreuen."
+   ],
+   "tips": "Die Marinade, die mit rohem Fleisch in Berührung war, nicht als Dressing wiederverwenden: deshalb wird das Dressing vorher geteilt. Erdnussmus ist kalorienreich, daher nur 30 g für zwei Portionen. Enthält Erdnüsse und Soja.",
+   "storage": "Im Kühlschrank bis zu 1 Tag; Dressing und Fleisch getrennt.",
+   "reheat": "Das Fleisch kurz in der Pfanne erwärmen; Salat kalt.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat ist nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/chicken-satay-salad (bbcgoodfood.com, Chicken satay salad); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Indonesien"
+  }),
+  R({
+   "name": "Kartoffelsalat mit Ei, Kochschinken und Skyr-Dressing",
+   "meal": "Salat/Bowl",
+   "group": "Schwein",
+   "cuisine": "Deutschland",
+   "servings": 2,
+   "prep": 20,
+   "cook": 25,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "Klassiker"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "kartoffeln",
+     400
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "kochschinken",
+     150
+    ],
+    [
+     "gurke",
+     100
+    ],
+    [
+     "zwiebel",
+     40
+    ],
+    [
+     "skyr",
+     120
+    ],
+    [
+     "senf",
+     15
+    ],
+    [
+     "essig",
+     20
+    ],
+    [
+     "schnittlauch",
+     10
+    ],
+    [
+     "rapsoel",
+     10
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die Kartoffeln mit Schale 20 bis 25 Minuten weich kochen, abgießen, kurz ausdampfen lassen und noch warm pellen. Die Eier 9 Minuten hart kochen, abschrecken und pellen.",
+    "Zwiebel fein würfeln, mit Essig, Senf, Öl, 50 ml heißem Wasser, Salz und Pfeffer zu einer Marinade verrühren. Die warmen Kartoffelscheiben darin 10 Minuten durchziehen lassen.",
+    "Gurke und Schinken würfeln, die Eier in Stücke schneiden. Skyr mit Schnittlauch glatt rühren.",
+    "Alles vorsichtig mit den Kartoffeln mischen, abschmecken und mindestens 30 Minuten durchziehen lassen."
+   ],
+   "tips": "Die warme Brühe-Essig-Marinade macht den Salat saftig, der Skyr ersetzt Mayonnaise. Kartoffelsalat mit Ei im Kühlschrank lagern und nicht länger als 2 Tage aufbewahren. Enthält Ei, Milch und Senf. Kochschinken ist histaminhaltig.",
+   "storage": "Im Kühlschrank bis zu 2 Tage.",
+   "reheat": "Kalt servieren; wird der Salat mit dem Schinken erwärmt, muss er mindestens 70 °C Kerntemperatur erreichen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Kartoffeln und Dressing werden nach dem Auftauen wässrig."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/classic-potato-salad (bbcgoodfood.com, Classic potato salad); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Couscous-Salat mit Feta, Edamame und Minze",
+   "meal": "Salat/Bowl",
+   "group": "Vegetarisch",
+   "cuisine": "Nordafrika",
+   "servings": 2,
+   "prep": 10,
+   "cook": 5,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "schnell",
+    "vegetarisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "couscous",
+     100
+    ],
+    [
+     "feta",
+     100
+    ],
+    [
+     "edamame",
+     200
+    ],
+    [
+     "tomate",
+     150
+    ],
+    [
+     "gurke",
+     100
+    ],
+    [
+     "minze",
+     10
+    ],
+    [
+     "petersilie",
+     10
+    ],
+    [
+     "zitronensaft",
+     25
+    ],
+    [
+     "skyr",
+     100
+    ],
+    [
+     "olivenoel",
+     10
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Den Couscous mit 150 ml kochender Gemüsebrühe oder gesalzenem Wasser übergießen, zugedeckt 5 Minuten quellen lassen und mit einer Gabel auflockern. Abkühlen lassen.",
+    "Edamame nach Packungsangabe 3 bis 4 Minuten kochen, abtropfen lassen. Tomate und Gurke würfeln, Kräuter hacken.",
+    "Skyr, Zitronensaft und Öl zum Dressing verrühren und mit Salz und Pfeffer abschmecken.",
+    "Alles mit dem Couscous mischen und den zerbröckelten Feta darüber verteilen."
+   ],
+   "tips": "Der Salat ist in zehn Minuten fertig, wenn der Couscous gleich nach dem Quellen mit TK-Edamame abgekühlt wird. Edamame und Feta liefern das Eiweiß. Enthält Gluten (Couscous), Milch und Soja.",
+   "storage": "Im Kühlschrank bis zu 2 Tage.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat ist nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/10minute-couscous-salad (bbcgoodfood.com, 10-minute couscous salad); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Nordafrika"
+  }),
+  R({
+   "name": "Quinoa-Salat mit gegrilltem Halloumi",
+   "meal": "Salat/Bowl",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 2,
+   "prep": 15,
+   "cook": 20,
+   "level": "leicht",
+   "devices": [
+    "Herd",
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "vegetarisch",
+    "Kontaktgrill"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "quinoa",
+     60
+    ],
+    [
+     "halloumi",
+     160
+    ],
+    [
+     "edamame",
+     100
+    ],
+    [
+     "paprika",
+     100
+    ],
+    [
+     "gurke",
+     100
+    ],
+    [
+     "tomate",
+     100
+    ],
+    [
+     "minze",
+     10
+    ],
+    [
+     "zitronensaft",
+     25
+    ],
+    [
+     "skyr",
+     60
+    ],
+    [
+     "olivenoel",
+     5
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Den Quinoa in einem Sieb heiß abspülen, mit der doppelten Menge Wasser aufkochen und zugedeckt 12 bis 15 Minuten bei kleiner Hitze quellen lassen. Abkühlen lassen.",
+    "Edamame 3 bis 4 Minuten kochen. Paprika, Gurke und Tomate würfeln, Minze hacken.",
+    "Skyr, Zitronensaft und Öl zum Dressing verrühren, mit Salz und Pfeffer abschmecken.",
+    "Halloumi in Scheiben schneiden und auf dem Kontaktgrill (oder in der Pfanne) ohne Fett von beiden Seiten 3 bis 4 Minuten grillen, bis er goldbraun ist.",
+    "Quinoa, Gemüse und Edamame mit dem Dressing mischen und mit dem warmen Halloumi belegen."
+   ],
+   "tips": "Quinoa vorher abspülen, sonst schmeckt er bitter (Saponine). Halloumi ist salzig, deshalb das Dressing sparsam salzen. Enthält Milch und Soja.",
+   "storage": "Im Kühlschrank bis zu 1 Tag; Halloumi getrennt und frisch gegrillt.",
+   "reheat": "Halloumi kurz in der Pfanne erwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat ist nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/quinoa-salad-grilled-halloumi (bbcgoodfood.com, Quinoa salad with grilled halloumi); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Halloumi-Karotten-Orangen-Salat mit Kichererbsen",
+   "meal": "Salat/Bowl",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 2,
+   "prep": 15,
+   "cook": 8,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "vegetarisch",
+    "schnell"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "halloumi",
+     180
+    ],
+    [
+     "karotte",
+     200
+    ],
+    [
+     "orange",
+     300
+    ],
+    [
+     "kichererbsen",
+     200
+    ],
+    [
+     "rucola",
+     80
+    ],
+    [
+     "senf",
+     15
+    ],
+    [
+     "honig",
+     8
+    ],
+    [
+     "essig",
+     15
+    ],
+    [
+     "rapsoel",
+     10
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die Orangen schälen, die Filets herauslösen und dabei den Saft auffangen. Die Reste ausdrücken. Senf, Honig, Essig und 5 g Öl mit dem Saft zum Dressing verrühren, mit Salz und Pfeffer würzen.",
+    "Die Karotten mit dem Sparschäler in lange Streifen ziehen und im Dressing wenden. Die abgespülten Kichererbsen ebenfalls untermischen.",
+    "Den Halloumi in Scheiben schneiden und im restlichen Öl in einer beschichteten Pfanne von beiden Seiten 2 bis 3 Minuten goldbraun braten.",
+    "Den Rucola unter den Karottensalat heben, auf zwei Tellern anrichten und mit Halloumi und Orangenfilets belegen."
+   ],
+   "tips": "Das gelesene Rezept rechnet mit 225 g Halloumi für vier Personen und ohne Kichererbsen; hier sind es 180 g für zwei plus Kichererbsen, damit der Salat mindestens 30 g Eiweiß je Portion erreicht. Halloumi ist salzig. Enthält Milch und Senf.",
+   "storage": "Im Kühlschrank bis zu 1 Tag; Halloumi getrennt aufbewahren.",
+   "reheat": "Halloumi kurz in der Pfanne erwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat ist nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf bbcgoodfoodme.com gelesene Rezept „Halloumi, carrot & orange salad“ (https://www.bbcgoodfoodme.com/recipes/halloumi-carrot-orange-salad/), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Sommersalat mit gebratenem Lachs, grünen Bohnen und Erbsen",
+   "meal": "Salat/Bowl",
+   "group": "Fisch",
+   "cuisine": "Großbritannien",
+   "servings": 2,
+   "prep": 20,
+   "cook": 12,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "Sommer",
+    "Pfanne"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "lachs",
+     280
+    ],
+    [
+     "gruene_bohnen",
+     150
+    ],
+    [
+     "erbsen_tk",
+     100
+    ],
+    [
+     "salat",
+     100
+    ],
+    [
+     "gurke",
+     150
+    ],
+    [
+     "kartoffeln",
+     200
+    ],
+    [
+     "avocado",
+     50
+    ],
+    [
+     "skyr",
+     100
+    ],
+    [
+     "zitronensaft",
+     20
+    ],
+    [
+     "dill",
+     5
+    ],
+    [
+     "rapsoel",
+     10
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die Kartoffeln in Scheiben schneiden und in Salzwasser 10 bis 12 Minuten garen, bis sie gerade weich sind. In den letzten 3 Minuten die Bohnen und in der letzten Minute die Erbsen mitgaren, alles abgießen und abschrecken.",
+    "Skyr, Zitronensaft und gehackten Dill zum Dressing verrühren, mit Salz und Pfeffer abschmecken.",
+    "Den Lachs salzen und pfeffern und im heißen Öl mit der Hautseite nach unten 4 bis 5 Minuten braten, wenden und 2 bis 3 Minuten weitergaren, bis er in der Mitte gerade durch ist (Kern mindestens 63 °C).",
+    "Salat, Gurkenscheiben, Kartoffeln, Bohnen und Erbsen mit dem Dressing mischen, die Avocado in Scheiben darauflegen und den Lachs in Stücken darauf anrichten."
+   ],
+   "tips": "Eine Abwandlung nach dem Titel: Das Original ist unbekannt, hier ein Sommersalat mit Lachs. Lachs kann durch Forelle ersetzt werden. Enthält Fisch und Milch. Avocado ist reich an Histamin.",
+   "storage": "Im Kühlschrank bis zu 1 Tag; Lachs getrennt aufbewahren.",
+   "reheat": "Lachs nur kurz erwärmen oder kalt essen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat ist nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/epic-summer-salad (bbcgoodfood.com, Epic summer salad); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Salade Niçoise mit Thunfisch, Ei und grünen Bohnen",
+   "meal": "Salat/Bowl",
+   "group": "Fisch",
+   "cuisine": "Frankreich",
+   "servings": 2,
+   "prep": 20,
+   "cook": 20,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "proteinreich",
+    "Klassiker",
+    "Fisch"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "thunfisch",
+     200
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "kartoffeln",
+     250
+    ],
+    [
+     "gruene_bohnen",
+     200
+    ],
+    [
+     "tomate",
+     200
+    ],
+    [
+     "oliven",
+     40
+    ],
+    [
+     "kapern",
+     10
+    ],
+    [
+     "salat",
+     100
+    ],
+    [
+     "zwiebel",
+     40
+    ],
+    [
+     "senf",
+     10
+    ],
+    [
+     "essig",
+     15
+    ],
+    [
+     "olivenoel",
+     20
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die Kartoffeln in Stücken 12 bis 15 Minuten kochen, die Bohnen in den letzten 4 Minuten mitgaren. Abgießen und abkühlen lassen. Die Eier 9 Minuten hart kochen, abschrecken und pellen.",
+    "Senf, Essig, Öl, die fein gewürfelte Zwiebel, Salz und Pfeffer zum Dressing verrühren.",
+    "Salat auf zwei Teller geben, Kartoffeln, Bohnen, geviertelte Tomaten, Oliven und Kapern darauf anrichten.",
+    "Den abgetropften Thunfisch grob zerzupfen, mit den Eierspalten auf den Salat legen und mit dem Dressing beträufeln."
+   ],
+   "tips": "Klassisch wird Thunfisch aus der Dose verwendet; hier ist er naturell (im eigenen Saft) gerechnet. Kapern und Oliven sind salzig, daher das Dressing sparsam salzen. Enthält Fisch, Ei und Senf. Dosenthunfisch ist histaminhaltig; Quecksilber: Thunfisch nur gelegentlich essen, besonders in Schwangerschaft.",
+   "storage": "Im Kühlschrank bis zu 1 Tag, Dressing getrennt.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Salat ist nicht zum Einfrieren geeignet."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/salade-nicoise (bbcgoodfood.com, Salade niçoise); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Frankreich"
+  })
+);
+
+/* ===== Rezeptcharge 40: 4 Snack-Rezepte, bbcgoodfoodme.com gelesen (1), bbcgoodfood.com gesperrt (3), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Vegetarische Pilz-Wurstrollen mit Quark-Öl-Teig",
+   "meal": "Snack",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 40,
+   "cook": 30,
+   "level": "mittel",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "proteinreich",
+    "vegetarisch",
+    "Meal-Prep",
+    "Snack"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "magerquark",
+     150
+    ],
+    [
+     "mehl",
+     150
+    ],
+    [
+     "rapsoel",
+     40
+    ],
+    [
+     "champignons",
+     200
+    ],
+    [
+     "lauch",
+     100
+    ],
+    [
+     "knoblauch",
+     6
+    ],
+    [
+     "misopaste",
+     15
+    ],
+    [
+     "senf",
+     10
+    ],
+    [
+     "gouda_light",
+     60
+    ],
+    [
+     "semmelbroesel",
+     40
+    ],
+    [
+     "eier",
+     55
+    ]
+   ],
+   "spices": [
+    "salbei",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Quark, Mehl, 30 g Öl und eine Prise Salz zu einem glatten Teig verkneten, in Folie wickeln und 30 Minuten kühlen.",
+    "Die Champignons in der Küchenmaschine sehr fein hacken (oder mit dem Messer), den Lauch fein würfeln. Das restliche Öl erhitzen, den Lauch 5 Minuten weich dünsten, die Pilze zugeben und 10 bis 12 Minuten braten, bis die Flüssigkeit verdampft ist.",
+    "Knoblauch, Salbei, Misopaste und Senf zugeben und 1 Minute mitbraten. Abkühlen lassen, dann geriebenen Gouda und Semmelbrösel untermengen und nur leicht salzen, weil Miso und Käse Salz mitbringen. Dazu ein Drittel des verquirlten Eis rühren.",
+    "Den Backofen auf 200 °C Ober-/Unterhitze vorheizen. Den Teig auf bemehlter Fläche zu einem langen Rechteck (etwa 40 × 24 cm) ausrollen, der Länge nach in zwei Streifen teilen, die Füllung mittig als Strang auflegen und den Teig darüberschlagen. Ränder mit einer Gabel andrücken.",
+    "Die Rollen in je vier Stücke schneiden (8 Stück), auf ein Blech mit Backpapier setzen, mit dem restlichen Ei bestreichen und 25 bis 30 Minuten backen, bis sie tief goldbraun sind. Kurz abkühlen lassen, je Portion zwei Rollen."
+   ],
+   "tips": "Das gelesene Rezept nutzt fertigen Blätterteig (320 g) und Kastanien; beides gibt es im Zutatenstamm nicht. Der Quark-Öl-Teig ersetzt den Blätterteig, Gouda light und Quark bringen das Eiweiß, die Kastanien fehlen. Die Rollen sind knusprig, aber weniger blättrig. Enthält Gluten, Milch, Ei, Soja (Miso) und Senf.",
+   "storage": "Im Kühlschrank bis zu 3 Tage.",
+   "reheat": "Im Backofen bei 180 °C oder im Airfryer 5 Minuten aufbacken.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 3,
+    "note": "Gebacken und abgekühlt zu zwei Rollen pro 250-ml-Block einfrieren; ungetaut 12 Minuten bei 180 °C aufbacken."
+   },
+   "src": "Eigene Fassung (Claude), angelehnt an das auf bbcgoodfoodme.com gelesene Rezept „Vegetarische Wurstrollen (Vegetarian sausage rolls)“ (https://www.bbcgoodfoodme.com/recipes/vegetarian-sausage-rolls/), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Regenbogen-Obstspieße mit Skyr-Vanille-Dip und Mandeln",
+   "meal": "Snack",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 2,
+   "prep": 15,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
+   "tags": [
+    "ohne Kochen",
+    "proteinreich",
+    "schnell",
+    "Obst",
+    "Snack"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "erdbeeren",
+     120
+    ],
+    [
+     "orange",
+     100
+    ],
+    [
+     "ananas",
+     80
+    ],
+    [
+     "kiwi",
+     80
+    ],
+    [
+     "heidelbeeren",
+     60
+    ],
+    [
+     "weintrauben",
+     80
+    ],
+    [
+     "skyr",
+     250
+    ],
+    [
+     "honig",
+     10
+    ],
+    [
+     "mandeln",
+     30
+    ]
+   ],
+   "spices": [
+    "vanille"
+   ],
+   "steps": [
+    "Erdbeeren putzen, Orange schälen und in Spalten teilen, Ananas und Kiwi in mundgerechte Stücke schneiden, Trauben und Heidelbeeren abspülen und trocknen.",
+    "Das Obst in Regenbogenfarben (rot, orange, gelb, grün, blau, violett) auf Holzspieße stecken.",
+    "Skyr mit Honig und Vanille glatt rühren. Die Mandeln grob hacken und in einer Pfanne ohne Fett 2 Minuten rösten.",
+    "Den Dip in zwei Schälchen geben, mit den Mandeln bestreuen und mit den Spießen servieren."
+   ],
+   "tips": "Ein Snack für die Brotdose oder fürs Buffet; die Spieße schmecken am besten frisch. Der Dip liefert das Eiweiß. Spieße für kleine Kinder ohne scharfe Spitzen verwenden oder das Obst auf Teller legen. Enthält Milch und Mandeln (Schalenfrucht). Ananas, Kiwi und Erdbeeren sind histaminliberierend; viel Fruchtzucker.",
+   "storage": "Spieße Im Kühlschrank bis zu 1 Tag; Dip bis zu 2 Tage.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Frisches Obst wird nach dem Auftauen matschig, der Dip trennt sich."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/rainbow-fruit-skewers (bbcgoodfood.com, Rainbow fruit skewers); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Crunchy Granola mit Skyr, Beeren und Kirschen",
+   "meal": "Frühstück",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 10,
+   "cook": 25,
+   "level": "leicht",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Backen",
+    "proteinreich",
+    "Meal-Prep",
+    "Frühstück"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haferflocken",
+     120
+    ],
+    [
+     "mandeln",
+     30
+    ],
+    [
+     "sonnenblumenkerne",
+     20
+    ],
+    [
+     "honig",
+     40
+    ],
+    [
+     "rapsoel",
+     15
+    ],
+    [
+     "eiklar",
+     33
+    ],
+    [
+     "skyr",
+     800
+    ],
+    [
+     "heidelbeeren",
+     120
+    ],
+    [
+     "suesskirschen",
+     160
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Den Backofen auf 150 °C Ober-/Unterhitze vorheizen und ein Blech mit Backpapier auslegen.",
+    "Haferflocken, gehackte Mandeln und Sonnenblumenkerne mit Zimt mischen. Honig, Öl und Eiklar verrühren und gründlich unter die Mischung arbeiten.",
+    "Auf dem Blech dünn verteilen und 20 bis 25 Minuten backen, nach der Hälfte wenden, bis das Granola goldbraun ist. Auf dem Blech vollständig auskühlen lassen, erst dann wird es knusprig.",
+    "Die Kirschen entsteinen und halbieren. Das Granola in vier Portionen teilen (je etwa 55 g). Je Portion 200 g Skyr in eine Schale geben, das Granola, 30 g Heidelbeeren und 40 g Kirschen darauf verteilen."
+   ],
+   "tips": "Wer Vorrat backen möchte, verdoppelt die Granola-Mengen und lagert es luftdicht. Das Eiklar macht das Granola klumpig-knusprig und bringt Eiweiß. Das Original ist unbekannt (Seite gesperrt): Dies ist ein App-Frühstück, kein Snack. Enthält Hafer (Gluten), Mandeln, Milch und Ei. Kirschen und Beeren: Fruchtzucker beachten.",
+   "storage": "Granola luftdicht bei Zimmertemperatur bis zu 2 Wochen; Skyr-Schale frisch.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Das Granola hält sich trocken bei Zimmertemperatur, Einfrieren ist unnötig; Skyr und Obst nicht einfrieren."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/crunchy-granola-berries-cherries (bbcgoodfood.com, Crunchy granola with berries & cherries); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Hähnchen-Nachos mit schwarzen Bohnen und Skyr-Creme",
+   "meal": "Hauptgericht",
+   "group": "Geflügel",
+   "cuisine": "Mexiko",
+   "servings": 2,
+   "prep": 20,
+   "cook": 20,
+   "level": "leicht",
+   "devices": [
+    "Backofen",
+    "Airfryer"
+   ],
+   "tags": [
+    "Überbacken",
+    "proteinreich",
+    "Airfryer",
+    "Tex-Mex"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "maistortilla",
+     90
+    ],
+    [
+     "haehnchenbrust",
+     250
+    ],
+    [
+     "schwarze_bohnen",
+     150
+    ],
+    [
+     "tomaten_dose",
+     150
+    ],
+    [
+     "zwiebel",
+     40
+    ],
+    [
+     "gouda_light",
+     60
+    ],
+    [
+     "skyr",
+     100
+    ],
+    [
+     "limettensaft",
+     15
+    ],
+    [
+     "avocado",
+     50
+    ],
+    [
+     "koriander_frisch",
+     10
+    ],
+    [
+     "rapsoel",
+     5
+    ]
+   ],
+   "spices": [
+    "kreuzkuemmel",
+    "paprika_suess",
+    "chilipulver",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die Tortillas in Dreiecke schneiden und im Airfryer bei 180 °C 4 bis 5 Minuten knusprig backen (oder auf einem Blech im Backofen bei 180 °C 8 bis 10 Minuten), dabei einmal wenden.",
+    "Das Öl in einer Pfanne erhitzen, die gewürfelte Zwiebel 3 Minuten glasig dünsten, das in kleine Würfel geschnittene Hähnchen zugeben und 6 bis 8 Minuten braten, bis es durchgegart ist (Kern mindestens 75 °C).",
+    "Kreuzkümmel, Paprika und Chili einrühren, die Tomaten und die abgespülten Bohnen zugeben und 5 Minuten einköcheln lassen. Mit Salz und Pfeffer abschmecken.",
+    "Die Chips in eine Auflaufform geben, die Hähnchen-Bohnen-Mischung darauf verteilen, mit dem geriebenen Gouda bestreuen und im Backofen bei 200 °C 8 bis 10 Minuten überbacken, bis der Käse geschmolzen ist.",
+    "Skyr mit Limettensaft und einer Prise Salz verrühren, die Avocado würfeln. Die Nachos damit und mit Korianderblättern garnieren."
+   ],
+   "tips": "Skyr statt saurer Sahne und Gouda light statt Cheddar halten Kalorien und Fett niedrig. Die Tortillachips werden gebacken, nicht frittiert. Das Original ist unbekannt (Seite gesperrt). Enthält Milch. Avocado und Hartkäse enthalten Histamin; Bohnen sind blähend.",
+   "storage": "Hähnchen-Bohnen-Mischung Im Kühlschrank bis zu 3 Tage; Chips frisch backen.",
+   "reheat": "Die Mischung in der Pfanne erwärmen, bis sie durch und mindestens 70 °C heiß ist.",
+   "freeze": {
+    "ok": "ja",
+    "block": 250,
+    "months": 3,
+    "note": "Nur die Hähnchen-Bohnen-Mischung (ohne Chips, Käse und Creme) einfrieren, eine Portion pro 250-ml-Block; über Nacht im Kühlschrank auftauen."
+   },
+   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/homemade-chicken-nachos (bbcgoodfood.com, Homemade chicken nachos); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "origin": "Mexiko"
+  })
+);
 [SEED, SEED2].forEach(a => { for (let i = a.length - 1; i >= 0; i--) { if (RETIRED[a[i].id]) a.splice(i, 1); } });
 
 /* ===== Bibliothek ab r77 (Entscheidung des Auftraggebers, 28.10.2026, aktualisiert) =====
@@ -20188,7 +23760,7 @@ function diaryCsv(diary) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    ZUTATEN, ZMAP, RETIRED, SMAP, SPICES, SEED, ALLERGENE, UNVERTR, KATS, GERAETE, MEALS, MAIN_MEALS, GRUPPEN, ZIEL_VERTEILUNG, KAMMERN, BLOCK_ML, EQUIP_STD, equipClean, kap, kapN, equipTotals, TAGE, SLOTS, FIXE_AUSSCHLUESSE,
+    ZUTATEN, ZMAP, RETIRED, SMAP, SPICES, SEED, ALLERGENE, UNVERTR, KATS, GERAETE, MEALS, MAIN_MEALS, GRUPPEN, ZIEL_VERTEILUNG, KAMMERN, BLOCK_ML, EQUIP_STD, equipClean, kap, kapN, equipTotals, TAGE, SLOTS, FIXE_AUSSCHLUESSE, FIXE_BEDINGT, EXCL_HAUPT_KEYS, isHauptRezept,
     calcRecipe, derive, conflicts, validateRecipe, runQA, distribution, dayTotals, shoppingList, fmtAmount, expiry, invStats, exclusionHits, recipeExclusionHits, energyCheck, slotFits, normalizeAIRecipe, ingredientEnergyIssues,
     isoLocal, addDaysIso, diffDays, fmtDate, newLot, lotState, stockTotals, deductFifo, recipeNeed, coverage, spiceCheck, whatCanICook, expiringSoon, lowStock,
     weekNeed, shopPlan, fmtGrams, emptyDay, dayOf, nutriOfIng, entryRecipe, entryIng, entryQuick, diaryTotals, macroGoals, weekStats, streak, weightSeries, recentFoods,
@@ -20836,7 +24408,7 @@ function validateBaustein(b, profile) {
   const badAmt = (b.ing || []).filter(([id, g]) => !(g > 0 && g <= 3000));
   add('Mengen positiv und plausibel', badAmt.length === 0, badAmt.length ? 'Auffällig: ' + badAmt.map(x => x[0]).join(', ') : '');
   const ex = recipeExclusionHits(b, profile && profile.excl);
-  add('Persönliche Ausschlüsse', ex.length === 0, ex.length ? 'Treffer: ' + ex.join(', ') : 'Keine Treffer bei den festen und eigenen Ausschlüssen');
+  add('Persönliche Ausschlüsse', ex.length === 0, ex.length ? 'Treffer: ' + ex.join(', ') : 'Keine Treffer bei den festen und eigenen Ausschlüssen (Ananas, Süßkartoffel und Batate sind in Bausteinen nicht erlaubt)');
   const en = energyCheck(b);
   add('Energie-Plausibilität', en.ok, en.kcal + ' kcal vs. ' + en.calc + ' kcal aus Makros je Block');
   add('Blockfüllung', b.fill >= 0.9 && b.fill <= 1.12, 'Geschätzte Ausbeute ' + Math.round(b.yieldMl) + ' ml für ' + b.n + ' Blöcke à ' + b.ml + ' ml (Füllgrad ' + Math.round(b.fill * 100) + ' %)', (b.fill >= 0.9 && b.fill <= 1.12) ? 'ok' : 'warn');
@@ -20922,7 +24494,7 @@ function planItemInfo(it, byRecipe) {
   return { name: r.name, ing: r.ing, spices: r.spices, ml: fz.block, cubes: r.servings, prep: r.prep, cook: r.cook, devices: r.devices, months: fz.months, mod: 'Komplett', kind: 'r', obj: r, group: r.group, limited: fz.ok === 'eingeschränkt' };
 }
 function sessionYield(plan, byRecipe) {
-  const cubes = { 50: 0, 125: 0, 250: 0, 500: 0 }; let liters = 0; const items = []; let activeMin = 0, maxCook = 0, bl = 0;
+  const cubes = { 50: 0, 120: 0, 125: 0, 250: 0, 500: 0 }; let liters = 0; const items = []; let activeMin = 0, maxCook = 0, bl = 0;
   const warn = [];
   plan.forEach(it => {
     const info = planItemInfo(it, byRecipe); if (!info) return;
@@ -20933,8 +24505,8 @@ function sessionYield(plan, byRecipe) {
     cubes[info.ml] += info.cubes * n; liters += info.cubes * n * info.ml / 1000; bl += info.cubes * n;
     activeMin += (info.prep || 0) * n; maxCook = Math.max(maxCook, info.cook || 0);
   });
-  const rounds = Math.max(1, ...[50, 125, 250, 500].map(ml => Math.ceil(cubes[ml] / kapN(ml))));
-  const used = {}; [50, 125, 250, 500].forEach(ml => { used[ml] = { n: cubes[ml], cap: kap(ml), rounds: Math.ceil(cubes[ml] / kapN(ml)) }; });
+  const rounds = Math.max(1, ...[50, 120, 125, 250, 500].map(ml => Math.ceil(cubes[ml] / kapN(ml))));
+  const used = {}; [50, 120, 125, 250, 500].forEach(ml => { used[ml] = { n: cubes[ml], cap: kap(ml), rounds: Math.ceil(cubes[ml] / kapN(ml)) }; });
   const wallMin = items.length ? Math.round(activeMin * 1.0 + maxCook + 60) : 0;
   return { items, cubes, used, rounds, liters: Math.round(liters * 10) / 10, blocks: bl, activeMin, maxCook, wallMin, warn };
 }
@@ -21018,9 +24590,9 @@ function istBestand(inv) {
   return out;
 }
 function prepRoundsFor(soll) {
-  // Wie viele Formen-Durchgänge (Runden) braucht der Soll-Bestand? Kapazität je Größe aus der Ausrüstung (state.equip), Standard 50:18, 125:12, 250:16, 500:8
-  const need = { 50: soll.Booster, 125: soll.Sauce, 250: soll.Protein + soll.Beilage + soll['Gemüse'], 500: soll.Komplett };
-  const r = [50, 125, 250, 500].map(ml => ({ ml, n: need[ml], rounds: Math.ceil(need[ml] / kapN(ml)) }));
+  // Wie viele Formen-Durchgänge (Runden) braucht der Soll-Bestand? Kapazität je Größe aus der Ausrüstung (state.equip), Standard 50:18, 125:12, 250:16, 500:8, 120:0
+  const need = { 50: soll.Booster, 120: 0, 125: soll.Sauce, 250: soll.Protein + soll.Beilage + soll['Gemüse'], 500: soll.Komplett };
+  const r = [50, 120, 125, 250, 500].map(ml => ({ ml, n: need[ml], rounds: Math.ceil(need[ml] / kapN(ml)) }));
   return { sizes: r, rounds: Math.max(...r.map(x => x.rounds)) };
 }
 
@@ -21100,10 +24672,15 @@ S('birne', 'Obst', 'Birne', 'LLIIIIIFFFLL', 'k');
 S('erdbeeren', 'Obst', 'Erdbeeren', 'IIIGFFFGIIII', 'k');
 S('pflaume', 'Obst', 'Pflaume / Zwetschge', 'IIIIIIFFFIII', 'k');
 S('himbeeren', 'Obst', 'Himbeeren', 'IIIIGFFFFFII', 'e');
+S('heidelbeeren', 'Obst', 'Heidelbeeren', 'IIIIIFFFFIII', 'e');
+S('suesskirschen', 'Obst', 'Süßkirschen', 'IIIIIFFFIIII', 'e');
 S('weintrauben', 'Obst', 'Weintrauben', 'IIIIIIIIFFII', 'e');
 /* Zutaten ohne Saisonbewertung (zählen im Rezept weder dafür noch dagegen) */
 const SAISON_NEUTRAL = {
   banane: 'Importware, ganzjährig im Handel', avocado: 'Importware, ganzjährig im Handel', orange: 'Importware, Hauptsaison im Winter, ganzjährig im Handel',
+  ananas: 'Importware, ganzjährig im Handel',
+  litschi: 'Importware, ganzjährig im Handel',
+  kiwi: 'Importware, ganzjährig im Handel', passionsfrucht: 'Importware, ganzjährig im Handel', orangensaft: 'Orangen Importware, Saft ohne eigene Saison',
   mango: 'Importware, ganzjährig im Handel', okra: 'in Deutschland nur als Importware', limettensaft: 'Importware, ganzjährig im Handel',
   zitronensaft: 'Zitronen ganzjährig im Handel, Saft ohne eigene Saison', rote_bete: 'App-Zutat ist vorgegart und ganzjährig erhältlich',
   trueffel: 'Delikatesse mit stark schwankender Verfügbarkeit, keine verlässlichen Monatsdaten'
@@ -22945,6 +26522,160 @@ const QUELLEN_REFERENZEN = {
   ],
   "r283": [
     {"url": "https://www.seriouseats.com/cuban-sandwich-recipe", "site": "seriouseats.com", "title": "Cuban sandwich", "kind": "D", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r284": [
+    {"url": "https://www.lecker.de/erdbeer-bananen-smoothie-61714.html", "site": "lecker.de", "title": "Erdbeer-Bananen-Smoothie", "kind": "G", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r285": [
+    {"url": "https://www.lecker.de/erdbeer-smoothie-rezept-71307.html", "site": "lecker.de", "title": "Erdbeer-Smoothie (mit Minze)", "kind": "G", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r286": [
+    {"url": "https://www.bbcgoodfood.com/recipes/two-minute-breakfast-smoothie", "site": "bbcgoodfood.com", "title": "Two-minute breakfast smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r287": [
+    {"url": "https://www.bbcgoodfood.com/recipes/breakfast-smoothie", "site": "bbcgoodfood.com", "title": "Breakfast smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r288": [
+    {"url": "https://www.bbcgoodfood.com/recipes/strawberry-smoothie", "site": "bbcgoodfood.com", "title": "Strawberry smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r289": [
+    {"url": "https://www.bbcgoodfood.com/recipes/sunshine-smoothie", "site": "bbcgoodfood.com", "title": "Sunshine smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r290": [
+    {"url": "https://www.bbcgoodfood.com/recipes/peanut-butter-smoothie", "site": "bbcgoodfood.com", "title": "Peanut butter smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r291": [
+    {"url": "https://www.bbcgoodfood.com/recipes/mango-banana-smoothie", "site": "bbcgoodfood.com", "title": "Mango banana smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r292": [
+    {"url": "https://www.bbcgoodfood.com/recipes/kale-smoothie", "site": "bbcgoodfood.com", "title": "Kale smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r293": [
+    {"url": "https://www.bbcgoodfoodme.com/recipes/ultimate-creme-brulee/", "site": "bbcgoodfoodme.com", "title": "Ultimate crème brûlée", "kind": "B", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r294": [
+    {"url": "https://www.bbcgoodfoodme.com/recipes/easy-cornflake-tart/", "site": "bbcgoodfoodme.com", "title": "Easy cornflake tart", "kind": "B", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r295": [
+    {"url": "https://www.bbcgoodfoodme.com/recipes/chocolate-brownie-cake/", "site": "bbcgoodfoodme.com", "title": "Chocolate brownie cake", "kind": "B", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r296": [
+    {"url": "https://www.bbcgoodfood.com/recipes/easy-chocolate-molten-cakes", "site": "bbcgoodfood.com", "title": "Easy chocolate molten cakes", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r297": [
+    {"url": "https://www.bbcgoodfood.com/recipes/ultimate-lemon-meringue-pie", "site": "bbcgoodfood.com", "title": "Ultimate lemon meringue pie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r298": [
+    {"url": "https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt", "site": "bbcgoodfood.com", "title": "Instant frozen berry yogurt", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r299": [
+    {"url": "https://www.bbcgoodfood.com/recipes/chocolate-cheesecake", "site": "bbcgoodfood.com", "title": "Chocolate cheesecake", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r300": [
+    {"url": "https://www.essen-und-trinken.de/rezepte/31493-rzpt-mangopudding", "site": "essen-und-trinken.de", "title": "Mangopudding", "kind": "H", "note": "Übermittelter Link; die Seite darf laut robots.txt nicht automatisch abgerufen werden, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r301": [
+    {"url": "https://www.essen-und-trinken.de/rezepte/glueckskekse-12086190.html", "site": "essen-und-trinken.de", "title": "Glückskekse", "kind": "H", "note": "Übermittelter Link; die Seite darf laut robots.txt nicht automatisch abgerufen werden, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r302": [
+    {"url": "https://www.bbcgoodfood.com/recipes/lychee-ginger-sorbet", "site": "bbcgoodfood.com", "title": "Lychee & ginger sorbet", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r303": [
+    {"url": "https://www.bbcgoodfood.com/recipes/tanghulu", "site": "bbcgoodfood.com", "title": "Tanghulu", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r304": [
+    {"url": "https://www.seriouseats.com/sweet-chinese-mooncakes-with-walnut-red-bean", "site": "seriouseats.com", "title": "Sweet Chinese mooncakes with walnut and red bean", "kind": "D", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r305": [
+    {"url": "https://www.seriouseats.com/chinese-ginger-milk-curd-recipe-11868260", "site": "seriouseats.com", "title": "Chinese ginger milk curd", "kind": "D", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r306": [
+    {"url": "https://www.foodnetwork.com/recipes/food-network-kitchen/tangyuan-with-peanut-filling-9557702", "site": "foodnetwork.com", "title": "Tangyuan with peanut filling", "kind": "I", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r307": [
+    {"url": "https://www.foodnetwork.com/recipes/food-network-kitchen/black-sesame-sweet-soup-24373893", "site": "foodnetwork.com", "title": "Black sesame sweet soup", "kind": "I", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r308": [
+    {"url": "https://www.foodnetwork.com/recipes/food-network-kitchen/fa-gao-9858871", "site": "foodnetwork.com", "title": "Fa gao", "kind": "I", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r309": [
+    {"url": "https://www.foodnetwork.com/recipes/food-network-kitchen/hong-dou-tang-9858870", "site": "foodnetwork.com", "title": "Hong dou tang", "kind": "I", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r310": [
+    {"url": "https://www.foodnetwork.com/recipes/orange-grand-marnier-sauce-for-nian-gao-recipe-1924985", "site": "foodnetwork.com", "title": "Orange Grand Marnier sauce for nian gao", "kind": "I", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r311": [
+    {"url": "https://www.foodnetwork.com/recipes/food-network-kitchen/ba-bao-fan-9858846", "site": "foodnetwork.com", "title": "Ba bao fan", "kind": "I", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r312": [
+    {"url": "https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html", "site": "chefkoch.de", "title": "Chinesisches flambiertes Eis", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r313": [
+    {"url": "https://www.chefkoch.de/rezepte/654001166948846/Gedaempfte-Dattelkloesschen.html", "site": "chefkoch.de", "title": "Gedämpfte Dattelklößchen", "kind": "A", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r314": [
+    {"url": "https://www.essen-und-trinken.de/rezepte/53951-rzpt-chinesische-pfannkuchen-mit-pflaumensauce", "site": "essen-und-trinken.de", "title": "Chinesische Pfannkuchen mit Pflaumensauce", "kind": "H", "note": "Übermittelter Link; die Seite darf laut robots.txt nicht automatisch abgerufen werden, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r315": [
+    {"url": "https://www.bbcgoodfood.com/recipes/avocado-strawberry-smoothie", "site": "bbcgoodfood.com", "title": "Avocado & strawberry smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r316": [
+    {"url": "https://www.bbcgoodfoodme.com/recipes/tropical-breakfast-smoothie/", "site": "bbcgoodfoodme.com", "title": "Tropical breakfast smoothie", "kind": "B", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."},
+    {"url": "https://www.bbcgoodfood.com/recipes/tropical-breakfast-smoothie", "site": "bbcgoodfood.com", "title": "Tropical breakfast smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen. Derselbe Titel liegt auch auf bbcgoodfoodme.com vor und wurde dort gelesen."}
+  ],
+  "r317": [
+    {"url": "https://www.bbcgoodfood.com/recipes/blueberry-smoothie-recipe", "site": "bbcgoodfood.com", "title": "Blueberry smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r318": [
+    {"url": "https://www.bbcgoodfood.com/recipes/kiwi-fruit-smoothie", "site": "bbcgoodfood.com", "title": "Kiwi fruit smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r319": [
+    {"url": "https://www.bbcgoodfood.com/recipes/creamy-mango-coconut-smoothie", "site": "bbcgoodfood.com", "title": "Creamy mango & coconut smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r320": [
+    {"url": "https://www.bbcgoodfood.com/recipes/immune-boosting-smoothie", "site": "bbcgoodfood.com", "title": "Immune-boosting smoothie", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r321": [
+    {"url": "https://www.essen-und-trinken.de/rezepte/salat-mit-honig-senf-dressing-12066152.html", "site": "essen-und-trinken.de", "title": "Salat mit Honig-Senf-Dressing", "kind": "H", "note": "Übermittelter Link; die Seite darf laut robots.txt nicht automatisch abgerufen werden, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r322": [
+    {"url": "https://www.bbcgoodfood.com/recipes/chicken-caesar-salad", "site": "bbcgoodfood.com", "title": "Chicken Caesar salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r323": [
+    {"url": "https://www.bbcgoodfood.com/recipes/greek-salad", "site": "bbcgoodfood.com", "title": "Greek salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r324": [
+    {"url": "https://www.bbcgoodfood.com/recipes/chicken-satay-salad", "site": "bbcgoodfood.com", "title": "Chicken satay salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r325": [
+    {"url": "https://www.bbcgoodfood.com/recipes/classic-potato-salad", "site": "bbcgoodfood.com", "title": "Classic potato salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r326": [
+    {"url": "https://www.bbcgoodfood.com/recipes/10minute-couscous-salad", "site": "bbcgoodfood.com", "title": "10-minute couscous salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r327": [
+    {"url": "https://www.bbcgoodfood.com/recipes/quinoa-salad-grilled-halloumi", "site": "bbcgoodfood.com", "title": "Quinoa salad with grilled halloumi", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r328": [
+    {"url": "https://www.bbcgoodfoodme.com/recipes/halloumi-carrot-orange-salad/", "site": "bbcgoodfoodme.com", "title": "Halloumi, carrot & orange salad", "kind": "B", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r329": [
+    {"url": "https://www.bbcgoodfood.com/recipes/epic-summer-salad", "site": "bbcgoodfood.com", "title": "Epic summer salad", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r330": [
+    {"url": "https://www.bbcgoodfood.com/recipes/salade-nicoise", "site": "bbcgoodfood.com", "title": "Salade niçoise", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r331": [
+    {"url": "https://www.bbcgoodfoodme.com/recipes/vegetarian-sausage-rolls/", "site": "bbcgoodfoodme.com", "title": "Vegetarian sausage rolls", "kind": "B", "note": "Übermittelter Link; Seite aufgerufen und gelesen. Die App-Fassung ist eine eigene, in Menge und Zutaten an die Vorgaben der App angepasste Zubereitung; Nährwerte der Originalseite sind nicht übernommen."}
+  ],
+  "r332": [
+    {"url": "https://www.bbcgoodfood.com/recipes/rainbow-fruit-skewers", "site": "bbcgoodfood.com", "title": "Rainbow fruit skewers", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r333": [
+    {"url": "https://www.bbcgoodfood.com/recipes/crunchy-granola-berries-cherries", "site": "bbcgoodfood.com", "title": "Crunchy granola with berries & cherries", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
+  ],
+  "r334": [
+    {"url": "https://www.bbcgoodfood.com/recipes/homemade-chicken-nachos", "site": "bbcgoodfood.com", "title": "Homemade chicken nachos", "kind": "B", "note": "Übermittelter Link; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung ist eine eigene Zubereitung nach dem Titel."}
   ]
 };
 
@@ -22964,10 +26695,14 @@ function quellenBlock(id) {
 
 /* ===== App: Rezepte, Rezeptdetail, Rezept-Editor ===== */
 function cuisines() { return [...new Set(lib().map(r => r.cuisine).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de')); }
+/* Schnellfilter „Smoothie“: keine eigene Kategorie, sondern Frühstück-Rezepte mit „Smoothie“ im Namen */
+const SMOOTHIE_FILTER = 'Smoothie';
+function isSmoothie(r) { return r.meal === 'Frühstück' && /smoothie/i.test(r.name || ''); }
 function filtered() {
   const f = ui.f, p = state.profile, q = norm(f.q), st = f.stock ? stockNow() : null;
   return lib().filter(r => {
-    if (f.meal && r.meal !== f.meal) return false;
+    if (f.meal === SMOOTHIE_FILTER) { if (!isSmoothie(r)) return false; }
+    else if (f.meal && r.meal !== f.meal) return false;
     if (f.group && r.group !== f.group) return false;
     if (f.dev && !(r.devices || []).includes(f.dev)) return false;
     if (f.cuisine && r.cuisine !== f.cuisine) return false;
@@ -23026,7 +26761,7 @@ function viewRezepte() {
   return '<div class="row between"><h2>Rezepte</h2><button type="button" class="btn small primary" data-act="newrec">+ Eigenes Rezept</button></div>' +
     '<div class="field"><input type="search" id="q" data-inp="q" placeholder="Rezept, Küche, Zutat oder Tag suchen" value="' + esc(f.q) + '" aria-label="Suche"></div>' +
     '<div class="chips"><button type="button" class="chip ' + (!f.meal ? 'on' : '') + '" data-act="meal" data-v="">Alle</button>' +
-    MEALS.map(m => '<button type="button" class="chip ' + (f.meal === m ? 'on' : '') + '" data-act="meal" data-v="' + esc(m) + '">' + esc(m) + '</button>').join('') + '</div>' +
+    MEALS.concat([SMOOTHIE_FILTER]).map(m => '<button type="button" class="chip ' + (f.meal === m ? 'on' : '') + '" data-act="meal" data-v="' + esc(m) + '">' + esc(m) + (m === SMOOTHIE_FILTER ? ' (' + lib().filter(isSmoothie).length + ')' : '') + '</button>').join('') + '</div>' +
     '<details class="panel" id="fdet" ' + (ui.fopen ? 'open' : '') + '><summary><span>Filter' + (activeFilterCount() ? ' (' + activeFilterCount() + ' aktiv)' : '') + '</span></summary><div class="stack-s">' +
     '<div class="grid2"><div class="field"><label for="fg">Fleisch/Fisch/Veg.</label><select id="fg" data-chg="flt" data-k="group">' + opt(GRUPPEN, f.group, 'Alle') + '</select></div>' +
     '<div class="field"><label for="fc">Küche</label><select id="fc" data-chg="flt" data-k="cuisine">' + opt(cuisines(), f.cuisine, 'Alle') + '</select></div></div>' +
@@ -23161,7 +26896,7 @@ function editorSheet() {
     '<textarea id="ed_paste" data-inp="edf" data-k="paste" placeholder="Rezepttext hier einfügen">' + esc(e.paste) + '</textarea>' + (SAMPLE_IMG ? '<input type="file" accept="image/*" id="ed_img" data-chg="edimg">' : '') +
     '<div class="row"><button type="button" class="btn primary" data-act="edki" ' + (e.busy ? 'disabled' : '') + '>' + (e.busy ? '<span class="spin"></span>Liest Rezept …' : 'Übernehmen') + '</button></div>' + (e.unmapped.length ? '<p class="note" style="color:var(--warn)">Nicht im Zutatenstamm gefunden und weggelassen: ' + esc(e.unmapped.join(', ')) + '. Bitte ergänzen oder ersetzen.</p>' : '') + '</div></details>' : '';
   return '<div class="row between"><h2>' + (e.id ? 'Rezept bearbeiten' : 'Eigenes Rezept') + '</h2><button type="button" class="btn small" data-act="closesheet">Abbrechen</button></div>' +
-    '<p class="note">Nährwerte, Allergene und Einkaufsliste entstehen aus den Zutaten. Ausgeschlossene Zutaten (Ananas, Süßkartoffel, Batate und deine eigenen) werden blockiert.</p>' + kiBox +
+    '<p class="note">Nährwerte, Allergene und Einkaufsliste entstehen aus den Zutaten. Ausgeschlossene Zutaten (deine eigenen) werden blockiert; Ananas, Süßkartoffel und Batate sind nur in Frühstück, Snack und Dessert erlaubt.</p>' + kiBox +
     '<div class="panel stack-s">' + inp('name', 'Name', 'z. B. Linseneintopf meiner Oma') + '<div class="grid2"><div class="field"><label for="ed_meal">Mahlzeit</label>' + sel('meal', MEALS, e.meal) + '</div><div class="field"><label for="ed_group">Fleisch/Fisch/Veg.</label>' + sel('group', GRUPPEN, e.group) + '</div></div>' +
     '<div class="grid2">' + inp('cuisine', 'Küche / Herkunft', 'z. B. Italien') + '<div class="field"><label for="ed_level">Aufwand</label>' + sel('level', ['leicht', 'mittel', 'anspruchsvoll'], e.level) + '</div></div>' +
     '<div class="grid3">' + inp('servings', 'Portionen', '4') + inp('prep', 'Vorbereiten (Min.)', '15') + inp('cook', 'Garen (Min.)', '20') + '</div>' +
@@ -23169,7 +26904,7 @@ function editorSheet() {
     '<div class="panel stack-s"><h3>Zutaten (Gramm für alle Portionen)</h3>' + ingRows + '<div class="field"><label for="ed_q">Zutat hinzufügen</label><input type="search" id="ed_q" data-inp="edq" value="' + esc(e.q) + '" placeholder="Zutat suchen, z. B. Zwiebel"></div><div class="alist" id="edres">' + edResultsHtml() + '</div><p class="note">Flüssigkeiten in Gramm angeben (1 ml ≈ 1 g). Ein Ei = 55 g.</p></div>' +
     '<details class="panel"><summary><span>Gewürze (' + e.spices.length + ')</span></summary><div class="chips" style="flex-wrap:wrap">' + SPICES.map(s => '<button type="button" class="chip ' + (e.spices.includes(s.id) ? 'on' : '') + '" data-act="edspice" data-v="' + s.id + '">' + esc(s.name) + '</button>').join('') + '</div></details>' +
     '<div class="panel stack-s"><h3>Zubereitung (ein Schritt pro Zeile)</h3><textarea id="ed_steps" data-inp="edf" data-k="steps" style="min-height:140px" placeholder="Schritt 1&#10;Schritt 2&#10;…">' + esc(e.steps) + '</textarea>' + inp('tips', 'Tipp (optional)', '') + '</div>' +
-    '<div class="panel stack-s"><h3>Aufbewahren und Einfrieren</h3>' + inp('storage', 'Kühlschrank', '') + inp('reheat', 'Aufwärmen', '') + '<div class="grid3"><div class="field"><label for="ed_fzok">Einfrieren</label>' + sel('fzok', ['ja', 'eingeschränkt', 'nein'], e.fzok) + '</div><div class="field"><label for="ed_fzblock">Block (ml)</label>' + sel('fzblock', ['50', '125', '250', '500'], e.fzblock) + '</div>' + inp('fzmonths', 'Monate', '3') + '</div>' + inp('fznote', 'Hinweis', '') + '</div>' +
+    '<div class="panel stack-s"><h3>Aufbewahren und Einfrieren</h3>' + inp('storage', 'Kühlschrank', '') + inp('reheat', 'Aufwärmen', '') + '<div class="grid3"><div class="field"><label for="ed_fzok">Einfrieren</label>' + sel('fzok', ['ja', 'eingeschränkt', 'nein'], e.fzok) + '</div><div class="field"><label for="ed_fzblock">Block (ml)</label>' + sel('fzblock', ['50', '120', '125', '250', '500'], e.fzblock) + '</div>' + inp('fzmonths', 'Monate', '3') + '</div>' + inp('fznote', 'Hinweis', '') + '</div>' +
     '<div class="panel stack-s">' + inp('src', 'Quelle / Herkunft des Rezepts', 'z. B. Rezept von Oma, eigenes Rezept') + '</div>' + res +
     '<details class="panel"><summary><span>JSON importieren (Rezepte aus Sicherung oder Datei)</span></summary><div class="stack-s"><p class="note">Format wie in „Als JSON exportieren“. Mehrere Rezepte als Liste sind möglich und werden einzeln geprüft.</p><textarea id="ed_json" data-inp="edf" data-k="json" placeholder="{ &quot;name&quot;: &quot;…&quot;, … }">' + esc(e.json) + '</textarea><button type="button" class="btn" data-act="edjson">JSON prüfen und übernehmen</button></div></details>' +
     (e.msg ? '<p class="note" style="color:var(--ink)">' + esc(e.msg) + '</p>' : '') +
@@ -23306,7 +27041,7 @@ function viewFreezer() {
     '<div class="panel stack-s"><h3>Einlagern</h3><div class="field"><label for="il">Ort</label><select id="il" data-chg="invf" data-k="loc">' + ['Gefrierer', 'Kühlschrank', 'Vorratsschrank'].map(l => '<option ' + (f.loc === l ? 'selected' : '') + '>' + l + '</option>').join('') + '</select></div>' +
     '<div class="field"><label for="ir">Rezept</label><select id="ir" data-chg="invrec">' + recOpts + '</select></div>' +
     '<div class="field"><label for="in">Name</label><input type="text" id="in" data-inp="invname" value="' + esc(f.name) + '" placeholder="z. B. Chili, Pesto, Gulasch im Glas"></div>' +
-    '<div class="grid4">' + (frozen ? '<div class="field"><label for="im">Größe</label><select id="im" data-chg="invf" data-k="ml">' + [50, 125, 250, 500].map(m => '<option value="' + m + '" ' + (Number(f.ml) === m ? 'selected' : '') + '>' + m + ' ml</option>').join('') + '</select></div>' : '') +
+    '<div class="grid4">' + (frozen ? '<div class="field"><label for="im">Größe</label><select id="im" data-chg="invf" data-k="ml">' + [50, 120, 125, 250, 500].map(m => '<option value="' + m + '" ' + (Number(f.ml) === m ? 'selected' : '') + '>' + m + ' ml</option>').join('') + '</select></div>' : '') +
     '<div class="field"><label for="ic">' + (frozen ? 'Blöcke' : 'Portionen') + '</label><input type="number" id="ic" inputmode="numeric" min="1" data-chg="invf" data-k="count" value="' + esc(f.count) + '"></div>' +
     (frozen ? '<div class="field"><label for="ix">Monate haltbar</label><input type="number" id="ix" inputmode="numeric" min="1" data-chg="invf" data-k="months" value="' + esc(f.months) + '"></div>' : '<div class="field"><label for="ix">Tage haltbar</label><input type="number" id="ix" inputmode="numeric" min="1" data-chg="invf" data-k="days" value="' + esc(f.days) + '"></div>') +
     '<div class="field"><label for="id">Datum</label><input type="date" id="id" data-chg="invf" data-k="date" value="' + esc(f.date || todayIso()) + '"></div></div>' +
@@ -23398,8 +27133,8 @@ function profilePanel() {
   const p = state.profile;
   return '<div class="stack-s"><h3>Meine Allergene</h3><p class="note">Rezepte mit diesen Stoffen werden markiert und auf Wunsch ausgeblendet.</p><div class="grid2">' + Object.keys(ALLERGENE).map(a => '<label class="check"><input type="checkbox" data-chg="pal" data-k="' + a + '" ' + (p.avoidAllergens.includes(a) ? 'checked' : '') + '>' + esc(ALLERGENE[a]) + '</label>').join('') + '</div>' +
     '<h3 style="margin-top:8px">Meine Unverträglichkeiten</h3><div class="grid2">' + Object.keys(UNVERTR).map(u => '<label class="check"><input type="checkbox" data-chg="pin" data-k="' + u + '" ' + (p.avoidIntol.includes(u) ? 'checked' : '') + '>' + esc(UNVERTR[u]) + '</label>').join('') + '</div><p class="note">Histamin wird nie als „frei“ bezeichnet, sondern als Risikoprofil (niedrig, mittel, erhöht) aus den Zutaten abgeleitet. Das ersetzt keine ärztliche Diagnose.</p>' +
-    '<h3 style="margin-top:8px">Feste Ausschlüsse</h3><div class="badges">' + FIXE_AUSSCHLUESSE.map(x => '<span class="badge bad">' + x + ' (fest, inkl. Schreibvarianten)</span>').join('') + p.excl.map(x => '<span class="badge bad">' + esc(x) + ' <button type="button" class="fav" style="font-size:calc(13px * var(--fz,1));padding:0 0 0 4px" data-act="excldel" data-v="' + esc(x) + '" aria-label="Entfernen">×</button></span>').join('') + '</div>' +
-    '<div class="row" style="flex-wrap:nowrap"><input type="text" id="ex" placeholder="Weitere Zutat ausschließen" style="flex:1" data-enter="excladd"><button type="button" class="btn" data-act="excladd">Hinzufügen</button></div><p class="note">Gilt für Rezepte, Zutaten, Zubereitungstexte, Tags, Importe, Tagebuch-Schnelleinträge und die Einkaufsliste. Thermomix wird bewusst nicht berücksichtigt.</p></div>';
+    '<h3 style="margin-top:8px">Feste Ausschlüsse</h3><div class="badges">' + FIXE_AUSSCHLUESSE.map(x => '<span class="badge bad">' + x + ' (fest, inkl. Schreibvarianten)</span>').join('') + FIXE_BEDINGT.map(x => '<span class="badge warn">' + x + ' (erlaubt, aber nicht als Hauptgericht)</span>').join('') + p.excl.map(x => '<span class="badge bad">' + esc(x) + ' <button type="button" class="fav" style="font-size:calc(13px * var(--fz,1));padding:0 0 0 4px" data-act="excldel" data-v="' + esc(x) + '" aria-label="Entfernen">×</button></span>').join('') + '</div>' +
+    '<div class="row" style="flex-wrap:nowrap"><input type="text" id="ex" placeholder="Weitere Zutat ausschließen" style="flex:1" data-enter="excladd"><button type="button" class="btn" data-act="excladd">Hinzufügen</button></div><p class="note">Gilt für Rezepte, Zutaten, Zubereitungstexte, Tags, Importe, Tagebuch-Schnelleinträge und die Einkaufsliste. Ananas, Süßkartoffel und Batate sind nur in Hauptgerichten, Suppen/Eintöpfen, Salat/Bowl und Meal-Prep-Bausteinen gesperrt. Thermomix wird bewusst nicht berücksichtigt.</p></div>';
 }
 function statusPanel() {
   const n = lib().length, nb = seedLib().length, nz = ZUTATEN.length;
@@ -23432,12 +27167,12 @@ function equipPanel() {
   const eq = equipNow(), t = equipTotals(eq), std = JSON.stringify(equipClean(eq)) === JSON.stringify(equipClean(null));
   const num = (k, ml, v, lo, hi, lbl) => '<input type="number" inputmode="numeric" min="' + lo + '" max="' + hi + '" step="1" aria-label="' + esc(lbl) + '" data-chg="equip" data-k="' + k + '" data-ml="' + ml + '" value="' + v + '" style="width:72px">';
   const rows = BLOCK_ML.slice().reverse().map(ml => '<tr><td>' + ml + ' ml</td><td class="n">' + num('formen', ml, eq.formen[ml], 0, 24, 'Anzahl Formen ' + ml + ' ml') + '</td><td class="n">' + num('kammern', ml, eq.kammern[ml], 1, 30, 'Kammern je Form ' + ml + ' ml') + '</td><td class="n mono">' + kap(ml, eq) + '</td></tr>').join('');
-  const none = BLOCK_ML.filter(ml => kap(ml, eq) === 0);
+  const none = BLOCK_ML.filter(ml => ml !== 120 && kap(ml, eq) === 0); // 120 ml ist optional (Standard 0 Formen), daher keine Warnung
   return '<div class="stack-s"><p class="note">Trage ein, welche Silikonformen du wirklich hast. Die App rechnet damit die Durchgänge beim Einlagern, im Prep-Plan und beim Zielbestand. Standard ist das Set aus dem Projekt: 12 Formen mit 54 Kammern.</p>' +
     '<table class="eqt"><thead><tr><th>Größe</th><th class="n">Formen</th><th class="n">Kammern je Form</th><th class="n">Blöcke je Durchgang</th></tr></thead><tbody>' + rows + '</tbody></table>' +
     '<p class="note mono">' + t.forms + ' Formen · ' + t.chambers + ' Kammern · ' + fmt(t.liters) + ' Liter gleichzeitig</p>' +
     (none.length ? '<p class="note" style="color:var(--warn)">Keine Form für ' + none.join(', ') + ' ml: Die Rechnung nimmt dort einen Block pro Durchgang an, die Zahl der Durchgänge ist dann sehr hoch. Trage die Formen ein oder plane diese Größe nicht.</p>' : '') +
-    '<p class="note">Die vier Blockgrößen (50, 125, 250, 500 ml) sind fest, weil die Rezepte und Bausteine in diesen Größen eingeteilt sind. Zulässig sind 0 bis 24 Formen und 1 bis 30 Kammern je Form.</p>' +
+    '<p class="note">Die fünf Blockgrößen (50, 120, 125, 250, 500 ml) sind fest, weil die Rezepte und Bausteine in diesen Größen eingeteilt sind. Die Größe 120 ml ist zusätzlich möglich (Standardbestand 0 Formen); Rezepte und Bausteine planen weiterhin mit 125 ml, 120 ml lässt sich für eigene Gefrierer-Einträge und als Block im Rezept wählen. Zulässig sind 0 bis 24 Formen und 1 bis 30 Kammern je Form.</p>' +
     '<div class="row"><button type="button" class="btn" data-act="equipreset" ' + (std ? 'disabled' : '') + '>Auf Standard zurücksetzen</button></div></div>';
 }
 function viewMehr() {
@@ -23490,7 +27225,7 @@ function aiErr(e) {
   const m = { not_granted: 'Die KI-Funktion wurde nicht erlaubt.', rate_limited: 'Zu viele Anfragen oder Kontingent erreicht. Versuche es später erneut.', invalid_json: 'Die Antwort war nicht verwertbar. Bitte erneut versuchen.', session_expired: 'Bitte in Claude neu anmelden.', sampling_disabled: 'KI ist für dieses Konto nicht verfügbar.', refused: 'Die Anfrage wurde abgelehnt. Formuliere sie anders.', upstream_error: 'Vorübergehender Fehler. Bitte erneut versuchen.', cancelled: '' };
   return c in m ? m[c] : 'Anfrage fehlgeschlagen (' + (c || 'unbekannt') + ').';
 }
-function exclText() { return FIXE_AUSSCHLUESSE.concat(state.profile.excl).join(', '); }
+function exclText() { return FIXE_AUSSCHLUESSE.concat(state.profile.excl).join(', ') + (state.profile.excl.length ? ', ' : '') + 'Ananas, Süßkartoffel, Batate nur in Frühstück, Snack und Dessert erlaubt, nie in Hauptgerichten, Suppen, Eintöpfen, Salaten und Bowls'; }
 function profileText() {
   const p = state.profile;
   return 'Zu vermeidende Allergene: ' + (p.avoidAllergens.map(a => ALLERGENE[a]).join(', ') || 'keine angegeben') + '. Zu vermeidende Unverträglichkeiten: ' + (p.avoidIntol.map(a => UNVERTR[a]).join(', ') || 'keine angegeben') + '.';
@@ -23523,7 +27258,7 @@ async function runVorratKI() {
   const ctl = new AbortController();
   Object.assign(ui.ai, { busy: true, ctl, vorrat: '', err: '' }); render();
   const inv = state.inv.map(i => '- ' + i.name + ': ' + i.count + (i.ml ? ' Blöcke à ' + i.ml + ' ml' : ' Portionen') + ' (' + (i.loc || 'Gefrierer') + ', ' + expiry(i).state + ')').join('\n');
-  const prompt = 'Schlage aus diesem Vorrat an fertigen Gerichten (Gefrierer: Silikon-Blöcke in 50/125/250/500 ml) 4 bis 6 konkrete Mahlzeiten vor, die sich aus den vorhandenen Einheiten kombinieren lassen. Nenne je Mahlzeit, welche Einheiten benötigt werden, was frisch ergänzt wird (kurz), und ob es für 1 Person oder für Besuch (3–4 Personen) reicht. Bevorzuge, was bald abläuft. Kurz, auf Deutsch, ohne Markdown-Sonderzeichen.\n' +
+  const prompt = 'Schlage aus diesem Vorrat an fertigen Gerichten (Gefrierer: Silikon-Blöcke in 50/120/125/250/500 ml) 4 bis 6 konkrete Mahlzeiten vor, die sich aus den vorhandenen Einheiten kombinieren lassen. Nenne je Mahlzeit, welche Einheiten benötigt werden, was frisch ergänzt wird (kurz), und ob es für 1 Person oder für Besuch (3–4 Personen) reicht. Bevorzuge, was bald abläuft. Kurz, auf Deutsch, ohne Markdown-Sonderzeichen.\n' +
     'Vorgaben: kalorienbewusst, proteinreich. NIEMALS verwenden: ' + exclText() + '. ' + profileText() + '\n\nVorrat:\n' + inv;
   try {
     await SAMPLE(prompt, { signal: ctl.signal, cache: false, onText: ({ text }) => { ui.ai.vorrat = text; const o = $('#vorratOut'); if (o) o.textContent = text; } });
@@ -23555,7 +27290,7 @@ async function runImportKI() {
       storage: String(raw.storage || e.storage), reheat: String(raw.reheat || e.reheat), unmapped: unm, ai: true, result: null,
       msg: 'Übernommen. Bitte alles prüfen, Mengen kontrollieren und „Prüfen“ ausführen, bevor du speicherst.'
     });
-    if (raw.freeze && typeof raw.freeze === 'object') { e.fzok = ['ja', 'eingeschränkt', 'nein'].includes(raw.freeze.ok) ? raw.freeze.ok : 'nein'; e.fzblock = String([50, 125, 250, 500].includes(Number(raw.freeze.block)) ? Number(raw.freeze.block) : 500); e.fzmonths = num(raw.freeze.months, '3'); e.fznote = String(raw.freeze.note || ''); }
+    if (raw.freeze && typeof raw.freeze === 'object') { e.fzok = ['ja', 'eingeschränkt', 'nein'].includes(raw.freeze.ok) ? raw.freeze.ok : 'nein'; e.fzblock = String([50, 120, 125, 250, 500].includes(Number(raw.freeze.block)) ? Number(raw.freeze.block) : 500); e.fzmonths = num(raw.freeze.months, '3'); e.fznote = String(raw.freeze.note || ''); }
   } catch (err) { e.msg = aiErr(err) || 'Das hat nicht geklappt.'; }
   e.busy = false; renderSheet();
 }
@@ -24272,7 +28007,7 @@ function prepSession() {
     return '<div class="panel stack-s"><div class="row between"><div class="grow"><b>' + esc(info.name) + '</b><div class="note mono">' + (info.notFreezable ? 'nicht zum Einfrieren vorgesehen' : info.cubes * batches + ' Blöcke à ' + info.ml + ' ml · ' + pp.kcal + ' kcal · P ' + fmt(pp.p) + ' je Block') + '</div></div><button type="button" class="fav" data-act="prem" data-i="' + idx + '" aria-label="Entfernen">×</button></div>' +
       '<div class="row"><button type="button" class="btn small sq" data-act="pdec" data-i="' + idx + '" aria-label="Weniger Chargen">−</button><b class="mono">' + batches + (batches === 1 ? ' Charge' : ' Chargen') + '</b><button type="button" class="btn small sq" data-act="pinc" data-i="' + idx + '" aria-label="Mehr Chargen">+</button></div></div>';
   }).join('');
-  const caps = [50, 125, 250, 500].filter(ml => y.used[ml].n > 0).map(ml => '<tr><td>' + ml + ' ml</td><td class="n mono">' + y.used[ml].n + '</td><td class="n mono">' + y.used[ml].cap + '</td><td class="n mono">' + y.used[ml].rounds + '</td></tr>').join('');
+  const caps = BLOCK_ML.filter(ml => y.used[ml].n > 0).map(ml => '<tr><td>' + ml + ' ml</td><td class="n mono">' + y.used[ml].n + '</td><td class="n mono">' + y.used[ml].cap + '</td><td class="n mono">' + y.used[ml].rounds + '</td></tr>').join('');
   const sum = plan.length ? '<div class="panel ice stack-s"><h3>Ausbeute dieser Session</h3><div class="grid3"><div class="macro" style="background:var(--surface)"><b>' + y.blocks + '</b><span>Blöcke</span></div><div class="macro" style="background:var(--surface)"><b>' + fmt(y.liters) + '</b><span>Liter</span></div><div class="macro" style="background:var(--surface)"><b>' + y.rounds + '</b><span>' + (y.rounds === 1 ? 'Runde' : 'Runden') + '</span></div></div>' +
     '<table><thead><tr><th>Größe</th><th class="n">Blöcke</th><th class="n">pro Runde</th><th class="n">Runden</th></tr></thead><tbody>' + caps + '</tbody></table>' +
     '<p class="note" style="color:var(--ink)">Küchenzeit etwa ' + Math.round(y.wallMin / 60 * 10) / 10 + ' Std. (Vorbereitung ' + y.activeMin + ' Min. plus längste Garzeit plus Abkühlen). Das ist ein Richtwert, kein Messwert. Mehr als eine Runde heißt: erst durchfrieren, Formen leeren, dann die nächste Runde füllen.</p>' +
