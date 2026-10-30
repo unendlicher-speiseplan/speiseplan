@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-30 11:09 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-30 11:36 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,50 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag r573 bis r582: fünfzehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten vierzehn). Die Nummerierung der Liste springt (1 bis 6, dann nochmals 6, dann 8 bis 10); es sind zehn Rezepte. Sechs Gerichte gab es dem Namen nach schon (Shawarma r463, Bao Buns r455, Sommerrollen r403 bis r408, Pakora r520, Pani Puri r443, Vada Pav r499), aber mit anderen Zutaten oder Mengen; neu sind Gyros-Pita, Burrito, Taquitos und Torta Ahogada. Alle zehn sind als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten); im Tipp steht jeweils das ältere Rezept.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Gyros-Pita Schweinefleisch (Schweineschulter); Shawarma Hähnchenbrust; Taquitos Hähnchen (gegart); Torta Ahogada Hähnchen (gegart) und Baguette; Summer Rolls Garnelen; Pani Puri Hüllen statt Pita-Chips; Vada Pav weiche Brötchen statt Pav-Buns. Optionale Einlagen (Hähnchen, Rindfleisch oder Tofu beim Burrito) und Chutneys ohne Mengenangabe sind nicht eingerechnet.
+- **Fehlende Mengen und Sorten sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel „Käse“ als Gouda; Bohnenpüree als zerdrückte schwarze Bohnen aus der Dose; Pommes 200 g; Knoblauch-Tahini-Sauce als 20 g Tahini mit Knoblauch; 100 g gekochte Reisnudeln als 35 g Rohgewicht; 300 g Gemüse bei den Pakora zu gleichen Teilen). Die getrockneten Chilis der Torta Ahogada sind als Guajillo-Chilis angesetzt und gehen nicht in die Nährwerte ein.
+- **Frittieren:** Taquitos, Bao-Burger-Hähnchen, Pakora und Vada Pav werden wie in der Vorlage frittiert (nur das aufgenommene Öl gerechnet, Sicherheitshinweis im Tipp); Panade und Marinaden sind vollständig gerechnet.
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp benannt): Torta Ahogada (737 kcal, Eiweiß 68 g), Bao Burger (849 kcal) und Vada Pav (13 g Eiweiß). Burrito (28 g) und Summer Rolls (29 g) tragen einen Hinweis wegen knapp unter 30 g Eiweiß; Pakora und Pani Puri sind als Snack geführt (Hinweis im Tipp).
+- **Neue Zutaten:** Pommes frites, TK, frittiert (BLS K130492) und Bao-Brötchen (Näherung nach Weizenbrötchen, BLS B511000; Produkte weichen ab).
+- **Tests angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch Souvlaki r460 und Gyros-Pita r573 sowie Pakora r520 und r580.
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; es gibt diesmal keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 557, ausgelieferte Rezepte im Abgleich 486, Quellen-Einträge 451 (davon 365 mit Link und 120 ohne bekannte Original-URL).
+
+## Nachtrag r563 bis r572: vierzehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten dreizehn). Fünf Gerichte gab es dem Namen nach schon (Samosas r458, Arancini r459, Arepas mit Käse r464, Bánh Cuốn r493, Roti Canai r485; Churros gibt es als r466 und r562), aber mit anderen Zutaten oder Mengen; neu sind Kachori, Yakitori, Tacos de Canasta, Jian Dui und der Churro-Burger. Alle zehn sind als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten); im Tipp steht jeweils das ältere Rezept.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Samosas und Kachori Butter statt Ghee; Yakitori Hähnchenschenkel, Mirin und Wasser statt Sake; Tacos de Canasta Kartoffelpüree und Chorizo; Jian Dui Schokolade statt roter Bohnenpaste; Roti Canai mit Dhal Öl statt Ghee und Wasser statt Brühe; Churro-Burger mit 4 Churros. Optionale Zutaten (Ragout oder Erbsen bei Arancini; Avocado, Bohnen und Salsa bei den Arepas) sind nicht eingerechnet; Chutneys und Dips als Beilage ohne Mengenangabe ebenfalls nicht.
+- **Fehlende Mengen sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel Arepas: geriebener Käse als Gouda, Butter 20 g; Bánh Cuốn: Nuoc Cham 60 g; Churro-Burger: Patty ≈ 100 g, Zimtzucker 20 g). Bei den Arepas nennt die Vorlage „4 Arepas“, formt aber 8 Kugeln; die App folgt der Schrittfolge (8 Fladen, 4 Portionen zu je 2).
+- **Frittieren:** Samosas, Kachori, Arancini und Jian Dui werden wie in der Vorlage frittiert (nur das aufgenommene Öl gerechnet, Sicherheitshinweis im Tipp). Bei der Panade der Arancini sind Mehl, Ei und Brösel vollständig gerechnet.
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp als AUSNAHME benannt): Arancini (819 kcal), Arepas (16 g Eiweiß), Bánh Cuốn (385 kcal, 14 g), Yakitori (252 kcal), Tacos de Canasta (345 kcal, 11 g), Roti Canai mit Dhal (21 g) und Jian Dui als Dessert (392 kcal, 7 g Eiweiß). Samosas und Kachori sind als Snack geführt (Hinweis im Tipp: 8 g bzw. 7 g Eiweiß). Der Churro-Burger liegt mit 648 kcal und 33 g Eiweiß im Rahmen.
+- **Neue Zutaten (eigene Berechnung, kein BLS-Eintrag, im Zutatennamen als rechnerisch gekennzeichnet):** Nuoc Cham (je 100 g aus 25 g Fischsauce, 15 g Zucker, 15 g Limettensaft und 45 g Wasser; 73 kcal) und Churros ohne Zimtzucker (grobe Näherung aus dem Teig von r562, etwa 27 g je Stück; 262 kcal je 100 g). Beide Werte weichen von Fertigprodukten ab.
+- **Tests angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch Arancini r459 und r565; die Dessert-Ausnahmen in `smoke6.js` enthalten r570 (Jian Dui); der Zähler für Desserts steht bei 63.
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; es gibt diesmal keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 547, ausgelieferte Rezepte im Abgleich 476, Quellen-Einträge 441 (davon 365 mit Link und 110 ohne bekannte Original-URL).
+
+## Nachtrag r553 bis r562: dreizehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten zwölf). Fünf Gerichte gab es dem Namen nach schon (Okonomiyaki r522, Koshari r513, Kimbap r456, Satay r482 und r528, Churros r466; das vorhandene Pad Kra Pao r98 ist eine andere Fassung mit Hähnchen und grünen Bohnen), aber mit anderen Zutaten oder Mengen; deshalb sind alle zehn als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): r553 Okonomiyaki, r554 Pad Kra Pao, r555 Chilaquiles Rojos, r556 Koshari, r557 Kimbap, r558 Guo Tie, r559 Gözleme, r560 Kelewele, r561 Satay (Malaysia), r562 Churros. Chilaquiles, Guo Tie, Gözleme und Kelewele sind neue Gerichte.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Okonomiyaki Gemüsebrühe, Schweinebauch und Okonomiyaki-Sauce; Pad Kra Pao Hackfleisch (gemischt), Basilikum und Fischsauce; Chilaquiles Feta und saure Sahne („Brühe“ als Gemüsebrühe); Kimbap Rindfleisch; Kelewele Zitronensaft; Satay (Malaysia) Hähnchen. Optionale Zutaten (Kimchi bei Kimbap, Erdnüsse bei Kelewele) sind nicht eingerechnet.
+- **Fehlende Mengen sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel Pad Kra Pao: Reis 150 g roh und Öl 25 g; Chilaquiles: Salsa 300 g, saure Sahne 40 g; Koshari: „gebratene Zwiebelringe“ als weitere Zwiebel; Kelewele: 3 Kochbananen ≈ 600 g geschält). Der Zimtzucker bei den Churros ist vollständig gerechnet (100 g), obwohl nicht alles haften bleibt.
+- **Frittieren:** Kelewele und Churros werden wie in der Vorlage frittiert (nur 50 g bzw. 40 g aufgenommenes Öl gerechnet, Sicherheitshinweis im Tipp). Reis-Hinweis bei Pad Kra Pao, Koshari und Kimbap.
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp als AUSNAHME benannt): Okonomiyaki (734 kcal, 27 g Eiweiß), Pad Kra Pao (856 kcal), Chilaquiles (903 kcal, 25 g), Koshari (21 g), Guo Tie (337 kcal, 15 g), Gözleme (18 g), Satay (340 kcal) und Churros als Dessert (539 kcal, 8 g Eiweiß). Kimbap (27 g) trägt einen Hinweis; Kelewele ist als Snack geführt (Hinweis: 2 g Eiweiß).
+- **Neue Zutaten:** Kochbananen (BLS F545100; Importware, in der Saison-Ansicht als neutrale Zutat geführt) und Tortillachips (BLS C546000).
+- **Tests angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch Kimbap r456 und r557 sowie Gyoza r530 und Guo Tie r558; die Dessert-Ausnahmen in `smoke6.js` enthalten r562 (Churros); die Zähler für neutrale Saison-Zutaten stehen bei 20 und für Desserts bei 62.
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; es gibt diesmal keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 537, ausgelieferte Rezepte im Abgleich 466, Quellen-Einträge 431 (davon 365 mit Link und 100 ohne bekannte Original-URL).
+
+## Nachtrag r543 bis r552: zwölfte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten elf). Drei Gerichte gab es dem Namen nach schon (Banh Xeo r473, Kottu Roti r475, Tteokbokki r457 und r409), aber mit anderen Zutaten oder Mengen; deshalb sind alle zehn als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): r543 Bánh Xèo, r544 Kottu Roti, r545 Zapiekanka, r546 Tteokbokki, r547 Lumpiang Shanghai, r548 Kumpir, r549 Mtabga, r550 Hawawshi, r551 Paneer Paratha, r552 Esquites. Zapiekanka, Lumpiang Shanghai, Kumpir, Mtabga, Hawawshi, Paneer Paratha und Esquites sind neue Gerichte.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Kottu Roti „Hähnchen oder Gemüse“ (Hähnchen), „Lauch oder Kohl“ (Lauch), „Currysoße oder etwas Brühe“ (Brühe); Tteokbokki „Zucker oder Maissirup“ (Zucker) und „Wasser oder Brühe“ (Wasser); Kumpir „Joghurt oder Sauerrahm“ (Joghurt); Paneer Paratha „Ghee oder Butter“ (Butter); Esquites „Milch oder Sahne“ (Milch) und „Cotija oder Feta“ (Feta). Optionale Zutaten (Fischkuchen oder Tofu bei Tteokbokki, Schinken oder Pilze bei Zapiekanka) sind nicht eingerechnet.
+- **Auffälligkeiten der Vorlage:** Hawawshi: Salat und Tahini stehen nur im Schritt (60 g und 30 g angenommen). Paneer Paratha: Joghurt, Pickles und Chutney stehen nur im Schritt und sind nicht eingerechnet. Die Tipps enthalten wieder Verweisnummern wie [44][45] ohne Verzeichnis; sie sind keine Quellen und wurden nicht zu Links erfunden.
+- **Fehlende Mengen sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel Roti ≈ 60 g je Fladen, 1 Baguette ≈ 250 g, 2 große Kartoffeln ≈ 600 g, 20 Frühlingsrollenblätter ≈ 160 g). Öl zum Braten nennt die Vorlage bei Bánh Xèo nicht und ist nicht eingerechnet.
+- **Frittieren:** Lumpiang Shanghai wird wie in der Vorlage frittiert (nur 40 g aufgenommenes Öl gerechnet, Sicherheitshinweis im Tipp); Bánh Xèo trägt den Sprossen-Hinweis.
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp als AUSNAHME benannt): Bánh Xèo (23 g Eiweiß), Zapiekanka (726 kcal), Lumpiang Shanghai (19 g), Kumpir (24 g), Mtabga (19 g) und Paneer Paratha (19 g, Portionsgewicht nur etwa 140 g). Hawawshi (28 g) trägt einen Hinweis; Tteokbokki und Esquites sind als Snack geführt (Hinweis im Tipp).
+- **Neue Zutaten:** keine; alle Zutaten waren schon in der Zutatenbasis (Tteok, Reismehl, Weizengrieß, Paneer, Harissa, Weizenvollkornmehl und andere).
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; es gibt diesmal keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 527, ausgelieferte Rezepte im Abgleich 456, Quellen-Einträge 421 (davon 365 mit Link und 90 ohne bekannte Original-URL).
 
 ## Nachtrag r533 bis r542: elfte Streetfood-Liste (30.10.2026)
 
@@ -233,17 +277,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **446** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 74, Rind: 68, Schwein: 60, Fisch: 50, Vegetarisch: 194 |
-| Verteilung nach Mahlzeit | Hauptgericht: 214, Suppe/Eintopf: 48, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 38, Dessert: 61, Aufstrich: 34, Sauce/Dips: 5 |
+| Mitgelieferte Rezepte | **486** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 81, Rind: 72, Schwein: 67, Fisch: 52, Vegetarisch: 214 |
+| Verteilung nach Mahlzeit | Hauptgericht: 245, Suppe/Eintopf: 48, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 45, Dessert: 63, Aufstrich: 34, Sauce/Dips: 5 |
 | Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 354 (353) |
+| Zutaten im Stamm (davon mit Nährwerten) | 360 (359) |
 | Gewürze | 67 |
 | Bausteine (Meal-Prep) | **90** (Protein: 20, Beilage: 8, Sauce: 27, Gemüse: 5, Booster: 30) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 2138 KB |
+| Größe `dist/index.html` | 2275 KB |
 
 ---
 
@@ -465,7 +509,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 446 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 486 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 90 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
