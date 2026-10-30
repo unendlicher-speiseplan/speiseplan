@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-30 11:36 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-30 14:34 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,120 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag r666 bis r675: fünfundzwanzigste Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste („Liste 25 – 10 weitere Streetfood-Rezepte“) übergeben (ohne Zusatzanweisung; gedeutet wie die ersten vierundzwanzig). Alle zehn Gerichte sind als eigene, **originalgetreue** Fassungen angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): Medianoche, Llapingachos, Salteñas, Chipa, Chivito Canadiense, Jamaican Beef Patty, Egg Waffles, Mohinga, Khao Jee Pate und Kottu Roti. Echte Dubletten gab es keine.
+- **Ältere Rezepte mit gleichem Namen oder ähnlicher Idee** (bleiben unverändert, der Tipp nennt sie): Chivito r490 (andere Mengen, Tomate und Salat eingerechnet); Salteñas r491 (Hähnchen, eigener Teig) sowie Empanadas r529 und r613; Kottu Roti r475 und r544 (anderes Mengenverhältnis); Khao Jee Pate verweist auf Num Pang r664 und die Bánh-Mì-Rezepte; der Jamaican Beef Patty auf Cornish Pasty r648.
+- **Wahlmöglichkeiten der Vorlage** (die andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Medianoche mit weichen Brötchen statt Brioche; Llapingachos mit Paprikapulver statt Annatto; Jamaican Beef Patty mit normaler Chili statt Scotch Bonnet; Mohinga mit Kichererbsenmehl und Seelachs (das „Fischfilet“ ist in der Vorlage nicht näher bestimmt); Khao Jee Pate mit Schweinefilet; Kottu Roti mit Roti und Lauch. „Käse“ ohne nähere Angabe ist wie in früheren Listen als Gouda gerechnet, „Schweizer Käse“ als Emmentaler.
+- **Nicht eingerechnet** sind Zutaten ohne Mengenangabe (saure Gurken, Senf, Butter beim Medianoche; Erdnusssauce, Salat, Avocado bei den Llapingachos; Salat, Tomate, Zwiebel, Mayonnaise, Ketchup, Speck und Oliven beim Chivito; Toppings und Einfettfett bei den Egg Waffles; Limette, Koriander, Fritters beim Mohinga; Gurke, Koriander, Chili beim Khao Jee Pate; Currysoße oder Brühe beim Kottu Roti) sowie Bratfett, das nicht in der Zutatenliste steht. Fehlende Mengen sind Annahmen der App und in jedem Rezepttipp aufgeführt.
+- **Annahmen mit Wirkung auf die Nährwerte:** Pâté als feine Leberwurst (Näherung), Daikon als weißer Rettich, Brioche als Weizenbrötchen, Schweinebraten als gegartes Schweinefleisch, Teigplatten der Salteñas mit 40 g je Stück, gekochte Kartoffeln mit den Werten roher Kartoffeln. Die Egg Waffles brauchen ein Egg-Waffle-Eisen, das nicht in der Geräteliste der App steht.
+- **Ausnahmen und Hinweise** (originalgetreu, im jeweiligen Tipp benannt): Llapingachos (rund 16 g Eiweiß), Khao Jee Pate (rund 703 kcal); Hinweise bei den Salteñas (rund 25 g Eiweiß) und beim Kottu Roti (rund 666 kcal).
+- **Neue Zutaten:** Emmentaler (BLS M304600) und Fischbrühe (BLS X4A1000).
+- **Quellen:** Der Text nennt keine Links, nur die Verweisnummer [138] ohne Verzeichnis; alle zehn Rezepte tragen deshalb einen Quellen-Eintrag der Art F ohne erfundenen Link.
+
+## Nachtrag r656 bis r665: vierundzwanzigste Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste („Liste 24 – 10 weitere Streetfood-Rezepte“) übergeben (ohne Zusatzanweisung; gedeutet wie die ersten dreiundzwanzig). Alle zehn Gerichte sind als eigene, **originalgetreue** Fassungen angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): Hawawshi, Ta’ameya, Msemen, Kefta-Sandwich, Manakish, Fatayer, Chapli Kabab, Jhalmuri, Num Pang und Pastéis de Nata. Echte Dubletten gab es keine.
+- **Ältere Rezepte mit gleichem Namen oder ähnlicher Idee:** Hawawshi gibt es schon als r550 (dort Chilipulver statt Piment, Salat und Tahini eingerechnet); Kefta-Sandwich ist eine andere Vorlage als die Kefta-Spieße r620; zu Num Pang nennt der Tipp die Bánh-Mì-Rezepte (r607, r524, r454). Die älteren Rezepte bleiben unverändert.
+- **Wahlmöglichkeiten der Vorlage** (die andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Hawawshi mit Pita und Rinderhack; Kefta-Sandwich und Chapli Kabab mit Rinderhack; Msemen mit Grieß zum Bestreuen (ohne Menge, nicht eingerechnet); Num Pang mit Schweinefilet und Mayonnaise.
+- **Nicht eingerechnet** sind Zutaten ohne Mengenangabe (Salat, Tahini, Joghurt-Sauce, Naan, Pickles, Honig und Butter zum Servieren der Msemen, Gemüse und Harissa beim Kefta-Sandwich, Olivenöl in der Fatayer-Füllung, Zitronenschale und Zimt zum Bestreuen bei den Pastéis, Zitronensaft und Koriander beim Jhalmuri). Fehlende Mengen sind Annahmen der App und in jedem Rezepttipp aufgeführt. Die Ta’ameya sind mit aufgenommenem Öl gerechnet.
+- **Annahmen mit Wirkung auf die Nährwerte:** Daikon als weißer Rettich; Maisstärke als Speisestärke; blanchierter Spinat mit den Werten von frischem Spinat; Za’atar als rechnerische Mischung (die Hälfte Sesam), daher mit Sesam-Allergen; Senföl als Näherung nach Rapsöl (mit Senf-Allergen).
+- **Hinweis zu Favabohnen:** Bei den Ta’ameya steht im Tipp ein Hinweis auf Favismus (G6PD-Mangel); die Bohnen werden roh eingeweicht verarbeitet und müssen beim Frittieren im Kern durchgaren.
+- **Ausnahmen** (originalgetreu, im jeweiligen Tipp benannt): Hawawshi mit rund 27 g Eiweiß trägt einen Hinweis; Pastéis de Nata haben rund 206 kcal und 3 g Eiweiß je Törtchen und stehen deshalb in der Ausnahmeliste der Dessert-Tests.
+- **Neue Zutaten:** Blätterteig mit Butter (BLS X9A6020), Hartweizengrieß (BLS C219300), Favabohnen getrocknet (BLS H750100), Senföl (Näherung nach Rapsöl) und Za’atar (rechnerische Mischung); neues Gewürz: gemahlene Granatapfelkerne (Anardana).
+- **Quellen:** Der Text nennt keine Links, nur Verweisnummern ohne Verzeichnis; alle zehn Rezepte tragen deshalb einen Quellen-Eintrag der Art F ohne erfundenen Link.
+
+## Nachtrag r646 bis r655: dreiundzwanzigste Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste („Liste 23 – 10 weitere Streetfood-Rezepte“) übergeben (ohne Zusatzanweisung; gedeutet wie die ersten zweiundzwanzig). Alle zehn Gerichte sind dem Namen nach neu und als eigene, **originalgetreue** Fassungen angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): Rou Jia Mo, Bitterballen, Cornish Pasty, Plátanos Fritos, Potato Bhajia, Boat Noodles, Mango Sticky Rice, Karaage, Dürüm mit Hähnchen und Halo-Halo. Dubletten gab es keine.
+- **Wahlmöglichkeiten der Vorlage** (die andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Rou Jia Mo mit Schweineschulter, Shaoxing-Wein (als Reiswein), Wasser und flachen Weizenbrötchen; Bitterballen mit Rinderhack; Plátanos Fritos mit Feta; Potato Bhajia mit Kichererbsenmehl; Boat Noodles mit Petersilie statt Korianderwurzeln; Mango Sticky Rice mit Sesam; Karaage mit Wasser statt Sake; Dürüm mit Wraps statt Lavash; Halo-Halo mit Kichererbsen statt süßer Bohnen.
+- **Nicht eingerechnet** sind Zutaten ohne Mengenangabe oder optionale (Senf, saure Sahne, Braunzucker, Chutney, Zitrone und Mayonnaise, Gemüse und Knoblauchsauce beim Dürüm, Leche Flan, Karamellsoße, Ube-Eis, Crushed Ice). Fehlende Mengen sind Annahmen der App und in jedem Rezepttipp aufgeführt. Frittierte Gerichte (Bitterballen, Potato Bhajia, Karaage) sind mit aufgenommenem Öl gerechnet, Panade und Teig vollständig.
+- **Annahmen mit Wirkung auf die Nährwerte:** Halo-Halo mit ungezuckerter Kondensmilch (7,5 % Fett; mit gezuckerter Kondensmilch wären es deutlich mehr Kalorien), Klebreis als Sushireis, Kokosstreifen als Kokosraspeln, Jackfrucht als Näherung.
+- **Ausnahmen** (originalgetreu, im jeweiligen Tipp benannt): Cornish Pasty (rund 911 kcal und 29 g Eiweiß), Mango Sticky Rice (rund 637 kcal, 9,7 g Eiweiß), Halo-Halo (rund 421 kcal). Mango Sticky Rice und Halo-Halo stehen deshalb in der Ausnahmeliste der Dessert-Tests.
+- **Neue Zutaten:** Kartoffelstärke (BLS K230000), Jackfrucht (Näherung nach BLS F549100) und Kondensmilch 7,5 % (BLS M182400).
+- **Quellen:** Der Text nennt keine Links, nur Verweisnummern ohne Verzeichnis; alle zehn Rezepte tragen deshalb einen Quellen-Eintrag der Art F ohne erfundenen Link.
+
+## Nachtrag r640 bis r645: zweiundzwanzigste Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste („Liste 22 – 10 weitere Streetfood-Rezepte“) übergeben (ohne Zusatzanweisung; gedeutet wie die ersten einundzwanzig). **Vier Gerichte wurden nicht angelegt, weil sie echte Dubletten sind:** Tteokbokki mit Käse, Mini-Pizza al Taglio, Sate Lilit und Churro-Nachos stehen Wort für Wort schon in der einundzwanzigsten Liste (r635 bis r638).
+- Die übrigen sechs Gerichte sind als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Sie gab es dem Namen nach schon, aber mit anderen Zutaten oder Mengen; der Tipp nennt jeweils die ältere Fassung: Bánh Mì (r607, r524, r454), Arepas (r464, r566, r526), Satay (r482, r528, r561, r627), Tacos al Pastor (r523: dort 12 kleine Tortillas, hier 8), Gyoza (r472, r530: r530 hat dieselbe Zutatenliste mit 100 g statt 150 g Kohl) und Falafel-Wrap (r634: dort mit Pickles, hier ohne).
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Bánh Mì Mayonnaise (mit Ei); Falafel im Ofen erwärmt. Bei den Arepas nennt die Überschrift 4 Arepas, die Schritte formen aber 8 Kugeln: gerechnet sind 4 Portionen zu je 2 Arepas.
+- **Tacos al Pastor:** Wie bei r523 sind Ananassaft und Ananas wegen der Regel zu bestimmten Zutaten in Hauptgerichten weggelassen (im Rezepttext ohne Namensnennung vermerkt). **Offene Frage an den Auftraggeber:** Sollen sie in beiden Fassungen (r523, r643) rein?
+- **Nicht eingerechnet** sind Saucen und Beilagen ohne Mengenangabe (Salsa, Tahini-Sauce). Fehlende Mengen sind Annahmen der App und in jedem Rezepttipp aufgeführt (zum Beispiel 1 Avocado ≈ 150 g, 12 Falafel ≈ 240 g, 8 Maistortillas ≈ 200 g, Sojasauce bei den Satay-Spießen zweimal 2 EL).
+- **Ausnahmen vom Eiweißrahmen** (originalgetreu, im jeweiligen Tipp benannt): Arepas (18 g), Gyoza (15 g) und Falafel-Wrap (14 g); Bánh Mì mit Tofu (26 g) trägt einen Hinweis.
+- **Neue Zutaten:** keine.
+- **Tests angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch die Paare r607/r640, r464/r641, r627/r642, r523/r643, r530/r644 und r634/r645.
+- **Quellen:** Der Text nennt keine Links; alle sechs stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 620, ausgelieferte Rezepte im Abgleich 549, Quellen-Einträge 514 (davon 365 mit Link und 183 ohne bekannte Original-URL).
+
+## Nachtrag r631 bis r639: einundzwanzigste Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste („Liste 21 – 10 weitere Streetfood-Rezepte“) übergeben (ohne Zusatzanweisung; gedeutet wie die ersten zwanzig). **Ein Gericht wurde nicht angelegt, weil es eine echte Dublette ist:** Yakitori mit Hähnchen und Frühlingszwiebeln (Zutaten und Mengen identisch mit r568: 600 g Hähnchenschenkel, 4 Frühlingszwiebeln, 4 EL Sojasauce, 3 EL Mirin, 2 EL Zucker, Wasser statt Sake; Sesam ohne Mengenangabe).
+- Die übrigen neun Gerichte sind als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Halloumi-Wrap (r477), Falafel in Pita (r452, r525), Tteokbokki (r409, r457, r546), Sate Lilit (r498), Churros (r466, r562) und Bao mit Hähnchen (r455, r578) gab es dem Namen nach schon, aber mit anderen Zutaten oder Mengen; der Tipp nennt jeweils die ältere Fassung.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Halloumi-Wrap Wraps (statt Fladenbrot); Falafel-Wrap Ofen und Gurken-Pickles; Mini-Pizza Salami (statt Pilze); Sate Lilit Ingwer (statt Galgant); Katsu Sando Ketchup mit Worcestersauce (Tonkatsu-Sauce führt die App nicht). „Käse“ beim Tacos Gobernador ist als Gouda gerechnet, „Fischhackfleisch“ als fein gehacktes Seelachsfilet.
+- **Nicht eingerechnet** sind Beilagen und Saucen ohne Mengenangabe (Salsa, Tahini-Sauce, Zimtzucker, Limette und Sambal) sowie optionales Obst. Fehlende Mengen sind Annahmen der App und in jedem Rezepttipp aufgeführt (zum Beispiel 12 fertige Falafel ≈ 240 g, ein Pizzateig ≈ 300 g, 1 Granatapfel ≈ 120 g Kerne, 8 Churros ≈ 216 g).
+- **Frittieren:** Korean Fried Chicken Bao und Chicken Katsu Sando werden wie in der Vorlage frittiert (nur das aufgenommene Öl gerechnet; Mehl, Ei und Panko sind vollständig gerechnet, die Werte sind deshalb eher zu hoch). Der Katsu Sando erreicht rechnerisch 1246 kcal je Sandwich; der Tipp weist darauf hin.
+- **Dessert:** Churro-Nachos sind als Dessert geführt (402 kcal, 8 g Eiweiß; AUSNAHME im Tipp) und in `smoke6.js` bei den originalgetreuen Desserts aufgeführt.
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp benannt): Korean Fried Chicken Bao (777 kcal), Falafel-Wrap (14 g Eiweiß), Tteokbokki mit Käse (669 kcal, 22 g), Mini-Pizza (20 g), Sate Lilit (171 kcal), Churro-Nachos (402 kcal, 8 g) und Chicken Katsu Sando (1246 kcal). Halloumi-Wrap (24 g) und Tacos Gobernador (29 g) tragen einen Hinweis.
+- **Neue Zutaten:** Pizzateig (BLS D079000) und Falafel (BLS Y9A1050).
+- **Quellen:** Der Text nennt keine Links; alle neun stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 614, ausgelieferte Rezepte im Abgleich 543, Quellen-Einträge 508 (davon 365 mit Link und 177 ohne bekannte Original-URL).
+
+## Nachtrag r621 bis r630: zwanzigste Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste („Liste 20 – 10 weitere Streetfood-Rezepte“) übergeben (ohne Zusatzanweisung; gedeutet wie die ersten neunzehn). Alle zehn Gerichte sind neu (keine echten Dubletten) und als **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Pupusas (r476, r593), Shawarma (r463, r574), Satay (r482, r528, r561), Summer Rolls (r579 u. a.) und Tacos (r93, r442, r523, r608 u. a.) gab es dem Namen nach schon, aber mit anderen Zutaten oder Mengen; der Tipp nennt jeweils die ältere Fassung.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Larb gerösteter Reis (statt Erdnüsse); Cumin Lamb Lammkeule (statt Rind); Pupusa Revuelta fein gehacktes Schweinefleisch (statt Chicharrón); Beef Tacos mit Rotkohl-Slaw Rindergulasch (statt Hack); Summer Rolls Garnelen (statt Tofu); Baklava-Eis Baklava und Pistazien. Beim Chermoula steht nur „festkochender Fisch“: gerechnet ist Seelachs.
+- **Nicht eingerechnet** sind Beilagen und Saucen ohne Mengenangabe (Salatblätter und Reis beim Larb, Fladenbrot und Zitronenscheiben beim Chermoula, Salat und Tahini-Sauce beim Shawarma, Curtido und Salsa bei den Pupusas, Salsa bei den Tacos) sowie der optionale Espresso beim Baklava-Eis. Dadurch haben mehrere Gerichte wenig Kalorien.
+- **Fehlende Mengen und Sorten sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel 1 Bund Kräuter ≈ 30 g, Hähnchenhack nach Hähnchenbrust, Lammkeule nach Lamm Nuss, 500 ml Vanilleeis ≈ 275 g, Pita 80 g je Stück, Bohnenpüree aus schwarzen Bohnen, Gemüse in den Summer Rolls mit den Mengen von r579). Bei der Pupusa Revuelta steht ein Hinweis zum sicheren Durchgaren des rohen, fein gehackten Schweinefleischs in der Füllung.
+- **Dessert:** Baklava-Eis ist als Dessert geführt (379 kcal, 6 g Eiweiß; AUSNAHME im Tipp) und in `smoke6.js` bei den originalgetreuen Desserts aufgeführt.
+- **Ausnahmen vom Kalorienrahmen** (originalgetreu, im jeweiligen Tipp benannt): Larb Gai (203 kcal), Cumin Lamb (234), Chermoula-Fischspieße (218), jeweils ohne Beilage. Die Pupusa Revuelta (26 g Eiweiß) trägt einen Hinweis.
+- **Neue Zutaten:** Hähnchenhackfleisch (Näherung nach Hähnchenbrust, V4A6100), Lammkeule (Näherung nach Lamm Nuss, U817100) und Baklava (BLS D702000); Vanilleeis war schon vorhanden.
+- **Tests angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch die Pupusas r476 und r624 sowie die Summer Rolls r579 und r628.
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 605, ausgelieferte Rezepte im Abgleich 534, Quellen-Einträge 499 (davon 365 mit Link und 168 ohne bekannte Original-URL).
+
+## Nachtrag r611 bis r620: neunzehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten achtzehn). Alle zehn Gerichte sind neu (keine echten Dubletten) und als **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Choripán (r519) und Rinder-Empanadas (r134, r448, r529) gab es dem Namen nach schon, aber mit anderen Zutaten oder Mengen; der Tipp nennt jeweils die ältere Fassung.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Kabab Koobideh und Kefta Rinderhack (statt Lamm); Empanadas gebacken (statt frittiert); Sosis Bandari Brötchen und Öl; Zimtzucker statt Melasse bei den Buñuelos; Bacalaítos Petersilie. Optionale Zutaten (Paprika und Zwiebeln beim Choripán, Rosinen bei den Empanadas, Walnüsse bei den Loukoumades) sowie Beilagen und Saucen ohne Mengenangabe (Joghurt-Sauce oder Sumach, Tomaten und Kräuter beim Koobideh, Fladenbrot bei den Kefta, Zimtzucker bei Buñuelos und Leche Frita) sind nicht eingerechnet.
+- **Fehlende Mengen und Sorten sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel „Würste“ beim Sosis Bandari als Bratwurst zu 125 g, „Schweinefleisch“ bei den Pinchos als Schweineschulter, Fladenbrot 80 g je Stück, Salzkabeljau eingeweicht als rohes Kabeljaufilet, 100 ml Honig ≈ 140 g). Fritiertes (Buñuelos, Bacalaítos, Leche Frita, Loukoumades) ist mit aufgenommenem Öl gerechnet, Sicherheitshinweis im Tipp.
+- **Desserts:** Buñuelos, Leche Frita und Loukoumades sind als Dessert geführt (229, 309 und 261 kcal, aber nur 4 bis 8 g Eiweiß); im Tipp als HINWEIS vermerkt und in `smoke6.js` bei den originalgetreuen Desserts aufgeführt. Bacalaítos sind ein Snack.
+- **Ausnahmen vom Kalorienrahmen** (originalgetreu, im jeweiligen Tipp benannt): Choripán (817 kcal) und Pinchos de Cerdo (291 kcal, ohne Beilage). Empanadas (26 g Eiweiß) und Sosis Bandari (28 g) tragen einen Hinweis.
+- **Neues Gewürz:** Anis (Samen) für die Buñuelos. Keine neuen Zutaten.
+- **Tests angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch die Empanadas r529 und r613.
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 595, ausgelieferte Rezepte im Abgleich 524, Quellen-Einträge 489 (davon 365 mit Link und 158 ohne bekannte Original-URL).
+
+## Nachtrag r601 bis r610: achtzehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten siebzehn). Alle zehn Gerichte sind neu (keine echten Dubletten) und als **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Ähnliche ältere Rezepte sind im Tipp genannt (Bao Buns r455 und Bao Burger r578, Pad Kra Pao r98 und r554, Kimbap r456 und r557, Bánh Mì r524, Pulled Pork r190 und r202).
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Gua Bao Reiswein und Sauerkraut; Pad Kee Mao Hähnchen und Fischsauce; Yaki Udon Hähnchen und Mirin; Kimchi Bokkeumbap Speck; Kimbap Schinken; Halloumi-Bánh-Mì Mayonnaise (mit Ei); Sticky Pork als Hähnchenschenkel (deshalb als „Sticky Chicken“ benannt; mit Schweinebauch läge die Portion deutlich über dem Kalorienrahmen).
+- **Fehlende Mengen und Sorten sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel 8 Bao-Brötchen ≈ 320 g, 8 Maistortillas ≈ 200 g, Kimchi als Näherung nach Chinakohl, „Käse“ als Gouda, 1 Ananas als 600 g Fruchtfleisch). Optionale Zutaten (Currypulver, Bonitoflocken, Ingwer beim Yaki Udon) und Beilagen ohne Mengenangabe sind nicht eingerechnet.
+- **Dessert:** Die Ananas-Spieße sind als Dessert geführt (Ananas ist als Dessert erlaubt); 339 kcal, aber nur rund 7 g Eiweiß, deshalb im Tipp als HINWEIS vermerkt und in `smoke6.js` bei den originalgetreuen Desserts aufgeführt.
+- **Ausnahmen vom Kalorienrahmen** (originalgetreu, im jeweiligen Tipp benannt): Gua Bao (783 kcal), Pad Kee Mao (776), gefalteter Kimbap (723), Halloumi-Bánh-Mì (739) und Sticky Chicken (703). Kimchi Bokkeumbap (26 g Eiweiß) trägt einen Hinweis.
+- **Neue Zutat:** `udon_frisch` (Udon-Nudeln, frisch; Näherung nach gekochten Teigwaren ohne Ei, BLS E401032, 146 kcal je 100 g).
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 585, ausgelieferte Rezepte im Abgleich 514, Quellen-Einträge 479 (davon 365 mit Link und 148 ohne bekannte Original-URL).
+
+## Nachtrag r593 bis r600: siebzehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten sechzehn). **Zwei Gerichte wurden nicht angelegt, weil sie echte Dubletten sind:** Churros con Chocolate (Zutaten und Mengen identisch mit Churros mit Zimtzucker und Schokoladendip, r562) und Fish and Chips (Zutaten und Mengen identisch mit r467: 600 g Kabeljau, 200 g Mehl, 300 ml Bier, 1 TL Backpulver, 1 kg Kartoffeln). Wer sie trotzdem als eigene Fassung haben möchte, gibt Bescheid.
+- Die übrigen acht Gerichte sind als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Sechs gab es dem Namen nach schon (Pupusas r476, Coxinha r492, Khachapuri r502, Bunny Chow mit Lammcurry r469, Ceviche r450, Döner r462), aber mit anderen Zutaten oder Mengen; neu sind Momo und Currywurst. Im Tipp steht jeweils das ältere Rezept.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Khachapuri Mozzarella (Sulguni führt die App nicht); Bunny Chow Kichererbsen und Wasser; Momo Schweinehack; Döner Kalbshack. Bei den Pupusas stehen Käse und Bohnenpüree beide mit Menge in der Zutatenliste; gerechnet sind beide.
+- **Fehlende Mengen und Sorten sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel „geriebener Käse“ als Gouda, „Frischkäse“ als Doppelrahm-Frischkäse, Panade der Coxinha 50 g Mehl, 1 Ei und 100 g Brösel, 4 Bratwürste ≈ 500 g, Pommes 150 g je Portion). Saucen, Dips und Beilagen ohne Mengenangabe sind nicht eingerechnet.
+- **Ceviche:** Wie bei r450 ist eine in der Vorlage genannte Beilage wegen der Regel zu bestimmten Zutaten in Hauptgerichten weggelassen (im Rezepttext ohne Namensnennung vermerkt); die zweite Beilage (Mais) steht ohne Menge und ist nicht eingerechnet. Rohfisch-Hinweis im Tipp.
+- **Frittieren:** Coxinha wird wie in der Vorlage frittiert (nur das aufgenommene Öl gerechnet, Sicherheitshinweis im Tipp).
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp benannt): Pupusas (25 g Eiweiß), Khachapuri (678 kcal, 27 g), Bunny Chow (19 g), Ceviche (122 kcal, 23 g), Momo (23 g) und Currywurst (25 g). Coxinha (28 g, 6 Portionen) trägt einen Hinweis.
+- **Neue Zutaten:** keine.
+- **Tests angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch Coxinha r492 und r594 sowie Ceviche r450 und r597.
+- **Quellen:** Der Text nennt keine Links; alle acht stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; es gibt diesmal keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 575, ausgelieferte Rezepte im Abgleich 504, Quellen-Einträge 469 (davon 365 mit Link und 138 ohne bekannte Original-URL).
+
+## Nachtrag r583 bis r592: sechzehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine weitere Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten fünfzehn). Drei Gerichte gab es dem Namen nach schon (Bulgogi r114, Doubles r500, Acarajé r501), aber mit anderen Zutaten oder Mengen; neu sind Baozi, Mandu, Scallion Pancake, Dholl Puri, Schezwan Fried Rice, Aloo Tikki Wrap und Poffertjes. Alle zehn sind als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten); im Tipp steht jeweils das ältere Rezept.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Baozi Vollmilch und Schweinehack; Mandu nur dämpfen; Bulgogi-Spieße Zucker statt Birnensaft; Doubles Kokosmilch; Scallion Pancake Chilisauce; Aloo Tikki Wrap Rotis; Poffertjes Ahornsirup. Optionale Zutaten (Käse beim Scallion Pancake, Garnelen beim Acarajé) und Beilagen ohne Mengenangabe (Chutneys, Saucen, Reis oder Salat, Vatapá) sind nicht eingerechnet.
+- **Fehlende Mengen sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel Gyoza-Teigblätter 8 g je Blatt; 200 g gekochte gelbe Erbsen als 90 g Rohgewicht; Gemüse beim Schezwan Fried Rice zu gleichen Teilen; Kewpie-Mayonnaise als normale Mayonnaise; Puderzucker als Zucker).
+- **Frittieren:** Doubles und Acarajé werden wie in der Vorlage frittiert (nur das aufgenommene Öl gerechnet, Sicherheitshinweis im Tipp).
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp benannt): Mandu (25 g Eiweiß), Bulgogi-Spieße (240 kcal), Doubles (17 g Eiweiß, 654 kcal), Scallion Pancake (746 kcal, 21 g), Dholl Puri (376 kcal, 13 g) und Schezwan Fried Rice (390 kcal, 11 g). Baozi (27 g) trägt einen Hinweis; Acarajé und Aloo Tikki Wrap sind als Snack geführt (Hinweis im Tipp). Poffertjes liegen als Dessert im Rahmen (314 kcal, 10,5 g Eiweiß).
+- **Neue Zutaten:** Kimchi (Näherung nach rohem Chinakohl, BLS G321100; Fischsauce möglich, daher als Fisch-Allergen geführt) und Schezwan-Sauce (eigene Berechnung aus Chilipaste, Rapsöl, Sojasauce und Knoblauch, kein BLS-Eintrag; Fertigsaucen weichen ab).
+- **Tests angepasst:** Der Zähler für Desserts in `smoke6.js` steht bei 64 (Poffertjes r592).
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; es gibt diesmal keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 567, ausgelieferte Rezepte im Abgleich 496, Quellen-Einträge 461 (davon 365 mit Link und 130 ohne bekannte Original-URL).
 
 ## Nachtrag r573 bis r582: fünfzehnte Streetfood-Liste (30.10.2026)
 
@@ -277,17 +391,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **486** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 81, Rind: 72, Schwein: 67, Fisch: 52, Vegetarisch: 214 |
-| Verteilung nach Mahlzeit | Hauptgericht: 245, Suppe/Eintopf: 48, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 45, Dessert: 63, Aufstrich: 34, Sauce/Dips: 5 |
+| Mitgelieferte Rezepte | **579** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 94, Rind: 89, Schwein: 86, Fisch: 60, Vegetarisch: 250 |
+| Verteilung nach Mahlzeit | Hauptgericht: 312, Suppe/Eintopf: 50, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 59, Dessert: 73, Aufstrich: 34, Sauce/Dips: 5 |
 | Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 360 (359) |
-| Gewürze | 67 |
+| Zutaten im Stamm (davon mit Nährwerten) | 378 (377) |
+| Gewürze | 69 |
 | Bausteine (Meal-Prep) | **90** (Protein: 20, Beilage: 8, Sauce: 27, Gemüse: 5, Booster: 30) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 2275 KB |
+| Größe `dist/index.html` | 2588 KB |
 
 ---
 
@@ -509,7 +623,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 486 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 579 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 90 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
