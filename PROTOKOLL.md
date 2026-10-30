@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-30 14:52 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-30 22:38 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,328 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag r818: Bubble Tea (30.10.2026)
+
+Übergebener Text „Authentisches Bubble Tea – Taiwan Style Black Milk Tea mit Boba“ originalgetreu als ein Rezept übernommen (Boba, Tee und Zusammenbau gehören zu einem Getränk). Status: Automatisch validiert.
+
+- **r818 Bubble Tea – Taiwan Style Black Milk Tea mit Boba (Taiwan, Streetfood)** – Snack, 591 kcal / 5,9 g Eiweiß je Glas (2 Gläser), Herd. Die Schritte sind nach Boba, Tee, Zuckersirup und Drink gekennzeichnet. Optimale Mischung, Anpassungen und die authentische Variante stehen im Tipp.
+- **Zuckersirup der Vorlage:** inhaltlich identisch mit r817 (100 g Zucker, 100 ml Wasser), deshalb nicht als weiteres Rezept angelegt; im Tipp von r818 auf r817 verwiesen.
+
+Gerechnet ist die Zutatenliste der Vorlage mit 60 g Zucker im Tee. Nicht gerechnet: die Alternative 80 ml Zuckersirup, die 20 bis 30 ml Sirup je Glas der „Optimalen Mischung“ (sonst wäre der Tee doppelt gesüßt) und die optionale Evaporated Milk. Der braune Zucker (60 g) ist vollständig gerechnet, obwohl nicht aller Sirup im Glas landet; der Wert ist eher eine Obergrenze.
+
+Neue Zutat: Tapioka-Perlen für Bubble Tea (trocken, Näherung nach Tapiokastärke, BLS K512000). Das Gewürz „Schwarztee, lose“ heißt jetzt „z. B. Assam oder Ceylon“. Hinweis der App im Tipp: Tapioka-Perlen sind für kleine Kinder eine Verschluckungsgefahr. Quellen: Die Vorlage nennt Fußnoten [746][747][752][753][756][757] ohne Links; nicht prüfbar. Shaker und Strohhalme stehen nicht in der Geräteliste. Keine Einfrierangaben.
+
+Testzähler: Bibliothek 793, SHIP 722.
+
+## Nachtrag Geräte: Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine (30.10.2026)
+
+Auf Wunsch des Nutzers wurde die Geräteliste um vier Geräte erweitert: **Mixer**, **Küchenmaschine** (mit Zubehör), **Fleischwolf** und **Nudelmaschine**. Sie erscheinen im Gerätefilter der Rezepte, im Gerätefilter der KI-Rezeptanfrage, im Rezepteditor und in der Liste der verfügbaren Geräte für die KI-Rezepte. „Monsieur Cuisine Connect“ bleibt unverändert (weiterhin ohne geprüftes Programmwissen).
+
+Zugeordnet wurden die Geräte nur bei Rezepten, deren Schritte sie schon nennen (28 Rezepte, sonst nichts geändert):
+- **Mixer** (Standmixer, Mixer): r165, r230, r262, r263, r271, r284, r285, r286, r287, r288, r290, r291, r298, r307, r315, r316, r317, r319, r337, r343, r344, r354, r399, r816.
+- **Küchenmaschine**: r306, r331, r399, r400.
+- **Fleischwolf**: r98 (laut Rezept „fein hacken oder durch den Fleischwolf drehen“, also optional).
+- **Nudelmaschine**: noch kein Rezept der App nennt sie; für neue Rezepte und KI-Anfragen verfügbar.
+
+Nicht zugeordnet: r414 (Pürierstab), die Rezepte r812 (Pai Bao, Teig „kneten“ ohne Gerätenennung) und r807 (Lap Cheong, Trichter statt Wolf). Der Hinweis „Der Mixer steht nicht in der Geräteliste“ im Tipp von r816 wurde entfernt. Der Hinweis zum Wurstfüller in r807 bleibt stehen.
+
+## Nachtrag r816 und r817: Coconut Juice und Zuckersirup (30.10.2026)
+
+Übergebener Text „Hongkong Streetfood Coconut Juice“ (Stil „King of Coconut“) originalgetreu übernommen, Sirup als eigenes Rezept getrennt. Status: Automatisch validiert.
+
+- **r816 Coconut Juice – Kokosdrink im Stil von „King of Coconut“ (Hongkong, Streetfood)** – Snack, 546 kcal / 7,9 g Eiweiß je Portion (3 Portionen zu je etwa 330 ml angenommen, die Vorlage nennt etwa 1 Liter). Gerechnet ist die „Optimale Mischung“ der Vorlage (70 ml Sirup); die Spanne 60 bis 80 ml, die optionale Kokoscreme und die Anpassungshinweise stehen im Tipp. Die Hinweise zur besonders authentischen Variante stehen ebenfalls im Tipp.
+- **r817 Zuckersirup für den Coconut Juice (Hongkong, Streetfood)** – Sauce/Dips, 50 kcal je Portion (8 Portionen zu je etwa 20 ml angenommen), Herd. Hält laut Vorlage im Kühlschrank etwa 2 Wochen.
+
+**Hinweis zu den Nährwerten von r816:** Junges Kokosfleisch steht nicht im BLS. Gerechnet ist es als Näherung nach reifem Kokos-Fruchtfleisch (BLS H150100). Junges Fleisch ist wasserreicher und energieärmer, der Wert von 546 kcal ist deshalb eine Obergrenze.
+
+Neue Zutaten: Junges Kokosfleisch (Näherung), Eiswürfel/Crushed Ice (0 kcal), Zuckersirup (rechnerisch 1:1 aus Zucker und Wasser, 200 kcal je 100 g). Evaporated Milk ist als bestehende ungezuckerte Kondensmilch (7,5 % Fett) geführt.
+
+Quellen: Die Vorlage nennt Fußnoten [704][705][709][711] ohne Links; nicht prüfbar, im Rezept vermerkt. Keine Einfrierangaben in der Vorlage (kein Eintrag im Gefrierplan). Der Mixer steht nicht in der Geräteliste.
+
+Testzähler: Bibliothek 792, SHIP 721, Sauce/Dips 10.
+
+## Nachtrag r810 bis r815: Hongkong-Cha-Chaan-Teng-Frühstück (30.10.2026)
+
+Übergebener Text „Das ultimative Hongkong-Cha-Chaan-Teng-Frühstück“ (ohne Quellenlinks) originalgetreu übernommen, je Sorte getrennt. Status: Automatisch validiert. Die Überschriften tragen „(Hongkong, Cha Chaan Teng)“ statt „Dim Sum“, weil es kein Dim Sum ist.
+
+- **r810 Frisches Fünf-Gewürze-Pulver – Ng Heung Fan** – Sauce/Dips, 12 Portionen (angenommen), Herd. Gewürze ohne BLS-Wert, deshalb keine Nährwerte; die Mengen stehen in den Schritten.
+- **r811 Hongkong-Style Kochschinken aus Schweinenacken, Sous-vide** – Snack, 306 kcal / 32,4 g Eiweiß je Portion (6 Portionen angenommen). Tipp mit Sicherheitshinweis zum Nitritpökelsalz: 32 g auf 1 kg Fleisch entsprechen rechnerisch bis zu 160 mg Nitrit/kg, nahe an der EU-Zugabegrenze von 150 mg/kg (nach Kenntnis der App; bitte selbst prüfen). Nur echtes Nitritpökelsalz verwenden, nicht Prague Powder #1.
+- **r812 Pai Bao – Hongkong-Milchbrot mit Tangzhong** – Snack, 332 kcal / 10 g Eiweiß je Scheibe (6 Scheiben angenommen).
+- **r813 Klassisches Hongkong-Schinken-Ei-Sandwich** – Frühstück, 957 kcal / 45,6 g Eiweiß. AUSNAHME VOM KALORIENRAHMEN (Mengen der Vorlage: 3 Eier, 3 Scheiben Luncheon Meat, 2 dicke Scheiben Milchbrot, Butter).
+- **r814 Schinken-Ei-Sandwich mit Cheddar aus dem Airfryer** – Frühstück, 1072 kcal / 50,3 g Eiweiß. AUSNAHME VOM KALORIENRAHMEN.
+- **r815 Yuen Yeung – Hongkong-Kaffee-Tee** – Snack, 210 kcal / 5,2 g Eiweiß je Tasse (2 Tassen). AUSNAHME VOM KALORIENRAHMEN (Getränk). Gerechnet mit gezuckerter Kondensmilch (100 ml ≈ 130 g); die Alternative Evaporated Milk plus Zucker und die optionalen 1 bis 2 EL gezuckerte Kondensmilch sind nicht gerechnet.
+
+Nicht als eigenes Rezept angelegt: **Gebratenes Luncheon Meat** (Original der Vorlage), weil es nur zwei Zutaten hat und die App für Rezepte mindestens drei verlangt (außer Aufstrich und Sauce/Dips). Das Vorgehen steht im Tipp von r811, und Luncheon Meat ist in r813 und r814 als Zutat gerechnet.
+
+Neue Zutaten: Luncheon Meat (Näherung nach Fleischkäse, BLS W233000), Nitritpökelsalz (BLS R118000), gezuckerte Kondensmilch (BLS M181400), Kaffee (Getränk, BLS N410100), Schwarztee (Getränk, BLS N630000, Eiweiß fehlt im BLS und ist mit 0 gerechnet), Hongkong-Milchbrot (rechnerisch aus dem Teig von r812 je 100 g Teig, ohne Backverlust). Neue Gewürze: Fenchelsamen, Schwarztee (lose).
+
+Annahmen: Portionszahlen und Zeiten, Gewichte der Brotscheiben (je 55 g), Luncheon-Scheiben (je 30 g), Butter, Tangzhong mit Wasser, Rohrzucker als brauner Zucker. Die Vorlage nennt keine Einfrierangaben (kein Eintrag im Gefrierplan). Pökelspritze nicht in der Geräteliste.
+
+Testzähler: Bibliothek 790, SHIP 719, Sauce/Dips 9, Frühstück 25. Test „Sous-vide-Rezept“ verlangt „Wasserbad“ mit Temperatur im selben Satz; Schritt 9 von r811 ist entsprechend formuliert.
+
+## Nachtrag r807 bis r809: Lap Cheong, Char Siu, Char-Siu-BBQ-Sauce (30.10.2026)
+
+Neue Rezeptliste (drei Rezepte, ohne Quellenlinks im übergebenen Text) originalgetreu übernommen. Status: Automatisch validiert.
+
+- **r807 Lap Cheong – Kantonesische Wurst (Kanton, Dim Sum)** – Snack, 212 kcal / 11 g Eiweiß je Portion (8 Portionen angenommen), Backofen. Zutaten und Mengen wie in der Vorlage.
+- **r808 Char Siu – Kantonesisches BBQ-Schweinefleisch (Kanton, Dim Sum)** – Hauptgericht, 564 kcal / 49,2 g Eiweiß je Portion (6 Portionen angenommen), Backofen. Marinade und Glasur laut Vorlage; Nacken statt Bauch gerechnet, Zeiten ergänzt.
+- **r809 Char-Siu-BBQ-Sauce (Kanton, Dim Sum)** – Sauce/Dips, 89 kcal / 1 g Eiweiß je Portion (8 Portionen angenommen), Herd. Maltose gerechnet; Honig ist die genannte Alternative und nicht berechnet.
+
+Neue Zutaten: Schweinenacken (BLS U632100), Rückenspeck (BLS W412000), Pökelsalz (eigener Eintrag, 0 kcal), Fenjiu (Näherung über Wodka, BLS P712000), roter fermentierter Tofu (Näherung, BLS H861000), Maltose (BLS S117000), Schweinedärme als Gewürz-/Zubehöreintrag ohne Nährwerte.
+
+**Sicherheitshinweis (Einschätzung der App, steht im Tipp von r807):** Die Vorlage nennt 3 g Prague Powder #1 auf etwa 500 g Fleisch und Fett, das sind rund 6 g/kg. Üblich sind etwa 2,5 g/kg. In Deutschland ist Nitritpökelsalz (0,4–0,5 % Nitrit) ein anderes Produkt. Dazu kommt die Trocknung bei 50 °C ohne Kontrollwert. Die Vorlage selbst sagt „vor dem Verzehr immer durchgaren“.
+
+Annahmen: Portionszahlen (8/6/8), Wassermenge 75 g bei Lap Cheong, Zuckeraufteilung, Wursthülle nicht berechnet. Die Vorlage nennt keine Einfrierangaben, daher kein Eintrag im Gefrierplan. Die bestehenden Zutaten chinesische_wurst, char_siu_sauce und char_siu_fleisch (r737, r738, r786, r788, r795) wurden nicht umgestellt.
+
+Testzähler: Bibliothek 784, SHIP 713. Sauce/Dips-Kategorie jetzt 8 Rezepte. Autoplan-Gefrierer-Test nutzt die Seeds 35 bis 44, weil sich die Auswahl mit dem Bestand ändert.
+
+## Nachtrag r806: Dim-Sum-Rezepte – Liste 11 (30.10.2026)
+
+- Ein neues Rezept aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 11“ (zehn Einträge): r806 Tofu Pudding (Hongkong, Dim Sum, 80 g Zucker). Es ist eine zweite Fassung des Tofu Puddings r754 (Liste 3): dort 100 g Zucker und „Abkühlen lassen“ ohne Zeit, hier 80 g Zucker, 100 ml Wasser für den Sirup und 2 Stunden Kühlzeit. Nährwerte je Portion: 160 kcal / 8 g Eiweiß (AUSNAHME VOM DESSERTRAHMEN im Tipp). Der Dubletten-Test meldet dafür Warnungen (r754, r806), die als bekannt ausgenommen sind; der Dessert-Test zählt jetzt 98 Desserts.
+- Dubletten (nicht übernommen, Zutaten, Mengen, Zeiten und Schritte sind identisch mit den vorhandenen Rezepten): Coconut Jelly (r774), Red Bean Soup (r770), Green Bean Soup (r771), Peanut Soup (r772), Lotus Seed Soup (r773), Mango Pudding (r776, die nach Recherche korrigierte Fassung bleibt; die Vorlage ist dieselbe wie in Liste 6), Almond Jelly (r777), Sesame Soup (dieselbe Suppe wie r778) und Walnut Soup (r779).
+- Neue Quellenangaben: Beim Eintrag „Sesame Soup“ nennt Liste 11 den Food-Network-Link (Black sesame sweet soup) und bei „Walnut Soup“ den Link whattocooktoday.com/walnut-black-sesame-soup.html. Beide sind als zusätzliche Quellen bei r778 bzw. r779 eingetragen (Art K, in dieser Sitzung nicht abrufbar, Mengen nicht verglichen). Der Link von r806 (pyskitchen.com, Kategorie Dim Sum) ist ebenfalls nicht abrufbar (Art K).
+- Technisches: Zähler der Tests angepasst (Bibliothek 781, ausgelieferte Rezepte 710, Quellen-Links 473, Desserts 98).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r803 bis r805: Dim-Sum-Rezepte – Liste 9 (30.10.2026)
+
+- Drei neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 9“ (zehn Einträge, sieben als Dubletten nicht übernommen), Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Hongkong, Dim Sum)“: r803 Duck Noodles (Suppe/Eintopf), r804 Sesame Prawn Toast (Snack), r805 Shrimp Toast ohne Sesam (Snack).
+- Dubletten (nicht übernommen, Zutaten, Mengen, Zeiten und Schritte sind identisch mit den vorhandenen Rezepten): Turnip Cake (r737), Taro Cake (r738), Fish Balls (r739), Pork Balls (r740), Chicken Balls (r741), Vegetable Balls (r742) und Sweet Potato Balls (r743).
+- Gleichnamig, aber anders: „Shrimp Toast“ in Liste 9 (Eiweiß, Sojasauce, Ingwer, Knoblauch, kein Sesam) unterscheidet sich vom vorhandenen Shrimp Toast r736 (ganzes Ei, weißer Pfeffer, 50 g Sesam). Deshalb gibt es die neue Fassung als eigenes Rezept r805 mit dem Zusatz „ohne Sesam“ im Namen; der Tipp verweist auf r736. „Sesame Prawn Toast“ (r804) hat 100 g Sesam und ist ebenfalls eine eigene Fassung. Der Dubletten-Test meldet dafür Warnungen (r804, r805), die als bekannt ausgenommen sind.
+- Neue Zutat: Entenfleisch mit Haut (BLS V464100, Brust oder Keule, roh). Die Vorlage nennt „Entenbrust oder Entenkeulen“ und „Enten- oder Hühnerbrühe“: gerechnet sind Entenfleisch (essbarer Anteil, 800 g) und Hühnerbrühe, weil Entenbrühe nicht in der Zutatenbasis steht; das steht im Tipp.
+- Nährwerte je Portion (Näherung): r803 843 kcal / 52 g Eiweiß (AUSNAHME VOM KALORIENRAHMEN im Tipp: 800 g Ente mit Haut, 400 g Eiernudeln), r804 491 / 24,6, r805 350 / 19,4. Der Test für Portionsgewicht/kcal-Warnungen gilt jetzt bis r805.
+- Einfrieren: Die Vorlage nennt „Ja“ (Ente und Brühe getrennt bzw. roh einfrieren); im Gefrierplan der App (Souper Cubes) sind die Gerichte nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: kitchensanctuary.com und mission-food.com sind in dieser Sitzung nicht abrufbar (Art K, nicht gelesen). Der Link der Vorlage von Duck Noodles führt auf ein Rezept für Sesam-Garnelen-Toast und passt vermutlich nicht zum Gericht.
+- Technisches: Zähler der Tests angepasst (Bibliothek 780, ausgelieferte Rezepte 709, Quellen-Links 470).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r794 bis r802: Dim-Sum-Rezepte – Liste 8 (30.10.2026)
+
+- Neun neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 8“ (zehn Einträge, einer als Dublette zusammengeführt), Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Ort, Dim Sum)“. Hauptgericht: r794 Mongolian Beef Noodles (China), r802 Crispy Chicken Noodles. Snack: r795 Char Siu Rice Noodle Roll, r796 Green Onion Ginger Beef Dumpling, r797 Chicken Vegetable Dumpling, r798 Pork Vegetable Dumpling, r799 Shrimp Rice Roll, r800 Beef Rice Roll, r801 Vegetable Rice Roll.
+- Dublette: „Char Siu Rice Noodle Roll“ und „BBQ Pork Rice Roll“ stehen in der Liste mit gleichen Zutaten, Mengen und Schritten (nur der Titel unterscheidet sich; Char Siu ist das chinesische BBQ-Schweinefleisch). Die App führt das Rezept einmal (r795); der Hinweis steht im Tipp. Eine Recherche zur authentischen Fassung wurde nicht gemacht, weil die Titel dasselbe Gericht bezeichnen.
+- Neue Zutaten: Dumpling-Teigblätter (Näherung nach Pizzateig; 20 Stück mit 10 g je Blatt gerechnet) und Char-Siu-Schweinefleisch (rechnerisch 90 % gekochtes Schweinefleisch, 10 % Char-Siu-Sauce; echtes Char Siu ist fetter, Fertigware weicht ab).
+- Nährwerte je Portion (Näherung): r794 615 kcal / 48,1 g Eiweiß, r795 409 / 20,9, r796 344 / 23,8, r797 280 / 26,4, r798 442 / 22,5, r799 368 / 15,4, r800 429 / 16,6, r801 339 / 5,5, r802 630 / 49,4. Die Hauptgerichte liegen im Rahmen; Snacks haben keine Eiweißregel.
+- Annahmen: „Rindfleisch/Hähnchen in Streifen“ als Hüftsteak bzw. Hähnchenbrust; Reisrollen mit etwa 8 Blättern zu 5 Minuten gerechnet (die Vorlage nennt keine Blattzahl); das Rinderhack in r800 gart nur 2 bis 3 Minuten im Dampf, Hinweis auf vollständiges Durchgaren im Tipp. „Crispy Chicken Noodles“ hat in der Vorlage keinen Schritt, der die Nudeln knusprig macht; die Schritte stehen unverändert, der Hinweis im Tipp.
+- Einfrieren: Die Vorlage nennt „Ja“ bei allen Rezepten; im Gefrierplan der App (Souper Cubes) sind sie nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: alle Links führen nach der Adresse auf einen Artikel „13 delicious dim sum recipes“ von Beaver Online (Großbritannien); die Seite ist in dieser Sitzung nicht abrufbar (Art K, nicht gelesen).
+- Technisches: Zähler der Tests angepasst (Bibliothek 777, ausgelieferte Rezepte 706, Quellen-Links 467).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r784 bis r793: Dim-Sum-Rezepte – Liste 7 (30.10.2026)
+
+- Zehn neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 7“ (zehn Einträge, keiner als Dublette übersprungen), Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Ort, Dim Sum)“. Snack (Brötchen): r784 Black Sesame Bun, r785 Golden Egg Yolk Bun, r786 Chinese Sausage Roll, r787 Pan-Fried Chicken Bun, r788 Baked BBQ Pork Bun. Snack (Wontons): r789 Fried Wonton, r790 Wonton in Spicy Sauce (Shanghai). Suppe/Eintopf: r791 Shanghai Wonton Soup (Shanghai), r792 Beef Noodle Soup (Taiwan), r793 Spicy Beef Noodle Soup (Taiwan).
+- Ähnlichkeit: r792 hat dieselbe Zutatenliste und dieselben Schritte wie r756 „Beef Noodles (Hongkong, Dim Sum)“, nur mit 90 bis 120 statt 60 bis 90 Minuten Köcheln und der Herkunft Taiwan. Die Vorlage führt beide als eigene Rezepte, deshalb gibt es beide; der Hinweis steht im Tipp von r792. Die App meldet dafür eine Dubletten-Warnung (r756, r792, r793), die im Test als bekannt ausgenommen ist. Eine Recherche, welche Fassung authentisch ist, steht aus (auf Wunsch möglich).
+- Neue Zutaten: Wonton-Teigblätter (Näherung nach Pizzateig, Gluten und Ei), Chiliöl (Näherung nach Rapsöl), Eigelb, gesalzen (Näherung nach Hühnerei-Eigelb, Salz nicht gerechnet) und Char-Siu-Sauce (Näherung nach Hoisinsauce, USDA SR Legacy). „Chinesische Wurst“ in r786 nutzt die schon vorhandene Zutat Lap Cheong (Näherung nach Salami); das eigene Lap-Cheong-Rezept folgt erst, wenn alle Dim-Sum-Listen eingebaut sind.
+- Nährwerte je Portion (Näherung): r784 564 kcal / 16,1 g Eiweiß, r785 526 / 11,5, r786 524 / 20,9, r787 446 / 24,3, r788 453 / 25,2, r789 483 / 23,4, r790 477 / 23,4, r791 390 / 24,2, r792 645 / 56,2, r793 649 / 56,3. Bei r784 bis r786 steht „HINWEIS“ (über 500 kcal je Portion mit 2 Brötchen), bei r791 „AUSNAHME VOM KALORIENRAHMEN/EIWEISSRAHMEN“.
+- Annahmen: 20 Wonton-Teigblätter ohne Gewichtsangabe mit 8 g je Blatt gerechnet; „Öl zum Frittieren“ (r789) mit 50 g aufgenommenem Rapsöl und „Öl zum Braten“ (r787) mit 20 g Rapsöl angesetzt; Chilipaste (r793) als Sambal Oelek; das Sesamöl in r786 ohne Schritt in der Vorlage wird mit der Füllung gegeben.
+- Einfrieren: Die Vorlage nennt „Ja“ bei allen zehn Rezepten; im Gefrierplan der App (Souper Cubes) sind sie nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: alle Links der Vorlage führen nach ihrem Aufbau auf Seiten im Bestellsystem eines Restaurants (Dim Sum House: „Salt Baked Fried Squid“ bzw. „Spicy Beef Noodle Soup“), also vermutlich auf eine Speisekarte statt auf Rezepte; sie sind in dieser Sitzung nicht abrufbar (Art K, nicht gelesen).
+- Technisches: Zähler der Tests angepasst (Bibliothek 768, ausgelieferte Rezepte 697, Quellen-Links 458); der Autoplan-Test mit dem Gefrierer-Chili nutzt jetzt die Seeds 15 bis 24, weil die Auswahl vom Rezeptbestand abhängt.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r775 bis r783: Dim-Sum-Rezepte – Liste 6 (30.10.2026)
+
+- Neun neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 6“ (zehn Einträge, einer als Dublette nicht übernommen), Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Hongkong, Dim Sum)“. Desserts: r775 Egg Custard, r776 Mango Pudding (nach Recherche korrigiert), r777 Almond Jelly, r778 Black Sesame Soup (nach Recherche geklärt), r779 Walnut Soup, r780 Taro Soup, r781 Sweet Potato Soup, r782 Pumpkin Soup. Snack: r783 Lotus Seed Bun.
+- Dublette und Recherche (auf Wunsch, 30.10.2026): „Sesame Soup“ und „Black Sesame Soup“ haben in der Liste dieselben Zutaten und Mengen (nur kleine Unterschiede im Wortlaut der Schritte) und denselben Link. Verglichen mit vier gelesenen Rezepten (Omnivore’s Cookbook, The Woks of Life, The Hong Kong Cookery, My Kitchen 101) ist das Gericht die schwarze Sesamsuppe; „Sesame Soup“ hat die genaueren Schritte (Reis 1 Stunde einweichen, Sesam leicht anrösten), „Black Sesame Soup“ den passenderen Namen. r778 führt die Suppe einmal: Name von „Black Sesame Soup“, Schritte von „Sesame Soup“, Zutaten und Mengen unverändert; ergänzt sind Rösten bis zum Duft und ständiges Rühren (Quellen). Der Link der Vorlage (dimsumcentral.com) war nicht abrufbar.
+- Mangopudding r776 (auf Wunsch nachrecherchiert und korrigiert): Die Vorlage (500 ml Mangosirup, 200 ml Milch, 200 ml Sahne, 10 g Gelatine, 200 g Mangopüree, 1 Mango; nur die Schritte Gelatine lösen, mischen, kühlen) war lückenhaft. Nach The Hong Kong Cookery (nach „Dim Sum in Hong Kong“ von Leung Wai Shan), Teak & Thyme und What to Cook Today fehlten Zucker und Wasser (der „Mangosirup“ kommt in keinem Rezept vor), das Lösen der Gelatine in heißem Wasser (10 g sind für 1,4 kg Masse zu wenig, gelesene Rezepte nehmen etwa 15 bis 20 g je kg), das Sieben des Pürees, das Abkühlen mit Eiswasser und die milchige Sauce zum Servieren. Die Fassung nutzt die Mengen von The Hong Kong Cookery (Püree 100 g, Mango 200 g, Zucker 150 g, Gelatine 17,5 g, Milch 100 g, Sahne 100 g) plus 100 g Mango und 60 g ungezuckerte Kondensmilch zum Servieren; sie hat 338 kcal und 6,9 g Eiweiß je Portion (vorher 659 kcal und 6 g). Die Vorlagenwerte stehen im Tipp, das Original ist nicht mehr als eigenes Rezept angelegt (auf Wunsch möglich).
+- Neue Zutaten: Mangosirup (Näherung nach Ahornsirup; durch die Korrektur von r776 nicht mehr in einem Rezept verwendet, bleibt als Zutat angelegt), Mangopüree (ungesüßt, Näherung nach Mango; als neutrale Zutat in den Saison-Daten, Test und Zähler auf 24 neutrale Zutaten angepasst), Mandeldrink ungesüßt (BLS H800000, Schalenfrucht) und schwarzer Sesam (Näherung nach Sesam). „Mandelmilch“ ist als Mandeldrink geführt, das Mandel-Aroma als Gewürz ohne Gramm (wie bei r747).
+- Hinweise: Der Mangopudding enthält Gelatine (tierisch), steht deshalb in der Gruppe Schwein und ist nicht vegetarisch. Die Süßkartoffel-Suppe (r781) ist als Dessert geführt, weil Süßkartoffel nur in Frühstück, Snack und Dessert erlaubt ist; der Test der ausgeschlossenen Zutaten kennt die Suppe als Ausnahme. Kühlzeit 3 Stunden (r776, r777) ist in der Zubereitungszeit enthalten.
+- Nährwerte je Portion (Näherung): r775 318 kcal / 13,1 g Eiweiß, r776 338 / 6,9, r777 135 / 1,1, r778 470 / 12,4, r779 548 / 10, r780 281 / 3,6, r781 279 / 2,4, r782 202 / 2,8, r783 424 / 10,6. Außerhalb des Dessertrahmens (r776 bis r782) steht „AUSNAHME VOM DESSERTRAHMEN“.
+- Einfrieren: Die Vorlage nennt „Nein“ bei r775 bis r777, sonst „Ja, nach dem Abkühlen“; im Gefrierplan der App (Souper Cubes) sind die Gerichte nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: die Links der Vorlage sind im Text genannt, aber von Claude nicht gelesen (Art K; Wikipedia, cfs.gov.hk und dimsumcentral.com sind in dieser Sitzung nicht abrufbar). Für r776 und r778 kommen sieben am 30.10.2026 gelesene Rezeptseiten dazu (Art GELESEN_EIGENE_FASSUNG). Der Wikipedia-Link (Liste von Dim-Sum-Gerichten) passt vermutlich nicht zu den einzelnen Rezepten; der Link von r775 führt auf ein PDF der Lebensmittelbehörde von Hongkong.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r765 bis r774: Dim-Sum-Rezepte – Liste 5 (30.10.2026)
+
+- Zehn neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 5“, Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Hongkong, Dim Sum)“. Hauptgerichte: r765 Gebratene Nudeln mit Schweinefleisch, r766 Gebratene Reisnudeln mit Rind, r767 Gebratene Bohnennudeln mit Hähnchen, r768 Gebratene Weizennudeln mit Schweinefleisch, r769 Sesamnudeln mit Gemüse. Desserts: r770 Red Bean Soup, r771 Green Bean Soup, r772 Peanut Soup, r773 Lotus Seed Soup, r774 Coconut Jelly.
+- Neue Zutaten: Rote Bohnen (Azuki), getrocknet (Näherung nach Kidneybohnen, reif; BLS H742100), Mungbohnen, getrocknet (BLS H770100) und Lotuskerne, getrocknet (grobe Näherung nach reifen Mungbohnen). „Bohnennudeln“ sind als Glasnudeln aus Mungbohnenstärke geführt, „Weizennudeln“ und „Nudeln“ als Hartweizennudeln (roh), „Sesampaste“ als Tahini.
+- Doppelung: Die Rote-Bohnen-Suppe gibt es schon als r309 (Süße rote Bohnensuppe, Hong Dou Tang, mit Dosenbohnen und Speisestärke). r770 ist die Fassung dieser Liste mit getrockneten Bohnen; der Tipp verweist auf r309. Die beiden gebratenen Nudeln mit Schweinefleisch (r765 mit Eiernudeln, r768 mit Weizennudeln) sind als zwei Sorten in der Dubletten-Ausnahme geführt.
+- Annahmen: „Schweinefleisch in Streifen“ als Schweinefilet, „Rindfleisch in Streifen“ als Rinderhüftsteak, „Hähnchen“ als Hähnchenbrustfilet; Öl 30 ml ≈ 27 g Rapsöl; Sojasauce 30 ml ≈ 34 g, Austernsauce 15 ml ≈ 17 g; Nudeln roh gewogen; Salz und Pfeffer als Gewürze ohne Gramm (bei r772 und r773 das Salz mit 5 g als Zutat geführt, damit die Zutatenliste vollständig ist). Die Lotuskerne in r770 und r771 sind in der Vorlage optional, hier eingerechnet. Die Vorlage nennt für r766 keine Karotte. Einweichzeit der Bohnen über Nacht (r770) und Kühlzeit 3 Stunden (r774, in der Zubereitungszeit enthalten) kommen zu den Zeiten der Vorlage dazu.
+- Nährwerte je Portion (Näherung): r765 592 kcal / 37,5 g Eiweiß, r766 597 / 30,6, r767 591 / 25, r768 596 / 36,7, r769 466 / 15,3, r770 295 / 14,4, r771 283 / 14,9, r772 565 / 21,8, r773 246 / 12, r774 389 / 3,5. Außerhalb des Rahmens steht „AUSNAHME VOM EIWEISSRAHMEN“ (r767, r769) bzw. „AUSNAHME VOM DESSERTRAHMEN“ (r772, r774).
+- Einfrieren: Die Vorlage nennt bei r765 bis r773 „Einfrierbar: Ja“, bei r774 „Nein“; im Gefrierplan der App (Souper Cubes) sind die Gerichte nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: alle Links sind im Text genannt, aber von Claude nicht gelesen (Art K; Epicurious, Omnivore’s Cookbook und Greedy Girl Gourmet sind in dieser Sitzung nicht abrufbar). Die Adresse von r765 bis r769 nennt einen Dim-Sum-Artikel statt eines Nudelgerichts; die Adresse von r771 bis r773 nennt eine Rote-Bohnen-Suppe, die Gerichte sind aber andere Suppen.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r755 bis r764: Dim-Sum-Rezepte – Liste 4 (30.10.2026)
+
+- Zehn neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 4“, Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Hongkong, Dim Sum)“. Nudelsuppen (alle Suppe/Eintopf): r755 Wonton Noodles, r756 Beef Noodles, r757 Fish Noodles, r758 Vegetable Noodles. Reisbrei: r759 Congee (Snack), r760 Pork Congee, r761 Chicken Congee, r762 Fish Congee, r763 Shrimp Congee, r764 Beef Congee (Suppe/Eintopf).
+- Neue Zutat: Wontons, gefüllt (Fertigprodukt; Näherung nach BLS E603022, Ravioli mit Fleischfüllung gedämpft; vorsorglich Gluten und Ei gekennzeichnet). Die Vorlage nennt nur „20 Wontons“: gerechnet sind 20 Stück zu je 15 g = 300 g (Annahme); die Füllung ist offen, die Gruppe Schwein ist deshalb nur eine Annahme.
+- Annahmen: „Rinderschulter“ als Rindergulasch; „Fischfilet“ als Kabeljau; „Hähnchen, gewürfelt“ als Hähnchenbrustfilet; „Reis“ als Jasminreis (roh gewogen); „Wasser oder Brühe“ als Wasser (bei Fisch- und Rindfleisch-Reisbrei nennt die Vorlage Fisch- bzw. Rinderbrühe, die gerechnet ist); Nudeln roh gewogen; Salz und Pfeffer als Gewürze ohne Gramm; kein Bratfett bei r756; bei r757 würzt der Ingwer den Fisch und die Sojasauce kommt zum Servieren (beides steht in der Zutatenliste, aber in keinem Schritt der Vorlage). Der einfache Reisbrei (r759) ist als Snack geführt.
+- Nährwerte je Portion (Näherung): r755 505 kcal / 19,3 g Eiweiß, r756 645 / 56,2, r757 558 / 39, r758 449 / 10,3, r759 209 / 4,1, r760 415 / 17,8, r761 294 / 21,8, r762 301 / 21,5, r763 277 / 18,3, r764 363 / 19,7. Außerhalb des Rahmens steht „AUSNAHME VOM EIWEISSRAHMEN“ (r755, r758, r760) bzw. „AUSNAHME VOM KALORIENRAHMEN/EIWEISSRAHMEN“ (r761 bis r764), bei r759 ein „HINWEIS“.
+- Einfrieren: Die Vorlage nennt bei allen zehn Rezepten „Einfrierbar: Ja“ (Wontons roh, Fleisch bzw. Fisch und Brühe getrennt, Reisbrei nach dem Abkühlen); im Gefrierplan der App (Souper Cubes) sind die Gerichte nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: beide Links führen auf Serious Eats, das für Claude gesperrt ist (Art D); die Seiten wurden nicht gelesen und die Links nicht geprüft. Die Adresse von r755 bis r758 nennt ein Dim-Sum-Brunch-Rezept statt einer Nudelsuppe; die Adresse von r759 bis r764 enthält „grond“ (vermutlich ein Tippfehler für „ground“) und nennt ein Congee mit Schweinehack und Mais, die Fassungen passen nur teilweise.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r745 bis r754: Dim-Sum-Rezepte – Liste 3 (30.10.2026)
+
+- Zehn neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 3“, Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Ort, Dim Sum)“: r745 Lotus Seed Balls (Dessert), r746 Jade Roll (Snack), r747 Almond Tart und r748 Coconut Tart (Dessert), r749 Peanut Bun, r750 Walnut Bun, r751 Cashew Bun, r752 Sesame Bun und r753 Custard Bun (alle Snack), r754 Tofu Pudding (Dessert). Die Liste enthält keine Lap Cheong; die Zutat „Lap Cheong“ bleibt in r737 und r738 unverändert.
+- Neue Zutaten: Lotuspaste (kein BLS-Eintrag, grobe rechnerische Näherung aus je 1 Teil Zucker und weißen Bohnen), Agar-Agar (kein BLS-Eintrag, nur Energie aus Ballaststoffen mit 2 kcal/g) und als Gewürz Mandel-Aroma (ohne Gramm, vorsorglich als Schalenfrucht gekennzeichnet). „Sojamilch“ ist als Sojadrink ungesüßt geführt, „Klebreismehl“ als Reismehl/Klebreismehl. Der Test der Energie-Plausibilität kennt Agar-Agar über den Ballaststoff-Energieanteil.
+- Annahmen: Zucker, der in der Vorlage zweimal steht (Teig und Füllung), ist je Rezept zusammengefasst; ein Ei ≈ 60 g, ein Eigelb ≈ 20 g; Milch 200 ml ≈ 206 g; „Öl zum Frittieren“ bei r745 als 60 g aufgenommenes Rapsöl (Schätzung); Wasser, Einweichwasser und Kochwasser nicht gerechnet; kein Bratfett bei r746. Backtemperatur bei r747 und r748 fehlt in der Vorlage (Richtwert der App 180 °C im Tipp). Bei den Brötchen r749 bis r753 sind 110 Minuten Zubereitung gerechnet (30 Minuten laut Vorlage plus 1 Stunde Gehzeit und 20 Minuten Ruhezeit aus der Anleitung), bei den Törtchen 60 Minuten (30 plus 30 Minuten Kühlen). Hinweise der App: 100 ml Wasser auf 500 g Klebreismehl (r745) sind wenig; die Eigelb-Füllung bei r753 muss beim Dämpfen vollständig stocken. Der Dämpfer und die Fritteuse stehen nicht in der Geräteliste, als Gerät ist der Herd geführt.
+- Nährwerte je Portion (Näherung): r745 628 kcal / 11 g Eiweiß, r746 264 / 6,3, r747 283 / 5,8, r748 341 / 6,1, r749 582 / 18,8, r750 616 / 14,5, r751 581 / 16,1, r752 564 / 16,1, r753 535 / 12,1, r754 180 / 8. Außerhalb des Dessertrahmens (r745, r747, r748, r754) steht „AUSNAHME VOM DESSERTRAHMEN“, bei den kalorienreichen Brötchen (r749 bis r753) ein „HINWEIS“.
+- Einfrieren: Die Vorlage nennt bei r745 bis r753 „Einfrierbar: Ja“ (roh bzw. nach dem Abkühlen), bei r754 „Nein“; im Gefrierplan der App (Souper Cubes) sind die Gerichte nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: alle Links sind im Text genannt, aber von Claude nicht gelesen (Art K; die Seiten sind in dieser Sitzung nicht abrufbar). Die Links führen laut Adresse auf Sammel- und Kategorieseiten bzw. eine Restaurant-Speisekarte statt auf einzelne Rezepte.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r735 bis r744: Dim-Sum-Rezepte – Liste 2 (30.10.2026)
+
+- Zehn neue Rezepte aus der übergebenen Liste „Dim-Sum-Rezepte – Liste 2“, Zutaten, Mengen und Schritte originalgetreu in eigenen Worten, Überschriften mit „(Ort, Dim Sum)“: r735 Xiao Long Bao, r736 Shrimp Toast, r737 Turnip Cake, r738 Taro Cake, r739 Fish Balls, r740 Pork Balls, r741 Chicken Balls, r742 Vegetable Balls (alle Snack), r743 Sweet Potato Balls und r744 Pumpkin Balls (Dessert).
+- Neue Zutaten: Gelatine (BLS R468000), Taro (Näherung nach Kartoffeln), Lap Cheong (chinesische Wurst; Näherung nach Salami), Süßkartoffel (BLS K420100). Süßkartoffel ist nur in Frühstück, Snack und Dessert erlaubt und kommt nur in r743 (Dessert) vor; sie steht als neutrale Zutat in den Saison-Daten. Dafür wurden der Saison-Test (Süßkartoffel nur neutral, nie bewertet; 23 neutrale Zutaten) und die Prüfung der Saison-Übersicht in smoke5 angepasst.
+- Hinweis der App bei r735: 100 g Gelatine auf 200 ml Brühe sind sehr viel; unverändert übernommen, mit Vorbehalt bei der Eiweißangabe.
+- Annahmen: „Fischfilet“ als Kabeljau; 8 Scheiben Toastbrot ≈ 200 g; „Öl zum Frittieren“ als aufgenommenes Rapsöl (50 g bei r736, 40 g bei r743 und r744; Schätzung); kein Bratfett bei r737 und r738 (in der Vorlage nicht genannt); Frühlingszwiebeln bei r737 und r738 mit zu Garnelen und Wurst; Gruppe Schwein wegen der chinesischen Wurst. Der Dämpfer und die Fritteuse stehen nicht in der Geräteliste; als Gerät ist der Herd geführt.
+- Nährwerte je Portion (Näherung): r735 588 kcal / 43 g Eiweiß, r736 433 / 22,8, r737 250 / 11,6, r738 305 / 12, r739 160 / 27,3, r740 402 / 27,5, r741 197 / 32,3, r742 97 / 6,5, r743 436 / 7,2, r744 362 / 7. Außerhalb des Dessertrahmens (r743, r744) steht „AUSNAHME VOM DESSERTRAHMEN“, bei den sehr leichten Bällchen (r739, r741, r742) ein „HINWEIS“.
+- Einfrieren: Die Vorlage nennt „Einfrierbar: Ja“; im Gefrierplan der App (Souper Cubes) sind die Gerichte nicht vorgesehen, die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Quellen: alle Links sind im Text genannt, aber von Claude nicht gelesen (Art K). Die Links führen laut Adresse überwiegend auf Sammel- oder Rubrikseiten bzw. einen Restaurant-Prospekt (PDF) statt auf einzelne Rezepte; der Link von r744 nennt einen Taro-Kuchen, das Gericht ist aber Kürbisbällchen.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r734: Cheung Fun mit Garnelen (verbesserte Fassung) (30.10.2026)
+
+- Neuer Snack (Dim Sum) r734 aus der übergebenen Überprüfung „Cheung Fun mit Garnelen“; übernommen ist die dort angegebene verbesserte Fassung für 15 bis 20 Rollen (dünnerer Teig mit 550 ml Wasser, rohe Garnelen mitgedämpft, 1 bis 2 plus 2 bis 3 Minuten Dämpfzeit, süßliche Sauce mit heller und dunkler Sojasauce, optional Paprikabutter), Zutaten und Mengen unverändert, in eigenen Worten. Die frühere Fassung (400 ml Wasser, vorher angebratene Garnelen, Austernsauce) ist nicht in der App.
+- Neue Zutaten: Weizenstärke (BLS C216000, als Gluten-Allergen geführt) und dunkle Sojasauce (Näherung nach Sojasauce, BLS R143000).
+- Annahmen: 4 Portionen zu je 4 bis 5 Rollen (die Vorlage nennt keine Portionen); Tapiokastärke als Tapiokamehl; Speiseöl als Rapsöl; Sojasauce und Öle nach Milliliter in Gramm umgerechnet; Wasser und Fett zum Einfetten nicht gerechnet; Salz ohne Gramm; Zeit 40 Minuten Dämpfen und Rollen (hängt von der Tablettgröße ab). Dämpftablett, Wok und Dämpfeinsatz stehen nicht in der Geräteliste; als Gerät ist der Herd geführt.
+- Nährwerte je Portion (Näherung): 517 kcal, 17,3 g Eiweiß (Snack, kein Eiweißrahmen).
+- Einfrieren: Vorlage macht keine Angabe, daher kein Gefrierblock.
+- Quelle: keine; nur Fußnoten ohne Links (Art F).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r724 bis r733: 10 schnelle Gerichte mit Fleisch oder Fisch (30.10.2026)
+
+- Zehn neue Hauptgerichte aus der übergebenen Überprüfung „10 schnelle Gerichte mit Fleisch oder Fisch“; übernommen sind die dort angegebenen verbesserten Fassungen (präzise Mengen, konkrete Garzeiten), Zutaten und Mengen unverändert, in eigenen Worten: r724 Hähnchenbrust mit Gemüsepfanne, r725 Rindfleisch-Gemüse-Wraps, r726 Garnelen-Pasta, r727 Schweinefilet mit Apfel, r728 Hähnchen-Curry, r729 Rindersteak mit Salat, r730 Fischfilet mit Reis, r731 Puten-Gemüse-Pfanne, r732 Schweinehackfleisch mit Gemüse, r733 Hähnchen-Nudelsalat. Die frühere Fassung (ungenaue Mengen, „einige Minuten“) ist nicht in der App.
+- Neue Zutaten: Joghurt-Dressing (BLS X357340) und Balsamico-Dressing (Näherung nach BLS X359540, Rotweinmarinade/Salatsauce).
+- Annahmen: 2 Portionen je Gericht (die Vorlage nennt keine); „Fischfilets“ als Kabeljau; „Spaghetti“ als Hartweizennudeln; „Kopfsalat“ als Blattsalat (gleiche Werte); Rindersteak als Rinderhüftsteak; „Öl“ ohne Sorte als Rapsöl; Apfelsaft statt Brühe in r727 und Brühe statt Wasser in r732 (jeweils die zuerst genannte Wahl); Petersilie 5 g (r726); keine Bratfett-Angabe bei r729 und r733, daher ohne Fett gerechnet; die Zitrone in r730 zum Beträufeln. Fertige Dressings weichen je nach Produkt ab.
+- Nährwerte je Portion (Näherung): r724 384 kcal / 44,6 g Eiweiß, r725 687 / 37, r726 582 / 36,1, r727 382 / 35,1, r728 981 / 43,2, r729 291 / 48,2, r730 611 / 35, r731 271 / 33,8, r732 526 / 24,2, r733 544 / 43,9. Außerhalb des Rahmens (r724, r725, r727, r728, r729, r731, r732) tragen die Tipps den Vermerk „AUSNAHME VOM KALORIENRAHMEN“ bzw. „…EIWEISSRAHMEN“.
+- Einkaufsliste der Vorlage: Sie stimmt nicht ganz mit den Rezepten überein (z. B. nennt sie 4 Hähnchenbrustfilets zu je 180 g, die Rezepte brauchen 360 g + 250 g + 250 g; 4 Paprika statt 5, 3 Zucchini statt 2, 5 Zwiebeln statt 6, 1 Gurke statt 2). Die App rechnet die Einkaufsliste aus den Rezepten selbst.
+- Einfrieren: Vorlage macht keine Angabe, daher kein Gefrierblock.
+- Quellen: r724 (Allrecipes, für Claude gesperrt) und r726 (NYT Cooking) sind im Text genannt, aber nicht gelesen (Art K); die übrigen acht tragen „Quelle nicht gefunden“ (Art F), die Fußnoten [398], [402], [406] haben keine Links.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r722 und r723: Ramen-Gewürzmischung (30.10.2026)
+
+- Zwei neue Rezepte (Kategorie Sauce/Dips) aus der übergebenen Überprüfung „Ramen-Gewürzmischung“: r722 verbesserte Fassung (weniger geräuchertes Paprikapulver und Zucker, Dashi-Pulver, Shichimi Togarashi, Sojasaucen-Pulver optional) und r723 die klassisch japanische Variante nach Shichimi-Art. Zutaten und Mengen wie dort angegeben, in eigenen Worten. Die frühere Fassung (2 EL geräuchertes Paprikapulver, 1 TL Zucker) ist nicht in der App.
+- Neue Gewürze: Sansho-Pfeffer, Dashi-Pulver (Allergen Fisch), Sojasaucen-Pulver (Allergene Soja und Gluten), Zitrusschale getrocknet. Ingwerpulver, weißer Pfeffer, Togarashi (mit Sesam) und Chiliflocken gab es schon.
+- Annahmen: „Fischsauce-Pulver oder Dashi-Pulver“ als Dashi-Pulver (Gruppe Fisch); „Shichimi Togarashi“ als Togarashi; Nori-Flocken mit den Werten von Nori-Blatt; etwa 5 g Mischung je Portion Ramen (10 Portionen bei r722, 7 bei r723). Das Sojasaucen-Pulver ist optional, steht aber wegen der Allergene mit in der Liste.
+- Nährwerte: Gewürzpulver ohne Gramm (keine BLS-Werte), gerechnet nur Sesam, Zucker bzw. Nori: r722 11 kcal, r723 16 kcal je Portion (Untergrenze). Portionsgewicht 2 g bzw. 3 g, deshalb Vermerk „HINWEIS“.
+- Einfrieren: Vorlage macht keine Angabe, daher kein Gefrierblock.
+- Quellen: keine; nur Fußnoten ohne Links (Art F).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r721: Işkembe Çorbası – Türkische Pansensuppe (verbesserte Fassung) (30.10.2026)
+
+- Neue Suppe r721 aus der übergebenen Überprüfung „Işkembe Çorbası – Türkische Pansensuppe“; übernommen ist die dort angegebene verbesserte Fassung für 4 Personen (Pansen 1,5 bis 3 Stunden gekocht, Mehlschwitze, Terbiye aus Eigelb, Joghurt, Knoblauch und Zitronensaft, Knoblauch-Essig-Sauce, Paprikabutter), Zutaten und Mengen unverändert, in eigenen Worten. Die frühere Fassung (1 Stunde, 2 ganze Eier, kein Essig) ist nicht in der App.
+- Neue Zutat: Rinderpansen/Kutteln, roh (BLS V551100: 80 kcal, 13,5 g Eiweiß je 100 g).
+- Annahmen: 2 Eigelb ≈ 36 g; Joghurt als Naturjoghurt 3,5 %; Essig 100 ml ≈ 100 g (die ganze Sauce eingerechnet); Kochwasser und Wasser der Sauce nicht gerechnet; Salz, Pfeffer und Rosenpaprika (als Paprika edelsüß) ohne Gramm. Der Schnellkochtopf der Vorlage (45 bis 60 Minuten) steht nicht in der Geräteliste.
+- Nährwerte je Portion (Näherung): 261 kcal, 11,7 g Eiweiß, 145 g Zutaten; unter dem Eiweiß- und Portionsgewichtsrahmen, deshalb Vermerk „AUSNAHME VOM EIWEISSRAHMEN“.
+- Sicherheit: Hinweis der App zum rohen Ei (Risikogruppen erhitzen die Suppe unter Rühren auf mindestens 70 °C).
+- Einfrieren: Vorlage macht keine Angabe, daher kein Gefrierblock.
+- Quelle: keine; nur Fußnoten ohne Links (Art F).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r719 und r720: Hausgemachte Chips (verbesserte Fassungen) (30.10.2026)
+
+- Zwei neue Snacks aus der übergebenen Überprüfung „Hausgemachte Chips“: r719 Kartoffelchips zweistufig frittiert (140 bis 150 °C, dann 180 bis 190 °C) und r720 Kartoffelchips aus dem Airfryer; Zutaten und Schritte wie in den dort angegebenen verbesserten Fassungen, in eigenen Worten. Die frühere Einmal-Frittier-Fassung ist nicht in der App.
+- Neue Zutat: Speisesalz (BLS R111000, 0 kcal), weil die Prüfung mindestens 3 Zutaten verlangt; Salzmenge 3 g ist eine Annahme der App.
+- Annahmen: 2 große Kartoffeln ≈ 500 g, 2 Portionen (die Vorlage nennt keine Mengen); „Pflanzenöl zum Frittieren“ als 40 g aufgenommenes Rapsöl (Schätzung, Öl im Topf nicht eingerechnet); 1 EL Öl im Airfryer ≈ 10 g; die optionalen Gewürze (Paprika, Knoblauch, Rosmarin, Chili) ohne Gramm. Die Fritteuse steht nicht in der Geräteliste; als Gerät ist der Herd geführt.
+- Nährwerte je Portion (Näherung): r719 388 kcal, 4,8 g Eiweiß; r720 253 kcal, 4,8 g Eiweiß (Snack, kein Eiweißrahmen).
+- Einfrieren: Vorlage macht keine Angabe, daher kein Gefrierblock.
+- Quellen: keine; nur Fußnoten ohne Links (Art F).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r718: Schneller & Einfacher Zitronenkuchen (verbesserte Fassung) (30.10.2026)
+
+- Neues Dessert r718 aus der übergebenen Überprüfung „Schneller & Einfacher Zitronenkuchen“; übernommen ist die dort angegebene verbesserte Fassung (Rührkuchen aus der 25-cm-Kastenform mit Zitronensirup und Glasur), Zutaten und Mengen unverändert, in eigenen Worten. Die frühere Fassung (2 EL Zitronensaft, 50 Minuten, kein Sirup) ist nicht in der App.
+- Neue Zutat: Puderzucker (BLS S111100, 400 kcal je 100 g).
+- Annahmen: 12 Stücke (die Vorlage nennt keine Portionen); Zitronensaft insgesamt etwa 149 g (3,5 EL im Teig als Mitte der Spanne 3 bis 4 EL, 50 ml Sirup, 3 EL Glasur); 4 Eier der Größe M ≈ 212 g; Vollmilch; Mehl Typ 405 als Weizenmehl; Prise Salz ohne Gramm. Hinweis: Die Vorlage nennt nur 1 Zitrone, die Saftmengen brauchen etwa 3 bis 4.
+- Nährwerte je Stück (Näherung): 410 kcal, 5,6 g Eiweiß; außerhalb des Dessertrahmens (120 bis 350 kcal, mindestens 10 g Eiweiß), deshalb Vermerk „AUSNAHME VOM DESSERTRAHMEN“.
+- Einfrieren: Vorlage macht keine Angabe, daher kein Gefrierblock.
+- Quelle: keine; nur Fußnoten ohne Links (Art F).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r717: Chicken Stroganoff (Brasilien, Sous-vide, korrigierte Fassung) (30.10.2026)
+
+- Neues Hauptgericht r717 aus der übergebenen Überprüfung „Chicken Stroganoff (Brasilien)“; übernommen ist die dort angegebene korrigierte Fassung (6 Portionen, Sous-vide 71,1 °C, 1:30 Stunden), Zutaten und Mengen unverändert, in eigenen Worten. Die frühere Fassung (675 ml Sahne, ohne Zwiebel, Knoblauch, Champignons, Worcestershire-Sauce) ist nicht in der App.
+- Annahmen: „Tomatensauce“ als passierte Tomaten (Passata); Sahne 500 ml ≈ 500 g; Reis als roher Langkornreis (Werte von poliertem Reis), Reiswasser nicht gerechnet; Salz und Pfeffer ohne Gramm.
+- Nährwerte je Portion (Näherung): 734 kcal, 42,2 g Eiweiß; über dem Kalorienrichtwert, deshalb Vermerk „AUSNAHME VOM KALORIENRAHMEN“.
+- Sicherheitsangaben (Pasteurisierung bei 71,1 °C) stammen aus der Vorlage; die App-Mindesttemperatur für Geflügel liegt bei 63 °C.
+- Einfrieren: Vorlage macht keine Angabe, daher kein Gefrierblock.
+- Quelle: keine; nur Fußnoten ohne Links (Art F).
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r714 bis r716: Pulled Pork, Pulled Beef und Pulled Chicken (30.10.2026)
+
+- Drei neue Hauptgerichte (USA) aus dem übergebenen Text „Pulled Pork, Pulled Beef und Pulled Chicken“, Zutaten, Mengen und Schritte originalgetreu in eigenen Worten: r714 Pulled Pork (8 Portionen), r715 Pulled Beef (8 Portionen), r716 Pulled Chicken (6 Portionen).
+- Gerät: Der Slow Cooker steht nicht in der Geräteliste der App; als Gerät ist der Multikocher geführt (Slow-Cook-Funktion, Stufe LOW). Das steht im Tipp jedes Rezepts.
+- Annahmen: Millilitermengen in Gramm umgerechnet (Barbecue-Sauce 250 ml ≈ 263 g, Apfelsaft 250 ml ≈ 260 g); Worcestershire-Sauce mit dem Allergen Fisch; Rub-Gewürze ohne Gramm, der braune Zucker (4 g) ist eingerechnet; Fettdeckel und abgetrenntes Fett sind nicht abgezogen; „etwas Schmorfond“ und die Serviervorschläge (Buns, Coleslaw, Tortillas) sind ohne Menge nicht eingerechnet.
+- Nährwerte je Portion (BLS-Näherung): Pulled Pork 397 kcal / 51,9 g Eiweiß, Pulled Beef 555 kcal / 47,5 g, Pulled Chicken 312 kcal / 40 g. Pulled Chicken liegt unter dem Kalorienrichtwert und trägt deshalb den Vermerk „AUSNAHME VOM KALORIENRAHMEN“.
+- Einfrieren: Die Vorlage nennt „Einfrierbar: Ja, mit etwas Sauce“. Im Gefrierplan der App (Souper Cubes) ist kein Block vorgesehen; die Vorlagenangabe steht als Hinweis im Gefrierfeld.
+- Ähnliche ältere Rezepte (andere Zutaten und Geräte): r93, r190, r202, r608.
+- Quellen: alle drei Links (NYT Cooking, Jo Cooks, America's Test Kitchen) sind im Text genannt, aber von Claude nicht gelesen (Seiten in dieser Sitzung nicht abrufbar); Art K.
+- Status: Entwurf erstellt, automatisch validiert; praktisch nicht getestet.
+
+## Nachtrag r713: Authentischer Neapolitanischer Pizzateig (30.10.2026)
+
+- Der Auftraggeber hat ein einzelnes Rezept übergeben („Authentischer Neapolitanischer Pizzateig“, ohne Zusatzanweisung; gedeutet wie die Listen). Es ist als eigene, **originalgetreue** Fassung angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Ein Rezept mit gleichem Namen gab es nicht; r636 (Mini-Pizza al Taglio) ist ein anderes Gericht.
+- **Portion:** Je Portion ist eine Pizza mit Margherita-Belag gerechnet (Teig für 6 Pizzen, Belagmengen mal 6); etwa 880 kcal und 32 g Eiweiß je Portion (AUSNAHME im Tipp). Die Vorlage nennt keine Nährwerte.
+- **Annahmen:** Tipo-00-Mehl als Weizenmehl (Näherung); San-Marzano-Tomaten als Passata; Fior di Latte oder Mozzarella als Mozzarella; Olivenöl 8 ml je Pizza ≈ 7 g, Basilikum 2 bis 3 Blätter je Pizza ≈ 8 g insgesamt; Wasser ohne Nährwerte nicht als Zutat geführt; Salz als Gewürz ohne Gramm. Die Gare (2 Stunden plus 4 bis 6 Stunden, oder 12 bis 24 Stunden kalt) steht im Tipp und ist nicht in der Zubereitungszeit enthalten.
+- **Unstimmigkeit in der Vorlage:** Die zweite Gare nennt die Vorlage einmal mit 4 bis 6 Stunden bei Raumtemperatur (Heimofen-Variante) und einmal laut AVPN mit mindestens 8 und höchstens 24 Stunden; die App übernimmt beides wie übergeben. Die AVPN-Angaben der Vorlage sind von der App nicht geprüft.
+- **Geräte:** Backofen mit Pizzastein oder Pizzastahl; der Holzofen (430 bis 480 °C) steht nicht in der Geräteliste der App.
+- **Quellen:** Die Vorlage nennt nur Verweisnummern [293] bis [298] ohne Verzeichnis; F-Eintrag ohne erfundenen Link.
+- **Einfrieren:** Die Vorlage nennt kein Einfrieren; nicht für den Souper-Cubes-Plan vorgesehen.
+
+## Nachtrag r703 bis r712: Liste 29 – 10 Airfryer-Rezepte (30.10.2026)
+
+- Der Auftraggeber hat „Liste 29 – 10 Airfryer-Rezepte“ übergeben (Antwort auf den Perplexity-Auftrag; ohne Zusatzanweisung). Alle zehn sind neu und als eigene, **originalgetreue** Fassungen angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): Griechische Hähnchenschenkel (r703), Skandinavischer Lachs (r704), Schweinekotelett (r705), Rinderhackbällchen (r706), Spanische Garnelen (r707), Japanischer Tofu (r708), Indischer Blumenkohl (r709), Zucchini-Sticks (r710), Karotten mit Kreuzkümmel (r711), Schoko-Bananen-Schiffchen (r712).
+- **Quellen:** Die Liste nennt bei **allen zehn** „Quelle nicht gefunden“ und keinen Link. Die Quellen-Einträge sind F-Einträge ohne Link; es gibt keine erfundenen Adressen. Zeiten und Temperaturen sind Angaben der Liste, von der App nicht getestet.
+- **Nährwerte:** Die App rechnet aus den Zutaten (BLS beziehungsweise Näherung), nicht aus den „Pro Portion“-Angaben der Liste; beide weichen teils deutlich ab (zum Beispiel r710 etwa 580 statt 220 kcal, r712 etwa 430 statt 280 kcal). Schenkel und Koteletts mit Knochen sind mit ihrem Gesamtgewicht nach den BLS-Werten des essbaren Anteils gerechnet (Knochen nicht abgezogen, Werte eher zu hoch).
+- **Ausnahmen (im Tipp als AUSNAHME/HINWEIS gekennzeichnet):** Kalorien über dem Hauptmahlzeiten-Rahmen bei r703 (etwa 720) und r705 (etwa 740); Eiweiß beziehungsweise Kalorien außerhalb des Rahmens bei r709 (Gemüse-Bowl, 12 g), r711 (3 g), r710 (Snack, 580 kcal) und beim Dessert r712 (430 kcal, 7 g Eiweiß).
+- **Annahmen:** „Reis“ (r707, r708, r709) als gekochter Reis (die Liste nennt keinen Zustand); Spaghetti als Trockengewicht; „Joghurt“ als Naturjoghurt 3,5 %; „Öl“ als Rapsöl; Millilitermengen in Gramm umgerechnet (jeweils im Tipp). Das „etwas Öl“ für das Gemüse (r703) und die Beilagen-Garung ohne Menge sind nicht eingerechnet.
+- **Kerntemperaturen der Liste:** Geflügel 74 °C, Schwein 70 °C, Rind 71 °C, Fisch und Meeresfrüchte 63 °C; die App verlangt für Hack, Geflügel und Schwein weiterhin mindestens 70 °C; bei Risikogruppen den Fisch höher garen.
+- **Neue Zutaten:** Hähnchenschenkel mit Haut (rechnerischer Mittelwert aus BLS V4A5100 und V4B5100), Schweinekotelett (BLS U622100).
+- **Einfrieren:** Die Liste nennt bei allen außer r710 und r712 „Einfrierbar: Ja“; in der App sind alle als „nicht für den Souper-Cubes-Gefrierplan vorgesehen“ geführt (wie bei den Sous-vide-Listen).
+- **Duplikat-Warnung:** r707 (Garnelen, Airfryer) ist dem Sous-vide-Rezept r694 ähnlich (Zutaten), aber anders zubereitet und gemengt; beide sind bewusst getrennt.
+
+## Nachtrag r700 bis r702: Liste 28 – 10 weitere Sous-vide-Rezepte (30.10.2026)
+
+- Der Auftraggeber hat „Liste 28 – 10 weitere Sous-vide-Rezepte“ übergeben (ohne Zusatzanweisung). **Drei** sind neu und als eigene, **originalgetreue** Fassungen angelegt: Rinderfilet mit Portweinjus (r700), Wolfsbarsch mit Zitrone und Thymian (r701), Glasierte Möhren mit Ingwer und Pistazien (r702).
+- **Nicht aufgenommen (wortgleiche Wiederholungen früherer Listen, gleiche Zutaten, Mengen, Schritte und Quellen):** Short Ribs mit Rotweinjus (= r692), Rinderbrust mit Barbecue-Glasur (= r683), Garnelen (= r694), Schweinebauch (= r695), Lammrücken (= r696), Eier mit Avocado-Toast (= r698), Pochierte Birne (= r699). Wer eine davon trotzdem als zweites Rezept will, gibt Bescheid.
+- **Nährwerte und Ausnahmen:** Die App rechnet aus den Zutaten; r702 hat etwa 4 g Eiweiß und 262 kcal je Portion (Gemüsebeilage, HINWEIS im Tipp). Die Vorlagenwerte (r700 590 kcal/45 g, r701 440 kcal/36 g, r702 180 kcal/3 g) weichen teils ab.
+- **Neue Zutaten:** Rinderfilet (BLS U211100), Portwein (BLS P431000, Alkohol und Sulfit), Wolfsbarsch (BLS-Näherung nach Zander, roh; eher zu niedrig im Fett).
+- **Sicherheit:** Pasteurisierungsangaben der Vorlage sind von der App nicht geprüft; die Tipps nennen das und verweisen auf die Vergleichswerte im Sous-vide-Basiswissen.
+- **Einfrieren:** Die Vorlage nennt „Einfrierbar: Ja“; in der App wie bei r681 bis r699 als nicht für den Souper-Cubes-Gefrierplan vorgesehen geführt.
+- **Quellen:** Links aus dem übergebenen Text; die Seiten waren in dieser Sitzung nicht abrufbar (r702 Serious Eats ist für Claude gesperrt, Art A) und wurden **nicht gelesen**.
+
+## Nachtrag r691 bis r699: Liste 27 – 10 weitere Sous-vide-Rezepte (30.10.2026)
+
+- Der Auftraggeber hat „Liste 27 – 10 weitere Sous-vide-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die früheren Listen). **Neun** sind als eigene, **originalgetreue** Fassungen angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): Rinderhüfte mit Chimichurri (r691), Short Ribs mit Rotweinjus (r692), Kabeljau (r693), Garnelen (r694), Schweinebauch mit Honig-Sambal (r695), Lammrücken (r696), Grüner Spargel (r697), Eier mit Avocado-Toast (r698), Pochierte Birne (r699).
+- **Nicht aufgenommen:** Nr. 3 „Rinderbrust mit Barbecue-Glasur“ ist wortgleich mit r683 (Liste 26): gleiche Zutaten, Mengen, Schritte und Quelle. Wer sie trotzdem als zweites Rezept will, gibt Bescheid.
+- **Zweite Fassung:** Nr. 2 „Short Ribs mit Rotweinjus“ trägt den Namen von r682, hat aber andere Mengen (Wein 100 statt 60 ml, Salz 14 statt 12 g, Thymian statt Rosmarin, Püree 500 statt 400 g) und steht deshalb als eigenes Rezept (r692); der Tipp nennt r682.
+- **Nährwerte und Ausnahmen:** Die App rechnet aus den Zutaten (BLS beziehungsweise Näherung), nicht aus den „Pro Portion“-Angaben der Vorlage. Kalorien über dem Hauptmahlzeiten-Rahmen: r692 (etwa 1.020 kcal), r695 (etwa 850), r696 (etwa 680); Eiweiß unter dem Richtwert: r697 (Gemüsebeilage); r699 Dessert mit etwa 2 g Eiweiß. Alle im Tipp als AUSNAHME/HINWEIS gekennzeichnet.
+- **Annahmen:** „Reis“ (r694 400 g, r695 600 g) als gekochter Reis (die Vorlage nennt keinen Zustand; Rohreis würde die Kalorien deutlich erhöhen); Rotweinessig als Essig; Lammrücken als Lamm Kotelett roh; Sauerteigbrot nach Roggenmischbrot; r695 enthält 20 ml Öl in der Zutatenliste, das in den Schritten nicht vorkommt (wie übergeben gerechnet).
+- **Neue Zutaten:** Lammrücken (BLS U727100, Näherung), Sauerteigbrot (Näherung nach Roggenmischbrot B271000).
+- **Regeländerungen:** (1) Mindest-Badtemperatur `svMinTemp`: vegetarische Sous-vide-Gerichte (Eier, Gemüse, Obst) ab 60 °C statt 70 °C, passend zu den Tabellen im Sous-vide-Basiswissen; für r698 (Eier bei 63 °C) nötig. (2) Die Energie-Plausibilitätsprüfung der Rezepte zählt jetzt wie die der Zutaten die Energie ohne Makros (Alkohol, Ballaststoffe, Säuren) nach BLS mit; ohne diese Änderung hätte die Pochierte Birne mit 300 ml Rotwein fälschlich als Fehler gegolten.
+- **Sicherheit:** Pasteurisierungsangaben der Vorlage („pasteurisiert“, „sicher“) sind von der App nicht geprüft; die Tipps nennen das und verweisen auf die Vergleichswerte in der App.
+- **Einfrieren:** Die Vorlage nennt bei allen außer r698 „Einfrierbar: Ja“; in der App sind alle als „nicht für den Souper-Cubes-Gefrierplan vorgesehen“ geführt (wie bei r681 bis r690).
+- **Quellen:** Alle Links aus dem übergebenen Text; die Seiten waren in dieser Sitzung nicht abrufbar und wurden **nicht gelesen** (r694 Serious Eats ist für Claude gesperrt, Art A). Vier Adressnamen passen nicht zum Gericht: r691 „flat-iron-steak“, r692 „corned-beef-style“, r696 „lamb-rack“, r698 „sous-vide-beets“; die App folgt dem übergebenen Text.
+
+## Nachtrag: Sous-vide-Basiswissen je Fleischsorte (30.10.2026)
+
+- Auftrag: Gartemperaturen und Garzeiten für Sous-vide bei verschiedenen Fleischsorten recherchieren und als Basiswissen in die App übernehmen. Die Daten stehen in `data_sousvide.js` (`SOUSVIDE.tabellen`, `SOUSVIDE.dicke`, `SOUSVIDE.regeln`, `SOUSVIDE.quellen`) und erscheinen in der App unter „Garen, Lagern, Sicherheit“ → Sous-vide.
+- **Quellen (gelesen am 30.10.2026):** Zwilling Gartabelle (Z), Swissmilk Garzeiten (S), Anova Time and Temperature Guide (A), Souvy-Tabelle (V), The Rational Kitchen (R) und Amazing Food Made Easy mit den Baldwin-Tabellen (B). Jede Tabellenzeile trägt ihr Quellenkürzel. Die Seiten wurden über ein Lesewerkzeug zusammengefasst; Zwilling gibt Dicken und Gargrade im Text nicht immer eindeutig zu; Souvy nennt selbst Unstimmigkeiten (doppelte Zeilen). Es sind Koch- und Geräteanleitungen, keine amtlichen Grenzwerte; die Werte sind nicht von der App getestet.
+- **Inhalt:** Rind (inklusive Kalb), Schwein, Lamm, Geflügel, Fisch und Meeresfrüchte, Eier, Gemüse; dazu eine Dicken-Tabelle (Aufheizen und Pasteurisierung bei 55, 57 und 60 °C für Rind, Lamm, Schwein) und die bisherige Geflügel-Haltezeit-Tabelle (Anova nach USDA).
+- **Auswahlregel der App:** Garstufen unter 55 °C (Rind, Lamm, Schwein), unter 50 °C (Fisch) und unter 63 °C (Geflügel) sind bewusst nicht übernommen, auch wenn einzelne Quellen sie nennen. Unter 55 °C höchstens 2 Stunden (R nennt 2, B nennt 4 Stunden; strengerer Wert). Hackfleisch, Burger, Innereien: keine Tabelle, es gilt Kern 70 °C für 2 Minuten (BfR).
+- **Geänderte Regel:** Bisher verlangte die App für Sous-vide bei Schwein, Rind, Fisch und Hack mindestens 70 °C im Bad, weil keine belegten Tabellen vorlagen. Jetzt gilt (`svMinTemp`): Geflügel 63 °C, Rind und Schwein (inklusive Lamm) 55 °C, Fisch 50 °C, sonst 70 °C. Die dokumentierte Ausnahme für r681 bis r687 entfällt damit; der entsprechende Tipp-Satz ist entfernt.
+- **Offene Unschärfe:** Die Baldwin-Tabelle nennt nicht ausdrücklich, ob die Pasteurisierungszeit das Aufheizen enthält; die App weist darauf hin und rät, im Zweifel die Aufheizzeit dazuzurechnen.
+
+## Nachtrag r681 bis r690: Liste 26 – 10 Sous-vide-Rezepte (30.10.2026)
+
+- Der Auftraggeber hat „Liste 26 – 10 Sous-vide-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die früheren Listen). Alle zehn sind als eigene, **originalgetreue** Fassungen angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): Flat Iron Steak (r681), Short Ribs (r682), Rinderbrust mit Barbecue-Glasur (r683), Lachs (r684), Oktopus (r685), Schweinefilet (r686), Lammkeule (r687), Onsen-Ei (r688), Rote Bete (r689), Crème brûlée (r690).
+- **Nährwerte:** Die App rechnet aus den Zutaten (BLS 4.0 beziehungsweise gekennzeichnete Näherung) und nicht aus den „Pro Portion“-Angaben der Vorlage; beide weichen teils deutlich ab (zum Beispiel r682 etwa 990 statt 640 kcal, r683 etwa 1.100 statt 620 kcal). Ausgetretenes Fett und Garverluste sind nicht abgezogen, die Werte sind also eher zu hoch.
+- **Ausnahmen (im Tipp als AUSNAHME/HINWEIS gekennzeichnet):** Kalorien über dem Hauptmahlzeiten-Rahmen bei r681, r682, r683; Eiweiß unter dem Richtwert bei r688 (Onsen-Ei) und r689 (Rote Bete); Crème brûlée r690 über 350 kcal und unter 10 g Eiweiß (Dessertrahmen).
+- **Näherungen:** Flat Iron nach Rind Bug/Schulter, Short Ribs als Rinderbrust, Oktopus roh als roher Tintenfisch, Ramen als Hartweizennudeln (Trockengewicht), Coleslaw als Weißkrautsalat mit Essigmarinade (Allergene Ei und Senf vorsorglich geführt), Rote Bete mit den Werten der gegarten Ware, Ziegenkäse als Ziegenfrischkäse. Umrechnungen ml in g sind im jeweiligen Tipp genannt.
+- **Sicherheit:** Die Pasteurisierungs- und Kerntemperaturangaben stammen aus der Vorlage und sind von der App **nicht geprüft**; die Tipps nennen das und raten Risikogruppen zu höheren Temperaturen. Das Onsen-Ei hat ein flüssiges Eigelb.
+- **Einfrieren:** Die Vorlage nennt bei r681 bis r687 und r689 „Einfrierbar: Ja“ (Vakuumbeutel, Eisbad); in der App sind alle zehn als „nicht für den Souper-Cubes-Gefrierplan vorgesehen“ geführt (kein Block, keine Haltbarkeitsangabe), die Vorlagenangabe steht im Hinweistext. **Bitte bei Bedarf Rückmeldung geben.**
+- **Geräte:** Sous-vide, Herd, bei r683 und r687 Backofen. Der Küchenbrenner für die Crème brûlée steht nicht in der Geräteliste.
+- **Neue Zutaten:** Flat Iron, Kartoffelpüree, Coleslaw, Barbecue-Sauce, Ziegenkäse, Zitrone (ganzjährig im Handel, neutral).
+- **Quellen:** Alle zehn Links (K-Einträge) stammen aus dem übergebenen Text; die Seiten waren in dieser Sitzung nicht abrufbar und wurden **nicht gelesen**. Vier Adressnamen passen nicht zum Gericht (r682 „corned-beef-style“, r683 „short-ribs“, r687 „shoulder“, r688 „sous-vide-beets“); die App folgt dem übergebenen Text.
 
 ## Nachtrag r680: Original New-York-Style Pastrami (30.10.2026)
 
@@ -411,17 +733,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **584** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 94, Rind: 90, Schwein: 86, Fisch: 60, Vegetarisch: 254 |
-| Verteilung nach Mahlzeit | Hauptgericht: 313, Suppe/Eintopf: 50, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 62, Dessert: 74, Aufstrich: 34, Sauce/Dips: 5 |
+| Mitgelieferte Rezepte | **722** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 109, Rind: 111, Schwein: 113, Fisch: 79, Vegetarisch: 310 |
+| Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 65, Salat/Bowl: 20, Frühstück: 18, Smoothie: 16, Snack: 104, Dessert: 98, Aufstrich: 34, Sauce/Dips: 10 |
 | Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 380 (379) |
-| Gewürze | 72 |
+| Zutaten im Stamm (davon mit Nährwerten) | 438 (437) |
+| Gewürze | 80 |
 | Bausteine (Meal-Prep) | **90** (Protein: 20, Beilage: 8, Sauce: 27, Gemüse: 5, Booster: 30) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
-| Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven |
+| Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 2609 KB |
+| Größe `dist/index.html` | 3202 KB |
 
 ---
 
@@ -440,7 +762,7 @@ Eine einzige HTML-Datei mit eingebettetem JavaScript, **zusammengesetzt durch Ve
 | `logic.js` | Kern: Konstanten (Allergene, Geräte, Kammern), Zutatenstamm (Basis), Nährwert- und Allergenrechnung, Ausschlussprüfung, Rezeptprüfung, KI-Rezept-Normalisierung | 
 | `data_zutaten.js` | Zusätzliche Zutaten (insgesamt siehe Abschnitt 3) und Gewürze (`SPICES`, `SMAP`) | 
 | `data_bls.js` | Quelle je Zutat: BLS-Code, Modus (bls/naeh/mix/abl/own), früherer Wert (`BLS_REF`) | 
-| `data_sousvide.js` | Sous-vide: belegte Zeit-Temperatur-Werte für Geflügel (Anova/USDA) und Regeln (`SOUSVIDE`) | 
+| `data_sousvide.js` | Sous-vide-Basiswissen: Temperatur und Zeit je Fleischsorte, Dicken-Tabelle, Geflügel-Haltezeiten (Anova/USDA), Regeln und Quellen (`SOUSVIDE`) | 
 | `data_rezepte1.js` | Mitgelieferte Rezepte, Teil 1 (Hilfsfunktion `R()`) | 
 | `data_rezepte2.js` | Mitgelieferte Rezepte, Teil 2 | 
 | `data_rezepte3.js` | Mitgelieferte Rezepte, Teil 3 | 
@@ -618,7 +940,7 @@ Kategorie `Dessert` in `MEALS`, Platz `d` in `SLOTS`, angezeigt nur bei `state.d
 | Befehl | Ergebnis | Status |
 |---|---|---|
 | `node test_logic2.js` | 95 Prüfungen | bestanden |
-| `node test_logic3.js` | 323 Prüfungen | bestanden |
+| `node test_logic3.js` | 351 Prüfungen | bestanden |
 | `node test_bls.js` | 9 Prüfungen | bestanden |
 | `node smoke2.js` | 153 Prüfungen | bestanden |
 | `node smoke3.js` | 91 Prüfungen | bestanden |
@@ -643,7 +965,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 584 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 722 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 90 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
@@ -830,7 +1152,7 @@ Aus der offenen 26er-Linkliste wurden **24 recherchierte Einzelrezepte als eigen
 
 **data_bls.js**: `blsStats`, `blsLine`
 
-**data_sousvide.js**: `svMinTemp`, `svTabelleHtml`
+**data_sousvide.js**: `svMinTemp`, `svEsc`, `svTabelleHtml`, `svWissenHtml`
 
 **logic2.js**: `isoLocal`, `addDaysIso`, `diffDays`, `fmtDate`, `shelfDays`, `lagerort`, `newLot`, `lotState`, `stockTotals`, `deductFifo`, `recipeNeed`, `coverage`, `spiceCheck`, `whatCanICook`, `expiringSoon`, `lowStock`, `weekNeed`, `shopPlan`, `fmtGrams`, `emptyDay`, `dayOf`, `round1x`, `nutriOfIng`, `entryRecipe`, `entryIng`, `entryQuick`, `diaryTotals`, `macroGoals`, `weekStats`, `streak`, `weightSeries`, `recentFoods`, `calcGoals`, `fastStatus`, `fmtHM`, `mulberry32`, `autoPlan`, `weekSummary`, `normalizeUserRecipe`, `parseRecipeJson`, `exportState`, `importState`, `diaryCsv`
 
