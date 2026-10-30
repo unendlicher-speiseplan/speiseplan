@@ -1191,6 +1191,11 @@ const ZUTATEN_PLUS = [
   I('kichererbsenmehl', 'Kichererbsenmehl', 'Trockenprodukte', 322, 20, 39.6, 5.8, { hul: 1, fod: 1 }),
   I('mango_chutney', 'Mango-Chutney (Näherung nach Frucht-Chutney)', 'Sonstiges', 282, 0.6, 68, 0.3),
   I('okonomiyaki_sauce', 'Okonomiyaki-Sauce (Näherung nach Tomatenketchup)', 'Gewürze & Öle', 98, 1.4, 21.2, 0.1, { al: ['gluten', 'soja'] }),
+  I('toastbrot', 'Weizentoastbrot', 'Trockenprodukte', 261, 8.3, 46.8, 3.6, { al: ['gluten'], fod: 1 }),
+  I('empanada_teigplatten', 'Empanada-Teigplatten (Näherung nach Pizzateig)', 'Trockenprodukte', 246, 6.5, 42, 5.1, { al: ['gluten'], fod: 1 }),
+  I('gyoza_teigblaetter', 'Gyoza-Teigblätter (Näherung nach Pizzateig)', 'Trockenprodukte', 246, 6.5, 42, 5.1, { al: ['gluten'], fod: 1 }),
+  I('rinderherz', 'Rinderherz (roh)', 'Fleisch & Geflügel', 121, 16.8, 0, 6),
+  I('bouillonpulver', 'Bouillonpulver / Brühwürfel (Pulver)', 'Gewürze & Öle', 195, 5.8, 27.9, 5.8, { al: ['sellerie'] }),
 ];
 ZUTATEN_PLUS.forEach(z => { ZUTATEN.push(z); ZMAP[z.id] = z; });
 
@@ -1219,7 +1224,10 @@ const SPICES = [
   { id: 'pandan', name: 'Pandanblätter' },
   { id: 'zitronenblaetter', name: 'Zitronenblätter' },
   { id: 'pav_bhaji_masala', name: 'Pav-Bhaji-Masala' },
-  { id: 'dabeli_masala', name: 'Dabeli-Masala' }
+  { id: 'dabeli_masala', name: 'Dabeli-Masala' },
+  { id: 'guajillo', name: 'Guajillo-Chili (getrocknet)' },
+  { id: 'achiote_paste', name: 'Achiote-Paste' },
+  { id: 'aonori', name: 'Aonori (grünes Algenpulver)' }
 ].map(s => Object.assign({ al: [], fod: 0 }, s));
 const SMAP = {};
 SPICES.forEach(s => { SMAP[s.id] = s; });
@@ -1608,6 +1616,15 @@ Object.assign(BLS_REF, {
   "kichererbsenmehl": { m: "bls", c: "H720400", n: "", e: 30.8 },
   "mango_chutney": { m: "naeh", c: "R144100", n: "Mango-Chutney steht nicht im BLS; Näherung nach Frucht-Chutney, herstellerabhängig", e: 4.9 },
   "okonomiyaki_sauce": { m: "naeh", c: "R141100", n: "Okonomiyaki-Sauce steht nicht im BLS; Näherung nach Tomatenketchup, herstellerabhängig", e: 7.2 },
+});
+Object.assign(BLS_REF, {
+  "toastbrot": { m: "bls", c: "B314000", n: "", e: 8.6 },
+  "empanada_teigplatten": { m: "naeh", c: "D079000", n: "Empanada-Teigplatten stehen nicht im BLS; Näherung nach rohem Pizzateig (Hefeteig), herstellerabhängig, fettreichere Platten haben mehr Energie", e: 6.4 },
+  "gyoza_teigblaetter": { m: "naeh", c: "D079000", n: "Gyoza-Teigblätter stehen nicht im BLS; Näherung nach rohem Pizzateig (Weizenteig), herstellerabhängig", e: 6.4 },
+});
+Object.assign(BLS_REF, {
+  "rinderherz": { m: "bls", c: "V511100", n: "", e: 0 },
+  "bouillonpulver": { m: "bls", c: "R810000", n: "", e: 8.3 },
 });
 ZUTATEN.forEach(z => { if (BLS_REF[z.id]) z.bls = BLS_REF[z.id]; });
 
@@ -36543,6 +36560,1644 @@ SEED2.push(
   })
 );
 
+/* ===== Rezeptcharge 69: 10 Streetfood-Rezepte, zehnte Liste (vom Auftraggeber übergebener Text, eigene Fassung von Claude; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Tacos al Pastor mit Schweineschulter (Mexiko, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Schwein",
+   "cuisine": "Mexiko",
+   "servings": 4,
+   "prep": 30,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Tacos al Pastor",
+    "Mexiko",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "schweineschulter",
+     600
+    ],
+    [
+     "maistortilla",
+     300
+    ],
+    [
+     "knoblauch",
+     6
+    ],
+    [
+     "essig",
+     15
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "koriander_frisch",
+     20
+    ],
+    [
+     "limettensaft",
+     40
+    ]
+   ],
+   "spices": [
+    "guajillo",
+    "achiote_paste",
+    "kreuzkuemmel",
+    "oregano",
+    "salz"
+   ],
+   "steps": [
+    "Die getrockneten Guajillo-Chilis (3) 15 Minuten in heißem Wasser einweichen.",
+    "Die Chilis mit Achiote-Paste (2 EL), Knoblauch (2 Zehen), Apfelessig (1 EL), Kreuzkümmel (1 TL), Oregano (1 TL) und Salz fein mixen.",
+    "Das sehr dünn geschnittene Schweinefleisch (600 g) darin mindestens 4 Stunden, besser über Nacht, im Kühlschrank marinieren.",
+    "Das Fleisch in einer sehr heißen Pfanne portionsweise scharf anbraten, bis die Ränder leicht verkohlen und es durchgegart ist (mindestens 70 °C).",
+    "In Streifen schneiden und auf warme Tortillas (12 kleine) legen.",
+    "Mit der fein gewürfelten roten Zwiebel, Koriander und Limettensaft servieren."
+   ],
+   "tips": "AUSNAHME VOM KALORIENRAHMEN: rund 379 kcal je Portion (3 Tacos, Eiweiß 36 g), originalgetreu. Zutaten wie in der Vorlage für 4 Personen (3 Tacos je Portion), mit einer Ausnahme: Zwei Zutaten der Vorlage (der Fruchtsaft in der Marinade und die Fruchtwürfel zum Servieren) sind wegen einer Projektregel des Auftraggebers (siehe PROTOKOLL, Nachtrag Streetfood) nicht in der Zutatenliste und den Schritten aufgeführt; ohne den Saft fällt die Marinade dicker aus. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße nennt: 12 kleine Maistortillas ≈ 300 g, 1 EL Apfelessig ≈ 15 g, 1 rote Zwiebel ≈ 80 g, Koriander 20 g, Limettensaft 40 g. Guajillo-Chilis (ca. 3 getrocknete Schoten) und Achiote-Paste gehen nicht in die Nährwerte ein (wenige Kilokalorien). Öl zum Braten nennt die Vorlage nicht und ist nicht eingerechnet. Tipp der Vorlage: statt Drehspieß eine sehr heiße Gusseisenpfanne; die dünnen Scheiben sollen am Ende knusprig sein. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Fleisch abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Das Fleisch in der heißen Pfanne durchgehend heiß erhitzen (mindestens 70 °C), Tortillas frisch aufwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [17][20] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Mexiko"
+  }),
+  R({
+   "name": "Bánh Mì mit Hähnchenbrust und eingelegtem Gemüse (Vietnam, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Geflügel",
+   "cuisine": "Vietnam",
+   "servings": 2,
+   "prep": 20,
+   "cook": 10,
+   "level": "mittel",
+   "devices": [
+    "Herd",
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "Streetfood",
+    "Bánh Mì",
+    "Vietnam",
+    "Hähnchen",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "baguette",
+     200
+    ],
+    [
+     "haehnchenbrust",
+     300
+    ],
+    [
+     "fischsauce",
+     30
+    ],
+    [
+     "sojasauce",
+     15
+    ],
+    [
+     "honig",
+     20
+    ],
+    [
+     "knoblauch",
+     3
+    ],
+    [
+     "karotte",
+     80
+    ],
+    [
+     "rettich",
+     100
+    ],
+    [
+     "reisessig",
+     45
+    ],
+    [
+     "zucker",
+     5
+    ],
+    [
+     "gurke",
+     100
+    ],
+    [
+     "koriander_frisch",
+     10
+    ],
+    [
+     "chili_frisch",
+     5
+    ],
+    [
+     "mayonnaise",
+     30
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Karotte und Rettich in Streifen schneiden und mit Reisessig (3 EL), Zucker (1 TL) und einer Prise Salz 30 Minuten einlegen.",
+    "Das Fleisch mit Fischsauce (2 EL), Sojasauce (1 EL), Honig (1 EL) und Knoblauch mindestens 1 Stunde marinieren.",
+    "Das Fleisch in der Pfanne oder auf dem Kontaktgrill durchgaren (Kerntemperatur mindestens 70 °C) und in Scheiben schneiden.",
+    "Die Baguettes kurz aufschneiden und toasten.",
+    "Mit Mayonnaise, Fleisch, eingelegtem Gemüse, Gurkenscheiben, Koriander und Chili füllen."
+   ],
+   "tips": "Zutaten wie in der Vorlage für 2 Sandwiches. Gewählt aus „Schweinebauch oder Hähnchenbrust“: Hähnchenbrust; mit Schweinebauch wäre es eine andere Fassung. Gewählt aus „Daikon oder Rettich“: Rettich. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 2 kleine Baguettes ≈ 200 g, 2 EL Fischsauce ≈ 30 g, 1 EL Sojasauce ≈ 15 g, 1 EL Honig ≈ 20 g, 1 Knoblauchzehe ≈ 3 g, 1 Karotte ≈ 80 g, ½ Rettich ≈ 100 g, 3 EL Reisessig ≈ 45 g, 1 TL Zucker ≈ 5 g, Gurke 100 g, Koriander 10 g, Chili 5 g, Mayonnaise 30 g. Von der Pickle-Flüssigkeit wird nur der Essig gerechnet. Es gibt in der App schon ein Banh Mi mit Schweinefilet (r454, andere Vorlage); dies ist die Fassung des übergebenen Textes. Tipp der Vorlage: Die eingelegten Gemüse liefern die typische Säure und Knackigkeit. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Fleisch und Pickles getrennt abgekühlt im Kühlschrank höchstens 2 Tage aufbewahren; Sandwich frisch belegen (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Das Fleisch in der Pfanne durchgehend heiß erhitzen (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [12][25] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Vietnam"
+  }),
+  R({
+   "name": "Falafel im Pitabrot mit Hummus und Tahini (Naher Osten, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Vegetarisch",
+   "cuisine": "Naher Osten",
+   "servings": 4,
+   "prep": 30,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Falafel",
+    "Naher Osten",
+    "vegan",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "kichererbsen_trocken",
+     250
+    ],
+    [
+     "zwiebel",
+     60
+    ],
+    [
+     "knoblauch",
+     6
+    ],
+    [
+     "petersilie",
+     30
+    ],
+    [
+     "koriander_frisch",
+     30
+    ],
+    [
+     "backpulver",
+     4
+    ],
+    [
+     "rapsoel",
+     40
+    ],
+    [
+     "pita",
+     240
+    ],
+    [
+     "hummus",
+     100
+    ],
+    [
+     "tahini",
+     40
+    ],
+    [
+     "tomate",
+     160
+    ],
+    [
+     "gurke",
+     100
+    ],
+    [
+     "salat",
+     60
+    ]
+   ],
+   "spices": [
+    "kreuzkuemmel",
+    "koriander_gem",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die rohen, 18 bis 24 Stunden eingeweichten Kichererbsen (250 g trocken gewogen) mit Zwiebel, Knoblauch (2 Zehen), Petersilie, Koriander, Kreuzkümmel (1 TL), gemahlenem Koriander (1 TL), Salz und Pfeffer grob zerkleinern.",
+    "Die Masse 30 Minuten ruhen lassen, dann das Backpulver (1 TL) unterheben.",
+    "Bällchen formen und bei 175 °C etwa 3 Minuten frittieren, bis sie dunkelgold sind.",
+    "Die Pita-Fladen (4) aufwärmen, mit Hummus bestreichen und mit Falafel, Tomaten, Gurke, Salat und Tahini füllen."
+   ],
+   "tips": "AUSNAHME VOM EIWEISSRAHMEN: rund 22 g Eiweiß je Portion, originalgetreu. Zutaten wie in der Vorlage für 4 Personen (1 Pita je Person). Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: Kichererbsen als Trockengewicht (250 g), 1 kleine Zwiebel ≈ 60 g, 2 Knoblauchzehen ≈ 6 g, „große Handvoll“ Petersilie und Koriander je 30 g, 1 TL Backpulver ≈ 4 g, 4 Pita-Fladen ≈ 240 g, Hummus 100 g, Tahini 40 g, Tomaten 160 g, Gurke 100 g, Salat 60 g. Beim Frittieren ist nur das aufgenommene Öl gerechnet (angenommen 40 g), nicht das ganze Frittieröl. Es gibt in der App schon Falafel in Pita mit Tahini (r452, andere Vorlage); dies ist die Fassung des übergebenen Textes mit Hummus. Tipp der Vorlage: keine gekochten Kichererbsen verwenden, sie machen die Masse zu feucht. Sicherheitshinweis der App: Heißes Fett nie unbeaufsichtigt lassen und niemals mit Wasser löschen; Deckel bereithalten. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Falafel abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren; Füllung frisch (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Im Backofen oder Airfryer bei etwa 180 °C knusprig aufbacken, bis sie durchgehend heiß sind.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [16][20] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Naher Osten"
+  }),
+  R({
+   "name": "Arepas mit Reina-Pepiada-Füllung (Venezuela, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Geflügel",
+   "cuisine": "Venezuela",
+   "servings": 4,
+   "prep": 25,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Arepas",
+    "Reina Pepiada",
+    "Venezuela",
+    "Hähnchen",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "harina_pan",
+     300
+    ],
+    [
+     "haehnchenfleisch_gegart",
+     200
+    ],
+    [
+     "avocado",
+     150
+    ],
+    [
+     "mayonnaise",
+     45
+    ],
+    [
+     "limettensaft",
+     15
+    ],
+    [
+     "zwiebel",
+     40
+    ],
+    [
+     "rapsoel",
+     12
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Maismehl (300 g), warmes Wasser (600 ml) und Salz (1 TL) zu einem glatten Teig verkneten.",
+    "Aus dem Teig 8 Kugeln formen und zu etwa 2 cm dicken Fladen drücken.",
+    "In einer geölten Pfanne je Seite etwa 3 Minuten goldbraun braten.",
+    "Das gekochte Hähnchen zupfen und mit Avocado, Mayonnaise (3 EL), roter Zwiebel (½) und Limettensaft (1 EL) mischen.",
+    "Die Arepas seitlich einschneiden und füllen."
+   ],
+   "tips": "AUSNAHME VOM EIWEISSRAHMEN: rund 23 g Eiweiß je Portion, originalgetreu. Zutaten wie in der Vorlage. Auffälligkeit der Vorlage: Die Überschrift nennt „4 Arepas“, der Schritt „8 Kugeln formen“; die App rechnet mit 4 Portionen und den 8 Fladen aus dem Schritt (2 Arepas je Portion). Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 1 Avocado ≈ 150 g (Fruchtfleisch), 3 EL Mayonnaise ≈ 45 g, 1 EL Limettensaft ≈ 15 g, ½ rote Zwiebel ≈ 40 g (gerechnet als Zwiebel), Bratöl 12 g. Das Hähnchen ist als verzehrfertig gegartes Hähnchenfleisch gerechnet, das Wasser geht nicht in die Nährwerte ein. Es gibt in der App schon Arepas mit Käse, schwarzen Bohnen und Avocado (r464, andere Vorlage); dies ist die Fassung des übergebenen Textes. Tipp der Vorlage: Die Füllung kann auch mit Käse, schwarzen Bohnen oder Rindfleisch variiert werden. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Arepas und Füllung getrennt abgekühlt im Kühlschrank höchstens 1 Tag aufbewahren (Avocado wird braun) (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Arepas in der Pfanne oder im Backofen aufwärmen; die Hähnchenfüllung nicht erhitzen, sondern kühl essen, oder vorher durchgehend auf mindestens 70 °C bringen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [21][12] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Venezuela"
+  }),
+  R({
+   "name": "Pad Thai mit Hähnchen (Thailand, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Geflügel",
+   "cuisine": "Thailand",
+   "servings": 2,
+   "prep": 75,
+   "cook": 10,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Pad Thai",
+    "Thailand",
+    "Hähnchen",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "reisnudeln",
+     150
+    ],
+    [
+     "haehnchenbrust",
+     200
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "knoblauch",
+     6
+    ],
+    [
+     "sprossen",
+     100
+    ],
+    [
+     "fruehlingszwiebel",
+     40
+    ],
+    [
+     "fischsauce",
+     45
+    ],
+    [
+     "tamarinde",
+     45
+    ],
+    [
+     "palmzucker",
+     30
+    ],
+    [
+     "erdnuesse",
+     30
+    ],
+    [
+     "limettensaft",
+     15
+    ]
+   ],
+   "spices": [
+    "chili_flocken"
+   ],
+   "steps": [
+    "Die Reisnudeln (150 g) 45 bis 60 Minuten in lauwarmem Wasser einweichen, nicht kochen.",
+    "Fischsauce (3 EL), Tamarindenpaste (3 EL) und Palmzucker verrühren.",
+    "Den Wok stark erhitzen, Knoblauch (2 Zehen) und das in Streifen geschnittene Hähnchen kurz anbraten, bis es durchgegart ist (mindestens 70 °C).",
+    "Die Eier (2) hineinschlagen und verrühren, dann Nudeln und Sauce zugeben.",
+    "Sprossen und Frühlingszwiebeln (2) kurz mitbraten.",
+    "Mit Erdnüssen, Limette und Chiliflocken servieren."
+   ],
+   "tips": "AUSNAHME VOM KALORIENRAHMEN: rund 690 kcal je Portion (Eiweiß 44 g), originalgetreu. Zutaten wie in der Vorlage für 2 Portionen. Gewählt aus „Garnelen oder Hähnchen“: Hähnchenbrust; mit Garnelen wäre es eine andere Fassung (in der App gibt es schon Pad Thai mit Garnelen, r453, andere Vorlage). Annahmen der App, weil die Vorlage nur Löffelmaße, eine Spanne oder keine Menge nennt: 3 EL Fischsauce ≈ 45 g, 3 EL Tamarindenpaste ≈ 45 g (gerechnet als Tamarindenfruchtmark), Palmzucker „2–3 EL“ als mittlerer Wert 2,5 EL ≈ 30 g, Erdnüsse 30 g und Limette 15 g Saft (beides ohne Menge in der Vorlage), 2 Frühlingszwiebeln ≈ 40 g. Öl zum Braten nennt die Vorlage nicht und ist nicht eingerechnet. Einweichzeit für die Nudeln nicht in der Kochzeit. Tipp der Vorlage: Alles vorbereiten und nur eine Portion gleichzeitig braten, Pad Thai braucht sehr hohe Hitze. Rohe Sprossen sind ein bekanntes Keimrisiko; wer auf Nummer sicher gehen will, überbrüht sie kurz (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Frisch am besten. Reste abgekühlt abgedeckt im Kühlschrank höchstens 1 Tag aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "In der Pfanne oder im Wok durchgehend heiß erhitzen (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [20][24] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Thailand"
+  }),
+  R({
+   "name": "Chicken Satay mit Erdnusssauce (Indonesien, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Geflügel",
+   "cuisine": "Indonesien",
+   "servings": 4,
+   "prep": 20,
+   "cook": 10,
+   "level": "leicht",
+   "devices": [
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "Streetfood",
+    "Satay",
+    "Indonesien",
+    "Hähnchen",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haehnchenbrust",
+     600
+    ],
+    [
+     "kokosmilch",
+     200
+    ],
+    [
+     "zucker",
+     12
+    ],
+    [
+     "knoblauch",
+     3
+    ],
+    [
+     "erdnussmus",
+     64
+    ],
+    [
+     "sojasauce",
+     30
+    ],
+    [
+     "limettensaft",
+     15
+    ]
+   ],
+   "spices": [
+    "kurkuma",
+    "curry",
+    "chili_flocken"
+   ],
+   "steps": [
+    "Das Hähnchen (600 g, in Streifen) mit Kokosmilch (200 ml), Kurkuma (1 TL), Currypulver (2 EL), Zucker (1 EL) und Knoblauch mindestens 1 Stunde marinieren.",
+    "Die Streifen auf eingeweichte Holzspieße stecken.",
+    "Bei hoher Hitze je Seite 3 bis 4 Minuten grillen oder braten, bis das Fleisch durchgegart ist (mindestens 70 °C).",
+    "Erdnussbutter (4 EL) mit Sojasauce (2 EL), Limettensaft (1 EL), Chiliflocken und etwas heißem Wasser glatt rühren.",
+    "Die Spieße warm mit der Sauce servieren."
+   ],
+   "tips": "Zutaten wie in der Vorlage für 4 Personen. Annahmen der App, weil die Vorlage nur Löffelmaße oder keine Menge nennt: 1 EL Zucker ≈ 12 g, 1 Knoblauchzehe ≈ 3 g, 4 EL Erdnussbutter ≈ 64 g (gerechnet als Erdnussmus), 2 EL Sojasauce ≈ 30 g, 1 EL Limettensaft ≈ 15 g; die Kokosmilch ist mit 200 g gerechnet, obwohl sie nur zum Teil an den Spießen haften bleibt. Currypulver, Kurkuma und Chili gehen nicht in die Nährwerte ein. Es gibt in der App schon Satay-Spieße mit Erdnusssauce (r482, andere Vorlage); dies ist die Fassung des übergebenen Textes. Tipp der Vorlage: Die Spieße vorher 30 Minuten wässern, damit sie nicht verbrennen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Spieße und Sauce getrennt abgekühlt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Die Spieße in der Pfanne oder im Backofen durchgehend heiß erhitzen (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [17] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Indonesien"
+  }),
+  R({
+   "name": "Empanadas mit Rinderhack, Ei und Oliven (Argentinien, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "Argentinien",
+   "servings": 5,
+   "prep": 40,
+   "cook": 30,
+   "level": "mittel",
+   "devices": [
+    "Herd",
+    "Backofen"
+   ],
+   "tags": [
+    "Streetfood",
+    "Empanadas",
+    "Argentinien",
+    "Rind",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "empanada_teigplatten",
+     400
+    ],
+    [
+     "rinderhack",
+     300
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "paprika",
+     150
+    ],
+    [
+     "eier",
+     165
+    ],
+    [
+     "oliven",
+     50
+    ]
+   ],
+   "spices": [
+    "paprika_suess",
+    "kreuzkuemmel",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Zwiebel und Paprika (gewürfelt) anbraten, dann das Hackfleisch krümelig braten.",
+    "Mit Paprikapulver (1 TL), Kreuzkümmel (1 TL), Salz und Pfeffer würzen und abkühlen lassen.",
+    "Die gewürfelten hartgekochten Eier (2) und die gehackten Oliven (50 g) unterheben.",
+    "Die Teigplatten (10) füllen, halbmondförmig falten und die Ränder fest andrücken.",
+    "Mit verquirltem Ei bestreichen und bei 200 °C etwa 20 Minuten backen, bis sie goldbraun sind und die Füllung durchgehend mindestens 70 °C hat."
+   ],
+   "tips": "AUSNAHME VOM KALORIEN- UND EIWEISSRAHMEN: rund 379 kcal und 22 g Eiweiß je Portion (2 Empanadas), originalgetreu. Zutaten wie in der Vorlage für 10 Stück; in der App sind das 5 Portionen zu je 2 Empanadas. Annahmen der App, weil die Vorlage nur Stückmaße nennt: 10 Teigplatten ≈ 400 g (Näherung nach rohem Pizzateig, Fettanteil herstellerabhängig, die Energie kann bei fettreicheren Platten höher sein), 1 Zwiebel ≈ 80 g, 1 Paprika ≈ 150 g, 3 Eier ≈ 165 g (2 hartgekochte in der Füllung, 1 zum Bestreichen). Öl zum Anbraten nennt die Vorlage nicht und ist nicht eingerechnet. Es gibt in der App schon Rinder-Empanadas (r448 und r134, andere Vorlagen); dies ist die Fassung des übergebenen Textes. Tipp der Vorlage: Für den klassischen Streetfood-Look können die Empanadas auch frittiert werden. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Im Backofen bei etwa 180 °C aufbacken, bis sie durchgehend heiß sind (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [24] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Argentinien"
+  }),
+  R({
+   "name": "Gyoza mit Schweinehack und Chinakohl, gebraten und gedämpft (Japan, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Schwein",
+   "cuisine": "Japan",
+   "servings": 4,
+   "prep": 40,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Gyoza",
+    "Japan",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "gyoza_teigblaetter",
+     170
+    ],
+    [
+     "schweinehack",
+     250
+    ],
+    [
+     "chinakohl",
+     100
+    ],
+    [
+     "fruehlingszwiebel",
+     40
+    ],
+    [
+     "knoblauch",
+     3
+    ],
+    [
+     "sojasauce",
+     15
+    ],
+    [
+     "sesamoel",
+     5
+    ],
+    [
+     "ingwer",
+     5
+    ],
+    [
+     "rapsoel",
+     20
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Den Chinakohl (100 g, fein gehackt, gesalzen) ausdrücken und mit Hackfleisch (250 g), Frühlingszwiebeln (2), Knoblauch, Ingwer (1 TL, gerieben), Sojasauce (1 EL) und Sesamöl (1 TL) mischen.",
+    "Je 1 TL Füllung auf ein Teigblatt (24 Stück) setzen, die Ränder mit Wasser bestreichen und falten.",
+    "In einer Pfanne mit etwas Öl von unten goldbraun braten.",
+    "Wasser (100 ml) zugeben, den Deckel auflegen und 5 bis 6 Minuten dämpfen.",
+    "Den Deckel abnehmen und kurz weiterbraten, bis die Unterseite knusprig ist; die Füllung muss durchgehend mindestens 70 °C haben."
+   ],
+   "tips": "AUSNAHME VOM KALORIEN- UND EIWEISSRAHMEN: rund 341 kcal und 15 g Eiweiß je Portion (6 Gyoza), originalgetreu. Zutaten wie in der Vorlage für etwa 24 Stück; in der App sind das 4 Portionen zu je 6 Gyoza. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 24 Teigblätter ≈ 170 g (Näherung nach rohem Pizzateig, herstellerabhängig), 2 Frühlingszwiebeln ≈ 40 g, 1 Knoblauchzehe ≈ 3 g, 1 EL Sojasauce ≈ 15 g, 1 TL Sesamöl ≈ 5 g, 1 TL geriebener Ingwer ≈ 5 g, Bratöl 20 g („etwas Öl“). Die Dipping-Sauce aus dem Tipp der Vorlage (Sojasauce, Reisessig, Chiliöl) ist nicht eingerechnet. Es gibt in der App schon Gyoza mit Schweinehack und Chinakohl (r472, andere Vorlage mit selbst gemachtem Teig); dies ist die Fassung des übergebenen Textes mit Teigblättern. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "In der Pfanne mit etwas Wasser und Deckel durchgehend heiß dämpfen (mindestens 70 °C), dann kurz knusprig braten.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text; Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Japan"
+  }),
+  R({
+   "name": "Korean Street Toast – Gilgeori Toast (Korea, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Vegetarisch",
+   "cuisine": "Korea",
+   "servings": 2,
+   "prep": 15,
+   "cook": 15,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Gilgeori Toast",
+    "Korea",
+    "Ei",
+    "vegetarisch",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "toastbrot",
+     112
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "karotte",
+     40
+    ],
+    [
+     "weisskohl",
+     200
+    ],
+    [
+     "fruehlingszwiebel",
+     40
+    ],
+    [
+     "butter",
+     20
+    ],
+    [
+     "gouda",
+     80
+    ],
+    [
+     "ketchup",
+     30
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Karotte (fein gerieben), Kohl (fein gehobelt) und Frühlingszwiebeln (2) mit den Eiern (2), Salz und Pfeffer vermengen.",
+    "Butter in einer Pfanne erhitzen.",
+    "Die Gemüse-Ei-Masse portionsweise flach in die Pfanne geben und von beiden Seiten garen, bis das Ei gestockt ist.",
+    "Das Toastbrot (4 Scheiben) buttern und knusprig rösten.",
+    "Das Brot mit Käse (4 Scheiben), Gemüse-Omelett und Ketchup belegen."
+   ],
+   "tips": "AUSNAHME VOM EIWEISSRAHMEN: rund 24 g Eiweiß je Portion, originalgetreu. Zutaten wie in der Vorlage für 2 Portionen (2 Sandwiches). Gewählt aus „Ketchup oder süß-würzige Sauce“: Ketchup. „Optional: Schinken“ ist nicht eingerechnet. Annahmen der App, weil die Vorlage nur Bruchteile, Stück- oder keine Mengen nennt: 4 Scheiben Toastbrot ≈ 112 g, ½ Karotte ≈ 40 g, ¼ Weißkohl ≈ 200 g (Teil eines kleinen Kopfes), 2 Frühlingszwiebeln ≈ 40 g, Butter 20 g (gesamt, zum Braten und Rösten), 4 Scheiben Käse ≈ 80 g (gerechnet als Gouda), Ketchup 30 g. Eier vollständig stocken lassen. Tipp der Vorlage: In Korea wird das Sandwich oft süßlich-würzig mit Ketchup und Zucker serviert. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Sofort essen. Reste abgekühlt abgedeckt im Kühlschrank höchstens 1 Tag aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "In der Pfanne durchgehend heiß erhitzen; das Ei soll vollständig gestockt sein.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [22] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Korea"
+  }),
+  R({
+   "name": "Elote – Mexican Street Corn mit Mayo und saurer Sahne (Mexiko, Streetfood)",
+   "meal": "Snack",
+   "group": "Vegetarisch",
+   "cuisine": "Mexiko",
+   "servings": 4,
+   "prep": 10,
+   "cook": 15,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Elote",
+    "Mexiko",
+    "Mais",
+    "vegetarisch",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "maiskolben",
+     600
+    ],
+    [
+     "mayonnaise",
+     60
+    ],
+    [
+     "saure_sahne",
+     60
+    ],
+    [
+     "feta",
+     100
+    ],
+    [
+     "limettensaft",
+     20
+    ],
+    [
+     "koriander_frisch",
+     10
+    ]
+   ],
+   "spices": [
+    "chilipulver",
+    "salz"
+   ],
+   "steps": [
+    "Die Maiskolben (4) kochen, grillen oder in einer Pfanne rösten, bis sie stellenweise dunkle Röstaromen haben.",
+    "Mayonnaise (4 EL) und saure Sahne (4 EL) verrühren.",
+    "Die heißen Kolben damit bestreichen.",
+    "Mit dem fein geriebenen Käse (100 g), Chilipulver (1 TL), Salz, Koriander und Limettensaft bestreuen."
+   ],
+   "tips": "HINWEIS: als Snack geführt; rund 10 g Eiweiß und 304 kcal je Kolben, originalgetreu. Zutaten wie in der Vorlage für 4 Maiskolben. Gewählt aus „saure Sahne oder Crème fraîche“: saure Sahne (10 % Fett); mit Crème fraîche wäre es eine andere Fassung. Gewählt aus „Cotija oder Feta“: Feta. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 4 Maiskolben ≈ 600 g essbarer Anteil (Körner, ohne Spindel), 4 EL Mayonnaise ≈ 60 g, 4 EL saure Sahne ≈ 60 g, 1 Limette ≈ 20 g Saft, Koriander 10 g. Chilipulver geht nicht in die Nährwerte ein. Es gibt in der App schon Elote mit Mayo und Käse (r518, andere Vorlage); dies ist die Fassung des übergebenen Textes. Tipp der Vorlage: ein klassischer mexikanischer Straßenverkaufs-Snack, traditionell mit würzigem Käse und Chili. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Frisch am besten; nicht aufbewahren (Mayonnaise, saure Sahne und Käse) (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Nicht erhitzen; es enthält kein Fleisch, ein Erhitzen auf 70 °C ist nicht nötig.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (zehnte Liste „10 Streetfood-Rezepte zum Nachkochen“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [12][15] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Mexiko"
+  })
+);
+
+/* ===== Rezeptcharge 70: 10 Streetfood-Rezepte, elfte Liste (vom Auftraggeber übergebener Text, eigene Fassung von Claude; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Jianbing – Crepes mit Ei, Hoisin und Cracker (China, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Vegetarisch",
+   "cuisine": "China",
+   "servings": 2,
+   "prep": 25,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Jianbing",
+    "China",
+    "Ei",
+    "vegetarisch",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mehl",
+     100
+    ],
+    [
+     "kichererbsenmehl",
+     50
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "fruehlingszwiebel",
+     30
+    ],
+    [
+     "koriander_frisch",
+     5
+    ],
+    [
+     "hoisin",
+     36
+    ],
+    [
+     "chilisauce_suess",
+     18
+    ],
+    [
+     "cracker",
+     20
+    ],
+    [
+     "sesam",
+     5
+    ],
+    [
+     "rapsoel",
+     6
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Weizenmehl (100 g) und Kichererbsenmehl (50 g) mit Wasser (250 ml) und Salz zu einem dünnen Teig verrühren und 15 Minuten quellen lassen.",
+    "Eine Pfanne oder Crepe-Pfanne leicht ölen und bei mittlerer Hitze erhitzen.",
+    "Eine Kelle Teig hineingeben und mit einem Teigschaber oder dem Löffelrücken dünn verteilen.",
+    "Ein Ei direkt auf dem Teig verteilen und mit Frühlingszwiebel (2), Koriander und Sesam bestreuen.",
+    "Wenn die Unterseite goldbraun ist, wenden.",
+    "Mit Hoisin-Sauce (2 EL) und Chilisauce (1 EL) bestreichen, einen Cracker in die Mitte legen und fest zusammenfalten; so beide Crepes backen.",
+    "Halbieren und sofort servieren."
+   ],
+   "tips": "AUSNAHME VOM EIWEISSRAHMEN: rund 20 g Eiweiß je Portion (1 Crepe), originalgetreu. Zutaten wie in der Vorlage für 2 Crepes (1 Crepe je Portion). Gewählt aus „Mungbohnenmehl oder Kichererbsenmehl“: Kichererbsenmehl; mit Mungbohnenmehl wäre es eine andere Fassung (die App hat schon einen Jianbing mit Mungbohnenmehl, r515, andere Vorlage). Auffälligkeit der Vorlage: Der Sesam steht im Schritt, aber nicht in der Zutatenliste; die App rechnet 5 g. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 2 Frühlingszwiebeln ≈ 30 g, Koriander 5 g, 2 EL Hoisin ≈ 36 g, 1 EL Chilisauce ≈ 18 g (gerechnet als süße Chilisauce), 2 dünne Cracker ≈ 20 g, Öl zum Ausbacken 6 g. Eier vollständig stocken lassen. Tipp der Vorlage: ein chinesischer Frühstücks-Crepe mit Ei, Kräutern, Saucen und einem knusprigen Cracker. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Sofort essen. Reste abgekühlt abgedeckt im Kühlschrank höchstens 1 Tag aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "In der Pfanne durchgehend heiß erhitzen; das Ei soll vollständig gestockt sein.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [29][35] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "China"
+  }),
+  R({
+   "name": "Chicken Kathi Roll – Hähnchen-Wraps mit Joghurt-Minz-Sauce (Indien, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Geflügel",
+   "cuisine": "Indien",
+   "servings": 4,
+   "prep": 20,
+   "cook": 15,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Kathi Roll",
+    "Indien",
+    "Hähnchen",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "haehnchenbrust",
+     400
+    ],
+    [
+     "joghurt35",
+     150
+    ],
+    [
+     "ingwer",
+     8
+    ],
+    [
+     "knoblauch",
+     8
+    ],
+    [
+     "zitronensaft",
+     15
+    ],
+    [
+     "roti",
+     200
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "koriander_frisch",
+     10
+    ],
+    [
+     "joghurt35",
+     60
+    ],
+    [
+     "minze",
+     5
+    ]
+   ],
+   "spices": [
+    "garam_masala",
+    "kurkuma",
+    "paprika_suess",
+    "salz"
+   ],
+   "steps": [
+    "Das Hähnchen (400 g, in Streifen) mit Joghurt (150 g), Ingwer-Knoblauch-Paste (1 EL), Garam Masala (1 EL), Kurkuma (1 TL), Paprikapulver (1 TL), Salz und Zitronensaft mindestens 2 Stunden marinieren.",
+    "In einer heißen Pfanne portionsweise garen, bis es leicht geröstet und durchgegart ist (mindestens 70 °C).",
+    "Die Rotis (4, dünn) erwärmen.",
+    "Mit Joghurt-Minz-Sauce (4 EL), Hähnchen, Zwiebelringen, Koriander und nach Wunsch Chili belegen.",
+    "Fest einrollen und optional kurz in der Pfanne oder auf dem Grill anrösten."
+   ],
+   "tips": "AUSNAHME VOM KALORIENRAHMEN: rund 280 kcal je Portion (1 Wrap, Eiweiß 30 g), originalgetreu. Zutaten wie in der Vorlage für 4 Wraps. Annahmen der App, weil die Vorlage nur Löffelmaße oder keine Menge nennt: „Joghurt“ als Naturjoghurt 3,5 % Fett gerechnet, 1 EL Ingwer-Knoblauch-Paste ≈ 16 g (je 8 g Ingwer und Knoblauch), Zitronensaft 15 g, 4 dünne Rotis ≈ 200 g (Näherung nach Weizenfladenbrot), 1 Zwiebel ≈ 80 g, Koriander 10 g, 4 EL Joghurt-Minz-Sauce ≈ 65 g (60 g Joghurt und 5 g Minze, ohne weitere Zutaten der Sauce). „Optional: grüne Chilis“ sind nicht eingerechnet. Gewürze gehen nicht in die Nährwerte ein; Öl zum Braten nennt die Vorlage nicht und ist nicht eingerechnet. Tipp der Vorlage: Kathi Rolls sind in Indien beliebte Streetfood-Wraps mit mariniertem Hähnchen und würzigen Saucen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Hähnchen und Sauce getrennt abgekühlt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Das Hähnchen in der Pfanne durchgehend heiß erhitzen (mindestens 70 °C), die Rotis frisch erwärmen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [28] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Indien (Kolkata)"
+  }),
+  R({
+   "name": "Souvlaki-Spieße mit Schweinefilet und Tzatziki in Pita (Griechenland, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Schwein",
+   "cuisine": "Griechenland",
+   "servings": 4,
+   "prep": 20,
+   "cook": 12,
+   "level": "leicht",
+   "devices": [
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "Streetfood",
+    "Souvlaki",
+    "Griechenland",
+    "Schwein",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "schweinefilet",
+     600
+    ],
+    [
+     "olivenoel",
+     32
+    ],
+    [
+     "zitronensaft",
+     40
+    ],
+    [
+     "knoblauch",
+     9
+    ],
+    [
+     "pita",
+     240
+    ],
+    [
+     "joghurt10",
+     200
+    ],
+    [
+     "gurke",
+     150
+    ],
+    [
+     "tomate",
+     200
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "petersilie",
+     10
+    ]
+   ],
+   "spices": [
+    "oregano",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Das Fleisch (600 g, gewürfelt) mit Olivenöl (3 EL), Zitronensaft (1 Zitrone), Knoblauch (2 Zehen), Oregano (1 TL), Salz und Pfeffer mindestens 1 Stunde marinieren.",
+    "Auf Spieße stecken und bei starker Hitze rundum 10 bis 12 Minuten grillen, bis das Fleisch durchgegart ist (mindestens 70 °C).",
+    "Joghurt (200 g) mit der geriebenen, ausgepressten Gurke (½), Knoblauch (1 Zehe), Salz und einem Schuss Olivenöl zu Tzatziki verrühren.",
+    "Die Pita (4) aufwärmen und mit Fleisch, Tomaten, Zwiebeln, Petersilie und Tzatziki füllen."
+   ],
+   "tips": "Zutaten wie in der Vorlage für 4 Portionen. Gewählt aus „Schweinefilet oder Hähnchenbrust“: Schweinefilet; mit Hähnchenbrust wäre es eine andere Fassung (die App hat schon Souvlaki mit Schweineschulter, r460, andere Vorlage). Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 3 EL Olivenöl ≈ 27 g plus ein Schuss (5 g) für das Tzatziki, Saft einer Zitrone ≈ 40 g, 3 Knoblauchzehen ≈ 9 g (zwei in der Marinade, eine im Tzatziki), 4 Pita ≈ 240 g, „griechischer Joghurt“ als Griechischer Joghurt 10 % Fett, ½ Gurke ausgepresst ≈ 150 g, Tomaten 200 g, Zwiebeln 80 g, Petersilie 10 g. Tipp der Vorlage: Souvlaki wird in Griechenland häufig als gegrillter Fleischspieß oder in Pita serviert. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Fleisch und Tzatziki getrennt abgekühlt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Das Fleisch in der Pfanne oder im Backofen durchgehend heiß erhitzen (mindestens 70 °C); das Tzatziki kalt essen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [37] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Griechenland"
+  }),
+  R({
+   "name": "Poutine mit Pommes, Cheese Curds und Brühesoße (Kanada, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "Kanada",
+   "servings": 4,
+   "prep": 45,
+   "cook": 25,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Poutine",
+    "Kanada",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "kartoffeln",
+     1000
+    ],
+    [
+     "rapsoel",
+     70
+    ],
+    [
+     "cheese_curds",
+     200
+    ],
+    [
+     "rinderbruehe",
+     500
+    ],
+    [
+     "butter",
+     15
+    ],
+    [
+     "mehl",
+     15
+    ],
+    [
+     "schalotten",
+     30
+    ],
+    [
+     "senf",
+     5
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Die Kartoffeln (1 kg, in Pommes geschnitten) 30 Minuten in kaltem Wasser wässern und gut trocknen.",
+    "Zweimal frittieren: erst bei 160 °C etwa 5 Minuten, dann bei 190 °C 3 bis 4 Minuten goldbraun.",
+    "Butter (1 EL) schmelzen, die fein gewürfelte Schalotte anschwitzen, Mehl (1 EL) einrühren und kurz mitbraten.",
+    "Nach und nach die Brühe (500 ml) zugeben, aufkochen und mit Senf (1 TL), Salz und Pfeffer abschmecken.",
+    "Die heißen Pommes mit Cheese Curds (200 g) und der heißen Soße übergießen."
+   ],
+   "tips": "AUSNAHME VOM EIWEISSRAHMEN: rund 17 g Eiweiß und 609 kcal je Portion, originalgetreu. Zutaten wie in der Vorlage für 4 Portionen. Gewählt aus „Cheese Curds oder grob gewürfelter Mozzarella“: Cheese Curds; mit Mozzarella wäre es eine andere Fassung (die App hat schon Poutine mit Cheese Curds und Bratensauce, r465, andere Vorlage). Auffälligkeit der Vorlage: Die Zutatenliste nennt nur 2 EL Öl, die Schritte verlangen aber zweimaliges Frittieren; die App rechnet deshalb nur das aufgenommene Öl (angenommen 70 g), nicht das ganze Frittieröl und nicht die 2 EL. Annahmen der App: Rinderbrühe 500 ml ≈ 500 g, 1 EL Butter ≈ 15 g, 1 EL Mehl ≈ 15 g, 1 Schalotte ≈ 30 g, 1 TL Senf ≈ 5 g. Bei der gerechneten Menge Soße sind die Curds nicht gekocht. Tipp der Vorlage: Die Curds sollen leicht schmelzen, aber noch Biss haben. Sicherheitshinweis der App: Heißes Fett nie unbeaufsichtigt lassen und niemals mit Wasser löschen; Deckel bereithalten. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Frisch am besten (die Pommes werden weich). Soße abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Die Soße vor dem Servieren aufkochen und durchgehend auf mindestens 70 °C erhitzen; Pommes im Backofen oder Airfryer bei etwa 200 °C knusprig aufbacken.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [30][37] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Kanada (Québec)"
+  }),
+  R({
+   "name": "Pierogi mit Kartoffel-Quark-Füllung (Polen, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Vegetarisch",
+   "cuisine": "Polen",
+   "servings": 5,
+   "prep": 60,
+   "cook": 20,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Pierogi",
+    "Polen",
+    "vegetarisch",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mehl",
+     400
+    ],
+    [
+     "eier",
+     55
+    ],
+    [
+     "rapsoel",
+     12
+    ],
+    [
+     "kartoffeln",
+     600
+    ],
+    [
+     "magerquark",
+     150
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "butter",
+     30
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer",
+    "muskat"
+   ],
+   "steps": [
+    "Mehl (400 g), warmes Wasser (200 ml), Ei, Öl (1 EL) und Salz zu einem glatten Teig verkneten und 30 Minuten ruhen lassen.",
+    "Die Kartoffeln (600 g) kochen, zerdrücken und mit Quark (150 g), Salz, Pfeffer und Muskat mischen.",
+    "Den Teig dünn ausrollen, Kreise ausstechen und je 1 TL Füllung daraufsetzen.",
+    "Zu Halbmonden formen und die Ränder fest andrücken.",
+    "In Salzwasser kochen, bis sie an der Oberfläche schwimmen.",
+    "In Butter mit der gebräunten Zwiebel schwenken."
+   ],
+   "tips": "AUSNAHME VOM EIWEISSRAHMEN: rund 16 g Eiweiß je Portion (6 Pierogi), originalgetreu. Zutaten wie in der Vorlage für etwa 30 Stück; in der App sind das 5 Portionen zu je 6 Pierogi. Gewählt aus „Quark oder Ricotta“: Quark, als Magerquark gerechnet; mit Ricotta wäre es eine andere Fassung (die App hat schon Pierogi mit Kartoffel-Speck-Füllung, r461, andere Vorlage). Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 1 Ei ≈ 55 g, 1 EL Öl ≈ 12 g, Kartoffeln 600 g roh gewogen, 1 Zwiebel ≈ 80 g, Butter 30 g zum Schwenken. Das Wasser geht nicht in die Nährwerte ein. Tipp der Vorlage: Pierogi sind gefüllte polnische Teigtaschen, die je nach Region mit Kartoffeln, Käse oder Fleisch gefüllt werden. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "In der Pfanne mit etwas Butter durchgehend heiß erhitzen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [30] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Polen"
+  }),
+  R({
+   "name": "Takoyaki mit Oktopus, Ingwer und Mayo (Japan, Streetfood)",
+   "meal": "Snack",
+   "group": "Fisch",
+   "cuisine": "Japan",
+   "servings": 4,
+   "prep": 20,
+   "cook": 20,
+   "level": "schwer",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Takoyaki",
+    "Japan",
+    "Oktopus",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mehl",
+     150
+    ],
+    [
+     "gemuesebruehe",
+     500
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "sojasauce",
+     5
+    ],
+    [
+     "oktopus",
+     200
+    ],
+    [
+     "fruehlingszwiebel",
+     40
+    ],
+    [
+     "eingelegter_ingwer",
+     20
+    ],
+    [
+     "rapsoel",
+     12
+    ],
+    [
+     "takoyaki_sauce",
+     40
+    ],
+    [
+     "mayonnaise",
+     30
+    ]
+   ],
+   "spices": [
+    "bonitoflocken",
+    "aonori"
+   ],
+   "steps": [
+    "Mehl (150 g), Brühe (500 ml), Eier (2) und Sojasauce (1 TL) glatt verrühren.",
+    "Die Takoyaki-Pfanne stark erhitzen und jede Vertiefung gut ölen.",
+    "Den Teig bis zum Rand einfüllen und Oktopus (200 g, gekocht, klein gewürfelt), Frühlingszwiebeln (2) und eingelegten Ingwer zugeben.",
+    "Mit Spießchen oder Essstäbchen ständig drehen, bis runde Bällchen entstehen.",
+    "Weiter backen, bis sie außen knusprig und innen weich sind.",
+    "Mit Takoyaki-Sauce, Mayonnaise, Bonitoflocken und Aonori servieren."
+   ],
+   "tips": "HINWEIS: als Snack geführt; rund 23 g Eiweiß und 353 kcal je Portion (6 Stück), originalgetreu. Zutaten wie in der Vorlage für etwa 24 Stück; in der App sind das 4 Portionen zu je 6 Stück. Gewählt aus „Dashi oder Brühe“: Brühe, als Gemüsebrühe gerechnet; mit Dashi wäre es eine andere Fassung. Gewählt aus „Takoyaki- oder Okonomiyaki-Sauce“: Takoyaki-Sauce (Näherung nach Tomatenketchup, herstellerabhängig). Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 2 Frühlingszwiebeln ≈ 40 g, eingelegter Ingwer 20 g, Öl für die Pfanne 12 g, Sauce 40 g und Mayonnaise 30 g. Der Oktopus-Wert ist ein eigener Richtwert der App. Die Brühe ist komplett eingerechnet, obwohl nicht der ganze Teig in die Bällchen geht. Bonitoflocken und Aonori gehen nicht in die Nährwerte ein. Eine Takoyaki-Pfanne ist nötig. Tipp der Vorlage: kleine gebratene Oktopus-Bällchen und ein bekannter japanischer Streetfood-Klassiker. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Frisch am besten. Reste abgekühlt abgedeckt im Kühlschrank höchstens 1 Tag aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Im Backofen bei etwa 180 °C durchgehend heiß aufbacken (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [33][37] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Japan (Osaka)"
+  }),
+  R({
+   "name": "Suya-Spieße mit Erdnusspulver und Bouillon (Nigeria, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "Nigeria",
+   "servings": 4,
+   "prep": 15,
+   "cook": 10,
+   "level": "leicht",
+   "devices": [
+    "Kontaktgrill"
+   ],
+   "tags": [
+    "Streetfood",
+    "Suya",
+    "Nigeria",
+    "Rind",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "rindersteak",
+     700
+    ],
+    [
+     "erdnuesse",
+     20
+    ],
+    [
+     "bouillonpulver",
+     5
+    ],
+    [
+     "rapsoel",
+     10
+    ],
+    [
+     "zwiebel",
+     160
+    ],
+    [
+     "tomate",
+     240
+    ],
+    [
+     "limettensaft",
+     20
+    ]
+   ],
+   "spices": [
+    "paprika_suess",
+    "ingwerpulver",
+    "knoblauchpulver",
+    "cayenne",
+    "salz"
+   ],
+   "steps": [
+    "Paprikapulver (1 EL), Ingwerpulver (1 TL), Knoblauchpulver (1 TL), Cayennepfeffer (1 TL), Bouillonpulver (1 TL) und Salz mit dem Erdnusspulver (2 EL) mischen.",
+    "Das Fleisch (700 g, in dünnen Streifen) damit einreiben und mindestens 1 Stunde marinieren.",
+    "Auf Spieße stecken und mit etwas Öl bestreichen.",
+    "Bei hoher Hitze je Seite 3 bis 4 Minuten grillen oder in einer Pfanne scharf braten, bis das Fleisch durchgegart ist (mindestens 70 °C).",
+    "Mit Zwiebelringen, Tomaten und Limette servieren."
+   ],
+   "tips": "AUSNAHME VOM KALORIENRAHMEN: rund 276 kcal je Portion (Fleisch mit Zwiebeln und Tomaten, ohne Beilage; Eiweiß 41 g), originalgetreu. Zutaten wie in der Vorlage für 4 Portionen. Gewählt aus „Erdnusspulver oder grob gemahlene Erdnüsse“: gemahlene ungesalzene Erdnüsse (2 EL ≈ 20 g; echtes entöltes Erdnusspulver hätte weniger Fett). Annahmen der App, weil die Vorlage nur Löffelmaße oder keine Menge nennt: 1 TL Bouillonpulver ≈ 5 g (enthält häufig Sellerie, herstellerabhängig), Öl zum Bestreichen 10 g, 2 Zwiebeln ≈ 160 g, 2 Tomaten ≈ 240 g, 1 Limette ≈ 20 g Saft. Die Gewürze gehen nicht in die Nährwerte ein. Es gibt in der App schon Suya (r516, andere Vorlage); dies ist die Fassung des übergebenen Textes. Tipp der Vorlage: würzige gegrillte Fleischspieße, die in Westafrika besonders beliebt sind. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Fleisch abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Das Fleisch in der Pfanne oder im Backofen durchgehend heiß erhitzen (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [39] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Nigeria"
+  }),
+  R({
+   "name": "Anticuchos de Corazón – Rinderherzspieße mit Kartoffeln und Mais (Peru, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "Peru",
+   "servings": 4,
+   "prep": 20,
+   "cook": 20,
+   "level": "mittel",
+   "devices": [
+    "Kontaktgrill",
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Anticuchos",
+    "Peru",
+    "Rind",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "rinderherz",
+     700
+    ],
+    [
+     "knoblauch",
+     9
+    ],
+    [
+     "sambal",
+     30
+    ],
+    [
+     "essig",
+     60
+    ],
+    [
+     "sojasauce",
+     30
+    ],
+    [
+     "rapsoel",
+     30
+    ],
+    [
+     "kartoffeln",
+     400
+    ],
+    [
+     "maiskolben",
+     300
+    ]
+   ],
+   "spices": [
+    "kreuzkuemmel",
+    "oregano",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Das Fleisch (700 g) in mundgerechte Würfel schneiden.",
+    "Knoblauch (3 Zehen), Chilipaste (2 EL), Rotweinessig (60 ml), Sojasauce (2 EL), Kreuzkümmel (1 TL), Oregano (1 TL), Salz und Pfeffer zu einer Marinade mixen.",
+    "Das Fleisch mindestens 4 Stunden in der Marinade ziehen lassen.",
+    "Auf Spieße stecken und bei starker Hitze rundum 8 bis 10 Minuten grillen, bis es durchgegart ist (mindestens 70 °C).",
+    "Mit gebratenen Kartoffeln und Mais servieren."
+   ],
+   "tips": "Zutaten wie in der Vorlage für 4 Portionen. Gewählt aus „Rinderherz oder Rindfleisch“: Rinderherz (passend zum Namen); mit Rindfleisch wäre es eine andere Fassung. Gewählt aus „Aji-Paste oder Chilipaste“: Chilipaste (Sambal Oelek), nicht die peruanische Aji-Paste. Der Rotweinessig ist mit dem Nährwert von Essig gerechnet (die App hat keinen eigenen Eintrag für Rotweinessig). Annahmen der App, weil die Vorlage nur Löffelmaße oder keine Menge nennt: 3 Knoblauchzehen ≈ 9 g, 2 EL Chilipaste ≈ 30 g, 2 EL Sojasauce ≈ 30 g, „Öl“ ohne Menge: 30 g (10 g zum Bestreichen und 20 g zum Braten der Kartoffeln), Beilage „Kartoffeln und Mais“ ohne Menge: 400 g Kartoffeln (roh) und 300 g Maiskolben (essbarer Anteil, gerechnet als Zuckermais). Die Marinade ist komplett eingerechnet, obwohl ein Teil abtropft. Tipp der Vorlage: Rinderherz ist die traditionelle Variante, Rindfleisch eine einfachere Alternative. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Fleisch abgekühlt abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Das Fleisch in der Pfanne oder im Backofen durchgehend heiß erhitzen (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [31] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Peru"
+  }),
+  R({
+   "name": "Roti John – Baguette mit Hackfleisch-Ei (Singapur/Malaysia, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "Singapur/Malaysia",
+   "servings": 2,
+   "prep": 15,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Streetfood",
+    "Roti John",
+    "Singapur",
+    "Malaysia",
+    "Rind",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "baguette",
+     200
+    ],
+    [
+     "rinderhack",
+     250
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "ketchup",
+     15
+    ],
+    [
+     "mayonnaise",
+     15
+    ],
+    [
+     "butter",
+     20
+    ],
+    [
+     "gurke",
+     60
+    ],
+    [
+     "chilisauce_suess",
+     15
+    ]
+   ],
+   "spices": [
+    "curry",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Das Hackfleisch (250 g) mit der gewürfelten Zwiebel, Currypulver (1 EL), Salz und Pfeffer anbraten, bis es durchgegart ist (mindestens 70 °C), und abkühlen lassen.",
+    "Die Eier (2) unterrühren.",
+    "Die Baguettes (2) längs aufschneiden, aber nicht ganz durchtrennen.",
+    "Eine Pfanne mit Butter erhitzen und die Baguette-Hälften mit der Innenseite nach unten hineinlegen.",
+    "Die Hackfleisch-Ei-Masse auf die Brote geben und stocken lassen.",
+    "Wenden, mit Ketchup (1 EL) und Mayonnaise (1 EL) bestreichen und zusammendrücken.",
+    "Mit Gurkenscheiben und Chilisauce servieren."
+   ],
+   "tips": "AUSNAHME VOM KALORIENRAHMEN: rund 723 kcal je Portion (ein ganzes Sandwich, Eiweiß 42 g), originalgetreu. Zutaten wie in der Vorlage für 2 Sandwiches. Gewählt aus „Rinder- oder Hähnchenhackfleisch“: Rinderhack; mit Hähnchenhack wäre es eine andere Fassung. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 2 kleine Baguettes ≈ 200 g, 1 Zwiebel ≈ 80 g, 1 EL Ketchup ≈ 15 g, 1 EL Mayonnaise ≈ 15 g, Butter 20 g, Gurkenscheiben 60 g, Chilisauce 15 g (gerechnet als süße Chilisauce). Currypulver geht nicht in die Nährwerte ein. Eier vollständig stocken lassen. Tipp der Vorlage: ein in Singapur und Malaysia verbreitetes Streetfood-Sandwich aus Baguette, Ei, Hackfleisch und Zwiebeln. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Sofort essen. Reste abgekühlt abgedeckt im Kühlschrank höchstens 1 Tag aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "In der Pfanne oder im Backofen durchgehend heiß erhitzen (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [27][39] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Singapur/Malaysia"
+  }),
+  R({
+   "name": "Tlayudas mit schwarzen Bohnen, Rinderhack und Mozzarella (Mexiko, Streetfood)",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "Mexiko",
+   "servings": 2,
+   "prep": 15,
+   "cook": 10,
+   "level": "leicht",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Streetfood",
+    "Tlayudas",
+    "Mexiko",
+    "Oaxaca",
+    "Rind",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "maistortilla",
+     160
+    ],
+    [
+     "schwarze_bohnen",
+     200
+    ],
+    [
+     "mozzarella",
+     150
+    ],
+    [
+     "rinderhack",
+     100
+    ],
+    [
+     "avocado",
+     150
+    ],
+    [
+     "salsa",
+     60
+    ],
+    [
+     "weisskohl",
+     60
+    ],
+    [
+     "koriander_frisch",
+     5
+    ],
+    [
+     "limettensaft",
+     15
+    ],
+    [
+     "rapsoel",
+     10
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Den Backofen auf 220 °C vorheizen.",
+    "Die Tortillas (2 große) beidseitig mit etwas Öl bestreichen und 3 bis 4 Minuten knusprig backen.",
+    "Mit dem Bohnenpüree (200 g) bestreichen.",
+    "Fein gehobelten Kohl, angebratenes Rinderhack (100 g, durchgegart, mindestens 70 °C), gezupften Mozzarella (150 g) und Avocado (1) darauf verteilen.",
+    "Weitere 4 bis 5 Minuten backen, bis der Käse schmilzt.",
+    "Mit Salsa, Koriander und Limette servieren."
+   ],
+   "tips": "AUSNAHME VOM KALORIENRAHMEN: rund 752 kcal je Portion (eine ganze Tlayuda, Eiweiß 38 g), originalgetreu. Zutaten wie in der Vorlage für 2 Tlayudas (1 je Portion). Gewählt aus „Maistortillas oder Weizenwraps“: Maistortillas; aus „Oaxaca-Käse oder Mozzarella“: Mozzarella; aus „Rinderhack oder gegrilltes Hähnchen“: Rinderhack; aus „Salsa Roja oder Salsa Verde“: Salsa Roja (Tomatensalsa); mit den anderen Varianten wäre es eine andere Fassung. Das Rinderhack muss vor dem Belegen angebraten werden (die Vorlage nennt den Schritt nicht ausdrücklich). Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 2 große Tortillas ≈ 160 g, 1 Avocado ≈ 150 g, Salsa 60 g, Kohl 60 g, Koriander 5 g, Limettensaft 15 g, Öl 10 g. Tipp der Vorlage: große, knusprige mexikanische Tortillas, oft „Oaxacan Pizza“ genannt. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Sofort essen; nicht aufbewahren (Avocado, geschmolzener Käse) (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Im Backofen bei etwa 200 °C durchgehend heiß aufbacken (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (elfte Liste „10 weitere Streetfood-Rezepte“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [33] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Mexiko (Oaxaca)"
+  })
+);
+
 /* ===== Bibliothek ab r77 (Entscheidung des Auftraggebers, 28.10.2026, aktualisiert) =====
    Ausgemustert bleiben nur die früheren eigenen Rezepte r01 bis r76. Die von Perplexity gelieferten (r77 bis r94) und die nach Online-Recherche geschriebenen Rezepte (r95 ff., Quelle "Eigene Fassung nach Recherche (Claude)") sind wieder in der Bibliothek, auf ausdrücklichen Wunsch des Auftraggebers ("alle Rezepte einbauen").
    Wieder nur Perplexity: in der Schleife unten nach dem ersten if den Zweig else if (!/^Perplexity/.test(a[i].src || "")) { RETIRED[...] = ...; a.splice(i, 1); } ergänzen (Sicherung: data_rezepte5.js.bak_perp).
@@ -38355,7 +40010,7 @@ function mergeState(s) {
   TAGE.forEach(t => { out.week[t] = Object.assign({ f: null, m: null, a: null, s: null, d: null }, isObj(out.week[t]) ? out.week[t] : {}); });
   out.stock = out.stock.filter(l => l && ZMAP[l.ing] && l.g > 0);
   out.userRecipes = out.userRecipes.filter(r => r && r.id && r.name && Array.isArray(r.ing) && Array.isArray(r.steps));
-  out.removed = (Array.isArray(s.removed) ? s.removed : []).filter(id => typeof id === 'string').slice(0, 500);
+  out.removed = (Array.isArray(s.removed) ? s.removed : []).filter(id => typeof id === 'string').slice(0, 5000);
   const pp = isObj(s.prep) ? s.prep : {};
   out.prep = Object.assign(defaultPrep(), pp);
   const clampN = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, Math.round(v))) : d; };
@@ -40487,6 +42142,66 @@ const QUELLEN_REFERENZEN = {
   ],
   "r522": [
     {"site": "Standardrezept (Japan)", "title": "Okonomiyaki", "kind": "F", "note": "Der übergebene Text nennt kein Quellenrezept, nur „Standardrezept (Japan)“; kein erfundener Link."}
+  ],
+  "r523": [
+    {"site": "Quelle nicht genannt", "title": "Tacos al Pastor", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [17][20] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r524": [
+    {"site": "Quelle nicht genannt", "title": "Bánh Mì", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [12][25] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r525": [
+    {"site": "Quelle nicht genannt", "title": "Falafel im Pitabrot", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [16][20] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r526": [
+    {"site": "Quelle nicht genannt", "title": "Arepas mit Reina Pepiada", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [21][12] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r527": [
+    {"site": "Quelle nicht genannt", "title": "Pad Thai", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [20][24] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r528": [
+    {"site": "Quelle nicht genannt", "title": "Chicken Satay", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [17] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r529": [
+    {"site": "Quelle nicht genannt", "title": "Empanadas mit Rindfleisch", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [24] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r530": [
+    {"site": "Quelle nicht genannt", "title": "Gyoza", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt weder Quellenrezept noch Link; kein erfundener Link."}
+  ],
+  "r531": [
+    {"site": "Quelle nicht genannt", "title": "Korean Street Toast", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [22] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r532": [
+    {"site": "Quelle nicht genannt", "title": "Elote", "kind": "F", "note": "Der übergebene Text (Liste „10 Streetfood-Rezepte zum Nachkochen“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [12][15] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r533": [
+    {"site": "Quelle nicht genannt", "title": "Jianbing", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [29][35] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r534": [
+    {"site": "Quelle nicht genannt", "title": "Chicken Kathi Roll", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [28] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r535": [
+    {"site": "Quelle nicht genannt", "title": "Souvlaki mit Tzatziki", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [37] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r536": [
+    {"site": "Quelle nicht genannt", "title": "Poutine", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [30][37] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r537": [
+    {"site": "Quelle nicht genannt", "title": "Pierogi mit Kartoffel-Käse-Füllung", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [30] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r538": [
+    {"site": "Quelle nicht genannt", "title": "Takoyaki", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [33][37] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r539": [
+    {"site": "Quelle nicht genannt", "title": "Suya-Spieße", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [39] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r540": [
+    {"site": "Quelle nicht genannt", "title": "Anticuchos de Corazón", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [31] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r541": [
+    {"site": "Quelle nicht genannt", "title": "Roti John", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [27][39] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r542": [
+    {"site": "Quelle nicht genannt", "title": "Tlayudas", "kind": "F", "note": "Der übergebene Text (Liste „10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [33] ohne Verzeichnis; kein erfundener Link."}
   ],
   "r354": [
     {"url": "https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt", "site": "bbcgoodfood.com", "title": "Instant frozen berry yogurt", "kind": "B", "note": "Im eingereichten Rezepttext als Originalseite genannt; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung folgt auf ausdrücklichen Wunsch den Zutaten und Mengen des eingereichten Rezepttextes (adaptiert von BBC Good Food, Cassie Best); Zubereitung in eigenen Worten."}

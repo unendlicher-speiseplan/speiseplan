@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-29 19:55 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-30 11:09 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,32 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag r533 bis r542: elfte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine Liste „10 weitere Streetfood-Rezepte“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten zehn). Sechs Gerichte gab es dem Namen nach schon (Jianbing r515, Souvlaki r460, Poutine r465, Pierogi r461, Takoyaki r480, Suya r516), aber jeweils mit anderen Zutaten oder Mengen; deshalb sind alle zehn als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): r533 Jianbing, r534 Chicken Kathi Roll, r535 Souvlaki, r536 Poutine, r537 Pierogi, r538 Takoyaki, r539 Suya, r540 Anticuchos de Corazón, r541 Roti John, r542 Tlayudas. Kathi Roll, Anticuchos, Roti John und Tlayudas sind neue Gerichte.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Jianbing „Mungbohnenmehl oder Kichererbsenmehl“ (Kichererbsenmehl), Souvlaki „Schweinefilet oder Hähnchenbrust“ (Schweinefilet), Poutine „Cheese Curds oder Mozzarella“ (Cheese Curds), Pierogi „Quark oder Ricotta“ (Quark, als Magerquark gerechnet), Takoyaki „Dashi oder Brühe“ (Gemüsebrühe) und „Takoyaki- oder Okonomiyaki-Sauce“ (Takoyaki-Sauce), Suya „Erdnusspulver oder gemahlene Erdnüsse“ (gemahlene Erdnüsse), Anticuchos „Rinderherz oder Rindfleisch“ (Rinderherz) und „Aji-Paste oder Chilipaste“ (Chilipaste/Sambal Oelek), Roti John „Rinder- oder Hähnchenhack“ (Rinderhack), Tlayudas Maistortillas, Mozzarella, Rinderhack und Salsa Roja (jeweils die zuerst genannte Variante).
+- **Auffälligkeiten der Vorlage:** Jianbing: Sesam steht im Schritt, nicht in der Zutatenliste (5 g angenommen). Poutine: Die Zutatenliste nennt nur 2 EL Öl, die Schritte verlangen zweimaliges Frittieren; gerechnet ist nur das aufgenommene Öl (70 g), dazu steht der Sicherheitshinweis. Die Tipps enthalten wieder Verweisnummern wie [29][35] ohne Verzeichnis; sie sind keine Quellen und wurden nicht zu Links erfunden.
+- **Fehlende Mengen sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel Kathi Roll: Ingwer-Knoblauch-Paste je 8 g, Joghurt-Minz-Sauce als 60 g Joghurt und 5 g Minze; Anticuchos: Beilage 400 g Kartoffeln und 300 g Mais; „Optional“-Zutaten wie grüne Chilis sind nicht eingerechnet). Rotweinessig (Anticuchos) ist mit dem Nährwert von Essig gerechnet.
+- **Frittieren:** Poutine wird wie in der Vorlage frittiert (nur aufgenommenes Öl gerechnet, Sicherheitshinweis im Tipp).
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp als AUSNAHME benannt): Jianbing (20 g Eiweiß), Kathi Roll (280 kcal), Poutine (17 g), Pierogi (16 g), Suya (276 kcal), Roti John (723 kcal) und Tlayudas (752 kcal). Takoyaki ist als Snack geführt (Hinweis im Tipp).
+- **Neue Zutaten:** Rinderherz (BLS V511100) und Bouillonpulver (BLS R810000; mit dem Allergen Sellerie gekennzeichnet, weil Brühpulver es häufig enthält, herstellerabhängig). Neues Gewürz ohne Nährwerte: Aonori. Poutine ist wegen der Rinderbrühe der Gruppe Rind zugeordnet.
+- **Test angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch Takoyaki r480 und r538 (zwei übergebene Fassungen desselben Gerichts).
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`; es gibt diesmal keine neuen gesperrten Links. Nicht praktisch getestet. Zähler: Bibliothek 517, ausgelieferte Rezepte im Abgleich 446, Quellen-Einträge 411 (davon 365 mit Link und 80 ohne bekannte Original-URL).
+
+## Nachtrag r523 bis r532: zehnte Streetfood-Liste (30.10.2026)
+
+- Der Auftraggeber hat eine Liste „10 Streetfood-Rezepte zum Nachkochen“ übergeben (ohne Zusatzanweisung; gedeutet wie die ersten neun). Acht Gerichte gab es dem Namen nach schon (Elote r518, Pad Thai r453, Satay r482, Gyoza r472, Falafel r452, Empanadas r448 und r134, Arepas r464, Banh Mì r454), aber jeweils mit anderen Zutaten oder Mengen; deshalb sind alle zehn als eigene, **originalgetreue** Fassungen des übergebenen Textes angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): r523 Tacos al Pastor, r524 Bánh Mì, r525 Falafel im Pitabrot, r526 Arepas mit Reina Pepiada, r527 Pad Thai, r528 Chicken Satay, r529 Empanadas, r530 Gyoza, r531 Korean Street Toast, r532 Elote. Jedes Rezept nennt im Tipp die ähnliche ältere Fassung.
+- **Projektregel Ananas (Tacos al Pastor):** Die Vorlage nennt Ananassaft in der Marinade und Ananaswürfel zum Servieren. Beides ist wegen der Regel „Ananas nicht als Hauptgericht“ nicht aufgeführt (wie bei Ceviche r450 mit der Süßkartoffel); das Rezept weist darauf hin, ohne die Zutat zu nennen. **Bitte Rückmeldung geben**, ob die Zutaten bei diesem Gericht doch enthalten sein sollen.
+- **Fehlende Mengen sind Annahmen der App** und in jedem Rezepttipp einzeln aufgeführt (zum Beispiel Baguette 100 g je Stück, Gurke und Mayonnaise bei Bánh Mì, Hummus 100 g bei Falafel, ¼ Weißkohl ≈ 200 g beim Street Toast, Palmzucker „2–3 EL“ als 2,5 EL bei Pad Thai). Öl zum Braten nennt die Vorlage bei Tacos, Pad Thai, Empanadas (Füllung) und Satay nicht und ist nicht eingerechnet.
+- **Wahlmöglichkeiten der Vorlage** (andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Bánh Mì „Schweinebauch oder Hähnchenbrust“ (Hähnchenbrust) und „Daikon oder Rettich“ (Rettich), Pad Thai „Garnelen oder Hähnchen“ (Hähnchen), Korean Street Toast „Ketchup oder süß-würzige Sauce“ (Ketchup; „Optional: Schinken“ nicht eingerechnet), Elote „saure Sahne oder Crème fraîche“ (saure Sahne) und „Cotija oder Feta“ (Feta).
+- **Auffälligkeiten der Vorlage:** Arepas nennt in der Überschrift „4 Arepas“, im Schritt „8 Kugeln“ (die App rechnet 4 Portionen mit 8 Fladen). Die Tipps enthalten Verweisnummern wie [17][20] ohne Verzeichnis; sie sind keine Quellen und wurden nicht zu Links erfunden.
+- **Frittieren:** Falafel wird wie in der Vorlage frittiert (nur 40 g aufgenommenes Öl gerechnet, Sicherheitshinweis im Tipp); Pad Thai trägt den Sprossen-Hinweis.
+- **Ausnahmen vom Kalorien- und Eiweißrahmen** (originalgetreu, im jeweiligen Tipp als AUSNAHME benannt): Tacos (379 kcal), Falafel (22 g Eiweiß), Arepas (23 g), Pad Thai (690 kcal), Empanadas (379 kcal, 22 g), Gyoza (341 kcal, 15 g) und Street Toast (24 g). Elote ist als Snack geführt (Hinweis: 10 g Eiweiß).
+- **Neue Zutaten:** Weizentoastbrot (BLS B314000). **Näherungen:** Empanada-Teigplatten und Gyoza-Teigblätter (beide nach rohem Pizzateig, BLS D079000; Fettanteil herstellerabhängig, bei fettreicheren Empanada-Platten kann die Energie höher sein). Neue Gewürze ohne Nährwerte: Guajillo-Chili (getrocknet) und Achiote-Paste.
+- **Programmfehler behoben:** Die Liste der entfernten Rezepte wurde beim Laden auf 500 Einträge begrenzt, die Bibliothek hat aber über 500 Rezepte; bei „Alle entfernen“ wären nach einem Neustart die letzten Rezepte wieder aufgetaucht. Die Grenze liegt jetzt bei 5000 (`app_a.js`); der Test „removed wird sauber geladen“ hat den Fehler gezeigt.
+- **Test angepasst:** Die Dubletten-Ausnahmen in `test_logic2.js` enthalten jetzt auch Elote r518 und r532 (zwei übergebene Fassungen desselben Gerichts).
+- **Quellen:** Der Text nennt keine Links; alle zehn stehen als F-Einträge („Quelle nicht genannt“) in `data_quellen.js`. Nicht praktisch getestet. Zähler: Bibliothek 507, ausgelieferte Rezepte im Abgleich 436, Quellen-Einträge 401 (davon 365 mit Link und 70 ohne bekannte Original-URL).
 
 ## Nachtrag r513 bis r522: neunte Streetfood-Liste (29.10.2026)
 
@@ -207,17 +233,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **426** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 69, Rind: 62, Schwein: 57, Fisch: 49, Vegetarisch: 189 |
-| Verteilung nach Mahlzeit | Hauptgericht: 196, Suppe/Eintopf: 48, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 36, Dessert: 61, Aufstrich: 34, Sauce/Dips: 5 |
+| Mitgelieferte Rezepte | **446** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 74, Rind: 68, Schwein: 60, Fisch: 50, Vegetarisch: 194 |
+| Verteilung nach Mahlzeit | Hauptgericht: 214, Suppe/Eintopf: 48, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 38, Dessert: 61, Aufstrich: 34, Sauce/Dips: 5 |
 | Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 349 (348) |
-| Gewürze | 64 |
+| Zutaten im Stamm (davon mit Nährwerten) | 354 (353) |
+| Gewürze | 67 |
 | Bausteine (Meal-Prep) | **90** (Protein: 20, Beilage: 8, Sauce: 27, Gemüse: 5, Booster: 30) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 2068 KB |
+| Größe `dist/index.html` | 2138 KB |
 
 ---
 
@@ -439,7 +465,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 426 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 446 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 90 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
