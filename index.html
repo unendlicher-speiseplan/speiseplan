@@ -1220,6 +1220,8 @@ const ZUTATEN_PLUS = [
   I('zatar', 'Za’atar (Gewürzmischung; rechnerisch: 1 Teil Sesam, 1 Teil kalorienarme Gewürzkräuter)', 'Gewürze & Öle', 283, 10.5, 0.7, 25.2, { al: ['sesam'] }),
   I('emmentaler', 'Emmentaler (mind. 45 % Fett i. Tr.)', 'Milchprodukte', 374, 27.5, 0, 29.2, { al: ['milch'], his: 2 }),
   I('fischbruehe', 'Fischbrühe (zubereitet)', 'Gewürze & Öle', 8, 1, 0, 0.4, { al: ['fisch'] }),
+  I('vanillezucker', 'Vanillezucker', 'Trockenprodukte', 400, 0, 100, 0),
+  I('rinderbrust', 'Rinderbrust / Brustkern (roh, mit Fettanteil)', 'Fleisch & Geflügel', 200, 18.6, 0, 14),
 ];
 ZUTATEN_PLUS.forEach(z => { ZUTATEN.push(z); ZMAP[z.id] = z; });
 
@@ -1234,7 +1236,7 @@ const SPICES = [
   { id: 'basilikum_tr', name: 'Basilikum, getrocknet' }, { id: 'majoran', name: 'Majoran' }, { id: 'lorbeer', name: 'Lorbeerblätter' },
   { id: 'chili_flocken', name: 'Chiliflocken' }, { id: 'chilipulver', name: 'Chilipulver' }, { id: 'cayenne', name: 'Cayennepfeffer' },
   { id: 'kuemmel', name: 'Kümmel' }, { id: 'knoblauchpulver', name: 'Knoblauchpulver', fod: 1 }, { id: 'zwiebelpulver', name: 'Zwiebelpulver', fod: 1 },
-  { id: 'ingwerpulver', name: 'Ingwerpulver' }, { id: 'senfsaat', name: 'Senfsaat', al: ['senf'] }, { id: 'fenchelsaat', name: 'Fenchelsamen' },
+  { id: 'ingwerpulver', name: 'Ingwerpulver' }, { id: 'senfsaat', name: 'Senfsaat', al: ['senf'] }, { id: 'senfpulver', name: 'Senfpulver', al: ['senf'] }, { id: 'einmachgewuerz', name: 'Einmachgewürz (Pickling Spice; enthält Senfsaat)', al: ['senf'] }, { id: 'pokelsalz', name: 'Nitritpökelsalz / Pink Curing Salt (nur in der angegebenen Menge verwenden)' }, { id: 'fenchelsaat', name: 'Fenchelsamen' },
   { id: 'sumach', name: 'Sumach' }, { id: 'zaatar', name: 'Za’atar', al: ['sesam'] }, { id: 'ras_el_hanout', name: 'Ras el Hanout' },
   { id: 'fuenf_gewuerz', name: 'Fünf-Gewürze-Pulver' }, { id: 'sternanis', name: 'Sternanis' }, { id: 'anis', name: 'Anis (Samen)' }, { id: 'anardana', name: 'Granatapfelkerne, gemahlen (Anardana)' }, { id: 'safran', name: 'Safran' },
   { id: 'piment', name: 'Piment' }, { id: 'wacholder', name: 'Wacholderbeeren' }, { id: 'petersilie_tr', name: 'Petersilie, getrocknet' }, { id: 'dill_tr', name: 'Dill, getrocknet' }, { id: 'chipotle_pulver', name: 'Chipotle-Pulver' }, { id: 'italienische_kraeuter', name: 'Italienische Kräuter' },
@@ -1693,6 +1695,12 @@ Object.assign(BLS_REF, {
 Object.assign(BLS_REF, {
   "emmentaler": { m: "bls", c: "M304600", n: "BLS M304600 Emmentaler mind. 45 % Fett i. Tr.; als „Schweizer Käse“ gerechnet", e: 1.7 },
   "fischbruehe": { m: "bls", c: "X4A1000", n: "BLS X4A1000 Fischbrühe", e: 0 },
+});
+Object.assign(BLS_REF, {
+  "vanillezucker": { m: "bls", c: "S114000", n: "BLS S114000 Vanillezucker", e: 0 },
+});
+Object.assign(BLS_REF, {
+  "rinderbrust": { m: "bls", c: "U255100", n: "BLS U255100 Rind Brustkern/Mittelbrust, roh", e: 0 },
 });
 ZUTATEN.forEach(z => { if (BLS_REF[z.id]) z.bls = BLS_REF[z.id]; });
 
@@ -48535,6 +48543,372 @@ SEED2.push(
   })
 );
 
+/* ===== Rezeptcharge 85: 4 Weihnachtsmarkt-Rezepte (Nr. 8, 14, 35 und 39) (vom Auftraggeber übergebener Text, eigene Fassung von Claude; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Reibekuchen / Kartoffelpuffer aus rohen Kartoffeln (Deutschland, Weihnachtsmarkt)",
+   "meal": "Snack",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 4,
+   "prep": 25,
+   "cook": 30,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Weihnachtsmarkt",
+    "Reibekuchen",
+    "Kartoffelpuffer",
+    "Deutschland",
+    "Kartoffeln",
+    "Snack",
+    "vegetarisch",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "kartoffeln",
+     1000
+    ],
+    [
+     "zwiebel",
+     80
+    ],
+    [
+     "eier",
+     110
+    ],
+    [
+     "mehl",
+     30
+    ],
+    [
+     "rapsoel",
+     60
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer",
+    "muskat"
+   ],
+   "steps": [
+    "Die Kartoffeln (1 kg, mehligkochend) schälen und fein reiben. Den Saft nicht ganz ausdrücken; die Stärke, die sich am Schüsselboden absetzt, wird später wieder untergehoben.",
+    "Die Zwiebel (1, mittelgroß) ebenfalls fein reiben.",
+    "Kartoffeln und Zwiebel mit Eiern (2), Mehl (3 EL), Salz (1 TL), Pfeffer und nach Wunsch Muskat vermengen.",
+    "Die abgesetzte Kartoffelstärke unterheben.",
+    "Das Bratfett in einer Pfanne erhitzen.",
+    "Für jeden Reibekuchen etwa 2 bis 3 EL Teig in die Pfanne geben und flach drücken (etwa 12 Stück).",
+    "Bei mittlerer bis hoher Hitze je Seite 3 bis 4 Minuten goldbraun und knusprig braten.",
+    "Auf Küchenpapier abtropfen lassen und heiß mit Apfelmus servieren."
+   ],
+   "tips": "Zutaten wie in der Vorlage für etwa 12 Reibekuchen; in der App sind das 4 Portionen zu je 3 Stück, geführt als Snack. Gewählt aus „Butterschmalz oder neutralem Öl“: neutrales Öl (Rapsöl); aus „Apfelmus oder Lachs mit Sahne-Meerrettich“: Apfelmus, das ohne Mengenangabe nicht eingerechnet ist; mit Butterschmalz oder Lachs wäre es eine andere Fassung. Muskat ist optional und als Gewürz ohne Gramm geführt. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 1 mittelgroße Zwiebel ≈ 80 g, 2 Eier ≈ 110 g, 3 EL Mehl ≈ 30 g, Bratöl 60 g (aufgenommenes Öl); die Kartoffeln sind samt ihrer Stärke gerechnet. Sicherheitshinweis der App: Heißes Fett nie unbeaufsichtigt lassen und niemals mit Wasser löschen; Deckel bereithalten. Kern laut Vorlage: Klassische Reibekuchen bestehen vor allem aus rohen Kartoffeln, Zwiebel, Ei, etwas Mehl und Salz, nicht aus Kartoffelpüree. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Frisch am besten. Reste abgekühlt abgedeckt im Kühlschrank höchstens 1 Tag aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Im Backofen oder Airfryer bei etwa 180 °C aufknuspern; es ist kein Fleisch enthalten, ein Erhitzen auf 70 °C ist nicht nötig.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummer [165] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Champignons mit Knoblauchsauce aus Crème fraîche und Joghurt (Deutschland, Weihnachtsmarkt)",
+   "meal": "Snack",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 4,
+   "prep": 20,
+   "cook": 10,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Weihnachtsmarkt",
+    "Champignons",
+    "Knoblauchsauce",
+    "Deutschland",
+    "Pilze",
+    "Snack",
+    "vegetarisch",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "champignons",
+     600
+    ],
+    [
+     "zwiebel",
+     160
+    ],
+    [
+     "knoblauch",
+     12
+    ],
+    [
+     "olivenoel",
+     27
+    ],
+    [
+     "butter",
+     30
+    ],
+    [
+     "petersilie",
+     5
+    ],
+    [
+     "creme_fraiche",
+     200
+    ],
+    [
+     "joghurt10",
+     200
+    ],
+    [
+     "zitronensaft",
+     5
+    ]
+   ],
+   "spices": [
+    "paprika_suess",
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Crème fraîche (200 g), Joghurt (200 g), gepressten Knoblauch (1 Zehe), Zitronensaft (1 TL), Salz und Pfeffer zur Knoblauchsauce verrühren.",
+    "Die Sauce im Kühlschrank ziehen lassen.",
+    "Die Champignons (600 g) mit einem Tuch putzen, nicht waschen; große Pilze halbieren.",
+    "Zwiebeln (2) und Knoblauch (3 Zehen) fein würfeln.",
+    "Das Olivenöl (3 EL) in einer großen Pfanne stark erhitzen.",
+    "Die Champignons 5 Minuten kräftig anbraten, bis sie goldbraun sind.",
+    "Butter (30 g), Zwiebeln und Knoblauch zugeben und weitere 3 bis 5 Minuten braten.",
+    "Mit Paprikapulver (1 TL, edelsüß), Salz und Pfeffer würzen.",
+    "Petersilie (1 EL, gehackt) unterheben.",
+    "Heiß mit der kalten Knoblauchsauce servieren."
+   ],
+   "tips": "Zutaten wie in der Vorlage für 4 Portionen, geführt als Snack. Der „griechische Joghurt“ ist als Griechischer Joghurt 10 % Fett gerechnet. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 2 Zwiebeln ≈ 160 g, 3 Knoblauchzehen in der Pfanne und 1 gepresste Zehe in der Sauce zusammen ≈ 12 g, 3 EL Olivenöl ≈ 27 g, 1 EL Petersilie ≈ 5 g, 1 TL Zitronensaft ≈ 5 g; die Sauce ist vollständig gerechnet. Kern laut Vorlage: Auf dem Weihnachtsmarkt werden die Pilze scharf gebraten und mit einer kalten, cremigen Knoblauchsauce serviert, häufig auf Basis von Crème fraîche und Joghurt. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Frisch am besten. Die Sauce abgedeckt im Kühlschrank höchstens 2 Tage aufbewahren; die Pilze am selben Tag essen (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Die Pilze in der Pfanne kräftig erhitzen und nicht mehrfach aufwärmen; es ist kein Fleisch enthalten, ein Erhitzen auf 70 °C ist nicht nötig.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [168][173] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Gebrannte Mandeln mit Vanille und Zimt (Deutschland, Weihnachtsmarkt)",
+   "meal": "Snack",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 4,
+   "prep": 5,
+   "cook": 15,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Weihnachtsmarkt",
+    "Gebrannte Mandeln",
+    "Deutschland",
+    "Mandeln",
+    "Snack",
+    "vegan",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "mandeln",
+     200
+    ],
+    [
+     "zucker",
+     150
+    ],
+    [
+     "vanillezucker",
+     8
+    ]
+   ],
+   "spices": [
+    "zimt"
+   ],
+   "steps": [
+    "Ein Backblech mit Backpapier auslegen.",
+    "Zucker (150 g), Vanillezucker (1 Päckchen), Zimt (1 TL) und Wasser (100 ml) in einer großen Pfanne oder einem Topf verrühren.",
+    "Zum Kochen bringen.",
+    "Die Mandeln (200 g, ganz und ungeschält) zugeben und bei mittlerer bis hoher Hitze unter ständigem Rühren kochen.",
+    "Nach etwa 5 bis 8 Minuten verdampft das Wasser; der Zucker legt sich zuerst als weiße, krümelige Schicht um die Mandeln.",
+    "Die Hitze etwas reduzieren und weiterrühren, bis der Zucker schmilzt und die Mandeln glänzend karamellisiert sind.",
+    "Sofort auf das Backblech geben.",
+    "Mit zwei Gabeln schnell auseinanderziehen, damit sie nicht verkleben.",
+    "Vollständig abkühlen lassen."
+   ],
+   "tips": "Zutaten wie in der Vorlage für etwa 4 Portionen, geführt als Snack. Das grobe Meersalz ist optional und nicht eingerechnet. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 1 Päckchen Vanillezucker ≈ 8 g; das Wasser geht nicht in die Nährwerte ein, der Zucker ist vollständig gerechnet. Sicherheitshinweis der App: Heißer Zucker und karamellisierter Zucker (weit über 100 °C) verursachen schwere Verbrennungen; nicht mit nassen Fingern berühren und Kinder fernhalten. Kern laut Vorlage: Die klassische Methode ist ein Sirup aus Zucker und Wasser mit Mandeln, die erst krümelig überzogen und dann karamellisiert werden. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Luftdicht und trocken bei Raumtemperatur höchstens 2 Wochen aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Nicht aufwärmen; es ist kein Fleisch enthalten, ein Erhitzen auf 70 °C ist nicht nötig.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [165][166][167] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  }),
+  R({
+   "name": "Kandierter Apfel am Spieß mit Zuckerschale (Deutschland, Weihnachtsmarkt)",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "servings": 6,
+   "prep": 15,
+   "cook": 20,
+   "level": "schwer",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Weihnachtsmarkt",
+    "Kandierter Apfel",
+    "Deutschland",
+    "Apfel",
+    "Dessert",
+    "vegan",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "apfel",
+     600
+    ],
+    [
+     "zucker",
+     400
+    ],
+    [
+     "honig",
+     20
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Äpfel (6, klein und fest) waschen, gründlich trocknen und mit Holzspießen versehen.",
+    "Ein Blech mit Backpapier auslegen oder ein leicht geöltes Blech vorbereiten.",
+    "Zucker (400 g), Wasser (150 ml) und Honig (1 EL) in einem Topf verrühren.",
+    "Ohne weiteres Rühren bei mittlerer Hitze kochen, bis ein Sirup entsteht.",
+    "Den Sirup auf etwa 145 bis 150 °C erhitzen. Alternativ einen Tropfen Sirup in kaltes Wasser geben; er muss zu einer harten Kugel werden.",
+    "Den Topf vom Herd nehmen.",
+    "Die Äpfel kurz in den Sirup tauchen und überschüssigen Sirup abtropfen lassen.",
+    "Auf dem Backpapier fest werden lassen.",
+    "Sobald die Schale hart und glänzend ist, servieren."
+   ],
+   "tips": "AUSNAHME VOM DESSERTRAHMEN: rund 335 kcal und 0,4 g Eiweiß je Portion (1 Apfel mit Zuckerschale), originalgetreu. Zutaten wie in der Vorlage für 6 Äpfel; in der App sind das 6 Portionen zu je einem Apfel, geführt als Dessert. Gewählt aus „Glukosesirup oder Honig“: Honig; mit Glukosesirup wäre es eine andere Fassung. Rote Lebensmittelfarbe und Zimt sind optional und nicht eingerechnet; Holzspieße und Backpapier zählen nicht. Annahmen der App, weil die Vorlage nur Stück- oder Löffelmaße oder keine Menge nennt: 6 kleine Äpfel ≈ 600 g (100 g je Apfel), 1 EL Honig ≈ 20 g. Der Zucker ist vollständig gerechnet, obwohl ein Teil des Sirups im Topf bleibt (die Werte sind eher zu hoch). Sicherheitshinweis der App: Zuckersirup mit 145 bis 150 °C verursacht schwere Verbrennungen; nie unbeaufsichtigt lassen, nicht mit Wasser in Berührung bringen und Kinder fernhalten. Kern laut Vorlage: Kandierte Äpfel werden in einen heißen Zuckersirup getaucht, der beim Abkühlen zu einer harten, glänzenden Schale wird. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Am besten am selben Tag essen; in einer trockenen Umgebung höchstens 1 Tag aufbewahren, weil die Zuckerschale sonst klebrig wird (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Nicht aufwärmen; es ist kein Fleisch enthalten, ein Erhitzen auf 70 °C ist nicht nötig.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [165][166] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "Deutschland"
+  })
+);
+
+/* ===== Rezeptcharge 86: 1 Rezept (Original New-York-Style Pastrami) (vom Auftraggeber übergebener Text, eigene Fassung von Claude; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
+SEED2.push(
+  R({
+   "name": "Original New-York-Style Pastrami aus Rinderbrust (USA, gepökelt, geräuchert und gedämpft)",
+   "meal": "Hauptgericht",
+   "group": "Rind",
+   "cuisine": "USA",
+   "servings": 8,
+   "prep": 90,
+   "cook": 480,
+   "level": "schwer",
+   "devices": [
+    "Backofen"
+   ],
+   "tags": [
+    "Pastrami",
+    "New York",
+    "USA",
+    "Rinderbrust",
+    "Pökeln",
+    "Räuchern",
+    "originalgetreu"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "rinderbrust",
+     2000
+    ],
+    [
+     "senf",
+     15
+    ],
+    [
+     "brauner_zucker",
+     5
+    ]
+   ],
+   "spices": [
+    "pokelsalz",
+    "einmachgewuerz",
+    "pfeffer",
+    "senfsaat",
+    "koriander_gem",
+    "knoblauchpulver",
+    "senfpulver",
+    "paprika_suess",
+    "lorbeer",
+    "salz"
+   ],
+   "steps": [
+    "Pökelbad: Wasser (2 Liter), grobes Salz (120 g), braunen Zucker (50 g), Pink Curing Salt (10 g, optional), Einmachgewürz (2 EL), Pfefferkörner (1 EL), Senfkörner (1 EL), Korianderkörner (1 TL), Knoblauch (4 Zehen, angedrückt) und Lorbeer (2 Blätter) aufkochen und rühren, bis sich Salz und Zucker gelöst haben.",
+    "Vom Herd nehmen und vollständig abkühlen lassen, am besten über Nacht im Kühlschrank.",
+    "Die Rinderbrust (2 kg, mit Fettdeckel) in einen großen lebensmittelechten Behälter oder Vakuumbeutel legen und mit der vollständig abgekühlten Lake bedecken; das Fleisch muss ganz untergetaucht sein, gegebenenfalls mit einem Teller beschweren.",
+    "5 bis 7 Tage im Kühlschrank pökeln; einmal täglich wenden oder die Lake leicht bewegen.",
+    "Die Brust aus der Lake nehmen, unter fließendem kaltem Wasser gründlich abspülen und 30 bis 60 Minuten in frischem kaltem Wasser einweichen, um überschüssiges Salz zu entfernen. Trocken tupfen.",
+    "Die Oberfläche dünn mit Senf (1 EL) bestreichen. Den Rub aus grob gemahlenem schwarzem Pfeffer (3 EL), gemahlenem Koriander (2 EL), Paprikapulver (1 EL, optional), Knoblauchpulver (1 TL), Senfpulver (1 TL) und braunem Zucker (1 TL) mischen, die Brust rundum großzügig damit einreiben und die Gewürze fest andrücken.",
+    "Unbedeckt im Kühlschrank mindestens 8 Stunden, besser über Nacht, trocknen lassen.",
+    "Smoker oder Grill für indirektes Räuchern auf 110 bis 120 °C vorheizen (Eichen-, Hickory- oder Kirschholz). Die Brust mit der Fettseite nach oben 5 bis 6 Stunden räuchern, bis die Kerntemperatur etwa 65 bis 75 °C erreicht.",
+    "Den Backofen auf 120 bis 140 °C vorheizen. Die Brust auf ein Rack in eine tiefe Form legen, heißes Wasser (500 ml) hineingießen, ohne das Fleisch zu benetzen, und die Form fest mit Alufolie abdecken.",
+    "Etwa 2 bis 3 Stunden dämpfen, bis die Kerntemperatur 93 bis 96 °C erreicht und eine Gabel oder ein Thermometer leicht eindringt.",
+    "In Alufolie wickeln und mindestens 1 Stunde ruhen lassen, idealerweise im Kühlschrank über Nacht.",
+    "In sehr dünne Scheiben gegen die Faser schneiden. Vor dem Servieren kurz dämpfen oder in Folie bei 120 °C erwärmen, bis die Scheiben durchgehend heiß sind (mindestens 70 °C)."
+   ],
+   "tips": "Zutaten wie in der Vorlage für eine Rinderbrust von 2 kg; in der App sind das 8 Portionen (rund 250 g Rohgewicht der Brust je Portion). Gewählt aus „Senf oder Olivenöl als Binder“: Senf; aus „Wasser oder Rinderbrühe“ zum Dämpfen: Wasser; mit Olivenöl oder Brühe wäre es eine andere Fassung. Das Pökelbad (Salz, Zucker, Gewürze, Knoblauch, Lorbeer, Wasser) ist nicht in die Nährwerte eingerechnet, weil das Fleisch nur einen Teil davon aufnimmt und die Vorlage keine Menge nennt; der Salzgehalt von Pastrami ist deshalb hoch und in den Nährwerten nicht abgebildet. Die Nährwerte beruhen auf dem rohen Fleisch mit Fettanteil (Brustkern, BLS) samt 1 EL Senf (15 g) und 1 TL braunem Zucker (5 g) aus dem Rub; Wasser- und Fettverluste beim Räuchern und Dämpfen sind nicht abgezogen (die Fett- und Kalorienwerte sind eher zu hoch, die Portion nach dem Garen deutlich leichter als 250 g). Roggenbrot, Spitzsenf, Sauerkraut, russisches Dressing und Schweizer Käse zum Servieren sind in der Vorlage nur Vorschläge ohne Menge und nicht eingerechnet. Pink Curing Salt (Nitritpökelsalz) ist in der Vorlage optional und als Gewürz ohne Gramm geführt; es ist kein normales Speisesalz, enthält Nitrit und darf nur in der angegebenen Menge verwendet werden. Laut Vorlage wird das Pastrami ohne Pökelsalz grauer statt rosa; die Vorlage hält es bei vollständigem Garen für sicher essbar. Zeit: Pökeln 5 bis 7 Tage plus Trocknen über Nacht; die Zubereitungszeit in der App zählt nur die Arbeits- und Garzeit. Smoker oder Räuchergrill sind nicht in der Geräteliste der App; Backofen für das Dämpfen. Kern laut Vorlage: Das Aroma von New-York-Pastrami kommt vor allem von schwarzem Pfeffer und Koriander im Rub und von der langen Pökelzeit. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+   "storage": "Abgekühlt in Folie im Kühlschrank höchstens 3 bis 4 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+   "reheat": "Kurz dämpfen oder in Folie bei 120 °C erwärmen, bis die Scheiben durchgehend heiß sind (mindestens 70 °C).",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezept „Original New-York-Style Pastrami“); Zutaten und Mengen wie übergeben, in eigenen Worten; Quelle laut Text: Keine Quelle im übergebenen Text (Verweisnummern [184][187][190] ohne Verzeichnis); Standardrezept ohne Quellenlink; Zeiten nach Vorlage bzw. Richtwerte, nicht getestet",
+   "origin": "USA"
+  })
+);
+
 /* ===== Bibliothek ab r77 (Entscheidung des Auftraggebers, 28.10.2026, aktualisiert) =====
    Ausgemustert bleiben nur die früheren eigenen Rezepte r01 bis r76. Die von Perplexity gelieferten (r77 bis r94) und die nach Online-Recherche geschriebenen Rezepte (r95 ff., Quelle "Eigene Fassung nach Recherche (Claude)") sind wieder in der Bibliothek, auf ausdrücklichen Wunsch des Auftraggebers ("alle Rezepte einbauen").
    Wieder nur Perplexity: in der Schleife unten nach dem ersten if den Zweig else if (!/^Perplexity/.test(a[i].src || "")) { RETIRED[...] = ...; a.splice(i, 1); } ergänzen (Sicherung: data_rezepte5.js.bak_perp).
@@ -52939,6 +53313,21 @@ const QUELLEN_REFERENZEN = {
   ],
   "r675": [
     {"site": "Quelle nicht genannt", "title": "Kottu Roti mit Hähnchen, Ei, Karotte und Lauch", "kind": "F", "note": "Der übergebene Text (Liste „Liste 25 – 10 weitere Streetfood-Rezepte“) nennt kein Quellenrezept und keinen Link, nur die Verweisnummer [138] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r676": [
+    {"site": "Quelle nicht genannt", "title": "Reibekuchen / Kartoffelpuffer", "kind": "F", "note": "Der übergebene Text (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [165] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r677": [
+    {"site": "Quelle nicht genannt", "title": "Champignons mit Knoblauchsauce", "kind": "F", "note": "Der übergebene Text (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [168][173] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r678": [
+    {"site": "Quelle nicht genannt", "title": "Gebrannte Mandeln", "kind": "F", "note": "Der übergebene Text (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [165][166][167] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r679": [
+    {"site": "Quelle nicht genannt", "title": "Kandierter Apfel", "kind": "F", "note": "Der übergebene Text (Liste „Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [165][166] ohne Verzeichnis; kein erfundener Link."}
+  ],
+  "r680": [
+    {"site": "Quelle nicht genannt", "title": "Original New-York-Style Pastrami", "kind": "F", "note": "Der übergebene Text (Rezept „Original New-York-Style Pastrami“) nennt kein Quellenrezept und keinen Link, nur Verweisnummern [184][187][190] ohne Verzeichnis; kein erfundener Link."}
   ],
   "r354": [
     {"url": "https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt", "site": "bbcgoodfood.com", "title": "Instant frozen berry yogurt", "kind": "B", "note": "Im eingereichten Rezepttext als Originalseite genannt; für Claude gesperrt, Seite nicht gelesen und der Link nicht geprüft. Die App-Fassung folgt auf ausdrücklichen Wunsch den Zutaten und Mengen des eingereichten Rezepttextes (adaptiert von BBC Good Food, Cassie Best); Zubereitung in eigenen Worten."}

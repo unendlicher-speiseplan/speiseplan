@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-30 14:34 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-30 14:52 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,26 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag r680: Original New-York-Style Pastrami (30.10.2026)
+
+- Der Auftraggeber hat ein einzelnes Rezept übergeben („Original New-York-Style Pastrami“, ohne Zusatzanweisung; gedeutet wie die Listen). Es ist als eigene, **originalgetreue** Fassung angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten). Bestandsrezepte mit gleichem Namen existieren nicht (r123 und r124 sind geschmorte beziehungsweise gekochte Rinderbrust, andere Gerichte).
+- **Wahlmöglichkeiten der Vorlage** (die andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Senf statt Olivenöl als Binder; Wasser statt Rinderbrühe zum Dämpfen.
+- **Nicht eingerechnet** sind das Pökelbad (Salz, Zucker, Gewürze, Knoblauch, Lorbeer; das Fleisch nimmt nur einen Teil auf, die Vorlage nennt keine Aufnahme) und die Serviervorschläge ohne Menge. Gerechnet sind die rohe Rinderbrust (2 kg, auf 8 Portionen), 1 EL Senf (15 g) und 1 TL brauner Zucker (5 g). Wasser- und Fettverluste beim Räuchern und Dämpfen sind nicht abgezogen, die Werte sind also eher zu hoch. Der hohe Salzgehalt ist in den Nährwerten nicht abgebildet.
+- **Pink Curing Salt** (Nitritpökelsalz) ist in der Vorlage optional; es steht als Gewürz ohne Gramm im Rezept, mit dem Hinweis aus der Vorlage, dass es kein normales Speisesalz ist und nur in der angegebenen Menge verwendet werden darf. Das Einmachgewürz und das Senfpulver tragen das Senf-Allergen.
+- **Zeit und Geräte:** Pökeln 5 bis 7 Tage und Trocknen über Nacht stehen im Tipp; die Zubereitungszeit in der App zählt nur Arbeits- und Garzeit. Smoker oder Räuchergrill stehen nicht in der Geräteliste der App; als Gerät ist der Backofen (Dämpfen) geführt.
+- **Neue Zutat:** Rinderbrust (BLS U255100); neue Gewürze: Senfpulver, Einmachgewürz, Nitritpökelsalz.
+- **Quellen:** Der Text nennt keine Links, nur Verweisnummern [184][187][190] ohne Verzeichnis; der Quellen-Eintrag ist ein F-Eintrag ohne erfundenen Link.
+
+## Nachtrag r676 bis r679: Weihnachtsmarkt-Rezepte Nr. 8, 14, 35 und 39 (30.10.2026)
+
+- Der Auftraggeber hat vier Weihnachtsmarkt-Rezepte übergeben („Weihnachtsmarkt-Rezepte: Nr. 8, 14, 35 und 39“, ohne Zusatzanweisung; gedeutet wie die Streetfood-Listen). Sie sind als eigene, **originalgetreue** Fassungen angelegt (Zutaten und Mengen wie übergeben, Zubereitung in eigenen Worten): Reibekuchen (r676), Champignons mit Knoblauchsauce (r677), Gebrannte Mandeln (r678) und Kandierter Apfel (r679). Dubletten gab es nicht; Bestandsrezepte mit gleichem Namen existieren nicht. Die Rezepte tragen den Tag „Weihnachtsmarkt“.
+- **Wahlmöglichkeiten der Vorlage** (die andere Variante wäre eine andere Fassung; **bitte bei Bedarf Rückmeldung geben**): Reibekuchen mit neutralem Öl (Rapsöl) statt Butterschmalz und mit Apfelmus (ohne Menge, nicht eingerechnet) statt Lachs mit Sahne-Meerrettich; Kandierter Apfel mit Honig statt Glukosesirup. Der „griechische Joghurt“ ist als Griechischer Joghurt 10 % Fett gerechnet.
+- **Nicht eingerechnet** sind optionale Zutaten und Beilagen ohne Menge: Muskat, Apfelmus, grobes Meersalz, rote Lebensmittelfarbe, Zimt beim Apfel. Fehlende Mengen sind Annahmen der App und in jedem Rezepttipp aufgeführt (zum Beispiel 3 EL Mehl ≈ 30 g, Bratöl der Reibekuchen 60 g aufgenommenes Öl, 6 kleine Äpfel ≈ 600 g, 1 Päckchen Vanillezucker ≈ 8 g). Beim Kandierten Apfel bleibt ein Teil des Sirups im Topf; der Zucker ist vollständig gerechnet, die Werte sind also eher zu hoch.
+- **Sicherheitshinweise** stehen in den Tipps: heißes Bratfett bei den Reibekuchen, heißer Zucker und Zuckersirup (145 bis 150 °C) bei den Gebrannten Mandeln und beim Kandierten Apfel.
+- **Ausnahme** (originalgetreu, im Tipp benannt): Kandierter Apfel mit rund 335 kcal und 0,4 g Eiweiß je Portion steht in der Ausnahmeliste der Dessert-Tests. Die drei anderen Rezepte sind als Snack geführt.
+- **Neue Zutat:** Vanillezucker (BLS S114000).
+- **Quellen:** Der Text nennt keine Links, nur Verweisnummern ([165] bis [173]) ohne Verzeichnis; alle vier Rezepte tragen deshalb einen Quellen-Eintrag der Art F ohne erfundenen Link.
 
 ## Nachtrag r666 bis r675: fünfundzwanzigste Streetfood-Liste (30.10.2026)
 
@@ -391,17 +411,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **579** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 94, Rind: 89, Schwein: 86, Fisch: 60, Vegetarisch: 250 |
-| Verteilung nach Mahlzeit | Hauptgericht: 312, Suppe/Eintopf: 50, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 59, Dessert: 73, Aufstrich: 34, Sauce/Dips: 5 |
+| Mitgelieferte Rezepte | **584** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 94, Rind: 90, Schwein: 86, Fisch: 60, Vegetarisch: 254 |
+| Verteilung nach Mahlzeit | Hauptgericht: 313, Suppe/Eintopf: 50, Salat/Bowl: 15, Frühstück: 15, Smoothie: 16, Snack: 62, Dessert: 74, Aufstrich: 34, Sauce/Dips: 5 |
 | Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 378 (377) |
-| Gewürze | 69 |
+| Zutaten im Stamm (davon mit Nährwerten) | 380 (379) |
+| Gewürze | 72 |
 | Bausteine (Meal-Prep) | **90** (Protein: 20, Beilage: 8, Sauce: 27, Gemüse: 5, Booster: 30) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 2588 KB |
+| Größe `dist/index.html` | 2609 KB |
 
 ---
 
@@ -623,7 +643,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 579 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 584 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 90 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
