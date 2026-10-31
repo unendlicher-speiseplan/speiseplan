@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-30 22:38 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-31 01:02 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,133 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag r870 bis r874: Moderne Dessert-Mochi (31.10.2026)
+
+Übergebene Liste „Teil 3: Moderne Dessert-Mochi – Japan, China und Hongkong“: fünf neue Rezepte (Snack, je 2 Stück = 1 Portion), Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten.
+
+- **r870 Matcha Daifuku** (Shiroan als „Weiße Bohnenpaste“, Matcha 8 + 6 g), **r871 Black Sesame Mochi** (Butter und Kokosmilch gewählt), **r872 Peanut Mochi** (eigener Klebreis-Teig, nicht der Daifuku-Grundteig), **r873 Chocolate Mochi** (Zartbitterschokolade), **r874 Taro Mochi** (Kokosmilch und Butter gewählt).
+- **Hülle bei Black Sesame, Chocolate, Taro:** „Daifuku-Grundteig für 12 Stück“ mit den Mengen des Daifuku-Rezepts gerechnet (wie bei Frucht-Mochi). Optionale Zutaten (Shiroan, Instantkaffee, Vanilleextrakt) sind nicht eingerechnet.
+- **Info:** „Gemeinsame Füllungsproduktion“ (Chargengrößen, Tiefkühlen) und „Wirtschaftlichkeit“ (Kosten, Einkauf) stehen als Zeile „Mochi: Füllungsproduktion und Kosten“ unter Mehr → Garen, Lagern, Sicherheit; Preise sind Angaben der Vorlage, nicht geprüft. Kein Rezept für Mochi-Eis und Pistazienpaste (nur erwähnt).
+- Keine neuen Zutaten. Mikrowelle und Dämpfer fehlen in der Geräteliste (Tipp vermerkt).
+
+Version der App: 10. Testzähler: Bibliothek 849, SHIP 778, Aufstrich 45, Desserts 99.
+
+## Nachtrag r863 bis r869: Frucht-Mochi (31.10.2026)
+
+Übergebene Liste „Teil 2: Frucht-Mochi – Japan, Hongkong und moderne Varianten“: sieben neue Rezepte (Snack, je 2 Stück = 1 Portion), Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten.
+
+- **r863 Ichigo Daifuku** (Anko, nicht Shiroan; 8 Erdbeeren mit 15 g je Stück angenommen), **r864 Mango Mochi** (Hongkong, Kokos-Hülle, Mangocreme), **r865 Blueberry**, **r866 Raspberry**, **r867 Yuzu** (Shiroan als „Weiße Bohnenpaste“ gerechnet), **r868 Peach**, **r869 Coconut Mochi** (Hongkong/Südostasien).
+- **Hülle bei Blueberry, Raspberry, Yuzu, Peach:** Die Vorlage nennt „Daifuku-Grundteig für 12 Stück“; gerechnet mit den Mengen des Daifuku-Rezepts (100 g Mehl, 50 g Zucker, 180 ml Wasser, 100 g Stärke), das ist die Hälfte des Grundteigs für 24.
+- **Entscheidungen bei „oder“:** Butter, Kokosraspel, Gelatine, Anko, Shiratamako, je zuerst genannt. Das optionale Shiroan zum Umhüllen ist nicht eingerechnet.
+- **Neue Zutaten:** Pfirsichpüree (Näherung nach Pfirsich roh), Yuzusaft (Näherung nach Zitronensaft); Yuzuschale als Gewürz ohne Gramm.
+- **Info:** Die „Gemeinsamen Fruchtfüllungen“ (Grundprinzip, Grundrezept, geeignete und ungeeignete Früchte) stehen unter Mehr → Garen, Lagern, Sicherheit als Zeile „Frucht-Mochi: stabile Fruchtfüllung“. Die Vorlage nennt dort keine bestimmte Frucht, deshalb kein eigenes Rezept.
+- **HINWEIS-Tipps** wegen unterem Kalorienrahmen bei r865, r866, r868. Warnung „Dubletten“ bei r863 ist gewollt und im Test ausgenommen.
+- **Nicht in der Geräteliste:** Mikrowelle, Dämpfer (im Tipp vermerkt). Frisch-Erdbeere (r863): Tiefkühlen nicht empfohlen.
+
+Version der App: 9. Testzähler: Bibliothek 844, SHIP 773, Aufstrich 45, Desserts 99.
+
+## Nachtrag r856 bis r862: Japanische Mochi, traditionell (31.10.2026)
+
+Übergebene Liste „Teil 1: Japanische Mochi – Traditionelle Rezepte“: sieben neue Rezepte, Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten (je 2 Stück = 1 Portion).
+
+- **r856 Anko** (Aufstrich, Selbstkochen aus 300 g Azukibohnen und 200 g Zucker). Die Vorlage nennt für 12 Daifuku 360 g Anko, aber keine Ausbeute der Paste; deshalb ist Anko im Daifuku als eigene Zutat (Näherung) mit 360 g geführt und das Selbstkochen als eigenes Rezept.
+- **r857 Daifuku-Grundteig** (für 24 Mochi, Tag „Grundzubereitung“), **r858 Daifuku Mochi**, **r859 Shiroan Daifuku** (Bohnenpaste aus der Zutatenliste der Vorlage gerechnet), **r860 Kusa Mochi**, **r861 Sakura Mochi** (Kansai-Stil), **r862 Kinako Mochi**.
+- **Entscheidungen bei „oder“:** Shiratamako (nicht Mochiko), Kartoffelstärke, neutrales Öl (nicht Butter), Yomogi-Pulver (nicht Blätter), Anko (nicht Shiroan) bei Kusa Mochi.
+- **Annahmen:** 180 ml Mochigome ≈ 150 g; Stärke zum Bestäuben mit der vollen Menge gerechnet (Nährwerte leicht zu hoch); Reiskocher durch Multikocher ersetzt (Hinweis im Tipp).
+- **Neue Zutaten:** weiße Bohnen getrocknet (Näherung nach Gartenbohne reif), Anko (rechnerisch wie Lotuspaste), Kinako (Näherung nach gerösteter Sojabohne), Yomogi (Näherung nach getrocknetem Basilikum); Gewürze ohne Gramm: Sakura-Blätter, rote Lebensmittelfarbe.
+- **HINWEIS-Tipps** wegen unterem Kalorienrahmen bei r857, r861, r862 (kleines Konfekt, bzw. nur Teig). Warnung „Dubletten“ (gleicher Mochi-Teig) bei r857, r858, r860, r862 ist gewollt und im Test ausgenommen.
+- **Nicht in der Geräteliste:** Mikrowelle, Dämpfer, Reiskocher (im Tipp vermerkt). Fußnoten [934] und [936] haben keine Links. Die „Verwendung“ des Grundteigs nennt Matcha Daifuku, Black Sesame, Peanut und Taro Mochi sowie Frucht-Mochi; dafür liegen noch keine Rezepte vor.
+
+Version der App: 8. Testzähler: Bibliothek 837, SHIP 766, Aufstrich 45, Desserts 99.
+
+## Nachtrag r847 bis r855: Moderne Mondkuchen und Snow Skin (31.10.2026)
+
+Übergebene Liste „Teil 2: Hongkonger Gebäck – Moderne Mondkuchen und Snow Skin“: neun neue Rezepte, Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten.
+
+- **Gebacken (Snack, 8 Portionen zu je 2 Stück):** r847 Custard Mooncake, r848 Lava Custard Mooncake. Teig, Custard, Kern und Eigelb-Anstrich sind zusammengezählt; der Anstrich stammt aus Teil 1 (nicht in diesem Text beschrieben).
+- **Füllungen (Aufstrich, 8 Portionen zu je 2 Portionen Füllung):** r849 Matcha, r850 Chocolate, r852 Mango, r853 Coconut, r854 Black Sesame Snow Skin, r855 Durian.
+- **r851 Snow Skin Mooncake, Hülle (Grundrezept, Snack):** Nährwerte nur für die Hülle (rund 203 kcal je Portion, HINWEIS im Tipp); die Füllung kommt hinzu.
+- **Zusammengelegt:** „Matcha Mooncake“ und „Matcha Snow Skin Mooncake“ haben gleiche Zutaten und Mengen, deshalb nur ein Rezept (r849); der Tipp nennt beide Verwendungen mit 35 g bzw. 30 g Portionen und den beiden Lagerangaben.
+- **Entscheidungen bei „oder“ in der Vorlage:** Kokosmilch statt Kokosmilchpulver (passt zu Schritt 4 der Vorlage), Mascarpone statt Sahne, Gelatine statt Agar-Agar (jeweils zuerst genannt), dunkle Schokolade als Zartbitter.
+- **Annahmen:** 1 Eigelb 18 g, 1 Ei 55 g, 1 Mango 200 g Fruchtfleisch. Gesalzene Eigelb im Lava-Kern und in der Schokofüllung nennt die Vorlage ohne Vorbehandlung; der Tipp rät zum Durchbacken.
+- **Neue Zutaten:** Milchpulver (BLS Vollmilchpulver), weiße Bohnenpaste (rechnerisch wie Lotuspaste), Matcha (Richtwert aus Tabellen, nicht BLS), Kokoscreme (Näherung nach Kokosmilch), Durian (Richtwert aus Tabellen, nicht BLS).
+- **Info:** Produktionsplan und Rangliste der Vorlage stehen unter Mehr → Garen, Lagern, Sicherheit als Zeile „Hongkonger Mondkuchen: Produktionsplan und Rangliste“.
+- **Nicht in der Geräteliste:** Mooncake-Form, Dämpfer, Mikrowelle, Vakuumiergerät (jeweils im Tipp vermerkt). Fußnoten [927] bis [933] der Vorlage haben keine Links.
+
+Version der App: 7. Testzähler: Bibliothek 830, SHIP 759, Aufstrich 44, Desserts 99.
+
+## Nachtrag r840 bis r846: Hongkonger Gebäck, Mondkuchen und Füllungen (31.10.2026)
+
+Übergebene Liste „Teil 1: Hongkonger Gebäck – Traditionelle Rezepte“: sieben neue Rezepte, Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten.
+
+- **r840 Lou Po Beng** (Snack, 10 Portionen zu je 2 Stück): Füllung mit Wintermelone, Wasser-Öl-Teig und Fettteig. Gerechnet mit Schweineschmalz (zuerst genannt), deshalb Gruppe „Schwein“, nicht vegetarisch.
+- **r841 Klassischer gebackener Mondkuchen, Grundrezept** (Snack, 8 Portionen zu je 2 Stück): Teig aus Mehl, Golden Syrup, Öl und Lauge-Wasser. Für die Nährwerte ist Lotuspaste mit 850 g gerechnet (Mitte von 800 bis 900 g); der Tipp sagt das.
+- **r842 White Lotus, r844 Red Bean, r845 Black Sesame, r846 Five-Nut:** die vier Füllungen als eigene Rezepte (Aufstrich, 8 Portionen zu je Füllung für 2 Mondkuchen). Spannen der Vorlage (Zucker, Öl, Wasser) sind mit der Mitte gerechnet; Optionales (Malzextrakt, Honig, Rosenwein) steht nur im Tipp. r846 mit Schmalz, Gruppe „Schwein“.
+- **r843 Salted Egg Yolk Lotus Mooncake** (Snack, 8 Portionen zu je 2 Stück): Die Vorlage nennt nur Paste und Eigelb; Teig und Eigelb-Anstrich stammen aus dem Grundrezept derselben Liste und sind mitgerechnet (Tipp sagt es). Eigelb mit 18 g je Stück angenommen. Die Vorlage nennt zwei verschiedene Pastenmengen (45 bis 50 g und 50 bis 55 g mit Eigelb); beide stehen im Tipp.
+
+Neue Zutaten (Nährwerte aus BLS oder als gekennzeichnete Näherung): Golden Syrup (Näherung nach Invertzuckercreme), Schweineschmalz (BLS), frische Wintermelone (Näherung nach Gurke), kandierte Wintermelone und kandierte Früchte (Näherung nach Zitronat/Sukkade), Kürbiskerne (BLS), Melonenkerne (Näherung nach Kürbiskernen).
+
+Nicht in der Geräteliste: Mooncake-Form und Vakuumiergerät (jeweils im Tipp vermerkt). Einfrieren: Backwaren „nein“ für den Souper-Cubes-Plan mit Hinweis auf die Angaben der Vorlage (2 bis 3 Monate), Pasten ohne Angabe. Die Fußnoten [904] bis [925] der Vorlage haben keine Links und sind nicht prüfbar. Warnung „Dubletten“ zwischen r841 und r843 (gleicher Teig, gleiche Paste) ist gewollt und im Test ausgenommen. Ein Dörrgerät ist laut Vorlage nicht geeignet.
+
+Version der App: 6. Testzähler: Bibliothek 821, SHIP 750, Desserts 99.
+
+## Nachtrag Nudeln: Tiefkühlen, Vakuumieren, Trocknen (31.10.2026)
+
+Übergebene Liste „Teil 4: Lagerung, Vakuumieren und Trocknen“ ist kein Rezept, sondern Lagerwissen. Sie steht deshalb als neue Zeile „Nudeln: Tiefkühlen, Vakuumieren, Trocknen“ unter Mehr → Garen, Lagern, Sicherheit (Tiefkühlen, Lagerzeiten, Vakuumieren, Trocknen, beste Methode je Land). Die Lagerzeiten in den Rezepten r823 bis r839 stimmen mit der Liste überein, die Rezepte sind unverändert. Quelle: übergebener Text, von der App nicht geprüft; Hinweis dazu steht in der Zeile.
+
+Version der App: 5. Testzähler unverändert: Bibliothek 814, SHIP 743, Desserts 99.
+
+## Nachtrag r839: Udon-Nudeln (31.10.2026)
+
+Übergebene Liste „Teil 3: Japanische und vietnamesische Nudeln“: Nur Udon ist als Rezept neu (r839, Snack, Tag „Grundzubereitung“, wie die Nudeln in r823 bis r838). Hochproteinmehl als Weizenmehl Type 550 gerechnet (Hinweis im Tipp). Warnung „Dubletten“ (ähnliche Zutaten wie die anderen Teigrezepte) ist gewollt und im Test ausgenommen.
+
+- **Ramen:** Zutaten und Mengen sind gleich wie in r826 (Ramen-Nudeln mit Kansui); deshalb kein neues Rezept, r826 gilt.
+- **Soba, Somen, Pho, Bún, Glasnudeln:** Die Liste enthält nur die Empfehlung „besser fertig kaufen“ mit Begründung, keine Zutaten oder Schritte; deshalb kein Rezept angelegt.
+
+Version der App: 4. Testzähler: Bibliothek 814, SHIP 743, Desserts 99.
+
+## Nachtrag r819 bis r838: Sojamilch, Tofu, chinesische und italienische Nudeln (31.10.2026)
+
+Drei übergebene Rezeptlisten originalgetreu als 20 einzelne Rezepte übernommen (Zutaten und Mengen wie übergeben, Schritte in eigenen Worten, je Sorte ein Rezept). Status: Automatisch validiert, nicht praktisch getestet. Keine Quelle im Text, deshalb „Standardrezept ohne Quellenlink“.
+
+- **Liste Sojamilch und Tofu (r819 bis r822):** Hongkong-Style Sojamilch, Tofu selbst gemacht (Calciumsulfat), Hongkong Tofu-Pudding Douhua, geräucherter Tofu (Wok, Ofen-Alternative). Der Tofu-Pudding ist eine dritte Fassung neben r754 und r806 (Calciumsulfat und Stärke statt Agar-Agar), der Name ist anders und der Inhalt weicht ab, deshalb kein Duplikat.
+- **Chinesische Nudeln Liste 1 (r823 bis r829):** Wonton-Teigblätter, Jiaozi-Teigblätter, Biang-Biang-Nudeln, Ramen-Nudeln mit Kansui, Dao-Xiao-Mian, Chinesische Eiernudeln, Mie-Nudeln ohne Ei.
+- **Italienische Nudeln Liste 1 und 2 (r830 bis r838):** Lasagneblätter, Ravioli, Tortelloni, Tagliatelle, Fettuccine, Pappardelle, Kartoffel-Gnocchi, Orecchiette, Cavatelli. Fettuccine, Pappardelle und Cavatelli nennt die Vorlage nur als „wie Tagliatelle“ bzw. „wie Orecchiette“; sie stehen deshalb mit vollem Teigrezept als eigene Rezepte (Warnung „Dubletten“ in der App ist hier gewollt und in den Tests ausgenommen).
+- **Einordnung:** Alle Nudel- und Teigrezepte sind Snack mit dem Tag „Grundzubereitung“, weil sie Vorrat zum späteren Kochen sind (die Vorlage endet beim Einfrieren). Rezepte mit diesem Tag nimmt der Autoplan nicht auf.
+- **Einfrieren:** Die Vorlagen frieren die Ware portionsweise vorgefroren und vakuumiert ein, nicht in Blöcken. Deshalb steht Einfrieren „nein“ (kein Souper-Cubes-Block) und die Angabe der Vorlage im Hinweis.
+- **Annahmen der App (in den Tipps genannt):** Portionszahl (8 Portionen zu 125 g Teig, Ravioli und Tortelloni 8 zu 200 g, Gnocchi 5 zu 200 g, Sojamilch 6 Gläser, Tofu 2 und geräucherter Tofu 2 Portionen); Mittelwerte bei Spannen (Wasser 1,9 l, Zucker 18 g, Tofu 450 g); „Mehl Type 00 oder Hartweizengrieß“ und „Grieß oder Mehl“: jeweils die erste Möglichkeit gerechnet; Spinat als frischer Blattspinat; Sojamilch als Sojadrink ungesüßt; das Mehl für Ramen mit mindestens 12 % Eiweiß als Type 550.
+- **Dokumentierte Ausnahmen:** Sojamilch (174 kcal je Glas), Tofu (225 kcal je Portion) und Douhua (6 g Eiweiß) stehen mit AUSNAHME-Vermerk im Tipp.
+- **Neue Zutaten:** Sojabohnen, getrocknet (BLS G750400), Kansui-Pulver (0), Calciumsulfat (0), Weizenmehl Type 00 (Näherung nach Type 405), Wasser (0; erscheint nicht auf der Einkaufsliste). Neue Gewürze: Speisestärke zum Bestäuben, Räuchermischung aus Reis und Zucker (wird nicht gegessen, nicht eingerechnet).
+- **Geräte:** Vakuumiergerät, Wok und Tofuform stehen nicht in der Geräteliste (jeweils im Tipp genannt). Nudelmaschine ist bei Wonton-Teigblättern und Ramen-Nudeln eingetragen, weil die Vorlage sie nennt.
+- **Aufwand:** Lange passive Zeiten (Einweichen über Nacht, Ruhen bis 4 Stunden, Pressen) stehen im Tipp und nicht in der Zeit.
+
+Version der App: 3. Testzähler: Bibliothek 813, SHIP 742, Desserts 99.
+
+## Nachtrag Versionsnummer (31.10.2026)
+
+Die App zeigt jetzt eine Versionsnummer: in der Kopfzeile („… Rezepte · Version 2 · Speicherort“) und unter Mehr → Status und Grenzen. Nach einem Update lässt sich so sofort sehen, ob die neue Fassung geladen ist. Zeigt die Seite noch die alte Nummer, den Cache mit Strg+Shift+R umgehen.
+
+- Die Nummer steht als `APP_VERSION` ganz oben in `logic.js` und ist eine fortlaufende ganze Zahl. Sie wird bei jeder Auslieferung um 1 erhöht. Zuerst 2026.10.31.1, dann 31.10.1, auf Wunsch zuletzt auf die Zahl verkürzt; Version 1 war der Stand vor der Einführung der Nummer, die erste angezeigte Nummer ist 2.
+- Der Cache-Name des Service Workers enthält die Nummer, damit Browser die neue Fassung sicher als neu erkennen.
+- Neuer Test in smoke3: Format der Nummer und Anzeige in der Kopfzeile.
+
+## Nachtrag Analysebericht: Korrekturen an Gruppe, Vegan-Tags, Geräten, Tags, Herkunft und Aufwand (31.10.2026)
+
+Umgesetzt nach dem Analysebericht (Zuordnung, Namensgebung, Bezeichnung, Equipment). Es wurden nur Metadaten geändert, keine Zutaten, Mengen oder Schritte; kein Rezept wurde neu angelegt (SHIP bleibt 722).
+
+- **Gruppe:** r776 Mango Pudding von Schwein auf Vegetarisch (enthält nur Gelatine).
+- **Vegan-Tag entfernt:** r163 (Honig), r470 (Honig), r679 (Honig), r197 (Skyr). Die Tags „vegan“ bei den übrigen Rezepten stimmen.
+- **Geräte ergänzt:** Mixer bei r289 (Hochleistungsmixer in Schritt 2); Herd bei r304, r332, r334, r435 (Pfanne notwendig) sowie r406 und r410 (Öl im Topf oder Dutch Oven erhitzen).
+- **Bewusst nicht ergänzt:** Backofen bei r201, r231, r322, r678 und Herd bei r96, r257, r516, r539, Stabmixer bei r258 – dort steht das Gerät nur als Alternative, zum Warmhalten oder als Option in den Schritten.
+- **Aufwand:** „schwer“ (20 Rezepte) wurde zu „anspruchsvoll“. Nur „leicht“, „mittel“ und „anspruchsvoll“ kennt der Editor; „schwer“ wäre beim Bearbeiten auf „mittel“ gefallen.
+- **Tags vereinheitlicht:** Meal-Prep → Meal Prep (31), eintopf → Eintopf, one pot → One Pot, überbacken → Überbacken. Das Status-Tag „Quelle geprüft 29.10.2026“ ist von 24 Rezepten (r417 bis r440) entfernt, weil es kein Thema beschreibt. Bei 59 Rezepten mit Meal-Prep-Kennzeichen wurde das Tag „Meal Prep“ ergänzt.
+- **Herkunft vereinheitlicht:** England und Vereinigtes Königreich → Großbritannien, Südkorea → Korea, Mittelmeerraum → Mittelmeer, Trinidad → Trinidad und Tobago (8 Rezepte).
+- **Namen:** r445 „(Belgien, Streetfood)“ und r734 „(China, Dim Sum)“ haben jetzt den Ort im Klammertext.
+
+Bewusst nicht geändert (braucht Entscheidung): Zusätze im Klammertext wie „gebacken“, „150 g Kohl“, „80 g Zucker“ unterscheiden zwei Fassungen desselben Gerichts und bleiben; die 56 Rezepte außerhalb des Kalorien- und Eiweißrahmens ohne AUSNAHME-Vermerk (der Grund muss je Rezept stimmen); Gruppe Lamm; Herkunft Taiwan/Hongkong statt China; Geräteliste um Dämpfer, Fritteuse, Wok, Stabmixer, Handmixer erweitern; Dutch-Oven-Infoblock.
+
+Testzähler unverändert: Bibliothek 793, SHIP 722.
 
 ## Nachtrag r818: Bubble Tea (30.10.2026)
 
@@ -733,17 +860,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **722** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 109, Rind: 111, Schwein: 113, Fisch: 79, Vegetarisch: 310 |
-| Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 65, Salat/Bowl: 20, Frühstück: 18, Smoothie: 16, Snack: 104, Dessert: 98, Aufstrich: 34, Sauce/Dips: 10 |
+| Mitgelieferte Rezepte | **778** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 109, Rind: 111, Schwein: 114, Fisch: 79, Vegetarisch: 365 |
+| Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 65, Salat/Bowl: 20, Frühstück: 18, Smoothie: 16, Snack: 148, Dessert: 99, Aufstrich: 45, Sauce/Dips: 10 |
 | Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 438 (437) |
-| Gewürze | 80 |
+| Zutaten im Stamm (davon mit Nährwerten) | 461 (460) |
+| Gewürze | 85 |
 | Bausteine (Meal-Prep) | **90** (Protein: 20, Beilage: 8, Sauce: 27, Gemüse: 5, Booster: 30) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 3202 KB |
+| Größe `dist/index.html` | 3416 KB |
 
 ---
 
@@ -943,7 +1070,7 @@ Kategorie `Dessert` in `MEALS`, Platz `d` in `SLOTS`, angezeigt nur bei `state.d
 | `node test_logic3.js` | 351 Prüfungen | bestanden |
 | `node test_bls.js` | 9 Prüfungen | bestanden |
 | `node smoke2.js` | 153 Prüfungen | bestanden |
-| `node smoke3.js` | 91 Prüfungen | bestanden |
+| `node smoke3.js` | 92 Prüfungen | bestanden |
 | `node smoke4.js` | 63 Prüfungen | bestanden |
 | `node test_saison.js` | 57 Prüfungen | bestanden |
 | `node smoke5.js` | 85 Prüfungen | bestanden |
@@ -965,7 +1092,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 722 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 778 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 90 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
