@@ -308,7 +308,7 @@ button.badge { border: 0; cursor: pointer; font-family: inherit; }
 <script>
 /* ===== Daten & Logik (ohne DOM, testbar) ===== */
 // Versionsnummer der App: bei jeder Auslieferung erhöhen (fortlaufende ganze Zahl). Sie steht in der Kopfzeile und unter Mehr.
-const APP_VERSION = '32';
+const APP_VERSION = '37';
 const ALLERGENE = {
   gluten: 'Glutenhaltiges Getreide', krebs: 'Krebstiere', ei: 'Eier', fisch: 'Fisch', erdnuss: 'Erdnüsse',
   soja: 'Soja', milch: 'Milch', schale: 'Schalenfrüchte', sellerie: 'Sellerie', senf: 'Senf',
@@ -1317,6 +1317,11 @@ const ZUTATEN_PLUS = [
   I('taropaste', 'Taropaste (süß; rechnerisch nach dem Grundrezept „Gemeinsame Taropaste“)', 'Sonstiges', 227, 1.9, 32.5, 9.5, { al: ['milch'], lak: 1 }),
   I('single_cream', 'Single Cream (leichte Sahne, ca. 18 % Fett; rechnerisch)', 'Milchprodukte', 188, 2.8, 3.6, 18, { al: ['milch'], lak: 1, fod: 1 }),
   I('oatcakes', 'Oatcakes (schottische Haferkekse; eigener Richtwert)', 'Trockenprodukte', 430, 10, 55, 17, { al: ['gluten'], fod: 1 }),
+  I('orangenlikoer', 'Orangenlikör (Grand Marnier, ca. 40 % vol.; eigener Richtwert)', 'Sonstiges', 321, 0, 25, 0),
+  I('rum', 'Rum (ca. 40 % vol.)', 'Sonstiges', 231, 0, 0, 0),
+  I('goji', 'Goji-Beeren, getrocknet', 'Trockenprodukte', 349, 14.3, 77.1, 0.4, { fod: 1, fr: 1 }),
+  I('jujuben', 'Jujuben (Chinesische Datteln), getrocknet', 'Trockenprodukte', 287, 3.7, 73.6, 0.5, { fod: 1, fr: 1 }),
+  I('sandkuchen', 'Sandkuchen / Rührkuchen (eigener Richtwert)', 'Trockenprodukte', 411, 5.5, 50, 21, { al: ['gluten', 'ei', 'milch'], lak: 1, fod: 1 }),
 ];
 ZUTATEN_PLUS.forEach(z => { ZUTATEN.push(z); ZMAP[z.id] = z; });
 
@@ -1960,7 +1965,12 @@ Object.assign(BLS_REF, {
 });
 Object.assign(BLS_REF, {
   "single_cream": { m: "own", c: "", n: "Single Cream: kein BLS-Eintrag; rechnerisch aus etwa 55 Teilen Schlagsahne 30 % und 45 Teilen Milch 1,5 % auf rund 18 % Fett gemischt. Die Packungsangaben sind maßgeblich.", e: 0, o: [188, 2.8, 3.6, 18] },
-  "oatcakes": { m: "own", c: "", n: "Oatcakes: kein BLS-Eintrag; grober Richtwert nach üblichen Packungsangaben schottischer Haferkekse. Die Packungsangaben sind maßgeblich. Hafer zählt als glutenhaltiges Getreide.", e: 0, o: [430, 10, 55, 17] }
+  "oatcakes": { m: "own", c: "", n: "Oatcakes: kein BLS-Eintrag; grober Richtwert nach üblichen Packungsangaben schottischer Haferkekse. Die Packungsangaben sind maßgeblich. Hafer zählt als glutenhaltiges Getreide.", e: 0, o: [430, 10, 55, 17] },
+  "orangenlikoer": { m: "own", c: "", n: "Orangenlikör (z. B. Grand Marnier): kein BLS-Eintrag; eigener Richtwert aus 40 % vol. (rund 31,6 g Alkohol je 100 ml, 7 kcal je g) und etwa 25 g Zucker je 100 g. Packungsangabe ist maßgeblich.", e: 221, o: [321, 0, 25, 0] },
+  "rum": { m: "own", c: "", n: "Rum (40 % vol.): kein BLS-Eintrag; Richtwert nach USDA FoodData Central, Alcoholic beverage, distilled, rum, 80 proof (231 kcal je 100 g, nur aus Alkohol).", e: 231, o: [231, 0, 0, 0] },
+  "goji": { m: "own", c: "", n: "Goji-Beeren, getrocknet: kein BLS-Eintrag; Richtwert nach USDA FoodData Central (Goji berries, dried) mit 349 kcal, 14,3 g Eiweiß, 77,1 g Kohlenhydrate, 0,4 g Fett je 100 g. Packungsangabe ist maßgeblich.", e: 0, o: [349, 14.3, 77.1, 0.4] },
+  "jujuben": { m: "own", c: "", n: "Jujuben (Chinesische Datteln), getrocknet: kein BLS-Eintrag; Richtwert nach USDA FoodData Central (Jujube, dried) mit 287 kcal, 3,7 g Eiweiß, 73,6 g Kohlenhydrate, 0,5 g Fett je 100 g. Packungsangabe ist maßgeblich.", e: 0, o: [287, 3.7, 73.6, 0.5] },
+  "sandkuchen": { m: "own", c: "", n: "Sandkuchen / Rührkuchen: kein BLS-Eintrag; grober Richtwert nach üblichen Packungsangaben (rund 410 kcal je 100 g). Enthält Weizen, Ei und Milch; die Packungsangabe ist maßgeblich.", e: 0, o: [411, 5.5, 50, 21] }
 });
 Object.assign(BLS_REF, {
   "taropaste": { m: "own", c: "", n: "Taropaste: kein BLS-Eintrag; rechnerisch aus dem Grundrezept „Gemeinsame Taropaste“ der App (600 g Taro, 150 g Zucker, 120 g Kokosmilch, 60 g Butter, Ausbeute laut Vorlage ca. 800 g). Taro ist selbst eine Näherung nach Kartoffeln. Gekaufte Pasten können abweichen; die Packungsangaben sind maßgeblich.", e: 0, o: [227, 1.9, 32.5, 9.5] }
@@ -21675,59 +21685,60 @@ SEED2.push(
 /* ===== Rezeptcharge 37: 15 chinesische Desserts, foodnetwork.com gelesen (6), essen-und-trinken.de, bbcgoodfood.com, seriouseats.com und chefkoch.de gesperrt (9), eigene Fassungen (eigene Fassungen ohne abrufbare Quelle, von Claude, nicht von Perplexity; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
 SEED2.push(
   R({
-   "name": "Mangopudding mit Skyr",
+   "name": "Mangopudding",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "China",
-   "servings": 2,
-   "prep": 15,
-   "cook": 8,
+   "servings": 10,
+   "prep": 30,
+   "cook": 5,
    "level": "leicht",
    "devices": [
-    "Herd"
+    "Herd",
+    "Stabmixer"
    ],
    "tags": [
     "Pudding",
-    "proteinreich",
     "Dessert",
-    "ohne Backen",
+    "Obst",
+    "Gelatine",
     "Chinesisch"
    ],
    "mp": false,
    "ing": [
     [
      "mango",
-     250
-    ],
-    [
-     "skyr",
-     200
-    ],
-    [
-     "milch15",
-     100
-    ],
-    [
-     "speisestaerke",
-     10
-    ],
-    [
-     "zucker",
-     10
+     500
     ],
     [
      "limettensaft",
-     10
+     120
+    ],
+    [
+     "milch15",
+     250
+    ],
+    [
+     "zucker",
+     40
+    ],
+    [
+     "gelatine",
+     24
+    ],
+    [
+     "litschi",
+     150
     ]
    ],
    "spices": [],
    "steps": [
-    "Die Mango schälen, das Fruchtfleisch vom Stein schneiden und mit dem Limettensaft fein pürieren.",
-    "Milch, Speisestärke und Zucker in einem kleinen Topf glatt verrühren und unter ständigem Rühren aufkochen, bis die Masse eindickt (etwa 2 Minuten). Vom Herd nehmen und 10 Minuten abkühlen lassen.",
-    "Den Skyr mit dem lauwarmen Pudding glatt verrühren, dann das Mangopüree unterziehen.",
-    "In zwei Gläser oder Schälchen füllen und mindestens 2 Stunden kalt stellen. Mit ein paar Mangowürfeln garnieren."
+    "Die 12 Blatt Gelatine (24 g) 5 bis 10 Minuten in reichlich kaltem Wasser einweichen. Die beiden Mangos schälen, das Fruchtfleisch vom Stein schneiden und mit dem Limettensaft sehr fein pürieren.",
+    "Die Milch mit dem Zucker in einem kleinen Topf erwärmen, nicht kochen lassen. Die Gelatine gut ausdrücken, in der warmen Milch auflösen und 5 Minuten abkühlen lassen.",
+    "Die Gelatinemilch unter das Mangopüree rühren, auf 10 kleine Gläser oder Förmchen verteilen und mindestens 4 Stunden kalt stellen, bis der Pudding fest ist.",
+    "Die Litschis entsteinen, klein schneiden und vor dem Servieren auf die Puddings geben."
    ],
-   "tips": "Die Stärke bindet nur die Milch, der Skyr kommt erst in die abgekühlte Masse, damit er nicht ausflockt. Statt frischer Mango passt auch aufgetaute Tiefkühlmango. Enthält Milch.",
+   "tips": "Originalfassung nach essen & trinken ohne Skyr: 10 kleine Portionen aus zwei Mangos, 120 ml Limette, 250 ml Milch, 40 g Zucker, 12 Blatt Gelatine und Litschis, etwa 30 Minuten plus Kühlen. Die Menge der Litschis (150 g) und die Einzelschritte sind Richtwerte der App. Gelatine ist tierisch (nicht vegan). Enthält Milch.",
    "storage": "Im Kühlschrank bis zu 2 Tage, abgedeckt.",
    "reheat": "Kalt servieren.",
    "freeze": {
@@ -21736,24 +21747,23 @@ SEED2.push(
     "months": 0,
     "note": "Der Pudding wird nach dem Auftauen wässrig."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.essen-und-trinken.de/rezepte/31493-rzpt-mangopudding (essen-und-trinken.de, Mangopudding); die Seite darf von automatischen Werkzeugen laut robots.txt nicht abgerufen werden und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Quellenabgleich 29.10.2026: Originalfassung ohne Skyr nach essen & trinken „Mangopudding“; Zutaten laut Quellenabgleich, nicht belegte Mengen sind Richtwerte (siehe Hinweise); Zeiten sind Richtwerte, nicht getestet",
    "origin": "China"
   }),
   R({
-   "name": "Glückskekse mit Eiklar und Erdbeer-Skyr-Dip",
+   "name": "Glückskekse",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "China",
-   "servings": 4,
-   "prep": 25,
-   "cook": 20,
+   "servings": 10,
+   "prep": 30,
+   "cook": 30,
    "level": "mittel",
    "devices": [
     "Backofen"
    ],
    "tags": [
     "Backen",
-    "proteinreich",
     "Dessert",
     "Gebäck",
     "Chinesisch"
@@ -21762,66 +21772,56 @@ SEED2.push(
    "ing": [
     [
      "eiklar",
-     66
+     100
+    ],
+    [
+     "puderzucker",
+     60
     ],
     [
      "mehl",
-     40
+     60
     ],
     [
-     "zucker",
-     30
-    ],
-    [
-     "rapsoel",
-     10
-    ],
-    [
-     "skyr",
-     600
-    ],
-    [
-     "erdbeeren",
-     400
+     "butter",
+     45
     ]
    ],
-   "spices": [
-    "vanille"
-   ],
+   "spices": [],
    "steps": [
-    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen und ein Blech mit Backpapier auslegen. Auf kleine Zettel vier bis acht kurze Sprüche schreiben.",
-    "Eiklar, Zucker, Öl, Vanille und 1 EL Wasser mit dem Schneebesen kurz verrühren, dann das Mehl unterrühren, bis ein glatter, dünnflüssiger Teig entsteht.",
-    "Pro Keks einen gestrichenen Teelöffel Teig auf das Blech geben und mit dem Löffelrücken zu einem Kreis von etwa 8 cm ziehen. Höchstens vier Kreise pro Blech backen, sonst werden die Kekse zu schnell hart.",
-    "8 bis 10 Minuten backen, bis der Rand goldbraun ist. Sofort einen Spruchzettel in die Mitte legen, den Kreis zur Hälfte klappen, über der Tischkante oder einem Glasrand zum Halbmond biegen und in einer Muffinform festhalten, bis er hart wird. Mit dem restlichen Teig ebenso verfahren.",
-    "Für den Dip die Erdbeeren putzen, die Hälfte fein pürieren, mit dem Skyr verrühren und die übrigen Erdbeeren in Stücken dazu servieren. Je Portion zwei Kekse zum Dippen reichen."
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen und Bleche mit Backpapier auslegen. 30 kurze Sprüche auf schmale Papierstreifen schreiben. Die Butter schmelzen und etwas abkühlen lassen.",
+    "Das Eiklar (von drei Eiern) mit dem Puderzucker kurz verrühren, nicht steif schlagen. Mehl und flüssige Butter unterrühren, bis ein glatter, dünnflüssiger Teig entsteht.",
+    "Pro Keks einen Teelöffel Teig auf das Blech geben und mit dem Löffelrücken zu einem dünnen Kreis von etwa 8 cm ziehen. Nur zwei bis drei Kreise pro Blech backen, weil die Kekse sofort geformt werden müssen.",
+    "Pro Blech etwa 6 bis 8 Minuten backen, bis der Rand goldbraun ist. Sofort einen Spruchzettel in die Mitte legen, den Kreis zur Hälfte klappen, über dem Rand einer Tasse zum Halbmond biegen und in einer Muffinform bis zum Erstarren stützen. Mit dem restlichen Teig ebenso verfahren."
    ],
-   "tips": "Der Teig muss sehr schnell geformt werden, solange die Kekse heiß und biegsam sind; Küchenhandschuhe aus Baumwolle schützen die Finger. Wird ein Keks zu fest, kurz 30 Sekunden zurück in den heißen Ofen. Mit Eiklar statt ganzer Eier bleiben Kalorien und Fett niedrig. Enthält Gluten, Ei und Milch.",
-   "storage": "Kekse trocken und luftdicht bis zu 3 Tage; den Dip Im Kühlschrank bis zu 2 Tage.",
-   "reheat": "Kalt servieren.",
+   "tips": "Originalfassung nach essen & trinken ohne Skyr-Dip: 30 Stück aus 3 Eiern (nur Eiweiß), 60 g Puderzucker, 60 g Mehl und 45 g Butter; bei 180 °C Ober-/Unterhitze portionsweise dünn backen und sofort warm falten. Eine Portion sind drei Kekse (rund 27 g, HINWEIS: unter dem Portionsgewicht von 80 g, weil Gebäck leicht ist). Backzeit ist ein Richtwert. Enthält Gluten, Ei und Milch.",
+   "storage": "Trocken und luftdicht bis zu 3 Tage.",
+   "reheat": "Nicht aufwärmen, bei Bedarf kurz im Ofen knusprig machen.",
    "freeze": {
     "ok": "nein",
     "block": 0,
     "months": 0,
-    "note": "Die Kekse werden durch Feuchtigkeit weich, der Dip trennt sich."
+    "note": "Die Kekse werden durch Feuchtigkeit weich."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.essen-und-trinken.de/rezepte/glueckskekse-12086190.html (essen-und-trinken.de, Glückskekse); die Seite darf von automatischen Werkzeugen laut robots.txt nicht abgerufen werden und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Quellenabgleich 29.10.2026: Originalfassung ohne Skyr nach essen & trinken „Glückskekse“; Zutaten laut Quellenabgleich, nicht belegte Mengen sind Richtwerte (siehe Hinweise); Zeiten sind Richtwerte, nicht getestet",
    "origin": "China"
   }),
   R({
-   "name": "Litschi-Ingwer-Eis mit Skyr",
+   "name": "Litschi-Ingwer-Sorbet",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "China",
    "servings": 4,
-   "prep": 15,
+   "prep": 20,
    "cook": 0,
    "level": "leicht",
    "devices": [
+    "Mixer",
     "Eisportionierer"
    ],
    "tags": [
     "Eis",
-    "proteinreich",
+    "Sorbet",
     "Dessert",
     "ohne Backen",
     "Chinesisch",
@@ -21831,33 +21831,33 @@ SEED2.push(
    "ing": [
     [
      "litschi",
-     400
-    ],
-    [
-     "skyr",
-     400
-    ],
-    [
-     "ingwer",
-     10
+     800
     ],
     [
      "zucker",
-     30
+     40
     ],
     [
-     "limettensaft",
-     20
+     "ingwer",
+     15
+    ],
+    [
+     "eingelegter_ingwer",
+     15
+    ],
+    [
+     "eiklar",
+     30
     ]
    ],
    "spices": [],
    "steps": [
-    "Die Litschis entsteinen (bei Dosenfrüchten gut abtropfen lassen), den Ingwer fein reiben.",
-    "Litschis, Ingwer, Zucker und Limettensaft fein pürieren, dann den Skyr unterrühren und abschmecken.",
-    "In eine flache Schale füllen und 4 bis 5 Stunden einfrieren; in den ersten 2 Stunden alle 30 Minuten kräftig durchrühren. Mit Eismaschine nach Herstelleranleitung gefrieren.",
+    "Die Litschis (zwei Dosen à 400 g) mit dem Sirup, dem Zucker, dem frisch geriebenen Ingwer und dem fein gehackten eingelegten Ingwer sehr fein pürieren. In eine Gefrierdose füllen und mindestens 6 Stunden durchfrieren.",
+    "Die gefrorene Masse in Stücke brechen, mit dem Eiklar im Mixer oder in der Küchenmaschine cremig mixen, bis sie hell und glatt ist.",
+    "Zurück in die Dose füllen und nochmals 2 bis 3 Stunden gefrieren, bis das Sorbet fest ist.",
     "Vor dem Servieren 10 Minuten antauen lassen und mit einem Eisportionierer in Kugeln stechen."
    ],
-   "tips": "Das Original ist ein Sorbet ohne Milchprodukt; hier ersetzt Skyr einen Teil der Frucht, damit das Dessert mindestens 10 g Eiweiß je Portion erreicht. Die Nährwerte beziehen sich auf rohe Litschis. Dosenlitschis bringen Zuckersirup mit: dann den Zucker weglassen. Enthält Milch.",
+   "tips": "Originalfassung nach BBC Good Food ohne Skyr: vier Portionen aus zwei 400-g-Dosen Litschi in Sirup, Zucker, frischem und eingelegtem Ingwer sowie einem rohen Eiweiß; Litschibasis mindestens sechs Stunden gefrieren und danach nochmals gefrieren. Zucker- und Ingwermengen sind Richtwerte der App. Die Nährwerte rechnen mit rohen Litschis; Dosensirup bringt zusätzlichen Zucker mit, dann den Zucker nach Geschmack kürzen. Rohes Eiweiß: für Schwangere, Kleinkinder und Menschen mit geschwächter Abwehr nur pasteurisiertes Eiklar verwenden. Enthält Ei.",
    "storage": "Im Gefrierer bis zu 2 Monate.",
    "reheat": "Vor dem Servieren antauen lassen.",
    "freeze": {
@@ -21866,24 +21866,23 @@ SEED2.push(
     "months": 2,
     "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/lychee-ginger-sorbet (bbcgoodfood.com, Lychee & ginger sorbet); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Quellenabgleich 29.10.2026: Originalfassung ohne Skyr nach BBC Good Food „Lychee & ginger sorbet“; Zutaten laut Quellenabgleich, nicht belegte Mengen sind Richtwerte (siehe Hinweise); Zeiten sind Richtwerte, nicht getestet",
    "origin": "China"
   }),
   R({
-   "name": "Tanghulu mit Skyr-Dip",
+   "name": "Tanghulu: kandierte Obstspieße",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "China",
-   "servings": 2,
-   "prep": 15,
-   "cook": 10,
+   "servings": 6,
+   "prep": 20,
+   "cook": 25,
    "level": "mittel",
    "devices": [
     "Herd"
    ],
    "tags": [
     "Karamell",
-    "proteinreich",
     "Dessert",
     "Obst",
     "Chinesisch"
@@ -21892,35 +21891,25 @@ SEED2.push(
    "ing": [
     [
      "erdbeeren",
-     150
+     300
     ],
     [
      "weintrauben",
-     100
-    ],
-    [
-     "orange",
-     100
+     150
     ],
     [
      "zucker",
-     40
-    ],
-    [
-     "skyr",
-     250
+     350
     ]
    ],
-   "spices": [
-    "vanille"
-   ],
+   "spices": [],
    "steps": [
-    "Erdbeeren und Trauben waschen und sehr gründlich trocknen, die Orange in Spalten teilen und die Haut entfernen. Das Obst abwechselnd auf vier Holzspieße stecken. Ein Backpapier und eine Schüssel Eiswasser bereitstellen.",
-    "Den Zucker mit 20 ml Wasser in einen kleinen Topf geben und ohne Rühren aufkochen, bis der Sirup 150 bis 155 °C erreicht (Zuckerthermometer); er ist dann hellgelb.",
-    "Den Topf vom Herd nehmen. Die Spieße rasch durch den Sirup drehen, kurz abtropfen lassen und auf das Backpapier legen. Den Zucker nach 2 Minuten fest werden lassen, für noch mehr Glasur kurz in Eiswasser tauchen und wieder abtrocknen.",
-    "Den Skyr mit Vanille glatt rühren und zum Dippen reichen. Sofort essen."
+    "Erdbeeren und Trauben waschen und vollständig trocken tupfen. Abwechselnd auf sechs stabile Holzspieße stecken und ein Backblech mit Backpapier oder einen leicht geölten Teller bereitstellen.",
+    "Den Zucker mit wenig Wasser (der Zucker soll nur gerade feucht sein) in einem kleinen hohen Topf bei mittlerer Hitze erhitzen. Nicht rühren, bis sich der Zucker aufgelöst hat; dann etwa 20 Minuten köcheln, bis der Sirup eindickt und ein Tropfen im kalten Wasser hart und spröde wird.",
+    "Nur Erwachsene sollten mit dem sehr heißen Sirup hantieren: Die Spieße zügig mit Zange oder hitzebeständigem Griff im Sirup drehen, kurz abtropfen lassen und zum Aushärten auf das Backpapier legen. Keinen heißen Zucker berühren oder kosten.",
+    "Die Glasur vollständig erkalten lassen, bis sie knackig hart ist, und die Spieße frisch servieren."
    ],
-   "tips": "Vorsicht: Heißer Zucker verursacht schwere Verbrennungen. Kinder fernhalten, eine Schüssel mit Eiswasser bereitstellen und den Topf nicht anfassen. Feuchtigkeit lässt die Glasur kleben, deshalb ist trockenes Obst entscheidend. Die Nährwerte rechnen mit dem ganzen Zucker, tatsächlich bleibt ein Teil im Topf. Enthält Milch.",
+   "tips": "Originalfassung nach BBC Good Food ohne Skyr-Dip: sechs Obstspieße aus 300 g Erdbeeren, 150 g Trauben und 350 g Kristallzucker; Zucker-Wasser-Sirup etwa 20 Minuten eindicken, rasch glasieren. Die Wassermenge ist ein Richtwert der App. Der Zucker wird nur zum Teil aufgenommen; die Nährwerte rechnen die gesamte Zuckermenge. Heißer Zuckersirup verursacht schwere Verbrennungen.",
    "storage": "Nicht aufbewahren; die Zuckerglasur wird nach wenigen Minuten klebrig.",
    "reheat": "Nicht aufwärmen.",
    "freeze": {
@@ -21929,7 +21918,7 @@ SEED2.push(
     "months": 0,
     "note": "Die Zuckerglasur zerläuft beim Auftauen."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/tanghulu (bbcgoodfood.com, Tanghulu); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Quellenabgleich 29.10.2026: Originalfassung ohne Skyr nach BBC Good Food „Tanghulu“; Zutaten laut Quellenabgleich, nicht belegte Mengen sind Richtwerte (siehe Hinweise); Zeiten sind Richtwerte, nicht getestet",
    "origin": "China"
   }),
   R({
@@ -22313,11 +22302,11 @@ SEED2.push(
    "origin": "China"
   }),
   R({
-   "name": "Orangen-Ingwer-Sauce mit Skyr (zu Nian Gao)",
+   "name": "Orangen-Grand-Marnier-Sauce (zu Nian Gao)",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "China",
-   "servings": 2,
+   "servings": 4,
    "prep": 15,
    "cook": 15,
    "level": "leicht",
@@ -22326,9 +22315,9 @@ SEED2.push(
    ],
    "tags": [
     "Kompott",
-    "proteinreich",
     "Dessert",
     "Obst",
+    "Alkohol",
     "Chinesisch"
    ],
    "mp": false,
@@ -22346,19 +22335,19 @@ SEED2.push(
      10
     ],
     [
-     "skyr",
-     300
+     "orangenlikoer",
+     120
     ]
    ],
    "spices": [],
    "steps": [
-    "Von zwei der Orangen die Schale und das Weiße abschneiden und die Filets zwischen den Trennhäuten herauslösen, dabei den Saft auffangen.",
+    "Von zwei der Orangen die Schale samt dem Weißen abschneiden und die Filets zwischen den Trennhäuten herauslösen, dabei den Saft auffangen.",
     "Die beiden anderen Orangen auspressen. Den Saft mit dem fein gehackten Ingwer und dem Zucker in einem Topf auf etwa die Hälfte einkochen (8 bis 10 Minuten).",
-    "Die Orangenfilets samt aufgefangenem Saft dazugeben und 1 Minute ziehen lassen.",
-    "Den Skyr auf zwei Schalen verteilen und die warme Sauce darübergeben."
+    "Den Grand Marnier zugeben und 1 bis 2 Minuten mitköcheln, dann die Orangenfilets samt aufgefangenem Saft dazugeben und 1 Minute ziehen lassen.",
+    "Die Sauce warm zu gedämpftem Nian Gao (Klebreiskuchen) reichen."
    ],
-   "tips": "Das gelesene Rezept gibt 120 ml Grand Marnier in die Sauce und reicht sie zu gedämpftem Nian Gao (Klebreiskuchen); hier ist der Orangenlikör weggelassen (Kalorien) und der Skyr bringt das Eiweiß. Wer Likör mag: 1 bis 2 EL erst am Schluss untermischen. Enthält Milch.",
-   "storage": "Die Sauce Im Kühlschrank bis zu 2 Tage.",
+   "tips": "Das gelesene Rezept (foodnetwork.com) gibt 120 ml Grand Marnier in die Sauce und reicht sie zu gedämpftem Nian Gao. Die Mengen von Orange, Ingwer und Zucker sowie die Portionszahl sind Richtwerte der App. Enthält Alkohol (Grand Marnier), der beim kurzen Kochen nur zum Teil verfliegt: nicht für Kinder, Schwangere und alkoholfreie Ernährung geeignet.",
+   "storage": "Die Sauce im Kühlschrank bis zu 2 Tage.",
    "reheat": "Sauce kurz erwärmen.",
    "freeze": {
     "ok": "nein",
@@ -22366,17 +22355,17 @@ SEED2.push(
     "months": 0,
     "note": "Die Orangenfilets werden nach dem Auftauen matschig."
    },
-   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Orange-Grand-Marnier-Sauce für Nian Gao“ (https://www.foodnetwork.com/recipes/orange-grand-marnier-sauce-for-nian-gao-recipe-1924985), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude), Originalfassung ohne Skyr nach dem auf foodnetwork.com gelesenen Rezept „Orange-Grand-Marnier-Sauce für Nian Gao“ (https://www.foodnetwork.com/recipes/orange-grand-marnier-sauce-for-nian-gao-recipe-1924985), in eigenen Worten; nicht belegte Mengen sind Richtwerte; Zeiten sind Richtwerte, nicht getestet",
    "origin": "China"
   }),
   R({
-   "name": "Ba Bao Fan: Achtschätze-Reis mit Skyr",
+   "name": "Ba Bao Fan: Achtschätze-Reis",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "China",
    "servings": 4,
    "prep": 40,
-   "cook": 50,
+   "cook": 60,
    "level": "mittel",
    "devices": [
     "Multikocher",
@@ -22384,7 +22373,6 @@ SEED2.push(
    ],
    "tags": [
     "Dämpfen",
-    "proteinreich",
     "Dessert",
     "Klebreis",
     "Chinesisch"
@@ -22392,119 +22380,129 @@ SEED2.push(
    "mp": false,
    "ing": [
     [
-     "sushireis",
+     "klebreis",
      160
     ],
     [
-     "kidneybohnen",
+     "anko",
      120
+    ],
+    [
+     "lotuskerne",
+     20
+    ],
+    [
+     "goji",
+     10
+    ],
+    [
+     "jujuben",
+     20
+    ],
+    [
+     "suesskirschen",
+     40
     ],
     [
      "zucker",
      35
     ],
     [
-     "datteln",
-     40
-    ],
-    [
-     "rosinen",
-     20
-    ],
-    [
-     "sonnenblumenkerne",
-     20
-    ],
-    [
      "speisestaerke",
      6
-    ],
-    [
-     "skyr",
-     200
     ]
    ],
-   "spices": [
-    "zimt"
-   ],
+   "spices": [],
    "steps": [
-    "Den Reis waschen und mindestens 4 Stunden (besser über Nacht) in Wasser einweichen, dann abgießen. Die Datteln entsteinen und in Streifen schneiden.",
-    "Die Bohnen mit 20 g Zucker und dem Zimt fein pürieren und in einer Pfanne 5 Minuten eindicken, bis sie formbar sind. Abkühlen lassen.",
-    "Den Reis in einem Dämpfeinsatz (mit feuchtem Tuch ausgelegt) etwa 40 Minuten dämpfen, bis er weich und klebrig ist.",
-    "Vier hitzefeste Schälchen leicht einölen und den Boden mit Datteln, Rosinen und Sonnenblumenkernen dekorativ auslegen. Die Hälfte des Reises darauf festdrücken, die Bohnenpaste darübergeben, mit dem restlichen Reis abdecken und fest andrücken. 10 Minuten nachdämpfen.",
-    "Die Stärke mit dem restlichen Zucker (15 g) und 100 ml Wasser aufkochen, bis der Sirup klar eindickt. Die Schälchen auf Teller stürzen, den Sirup darüberträufeln und je 50 g Skyr dazu servieren."
+    "Den Klebreis waschen und mindestens 4 Stunden (besser über Nacht) in Wasser einweichen, dann abgießen. Die Lotuskerne ebenfalls einweichen, Goji und Jujuben 15 Minuten in warmem Wasser quellen lassen; die Jujuben entsteinen und halbieren, die Kirschen entsteinen.",
+    "Die Lotuskerne in frischem Wasser im Multikocher oder Topf etwa 30 Minuten weich garen und abgießen.",
+    "Den Reis in einem Dämpfeinsatz (mit feuchtem Tuch ausgelegt) etwa 30 bis 40 Minuten dämpfen, bis er weich und klebrig ist.",
+    "Vier hitzefeste Schälchen leicht einölen und den Boden mit Kirschen, Jujuben, Goji und Lotuskernen dekorativ auslegen. Die Hälfte des Reises darauf festdrücken, die rote Bohnenpaste (Anko) darübergeben, mit dem restlichen Reis abdecken und fest andrücken. 10 Minuten nachdämpfen.",
+    "Die Stärke mit dem Zucker und 100 ml Wasser aufkochen, bis der Sirup klar eindickt. Die Schälchen auf Teller stürzen und den Sirup darüberträufeln."
    ],
-   "tips": "Die Zutaten sind vereinfacht: Das gelesene Rezept nutzt Klebreis, Lotussamen, Goji, Jujuben und Kirschen. Hier steht Sushireis (klebt weniger), die rote Bohnenpaste ist aus Kidneybohnen (Azukibohnen stehen nicht in der Datenbank) und Datteln ersetzen die Jujuben; der Skyr bringt Eiweiß. Enthält Milch, Sulfit (Rosinen) und Sonnenblumenkerne.",
+   "tips": "Das gelesene Rezept (foodnetwork.com) verwendet Klebreis, Lotussamen, Goji, Jujuben, Kirschen und rote Bohnenpaste, ohne Skyr. Die einzelnen Mengen, die Garzeiten und der Sirup sind Richtwerte der App; die Zutatenmengen des Originals liegen hier nicht mehr vor. Die rote Bohnenpaste ist als fertige Azukipaste (Anko) gerechnet.",
    "storage": "Im Kühlschrank bis zu 3 Tage, abgedeckt.",
    "reheat": "Etwa 5 Minuten über Dampf erwärmen.",
    "freeze": {
     "ok": "eingeschränkt",
     "block": 250,
     "months": 2,
-    "note": "Ohne Skyr einfrieren; Reis wird beim Auftauen fester, über Dampf wieder weich machen."
+    "note": "Reis wird beim Auftauen fester, über Dampf wieder weich machen."
    },
-   "src": "Eigene Fassung (Claude), angelehnt an das auf foodnetwork.com gelesene Rezept „Ba Bao Fan (Achtschätzereis)“ (https://www.foodnetwork.com/recipes/food-network-kitchen/ba-bao-fan-9858846), in eigenen Worten und für die App angepasst (Portionen, Kalorien, Eiweiß, Zutaten); Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude), Originalfassung ohne Skyr nach dem auf foodnetwork.com gelesenen Rezept „Ba Bao Fan (Achtschätzereis)“ (https://www.foodnetwork.com/recipes/food-network-kitchen/ba-bao-fan-9858846), in eigenen Worten; nicht belegte Mengen sind Richtwerte; Zeiten sind Richtwerte, nicht getestet",
    "origin": "China"
   }),
   R({
-   "name": "Gebackenes Skyr-Eis im Cornflakes-Mantel",
+   "name": "Chinesisches flambiertes Eis",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "China",
    "servings": 4,
-   "prep": 25,
-   "cook": 3,
-   "level": "mittel",
+   "prep": 40,
+   "cook": 10,
+   "level": "anspruchsvoll",
    "devices": [
-    "Airfryer",
-    "Eisportionierer"
+    "Herd",
+    "Eisportionierer",
+    "Thermometer"
    ],
    "tags": [
     "Eis",
-    "proteinreich",
     "Dessert",
-    "Airfryer",
-    "Chinesisch",
-    "Meal Prep"
+    "Frittiert",
+    "Flambiert",
+    "Alkohol",
+    "Chinesisch"
    ],
-   "mp": true,
+   "mp": false,
    "ing": [
     [
-     "skyr",
-     400
+     "vanilleeis",
+     320
     ],
     [
-     "zucker",
-     30
+     "sandkuchen",
+     120
+    ],
+    [
+     "mehl",
+     80
     ],
     [
      "eier",
      55
     ],
     [
-     "cornflakes",
+     "wasser",
+     80
+    ],
+    [
+     "rapsoel",
+     40
+    ],
+    [
+     "rum",
      40
     ]
    ],
-   "spices": [
-    "vanille"
-   ],
+   "spices": [],
    "steps": [
-    "Skyr, Zucker und Vanille glatt verrühren, in eine Schale füllen und 3 bis 4 Stunden einfrieren, bis die Masse fest ist.",
-    "Mit einem Eisportionierer 8 Kugeln abstechen, auf ein Tablett mit Backpapier legen und 1 Stunde hart gefrieren.",
-    "Die Cornflakes grob zerdrücken. Das Ei verquirlen. Jede gefrorene Kugel erst im Ei, dann in den Cornflakes wenden, fest andrücken und das Ganze wieder 30 Minuten einfrieren.",
-    "Den Airfryer auf 200 °C vorheizen. Die Kugeln im Korb 1 bis 2 Minuten backen, bis die Hülle goldgelb ist. Sofort servieren, je Portion zwei Kugeln."
+    "Das Vanilleeis mit dem Eisportionierer zu 8 Kugeln (je 40 g) formen, auf ein Tablett mit Backpapier legen und 1 Stunde hart gefrieren.",
+    "Den Sandkuchen fein zerkrümeln, die Kugeln rundum dünn damit umhüllen, fest andrücken und weitere 2 bis 3 Stunden einfrieren, bis sie steinhart sind.",
+    "Aus Mehl, Ei und Wasser einen glatten Ausbackteig rühren. Rapsöl in einem hohen Topf auf etwa 180 °C erhitzen (Thermometer).",
+    "Die Kugeln direkt aus dem Gefrierer zügig durch den Teig ziehen und im heißen Öl etwa 20 bis 30 Sekunden goldgelb ausbacken, mit der Schaumkelle herausheben und kurz abtropfen lassen. Je 2 Kugeln auf einen Teller legen.",
+    "Den Rum in einem kleinen Topf nur handwarm erwärmen, mit langem Streichholz über den Kugeln entzünden und sofort servieren. Dabei Abstand halten, Haare zurückbinden, nichts Brennbares in der Nähe, die Flasche stets weit entfernt lassen."
    ],
-   "tips": "Das Original (Chinesisches flambiertes Eis) wird frittiert und flambiert. Hier backt der Airfryer die Hülle kurz und es wird nicht flambiert, das spart Fett und vermeidet Stichflammen. Das Ei in der Hülle wird nur kurz erhitzt: für Schwangere und Menschen mit geschwächter Abwehr nicht geeignet, dafür die Hülle ohne Ei machen. Enthält Milch, Ei und Gluten.",
-   "storage": "Fertig panierte Kugeln im Gefrierer bis zu 4 Wochen.",
-   "reheat": "Direkt gefroren in den Airfryer.",
+   "tips": "Originalfassung nach Chefkoch: Vanilleeis mit Sandkuchen umhüllen, 2 bis 3 Stunden gefrieren, in Ausbackteig frittieren und mit Rum flambieren. Mengen, Teigzusammensetzung und Frittierzeit sind Richtwerte der App. Von der Frittieröl-Menge ist nur die Aufnahme (40 g) gerechnet; zum Ausbacken sind etwa 600 ml Öl im hohen Topf nötig. Heißes Öl und offene Flamme: nur Erwachsene, Feuerlöschdecke griffbereit, Wasser nie auf brennendes Fett. Enthält Alkohol, Gluten, Ei und Milch.",
+   "storage": "Nicht aufbewahren, sofort essen.",
+   "reheat": "Nicht aufwärmen.",
    "freeze": {
-    "ok": "ja",
-    "block": 125,
-    "months": 1,
-    "note": "Panierte Kugeln einzeln vorfrieren, dann in einem Behälter lagern; gefroren backen."
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Die frittierte Hülle weicht beim Auftauen auf; nur das umhüllte Eis vor dem Frittieren einfrieren."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html (chefkoch.de, Chinesisches flambiertes Eis); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Quellenabgleich 29.10.2026: Originalfassung ohne Skyr nach Chefkoch „Chinesisches flambiertes Eis“ (https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html); Zutaten laut Quellenabgleich, nicht belegte Mengen sind Richtwerte; Zeiten sind Richtwerte, nicht getestet",
    "origin": "China"
   }),
   R({
@@ -25605,11 +25603,11 @@ SEED2.push(
 /* ===== Rezeptcharge 50: 4 Subway-Brote (Italian, Honey Oat, Cheese Oregano, Sesam), getrennt aus einem eingereichten Text; Seiten nicht gelesen; eigene Fassung von Claude; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
 SEED2.push(
   R({
-   "name": "Subway-Brot Italian (Italienisches Weißbrot)",
+   "name": "Subway-Brot Italian (Baguettes à la Subway)",
    "meal": "Snack",
    "group": "Vegetarisch",
    "cuisine": "USA",
-   "servings": 4,
+   "servings": 3,
    "prep": 125,
    "cook": 25,
    "level": "mittel",
@@ -25627,27 +25625,27 @@ SEED2.push(
    "ing": [
     [
      "mehl550",
-     500
+     400
     ],
     [
-     "trockenhefe",
-     7
+     "wasser",
+     230
     ],
     [
      "zucker",
      10
     ],
     [
-     "gewuerze",
-     8
+     "trockenhefe",
+     7
+    ],
+    [
+     "speisesalz",
+     10
     ],
     [
      "olivenoel",
-     25
-    ],
-    [
-     "vollmilch",
-     30
+     50
     ],
     [
      "eier",
@@ -25656,23 +25654,27 @@ SEED2.push(
    ],
    "spices": [],
    "steps": [
-    "Trockenhefe, Zucker und 230 ml lauwarmes Wasser (etwa 35 bis 40 °C) in einer Schüssel verrühren und 5 bis 10 Minuten stehen lassen, bis die Mischung schäumt.",
-    "Mehl, Salz (8 g), Olivenöl (15 g), 30 ml lauwarme Milch und das Ei (laut Vorlage optional, für mehr Fluffigkeit) dazugeben und 8 bis 10 Minuten mit den Knethaken des Handmixers oder von Hand zu einem glatten, elastischen Teig kneten. Er darf leicht klebrig bleiben.",
-    "Den Teig in eine geölte Schüssel legen, abdecken und an einem warmen Ort etwa 1 Stunde gehen lassen, bis er sich verdoppelt hat.",
-    "Den Teig auf der bemehlten Fläche kurz durchkneten, in 4 gleiche Stücke teilen und jedes zu einem langen, ovalen Brötchen von etwa 30 cm formen. Auf ein mit Backpapier ausgelegtes Blech legen, abdecken und weitere 30 bis 40 Minuten gehen lassen.",
-    "Die Brötchen mit 1 EL Olivenöl bestreichen (optional etwas Meersalz darüberstreuen). Bei 180 °C Ober-/Unterhitze 20 bis 25 Minuten goldbraun backen.",
-    "Direkt nach dem Backen mit etwas Butter bestreichen, damit die Brötchen weich bleiben, und 10 Minuten unter einem Küchentuch ausdampfen lassen."
+    "Wasser, Trockenhefe, Zucker, Salz und Olivenöl in eine Schüssel geben, bei etwa 37 °C ungefähr 3 Minuten erwärmen oder gleich mit warmer Flüssigkeit arbeiten.",
+    "5 Minuten ruhen lassen.",
+    "130 g Mehl dazugeben und 2 Minuten kneten, dann weitere 200 g Mehl dazugeben und 2 Minuten kneten.",
+    "Die restlichen 70 g Mehl dazugeben und 8 Minuten kneten.",
+    "Den Teig abgedeckt etwa 1 Stunde gehen lassen, bis er sich ungefähr verdoppelt hat.",
+    "Den Teig auf einer leicht bemehlten Fläche in 3 gleiche Portionen teilen und jede Portion zu einem Rechteck von etwa 15 × 25 bis 30 cm ausrollen.",
+    "Von der langen Seite her zu einem Baguette aufrollen und die Baguettes mit Abstand auf ein Backpapier legen. Abgedeckt weitere 1 Stunde gehen lassen.",
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen. Das Ei verquirlen (nach Wunsch mit 1 EL Milch) und die Baguettes damit bestreichen.",
+    "Nach Wunsch mit Sesam, getrockneten Kräutern oder Käse bestreuen.",
+    "25 Minuten backen. Direkt nach dem Backen mit etwas geschmolzener Butter bestreichen und 10 Minuten unter einem Handtuch ausdampfen lassen."
    ],
-   "tips": "Auf Wunsch folgt diese Fassung den Zutaten und Mengen des eingereichten Rezepttextes (Subway-Copycat, gleicher Grundteig für alle Sorten), ohne Ersatz; jede Sorte ist hier ein eigenes Rezept mit vollem Grundteig für 4 Sub-Brötchen von etwa 30 cm (eine Portion ist ein Brötchen). Das Mehl darf laut Vorlage auch aus 450 g Mehl und 50 g Vitalweizengluten bestehen; gerechnet ist reines Weizenmehl Type 550. Das Wasser ist nicht eingerechnet (keine Nährwerte), die Butter zum Bestreichen nach dem Backen auch nicht (Menge im Text nicht angegeben): Butter ergänzt etwa 7 kcal je Gramm. Das Ei im Teig ist laut Vorlage optional und mitgerechnet, Milch als Vollmilch (30 ml als 30 g), Teigeinwaage mit Salz 8 g als Gewürz. Zubereitungszeit enthält zwei Gehzeiten (etwa 1 Stunde und 30 bis 40 Minuten); Wasser und Milch lauwarm halten, zu heiß tötet die Hefe. Nach dem Backen 10 Minuten unter einem Tuch ausdampfen lassen macht die Kruste weich. Ergebnis laut Vorlage: neutraler, weicher Geschmack, der Klassiker für alle Beläge. Enthält Gluten, Ei und Milch.",
-   "storage": "Am Backtag frisch essen. In einem Beutel oder in Frischhaltefolie bis zu 2 Tage bei Raumtemperatur (Angabe der Vorlage).",
+   "tips": "Alle vier Subway-Brote (r355 bis r358) teilen denselben Grundteig nach dem Originalrezept „Baguettes à la Subway®“ von foodwithlove.de (Perplexity-Abgleich vom 31.10.2026): 3 große Baguettes aus 400 g Weizenmehl Type 550, 230 g lauwarmem Wasser, 10 g Zucker, 7 g Trockenhefe, 9 bis 12 g Salz (gerechnet 10 g) und 50 g Olivenöl; keine Milch und kein Ei im Teig, das Ei (1 Stück, gerechnet 55 g) dient nur zum Bestreichen. Eine Portion ist ein Baguette. Das Wasser hat keinen Nährwert, die Butter nach dem Backen ist nicht eingerechnet (Menge nicht angegeben). Sesam, Kräuter oder Käse zum Bestreuen sind optional und nicht eingerechnet. Zubereitungszeit enthält zwei Gehzeiten von je etwa 1 Stunde; das Wasser lauwarm halten, zu heiß tötet die Hefe. Enthält Gluten und Ei.",
+   "storage": "Am selben Tag am besten; luftdicht 1 bis 2 Tage.",
    "reheat": "Eingefrorene Brötchen vor dem Verzehr kurz im Ofen aufbacken.",
    "freeze": {
     "ok": "eingeschränkt",
     "block": 250,
-    "months": 3,
-    "note": "Ungeschnitten und abgekühlt einzeln einfrieren (laut Vorlage bis zu 3 Monate), vor dem Verzehr kurz im Ofen aufbacken. Ein 30-cm-Brötchen passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
+    "months": 2,
+    "note": "Ungeschnitten und abgekühlt einzeln einfrieren, vor dem Servieren bei 160 °C 5 bis 8 Minuten aufbacken. Ein Baguette passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (Subway-Copycat „Italian Bread“, adaptiert aus mehreren Copycat-Rezepten, genannte Quelle https://app.samsungfood.com/recipes/107d2e525eaed984ecb8808c9a650cc4383) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, in eigenen Worten; die Seite wurde von Claude nicht aufgerufen und nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude), korrigiert nach dem vom Auftraggeber übergebenen Perplexity-Abgleich vom 31.10.2026 mit dem Originalrezept „Baguettes a la Subway®“ von foodwithlove.de (https://www.foodwithlove.de/homemade-subway-baguettes-20.html), Zutaten und Mengen wie im Original, in eigenen Worten; die Seite wurde von Claude nicht aufgerufen; Zeiten sind Richtwerte, nicht getestet",
    "origin": "USA"
   }),
   R({
@@ -25680,7 +25682,7 @@ SEED2.push(
    "meal": "Snack",
    "group": "Vegetarisch",
    "cuisine": "USA",
-   "servings": 4,
+   "servings": 3,
    "prep": 125,
    "cook": 25,
    "level": "mittel",
@@ -25693,33 +25695,33 @@ SEED2.push(
     "Subway",
     "Haferflocken",
     "Backen",
-    "originalgetreu"
+    "Adaption"
    ],
    "mp": false,
    "ing": [
     [
      "mehl550",
-     500
+     400
     ],
     [
-     "trockenhefe",
-     7
+     "wasser",
+     230
     ],
     [
      "zucker",
      10
     ],
     [
-     "gewuerze",
-     8
+     "trockenhefe",
+     7
+    ],
+    [
+     "speisesalz",
+     10
     ],
     [
      "olivenoel",
-     15
-    ],
-    [
-     "vollmilch",
-     30
+     50
     ],
     [
      "eier",
@@ -25736,23 +25738,27 @@ SEED2.push(
    ],
    "spices": [],
    "steps": [
-    "Trockenhefe, Zucker und 230 ml lauwarmes Wasser (etwa 35 bis 40 °C) in einer Schüssel verrühren und 5 bis 10 Minuten stehen lassen, bis die Mischung schäumt.",
-    "Mehl, Salz (8 g), Olivenöl (15 g), 30 ml lauwarme Milch und das Ei (laut Vorlage optional, für mehr Fluffigkeit) dazugeben und 8 bis 10 Minuten mit den Knethaken des Handmixers oder von Hand zu einem glatten, elastischen Teig kneten. Er darf leicht klebrig bleiben.",
-    "Den Teig in eine geölte Schüssel legen, abdecken und an einem warmen Ort etwa 1 Stunde gehen lassen, bis er sich verdoppelt hat.",
-    "Den Teig auf der bemehlten Fläche kurz durchkneten, in 4 gleiche Stücke teilen und jedes zu einem langen, ovalen Brötchen von etwa 30 cm formen. Auf ein mit Backpapier ausgelegtes Blech legen, abdecken und weitere 30 bis 40 Minuten gehen lassen.",
-    "Die Brötchen mit 1 EL Honig bestreichen und mit 2 EL Haferflocken bestreuen. Bei 180 °C Ober-/Unterhitze 20 bis 25 Minuten goldbraun backen.",
-    "Direkt nach dem Backen mit etwas Butter bestreichen und 10 Minuten unter einem Küchentuch ausdampfen lassen."
+    "Wasser, Trockenhefe, Zucker, Salz und Olivenöl in eine Schüssel geben, bei etwa 37 °C ungefähr 3 Minuten erwärmen oder gleich mit warmer Flüssigkeit arbeiten.",
+    "5 Minuten ruhen lassen.",
+    "130 g Mehl dazugeben und 2 Minuten kneten, dann weitere 200 g Mehl dazugeben und 2 Minuten kneten.",
+    "Die restlichen 70 g Mehl dazugeben und 8 Minuten kneten.",
+    "Den Teig abgedeckt etwa 1 Stunde gehen lassen, bis er sich ungefähr verdoppelt hat.",
+    "Den Teig auf einer leicht bemehlten Fläche in 3 gleiche Portionen teilen und jede Portion zu einem Rechteck von etwa 15 × 25 bis 30 cm ausrollen.",
+    "Von der langen Seite her zu einem Baguette aufrollen und die Baguettes mit Abstand auf ein Backpapier legen. Abgedeckt weitere 1 Stunde gehen lassen.",
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen. Das Ei verquirlen (nach Wunsch mit 1 EL Milch) und die Baguettes damit bestreichen.",
+    "Optional die Haferflocken auf die bestrichenen Baguettes streuen. Der Honig kommt erst nach dem Backen und Abkühlen: die Baguettes optional dünn damit bestreichen.",
+    "25 Minuten backen. Direkt nach dem Backen mit etwas geschmolzener Butter bestreichen und 10 Minuten unter einem Handtuch ausdampfen lassen."
    ],
-   "tips": "Auf Wunsch folgt diese Fassung den Zutaten und Mengen des eingereichten Rezepttextes (Subway-Copycat, gleicher Grundteig für alle Sorten), ohne Ersatz; jede Sorte ist hier ein eigenes Rezept mit vollem Grundteig für 4 Sub-Brötchen von etwa 30 cm (eine Portion ist ein Brötchen). Das Mehl darf laut Vorlage auch aus 450 g Mehl und 50 g Vitalweizengluten bestehen; gerechnet ist reines Weizenmehl Type 550. Das Wasser ist nicht eingerechnet (keine Nährwerte), die Butter zum Bestreichen nach dem Backen auch nicht (Menge im Text nicht angegeben): Butter ergänzt etwa 7 kcal je Gramm. Das Ei im Teig ist laut Vorlage optional und mitgerechnet, Milch als Vollmilch (30 ml als 30 g), Teigeinwaage mit Salz 8 g als Gewürz. Zubereitungszeit enthält zwei Gehzeiten (etwa 1 Stunde und 30 bis 40 Minuten); Wasser und Milch lauwarm halten, zu heiß tötet die Hefe. Nach dem Backen 10 Minuten unter einem Tuch ausdampfen lassen macht die Kruste weich. 1 EL Honig ist als 20 g, 2 EL Haferflocken als 15 g gerechnet. Ergebnis laut Vorlage: leicht süßlich und nussig, passt zu Hähnchen oder vegetarischen Belägen. Enthält Gluten (Weizen, Hafer), Ei und Milch.",
-   "storage": "Am Backtag frisch essen. In einem Beutel oder in Frischhaltefolie bis zu 2 Tage bei Raumtemperatur (Angabe der Vorlage).",
+   "tips": "Alle vier Subway-Brote (r355 bis r358) teilen denselben Grundteig nach dem Originalrezept „Baguettes à la Subway®“ von foodwithlove.de (Perplexity-Abgleich vom 31.10.2026): 3 große Baguettes aus 400 g Weizenmehl Type 550, 230 g lauwarmem Wasser, 10 g Zucker, 7 g Trockenhefe, 9 bis 12 g Salz (gerechnet 10 g) und 50 g Olivenöl; keine Milch und kein Ei im Teig, das Ei (1 Stück, gerechnet 55 g) dient nur zum Bestreichen. Eine Portion ist ein Baguette. Das Wasser hat keinen Nährwert, die Butter nach dem Backen ist nicht eingerechnet (Menge nicht angegeben). Honig (20 g, optional nach dem Abkühlen dünn auf die Baguettes streichen) und Haferflocken (15 g, optional zum Bestreuen) gehören nicht zum Originalteig, sondern sind eine moderne Abwandlung und mit gerechnet. Zwei Gehzeiten von je etwa 1 Stunde; Wasser lauwarm halten. Enthält Gluten und Ei.",
+   "storage": "Am selben Tag am besten; luftdicht 1 bis 2 Tage.",
    "reheat": "Eingefrorene Brötchen vor dem Verzehr kurz im Ofen aufbacken.",
    "freeze": {
     "ok": "eingeschränkt",
     "block": 250,
-    "months": 3,
-    "note": "Ungeschnitten und abgekühlt einzeln einfrieren (laut Vorlage bis zu 3 Monate), vor dem Verzehr kurz im Ofen aufbacken. Ein 30-cm-Brötchen passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
+    "months": 2,
+    "note": "Ungeschnitten und abgekühlt einzeln einfrieren, vor dem Servieren bei 160 °C 5 bis 8 Minuten aufbacken. Ein Baguette passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (Subway-Copycat „Honey Oat Bread“, adaptiert aus mehreren Copycat-Rezepten, genannte Quelle https://www.lazycuisine.com/en/recipe/subway-copycat-honey-oat-bread-50-percent-whole-wheat/) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, in eigenen Worten; die Seite wurde von Claude nicht aufgerufen und nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude), korrigiert nach dem vom Auftraggeber übergebenen Perplexity-Abgleich vom 31.10.2026 mit dem Originalrezept „Baguettes a la Subway®“ von foodwithlove.de (https://www.foodwithlove.de/homemade-subway-baguettes-20.html), Grundteig wie im Original, in eigenen Worten, Honig und Haferflocken als Abwandlung (nicht im Original); die Seite wurde von Claude nicht aufgerufen; Zeiten sind Richtwerte, nicht getestet",
    "origin": "USA"
   }),
   R({
@@ -25760,7 +25766,7 @@ SEED2.push(
    "meal": "Snack",
    "group": "Vegetarisch",
    "cuisine": "USA",
-   "servings": 4,
+   "servings": 3,
    "prep": 125,
    "cook": 25,
    "level": "mittel",
@@ -25773,33 +25779,33 @@ SEED2.push(
     "Subway",
     "Käse",
     "Backen",
-    "originalgetreu"
+    "Adaption"
    ],
    "mp": false,
    "ing": [
     [
      "mehl550",
-     500
+     400
     ],
     [
-     "trockenhefe",
-     7
+     "wasser",
+     230
     ],
     [
      "zucker",
      10
     ],
     [
-     "gewuerze",
-     8
+     "trockenhefe",
+     7
+    ],
+    [
+     "speisesalz",
+     10
     ],
     [
      "olivenoel",
-     25
-    ],
-    [
-     "vollmilch",
-     30
+     50
     ],
     [
      "eier",
@@ -25811,27 +25817,30 @@ SEED2.push(
     ]
    ],
    "spices": [
-    "oregano",
-    "knoblauchpulver"
+    "oregano"
    ],
    "steps": [
-    "Trockenhefe, Zucker und 230 ml lauwarmes Wasser (etwa 35 bis 40 °C) in einer Schüssel verrühren und 5 bis 10 Minuten stehen lassen, bis die Mischung schäumt.",
-    "Mehl, Salz (8 g), Olivenöl (15 g), 30 ml lauwarme Milch und das Ei (laut Vorlage optional, für mehr Fluffigkeit) dazugeben und 8 bis 10 Minuten mit den Knethaken des Handmixers oder von Hand zu einem glatten, elastischen Teig kneten. Er darf leicht klebrig bleiben.",
-    "Den Teig in eine geölte Schüssel legen, abdecken und an einem warmen Ort etwa 1 Stunde gehen lassen, bis er sich verdoppelt hat.",
-    "Den Teig auf der bemehlten Fläche kurz durchkneten, in 4 gleiche Stücke teilen und jedes zu einem langen, ovalen Brötchen von etwa 30 cm formen. Auf ein mit Backpapier ausgelegtes Blech legen, abdecken und weitere 30 bis 40 Minuten gehen lassen.",
-    "Die Brötchen mit 1 EL Olivenöl (oder geschmolzener Butter) bestreichen. 50 g geriebenen Käse, 1 TL getrockneten Oregano und nach Wunsch 1 TL Knoblauchpulver darauf verteilen.",
-    "Bei 180 °C Ober-/Unterhitze 20 bis 25 Minuten backen, bis der Käse goldbraun ist. Direkt danach mit etwas Butter bestreichen und 10 Minuten unter einem Küchentuch ausdampfen lassen."
+    "Wasser, Trockenhefe, Zucker, Salz und Olivenöl in eine Schüssel geben, bei etwa 37 °C ungefähr 3 Minuten erwärmen oder gleich mit warmer Flüssigkeit arbeiten.",
+    "5 Minuten ruhen lassen.",
+    "130 g Mehl dazugeben und 2 Minuten kneten, dann weitere 200 g Mehl dazugeben und 2 Minuten kneten.",
+    "Die restlichen 70 g Mehl dazugeben und 8 Minuten kneten.",
+    "Den Teig abgedeckt etwa 1 Stunde gehen lassen, bis er sich ungefähr verdoppelt hat.",
+    "Den Teig auf einer leicht bemehlten Fläche in 3 gleiche Portionen teilen und jede Portion zu einem Rechteck von etwa 15 × 25 bis 30 cm ausrollen.",
+    "Von der langen Seite her zu einem Baguette aufrollen und die Baguettes mit Abstand auf ein Backpapier legen. Abgedeckt weitere 1 Stunde gehen lassen.",
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen. Das Ei verquirlen (nach Wunsch mit 1 EL Milch) und die Baguettes damit bestreichen.",
+    "50 g geriebenen Mozzarella und 1 EL Oregano auf die bestrichenen Baguettes streuen.",
+    "25 Minuten backen. Direkt nach dem Backen mit etwas geschmolzener Butter bestreichen und 10 Minuten unter einem Handtuch ausdampfen lassen."
    ],
-   "tips": "Auf Wunsch folgt diese Fassung den Zutaten und Mengen des eingereichten Rezepttextes (Subway-Copycat, gleicher Grundteig für alle Sorten), ohne Ersatz; jede Sorte ist hier ein eigenes Rezept mit vollem Grundteig für 4 Sub-Brötchen von etwa 30 cm (eine Portion ist ein Brötchen). Das Mehl darf laut Vorlage auch aus 450 g Mehl und 50 g Vitalweizengluten bestehen; gerechnet ist reines Weizenmehl Type 550. Das Wasser ist nicht eingerechnet (keine Nährwerte), die Butter zum Bestreichen nach dem Backen auch nicht (Menge im Text nicht angegeben): Butter ergänzt etwa 7 kcal je Gramm. Das Ei im Teig ist laut Vorlage optional und mitgerechnet, Milch als Vollmilch (30 ml als 30 g), Teigeinwaage mit Salz 8 g als Gewürz. Zubereitungszeit enthält zwei Gehzeiten (etwa 1 Stunde und 30 bis 40 Minuten); Wasser und Milch lauwarm halten, zu heiß tötet die Hefe. Nach dem Backen 10 Minuten unter einem Tuch ausdampfen lassen macht die Kruste weich. Als geriebener Käse ist Mozzarella gerechnet (die Vorlage nennt Gouda oder Mozzarella), 1 EL Olivenöl als 10 g, Oregano und das optionale Knoblauchpulver ohne Nährwerte. Ergebnis laut Vorlage: würzig-aromatisch, passt zu Salami, Pepperoni oder Hähnchen. Enthält Gluten, Ei und Milch.",
-   "storage": "Am Backtag frisch essen. In einem Beutel oder in Frischhaltefolie bis zu 2 Tage bei Raumtemperatur (Angabe der Vorlage).",
+   "tips": "Alle vier Subway-Brote (r355 bis r358) teilen denselben Grundteig nach dem Originalrezept „Baguettes à la Subway®“ von foodwithlove.de (Perplexity-Abgleich vom 31.10.2026): 3 große Baguettes aus 400 g Weizenmehl Type 550, 230 g lauwarmem Wasser, 10 g Zucker, 7 g Trockenhefe, 9 bis 12 g Salz (gerechnet 10 g) und 50 g Olivenöl; keine Milch und kein Ei im Teig, das Ei (1 Stück, gerechnet 55 g) dient nur zum Bestreichen. Eine Portion ist ein Baguette. Das Wasser hat keinen Nährwert, die Butter nach dem Backen ist nicht eingerechnet (Menge nicht angegeben). Mozzarella (50 g) und Oregano gehören nicht zum Originalteig, sondern sind eine moderne Abwandlung als Topping und mit gerechnet. Zwei Gehzeiten von je etwa 1 Stunde; Wasser lauwarm halten. Enthält Gluten, Ei und Milch.",
+   "storage": "Am selben Tag am besten; luftdicht 1 bis 2 Tage.",
    "reheat": "Eingefrorene Brötchen vor dem Verzehr kurz im Ofen aufbacken.",
    "freeze": {
     "ok": "eingeschränkt",
     "block": 250,
-    "months": 3,
-    "note": "Ungeschnitten und abgekühlt einzeln einfrieren (laut Vorlage bis zu 3 Monate), vor dem Verzehr kurz im Ofen aufbacken. Ein 30-cm-Brötchen passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
+    "months": 2,
+    "note": "Ungeschnitten und abgekühlt einzeln einfrieren, vor dem Servieren bei 160 °C 5 bis 8 Minuten aufbacken. Ein Baguette passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (Subway-Copycat „Cheese Oregano Bread“, adaptiert aus mehreren Copycat-Rezepten, genannte Quelle https://neskitchen.com/recipe/copycat-subway-italian-herb-cheese-bread/) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, in eigenen Worten; die Seite wurde von Claude nicht aufgerufen und nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude), korrigiert nach dem vom Auftraggeber übergebenen Perplexity-Abgleich vom 31.10.2026 mit dem Originalrezept „Baguettes a la Subway®“ von foodwithlove.de (https://www.foodwithlove.de/homemade-subway-baguettes-20.html), Grundteig wie im Original, in eigenen Worten, Mozzarella und Oregano als Abwandlung (nicht im Original); die Seite wurde von Claude nicht aufgerufen; Zeiten sind Richtwerte, nicht getestet",
    "origin": "USA"
   }),
   R({
@@ -25839,7 +25848,7 @@ SEED2.push(
    "meal": "Snack",
    "group": "Vegetarisch",
    "cuisine": "USA",
-   "servings": 4,
+   "servings": 3,
    "prep": 125,
    "cook": 25,
    "level": "mittel",
@@ -25858,56 +25867,60 @@ SEED2.push(
    "ing": [
     [
      "mehl550",
-     500
+     400
     ],
     [
-     "trockenhefe",
-     7
+     "wasser",
+     230
     ],
     [
      "zucker",
      10
     ],
     [
-     "gewuerze",
-     8
+     "trockenhefe",
+     7
+    ],
+    [
+     "speisesalz",
+     10
     ],
     [
      "olivenoel",
-     15
-    ],
-    [
-     "vollmilch",
-     30
+     50
     ],
     [
      "eier",
-     110
+     55
     ],
     [
      "sesam",
-     20
+     25
     ]
    ],
    "spices": [],
    "steps": [
-    "Trockenhefe, Zucker und 230 ml lauwarmes Wasser (etwa 35 bis 40 °C) in einer Schüssel verrühren und 5 bis 10 Minuten stehen lassen, bis die Mischung schäumt.",
-    "Mehl, Salz (8 g), Olivenöl (15 g), 30 ml lauwarme Milch und das Ei (laut Vorlage optional, für mehr Fluffigkeit) dazugeben und 8 bis 10 Minuten mit den Knethaken des Handmixers oder von Hand zu einem glatten, elastischen Teig kneten. Er darf leicht klebrig bleiben.",
-    "Den Teig in eine geölte Schüssel legen, abdecken und an einem warmen Ort etwa 1 Stunde gehen lassen, bis er sich verdoppelt hat.",
-    "Den Teig auf der bemehlten Fläche kurz durchkneten, in 4 gleiche Stücke teilen und jedes zu einem langen, ovalen Brötchen von etwa 30 cm formen. Auf ein mit Backpapier ausgelegtes Blech legen, abdecken und weitere 30 bis 40 Minuten gehen lassen.",
-    "1 Ei verquirlen, die Brötchen damit bestreichen und mit 2 EL Sesamsamen bestreuen. Bei 180 °C Ober-/Unterhitze 20 bis 25 Minuten goldbraun backen.",
-    "Direkt nach dem Backen mit etwas Butter bestreichen und 10 Minuten unter einem Küchentuch ausdampfen lassen."
+    "Wasser, Trockenhefe, Zucker, Salz und Olivenöl in eine Schüssel geben, bei etwa 37 °C ungefähr 3 Minuten erwärmen oder gleich mit warmer Flüssigkeit arbeiten.",
+    "5 Minuten ruhen lassen.",
+    "130 g Mehl dazugeben und 2 Minuten kneten, dann weitere 200 g Mehl dazugeben und 2 Minuten kneten.",
+    "Die restlichen 70 g Mehl dazugeben und 8 Minuten kneten.",
+    "Den Teig abgedeckt etwa 1 Stunde gehen lassen, bis er sich ungefähr verdoppelt hat.",
+    "Den Teig auf einer leicht bemehlten Fläche in 3 gleiche Portionen teilen und jede Portion zu einem Rechteck von etwa 15 × 25 bis 30 cm ausrollen.",
+    "Von der langen Seite her zu einem Baguette aufrollen und die Baguettes mit Abstand auf ein Backpapier legen. Abgedeckt weitere 1 Stunde gehen lassen.",
+    "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen. Das Ei verquirlen (nach Wunsch mit 1 EL Milch) und die Baguettes damit bestreichen.",
+    "Nach dem Bestreichen mit Ei 20 bis 30 g Sesam auf die Baguettes streuen; nach Wunsch 2 EL geriebenen Parmesan mit 1 EL Oregano mischen und zusätzlich darüberstreuen.",
+    "25 Minuten backen. Direkt nach dem Backen mit etwas geschmolzener Butter bestreichen und 10 Minuten unter einem Handtuch ausdampfen lassen."
    ],
-   "tips": "Auf Wunsch folgt diese Fassung den Zutaten und Mengen des eingereichten Rezepttextes (Subway-Copycat, gleicher Grundteig für alle Sorten), ohne Ersatz; jede Sorte ist hier ein eigenes Rezept mit vollem Grundteig für 4 Sub-Brötchen von etwa 30 cm (eine Portion ist ein Brötchen). Das Mehl darf laut Vorlage auch aus 450 g Mehl und 50 g Vitalweizengluten bestehen; gerechnet ist reines Weizenmehl Type 550. Das Wasser ist nicht eingerechnet (keine Nährwerte), die Butter zum Bestreichen nach dem Backen auch nicht (Menge im Text nicht angegeben): Butter ergänzt etwa 7 kcal je Gramm. Das Ei im Teig ist laut Vorlage optional und mitgerechnet, Milch als Vollmilch (30 ml als 30 g), Teigeinwaage mit Salz 8 g als Gewürz. Zubereitungszeit enthält zwei Gehzeiten (etwa 1 Stunde und 30 bis 40 Minuten); Wasser und Milch lauwarm halten, zu heiß tötet die Hefe. Nach dem Backen 10 Minuten unter einem Tuch ausdampfen lassen macht die Kruste weich. Eier sind doppelt gerechnet (1 Ei im Teig, 1 Ei zum Bestreichen, zusammen 110 g); beim Bestreichen bleibt meist etwas übrig. 2 EL Sesam als 20 g gerechnet. Ergebnis laut Vorlage: klassischer Sub-Look mit leicht nussigem Sesamaroma. Enthält Gluten, Ei, Milch und Sesam.",
-   "storage": "Am Backtag frisch essen. In einem Beutel oder in Frischhaltefolie bis zu 2 Tage bei Raumtemperatur (Angabe der Vorlage).",
+   "tips": "Alle vier Subway-Brote (r355 bis r358) teilen denselben Grundteig nach dem Originalrezept „Baguettes à la Subway®“ von foodwithlove.de (Perplexity-Abgleich vom 31.10.2026): 3 große Baguettes aus 400 g Weizenmehl Type 550, 230 g lauwarmem Wasser, 10 g Zucker, 7 g Trockenhefe, 9 bis 12 g Salz (gerechnet 10 g) und 50 g Olivenöl; keine Milch und kein Ei im Teig, das Ei (1 Stück, gerechnet 55 g) dient nur zum Bestreichen. Eine Portion ist ein Baguette. Das Wasser hat keinen Nährwert, die Butter nach dem Backen ist nicht eingerechnet (Menge nicht angegeben). Sesam (gerechnet 25 g, Bereich 20 bis 30 g) ist im Original optional und liegt als Topping auf den Baguettes; Parmesan und Oregano sind optional und nicht eingerechnet. Zwei Gehzeiten von je etwa 1 Stunde; Wasser lauwarm halten. Enthält Gluten, Ei und Sesam.",
+   "storage": "Am selben Tag am besten; luftdicht 1 bis 2 Tage.",
    "reheat": "Eingefrorene Brötchen vor dem Verzehr kurz im Ofen aufbacken.",
    "freeze": {
     "ok": "eingeschränkt",
     "block": 250,
-    "months": 3,
-    "note": "Ungeschnitten und abgekühlt einzeln einfrieren (laut Vorlage bis zu 3 Monate), vor dem Verzehr kurz im Ofen aufbacken. Ein 30-cm-Brötchen passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
+    "months": 2,
+    "note": "Ungeschnitten und abgekühlt einzeln einfrieren, vor dem Servieren bei 160 °C 5 bis 8 Minuten aufbacken. Ein Baguette passt in keinen Block, der Gefrierplan rechnet formal mit 250 ml je Portion; besser im Beutel oder in Folie."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (Subway-Copycat „Sesam Bread“, adaptiert aus mehreren Copycat-Rezepten, genannte Quelle https://www.favfamilyrecipes.com/subway-bread/) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, in eigenen Worten; die Seite wurde von Claude nicht aufgerufen und nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude), korrigiert nach dem vom Auftraggeber übergebenen Perplexity-Abgleich vom 31.10.2026 mit dem Originalrezept „Baguettes a la Subway®“ von foodwithlove.de (https://www.foodwithlove.de/homemade-subway-baguettes-20.html), Grundteig wie im Original, in eigenen Worten, Sesam wie im Original optional; die Seite wurde von Claude nicht aufgerufen; Zeiten sind Richtwerte, nicht getestet",
    "origin": "USA"
   })
 );
@@ -73319,7 +73332,7 @@ const QUELLEN_REZEPTABGLEICH = {
  r246: {url:'https://www.chefkoch.de/rezepte/761551178884059/Deftige-Erbsensuppe.html',basis:'Original: getrocknete Erbsen 12 Stunden einweichen, mit 150 g Bauchspeck und 250 g Mettenden, Porree, Karotte, Sellerie und Kartoffeln etwa zwei Stunden sanft garen. App: Kochschinken und wenig Speck, ohne Mettenden; Garzeit nach Erbsenart und Packung bis vollständig weich.'},
  r272: {url:'https://www.chefkoch.de/rezepte/817681186299057/Birnen-in-Rotwein-an-Vanilleeis.html',basis:'Original für zwei Portionen: zwei Birnen, 200 ml Rotwein, drei EL Zucker, Zimt, Vanilleeis. Birnenhälften ca. 5–10 Minuten weich pochieren, Sud sirupartig reduzieren. App ergänzt viel Skyr und vier Portionen; Birnengarzeit an Fruchtreife angepasst.'},
  r234: {url:'https://www.chefkoch.de/rezepte/982031203667502/Kaese-Lauch-Suppe-mit-Hackfleisch.html',basis:'Original für vier Portionen: 500 g gemischtes Hack, etwa 750–800 g Lauch, 700 ml Brühe aus Würfeln, 250 g Schmelzkäse, ca. 150 g Crème fraîche plus Baguette; ca. 20 Minuten am Herd. App: Rinderhack, Frischkäse/Gouda/Kochsahne statt Schmelzkäse und mehr Brühe; Käse nur bei milder Hitze zugeben.'},
- r312: {url:'https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html',basis:'Original: Vanilleeis mit Sandkuchen umhüllen, 2–3 h gefrieren, in Ausbackteig frittieren, danach Rumflamme. App ist KEIN flambiertes und kein frittiertes Eis; wegen offener Flamme und rohem Eipanade-Problem als kaltes Skyr-Cornflakes-Eis ohne Ei/Hitze überarbeitet.'},
+ r312: {"url": "https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html", "basis": "Original: Vanilleeis mit Sandkuchen umhüllen, 2–3 h gefrieren, in Ausbackteig frittieren, danach Rumflamme. App: Originalfassung mit Vanilleeis, Sandkuchen, Ausbackteig und Rum; Mengen, Teig und Frittierzeit sind Richtwerte. Offene Flamme und heißes Öl: nur Erwachsene."},
  r313: {url:'https://www.chefkoch.de/rezepte/654001166948846/Gedaempfte-Dattelkloesschen.html',basis:'Original: Hefeteig mit Mehl, Hefe, Mineralwasser, Backpulver, Zucker/Schmalz und ca. 150 g Dattelpaste; 1 h Teigruhe, nach Füllen 5 Min. Ruhe und 10 Min. dämpfen. App: anderer Quark-Ei-Teig mit Walnuss-Dattelfüllung, 12–15 Min. dämpfen; keine Hefeteig-Kopie.'},
  r337: {url:'https://www.chefkoch.de/rezepte/1484001253619546/Bananen-Eis.html',basis:'Original für Eismaschine: zwei Bananen, 300 ml Milch, 200 ml geschlagene Sahne, 125 g Zucker, Vanillezucker, Zitronensaft und 1 g Johannisbrotkernmehl, danach etwa 40 Min. Eismaschine. App: Nicecream aus tiefgefrorenen Bananen und Skyr ohne zugesetzten Zucker und ohne Eismaschine.'},
  r353: {"url": "https://www.essen-und-trinken.de/rezepte/spaghetti-eis-13354700.html", "otherUrls": ["https://www.chefkoch.de/rezepte/1152361221481605/Spaghetti-Eis-Dessert.html"], "basis": "essen & trinken Spaghetti-Eis: vier Portionen mit 400 g Vanilleeis, 150 ml Sahne, 350 g Erdbeeren, 100 g weißer Schokolade und Puderzucker. Presse und Schalen eine Stunde vorkühlen und direkt anrichten. App enthält die entsprechenden Kernzutaten und Zubereitung. Die bereits zuvor gelesene CHEFKOCH-Spaghetti-Eis-Dessert-Seite ist dagegen eine Kühlschrankcreme und nicht dieselbe Vorlage."},
@@ -73371,8 +73384,8 @@ const QUELLEN_REZEPTABGLEICH = {
  r297: {"url": "https://www.bbcgoodfood.com/recipes/ultimate-lemon-meringue-pie", "basis": "BBC-Lemon-Meringue-Pie: 6–8 Stücke, Mürbeteig aus 175 g Mehl und 100 g Butter, dicke Zitronenfüllung und Baiser aus vier Eiweiß/200 g Zucker, mit Blindbacken und Ofengaren. App ist ein Zitronen-Baiser-Skyr-Becherdessert ohne Mürbeteig; nicht mit einem Pie verwechseln."},
  r253: {"url": "https://www.bbcgoodfoodme.com/recipes/bean-halloumi-stew/", "basis": "BBC-Good-Food-ME: zwei Portionen, 400-g-Dose gemischte Bohnen, 400 g Dosentomaten, 125 g Halloumi, Paprika und 3 EL Chilipesto, 10 Min. Gemüsebasis, 10 Min. köcheln; Käse separat 2 Min. je Seite. App: zusätzliche Bohnen, Spinat und mehr Halloumi, kein Chilipesto; eigene Variante."},
  r175: {"url": "https://www.bbcgoodfoodme.com/recipes/chilli-prawn-linguine/", "basis": "BBC-Good-Food-ME: sechs Portionen mit 280 g Linguine, 200 g Zuckerschoten, 24 rohen Riesengarnelen, Chili, Kirschtomaten, Basilikum und Limetten-Frischkäse-Dressing; Pasta und Erbsenschoten garen, Garnelen rund drei Min. braten. App: mehr Pasta, andere Garnelenmenge, Rucola und Petersilie; eigenständig."},
- r302: {"url": "https://www.bbcgoodfood.com/recipes/lychee-ginger-sorbet", "basis": "BBC-Litschi-Ingwer-Sorbet: vier Portionen aus zwei 400-g-Dosen Litschi in Sirup, Zucker, frischem und eingelegtem Ingwer sowie einem rohen Eiweiß; Litschibasis mindestens sechs Stunden gefrieren und danach nochmals gefrieren. App: Litschi-Skyr-Eis ohne rohes Ei, kürzere Gefrierphasen; bewusst abweichende sicherere Fassung."},
- r303: {"url": "https://www.bbcgoodfood.com/recipes/tanghulu", "basis": "BBC-Tanghulu: sechs Obstspieße, 300 g Erdbeeren, 150 g Trauben und 350 g Kristallzucker; Zucker-Wasser-Sirup über 20 Min. eindicken, rasch glasieren. App: weniger Zucker, Orangenstücke und Skyr-Dip; nicht identisches Zucker-Frucht-Verhältnis. Heißer Zuckersirup verursacht schwere Verbrennungen."},
+ r302: {"url": "https://www.bbcgoodfood.com/recipes/lychee-ginger-sorbet", "basis": "BBC-Litschi-Ingwer-Sorbet: vier Portionen aus zwei 400-g-Dosen Litschi in Sirup, Zucker, frischem und eingelegtem Ingwer sowie einem rohen Eiweiß; Litschibasis mindestens sechs Stunden gefrieren und danach nochmals gefrieren. App: Originalfassung mit denselben Zutaten und Gefrierphasen ohne Skyr; Zucker- und Ingwermengen sind Richtwerte."},
+ r303: {"url": "https://www.bbcgoodfood.com/recipes/tanghulu", "basis": "BBC-Tanghulu: sechs Obstspieße, 300 g Erdbeeren, 150 g Trauben und 350 g Kristallzucker; Zucker-Wasser-Sirup über 20 Min. eindicken, rasch glasieren. App: Originalfassung mit denselben Mengen, ohne Orangenstücke und ohne Skyr-Dip; die Wassermenge ist ein Richtwert. Heißer Zuckersirup verursacht schwere Verbrennungen."},
  r315: {"url": "https://www.bbcgoodfood.com/recipes/avocado-strawberry-smoothie", "basis": "BBC: zwei Portionen, halbe Avocado, 150 g Erdbeeren, vier EL Naturjoghurt, 200 ml fettarme Milch und Zitrone/Limette; kalt mixen. App ersetzt Joghurt überwiegend durch 200 g Skyr und nimmt weniger Milch; eiweißbetonte Eigenfassung."},
  r316: {"url": "https://www.bbcgoodfood.com/recipes/tropical-breakfast-smoothie", "basis": "BBC: 2–3 Portionen, drei Passionsfrüchte, eine Banane, eine kleine Mango und 300 ml Orangensaft; 5 Min. roh pürieren. App ergänzt 200 g Skyr und reduziert Obst/Orangensaft; andere Mengen und höherer Proteingehalt."},
  r317: {"url": "https://www.bbcgoodfood.com/recipes/blueberry-smoothie-recipe", "basis": "BBC: 1–2 Portionen mit 175 g Heidelbeeren, kleiner Banane, 1 EL Naturjoghurt und 100 ml Apfelsaft, optional Minze; etwa fünf Min. App: Skyr, Haferflocken, Milch, weniger Heidelbeeren; eigenständiger Frühstückssmoothie."},
@@ -73410,8 +73423,8 @@ const QUELLEN_REZEPTABGLEICH = {
  r190: {"url": "https://www.seriouseats.com/sous-vide-barbecue-pulled-pork-shoulder-recipe", "basis": "Serious Eats Sous-vide-Pulled-Pork: Schweineschulter bei 74 °C für 18–24 Stunden zupfbar; danach im Ofen/Smoker Kruste bilden. Die App arbeitet mit 74 °C/24 Stunden, ergänzt BBQ-Sauce, Krautsalat und Brot und unterscheidet sich daher als vollständige Mahlzeit."},
  r193: {"url": "https://www.seriouseats.com/sous-vide-glazed-carrots-recipe", "basis": "Serious Eats Sous-vide-Möhren: 454 g Möhren, 30 g Butter, 12 g Zucker und Salz; bei 84 °C ungefähr eine Stunde vakuumgaren und anschließend in Pfanne glasieren. App gart 700 g Möhren bei 85 °C 45–60 Minuten, ersetzt Zucker durch Honig und ergänzt Quinoa, Kichererbsen, Edamame und Dip."},
  r191: {"url": "https://www.seriouseats.com/sous-vide-steaks-recipe", "basis": "Serious Eats Sous-vide-Steak: variable Gargrade, Kerntemperatur nach Dicke und gewünschter Garstufe; abschließend kurz scharf anbraten. App wählt ausdrücklich 70 °C als durchgegarte Variante und ergänzt Kartoffeln und Bohnen. Bohnen vor Verzehr mindestens 10–12 Minuten kochen."},
- r300: {"url": "https://www.essen-und-trinken.de/rezepte/31493-rzpt-mangopudding", "basis": "essen & trinken Mangopudding: 10 kleine Portionen aus zwei Mangos, 120 ml Limette, 250 ml Milch, 40 g Zucker, 12 Blatt Gelatine und Litschis, etwa 30 Minuten plus Kühlen. App mit Mango, Skyr und Stärke ist eine alternative gelatinefreie 2-Portionen-Creme, nicht originalidentisch."},
- r301: {"url": "https://www.essen-und-trinken.de/rezepte/glueckskekse-12086190.html", "basis": "essen & trinken Glückskekse: 30 Stück aus 3 Eiern (nur Eiweiß), 60 g Puderzucker, 60 g Mehl und 45 g Butter; bei 180 °C Ober-/Unterhitze portionsweise dünn backen und sofort warm falten. App verwendet Eiklar, weniger Mehl/Zucker sowie Öl und serviert Erdbeer-Skyr-Dip; kleinere Eigenfassung."},
+ r300: {"url": "https://www.essen-und-trinken.de/rezepte/31493-rzpt-mangopudding", "basis": "essen & trinken Mangopudding: 10 kleine Portionen aus zwei Mangos, 120 ml Limette, 250 ml Milch, 40 g Zucker, 12 Blatt Gelatine und Litschis, etwa 30 Minuten plus Kühlen. App: Originalfassung mit denselben Zutaten und 10 Portionen ohne Skyr; nur die Litschimenge (150 g) ist ein Richtwert."},
+ r301: {"url": "https://www.essen-und-trinken.de/rezepte/glueckskekse-12086190.html", "basis": "essen & trinken Glückskekse: 30 Stück aus 3 Eiern (nur Eiweiß), 60 g Puderzucker, 60 g Mehl und 45 g Butter; bei 180 °C Ober-/Unterhitze portionsweise dünn backen und sofort warm falten. App: Originalfassung mit denselben Zutaten, 10 Portionen zu je 3 Keksen, ohne Dip; Backzeit ist ein Richtwert."},
  r314: {"url": "https://www.essen-und-trinken.de/rezepte/53951-rzpt-chinesische-pfannkuchen-mit-pflaumensauce", "basis": "essen & trinken chinesische Pfannkuchen mit Pflaumensauce: herzhafter Hauptgang mit Entenbrust, Shiitake, Gemüse und Wein-Sherry-Sauce aus Backpflaumen. Die App ist ein vegetarisches süßes Dessert mit Pflaumen und Eier-Milch-Pfannkuchen; NICHT aus dem Original ableitbar."},
  r321: {"url": "https://www.essen-und-trinken.de/rezepte/salat-mit-honig-senf-dressing-12066152.html", "basis": "essen & trinken Honig-Senf-Salat: zwei Portionen mit 100 g Blattsalat und Dressing aus 5 EL Rapsöl, 2 EL Weißweinessig, 2 TL Honig und 1 TL Senf, ohne Hähnchen. App erweitert um vollständig gebratene Hähnchenbrust, Gemüse und Vollkornbrot und reduziert Öl; eigenständige Hauptmahlzeit."},
 };
@@ -73432,8 +73445,6 @@ const REZEPT_PATCHES = {
  r190: {"tips": "Serious Eats Sous-vide-Pulled-Pork: Schweineschulter bei 74 °C für 18–24 Stunden zupfbar; danach im Ofen/Smoker Kruste bilden. Die App arbeitet mit 74 °C/24 Stunden, ergänzt BBQ-Sauce, Krautsalat und Brot und unterscheidet sich daher als vollständige Mahlzeit."},
  r193: {"tips": "Serious Eats Sous-vide-Möhren: 454 g Möhren, 30 g Butter, 12 g Zucker und Salz; bei 84 °C ungefähr eine Stunde vakuumgaren und anschließend in Pfanne glasieren. App gart 700 g Möhren bei 85 °C 45–60 Minuten, ersetzt Zucker durch Honig und ergänzt Quinoa, Kichererbsen, Edamame und Dip."},
  r191: {"steps": ["Steaks trocken tupfen, würzen und mit Knoblauch in geeigneten, sicheren Sous-vide-Beuteln vakuumieren. Das Wasserbad vorheizen.", "Für die ausdrücklich durchgegarte App-Variante das Wasserbad auf 70 °C stellen und die Steaks je nach Dicke etwa ein bis zwei Stunden garen. Nicht dieselbe Garpunktauswahl wie die flexiblen Original-Steaks.", "Kartoffeln etwa 20 Minuten weich garen. Frische grüne Bohnen getrennt mindestens 10–12 Minuten in sprudelnd kochendem Wasser vollständig durchgaren; nicht nur 6–8 Minuten erhitzen.", "Steaks aus dem Beutel nehmen und sehr gründlich trocken tupfen. In sehr heißer Pfanne kurz auf beiden Seiten für eine Kruste anbraten; nach dem Sous-vide-Garen nicht lange bei Raumtemperatur stehen lassen.", "Mit Kartoffeln, ausreichend gegarten Bohnen und Bratensaft servieren. Reste rasch abkühlen und vollständig durcherhitzen."], "cook": 140, "tips": "Serious Eats Sous-vide-Steak: variable Gargrade, Kerntemperatur nach Dicke und gewünschter Garstufe; abschließend kurz scharf anbraten. App wählt ausdrücklich 70 °C als durchgegarte Variante und ergänzt Kartoffeln und Bohnen. Bohnen vor Verzehr mindestens 10–12 Minuten kochen."},
- r300: {"tips": "essen & trinken Mangopudding: 10 kleine Portionen aus zwei Mangos, 120 ml Limette, 250 ml Milch, 40 g Zucker, 12 Blatt Gelatine und Litschis, etwa 30 Minuten plus Kühlen. App mit Mango, Skyr und Stärke ist eine alternative gelatinefreie 2-Portionen-Creme, nicht originalidentisch."},
- r301: {"tips": "essen & trinken Glückskekse: 30 Stück aus 3 Eiern (nur Eiweiß), 60 g Puderzucker, 60 g Mehl und 45 g Butter; bei 180 °C Ober-/Unterhitze portionsweise dünn backen und sofort warm falten. App verwendet Eiklar, weniger Mehl/Zucker sowie Öl und serviert Erdbeer-Skyr-Dip; kleinere Eigenfassung."},
  r314: {"tips": "essen & trinken chinesische Pfannkuchen mit Pflaumensauce: herzhafter Hauptgang mit Entenbrust, Shiitake, Gemüse und Wein-Sherry-Sauce aus Backpflaumen. Die App ist ein vegetarisches süßes Dessert mit Pflaumen und Eier-Milch-Pfannkuchen; NICHT aus dem Original ableitbar. Keine Herleitung aus der herzhaften Vorlage; Rezept ist ein unabhängiger Dessertentwurf."},
  r321: {"tips": "essen & trinken Honig-Senf-Salat: zwei Portionen mit 100 g Blattsalat und Dressing aus 5 EL Rapsöl, 2 EL Weißweinessig, 2 TL Honig und 1 TL Senf, ohne Hähnchen. App erweitert um vollständig gebratene Hähnchenbrust, Gemüse und Vollkornbrot und reduziert Öl; eigenständige Hauptmahlzeit."},
  r353: {"tips": "essen & trinken Spaghetti-Eis: vier Portionen mit 400 g Vanilleeis, 150 ml Sahne, 350 g Erdbeeren, 100 g weißer Schokolade und Puderzucker. Presse und Schalen eine Stunde vorkühlen und direkt anrichten. App enthält die entsprechenden Kernzutaten und Zubereitung. Die bereits zuvor gelesene CHEFKOCH-Spaghetti-Eis-Dessert-Seite ist dagegen eine Kühlschrankcreme und nicht dieselbe Vorlage. Aus der Chefkoch-Spaghetti-Eis-Dessert-Seite wurde kein Rezeptinhalt übernommen."},
@@ -73444,7 +73455,6 @@ const REZEPT_PATCHES = {
  r297: {"tips": "BBC-Lemon-Meringue-Pie: 6–8 Stücke, Mürbeteig aus 175 g Mehl und 100 g Butter, dicke Zitronenfüllung und Baiser aus vier Eiweiß/200 g Zucker, mit Blindbacken und Ofengaren. App ist ein Zitronen-Baiser-Skyr-Becherdessert ohne Mürbeteig; nicht mit einem Pie verwechseln."},
  r253: {"tips": "BBC-Good-Food-ME: zwei Portionen, 400-g-Dose gemischte Bohnen, 400 g Dosentomaten, 125 g Halloumi, Paprika und 3 EL Chilipesto, 10 Min. Gemüsebasis, 10 Min. köcheln; Käse separat 2 Min. je Seite. App: zusätzliche Bohnen, Spinat und mehr Halloumi, kein Chilipesto; eigene Variante."},
  r175: {"tips": "BBC-Good-Food-ME: sechs Portionen mit 280 g Linguine, 200 g Zuckerschoten, 24 rohen Riesengarnelen, Chili, Kirschtomaten, Basilikum und Limetten-Frischkäse-Dressing; Pasta und Erbsenschoten garen, Garnelen rund drei Min. braten. App: mehr Pasta, andere Garnelenmenge, Rucola und Petersilie; eigenständig."},
- r303: {"steps": ["Früchte sorgfältig waschen und vollständig trocken tupfen. Auf stabile Holzspieße stecken und einen hitzebeständigen, leicht geölten Teller vorbereiten.", "Die abgewogene Zuckermenge mit wenig Wasser in einem kleinen hohen Topf bei mittlerer Hitze erhitzen, bis sie karamellartig und bei der Probe im kalten Wasser hart und spröde wird. Wegen der deutlich kleineren Zuckermenge als im Original einen kleinen Topf verwenden; Zeit und erreichbare Siruphöhe variieren.", "Nur Erwachsene sollten mit dem sehr heißen Sirup hantieren: Spieße mit Zange oder hitzebeständigem Griff vorsichtig darin drehen und zum Aushärten ablegen; keinen heißen Zucker berühren oder kosten.", "Skyr-Dip getrennt anrühren, die überzogenen Spieße vollständig erkalten lassen und frisch servieren. Die App-Dosierung ist eine kleine eigene Abwandlung des BBC-Originals."], "tips": "BBC-Tanghulu: sechs Obstspieße, 300 g Erdbeeren, 150 g Trauben und 350 g Kristallzucker; Zucker-Wasser-Sirup über 20 Min. eindicken, rasch glasieren. App: weniger Zucker, Orangenstücke und Skyr-Dip; nicht identisches Zucker-Frucht-Verhältnis. Heißer Zuckersirup verursacht schwere Verbrennungen."},
  r315: {"tips": "BBC: zwei Portionen, halbe Avocado, 150 g Erdbeeren, vier EL Naturjoghurt, 200 ml fettarme Milch und Zitrone/Limette; kalt mixen. App ersetzt Joghurt überwiegend durch 200 g Skyr und nimmt weniger Milch; eiweißbetonte Eigenfassung."},
  r316: {"tips": "BBC: 2–3 Portionen, drei Passionsfrüchte, eine Banane, eine kleine Mango und 300 ml Orangensaft; 5 Min. roh pürieren. App ergänzt 200 g Skyr und reduziert Obst/Orangensaft; andere Mengen und höherer Proteingehalt."},
  r317: {"tips": "BBC: 1–2 Portionen mit 175 g Heidelbeeren, kleiner Banane, 1 EL Naturjoghurt und 100 ml Apfelsaft, optional Minze; etwa fünf Min. App: Skyr, Haferflocken, Milch, weniger Heidelbeeren; eigenständiger Frühstückssmoothie."},
@@ -74048,17 +74058,26 @@ const REZEPT_PATCHES = {
 };
 for (const [id,patch] of Object.entries(REZEPT_PATCHES)) {
  const r=SEED.find(x=>x.id===id);
+ if(!r && typeof RETIRED !== 'undefined' && RETIRED[id]) continue; // ausgemustert (z. B. chinesische Skyr-Desserts r300 bis r303, r310 bis r312)
  if(!r) throw new Error('Rezept zum Quellenabgleich nicht vorhanden: '+id);
  Object.assign(r,patch);
  r.src=(id==='r353' ? 'Eigene Fassung (Claude): Spaghetti-Eis nach vom Nutzer bereitgestellter essen-&-trinken-Vorlage; Chefkoch-Rezept als abweichende Kühlschrankcreme gelesen, NICHT als Basis verwendet' : 'Quellenabgleich 29.10.2026: eigene, teilweise proteinangereicherte Fassung nach '+(QUELLEN_REZEPTABGLEICH[id].url.includes('chefkoch')?'Chefkoch':QUELLEN_REZEPTABGLEICH[id].url.includes('seriouseats')?'Serious Eats':QUELLEN_REZEPTABGLEICH[id].url.includes('essen-und-trinken')?'essen & trinken':'BBC Good Food')+'; Originalrezept eingesehen, Abweichungen siehe Quellenhinweis');
  r.quellenGeprueft='2026-10-29';
 }
 
+/* Korrektur 31.10.2026: Die sieben chinesischen Desserts r300 bis r303 und r310 bis r312 stehen als Originalfassungen ohne Skyr
+   direkt im Rezepttext (data_rezepte4.js); hier wird nur der Quellenabgleich vom 29.10.2026 vermerkt. */
+['r300','r301','r302','r303','r312'].forEach(id => {
+ const r=SEED.find(x=>x.id===id);
+ if(!r) throw new Error('Rezept fehlt: '+id);
+ r.quellenGeprueft='2026-10-29';
+});
 /* Korrektur 29.10.2026 (Nutzerregeln): Für diese Rezepte wurden die Quellenvergleiche übernommen (siehe QUELLEN_REZEPTABGLEICH),
    die Rezepttexte selbst bleiben aber unverändert: r354 und r402 sind vom Nutzer übergeben und werden originalgetreu geführt,
-   die Skyr-Rezepte (r298, r302, r312, r337, r340–r343) bleiben unverändert, bis der Nutzer über Skyr/Sahne entschieden hat. */
-['r354','r402','r298','r302','r312','r337','r340','r341','r342','r343'].forEach(id => {
+   die Skyr-Rezepte (r298, r337, r340–r343) bleiben unverändert, bis der Nutzer über Skyr/Sahne entschieden hat. */
+['r354','r402','r298','r337','r340','r341','r342','r343'].forEach(id => {
  const r=SEED.find(x=>x.id===id);
+ if(!r && typeof RETIRED !== 'undefined' && RETIRED[id]) return; // ausgemustert
  if(!r) throw new Error('Rezept fehlt: '+id);
  r.quellenGeprueft='2026-10-29';
  r.src = (id==='r354' || id==='r402')
@@ -74626,12 +74645,12 @@ const MARINADEN = [
   { n: 'BBQ- oder Holzkohle-Marinade', ing: [['zucker', 50, '50 g Zucker'], ['honig', 40, '40 ml Honig'], ['knoblauch', 15, '15 g Knoblauch'], ['ingwer', 10, '10 g Ingwer'], ['speisesalz', 3, '3 g Salz']], sp: [['fuenf_gewuerz', '5 g Fünf-Gewürze-Pulver'], ['rauchsalz', 'optional 5 g Rauchsalz (oder geräucherter Paprika)']], fuer: 'Schwein, Hähnchen, Rind, Pute', zeit: '24 Stunden', extra: 'Nach dem Trocknen kurz grillen oder karamellisieren.' }
 ];
 const MARINADEN_NASS = [
-  { n: 'Char Siu Marinade und Glasur', nat: '叉烧 · Kantonesisch: Char Siu', land: 'Hongkong / Guangdong', typ: 'Feuchte Marinade und Glasur, kein Rub (Nr. 26A)', fuer: 'Schweinenacken oder Schweinebauch, Mengen für 1 kg Fleisch',
-    ing: [['hoisin', 60, '60 g Hoisin-Sauce'], ['sojasauce', 40, '40 ml helle Sojasauce'], ['sojasauce_dunkel', 20, '20 ml dunkle Sojasauce'], ['zucker', 40, '40 g Zucker'], ['reiswein', 30, '30 ml Shaoxing-Wein'], ['maltose', 30, '30 g Maltose oder Honig'], ['knoblauch', 15, '15 g Knoblauch, fein gehackt'], ['ingwer', 10, '10 g Ingwer, fein gerieben'], ['speisesalz', 3, '3 g Salz'], [null, 0, 'Optional: 10 g roter fermentierter Tofu']],
-    sp: [['fuenf_gewuerz', '5 g Fünf-Gewürze-Pulver'], ['weisser_pfeffer', '2 g weißer Pfeffer'], ['rote_lebensmittelfarbe', 'Optional: wenige Tropfen rote Lebensmittelfarbe']],
-    glasur: [['maltose', 40, '40 g Maltose'], [null, 0, '30 ml Wasser'], [null, 0, 'Optional: 20 ml Honig']],
-    steps: ['Alle Marinaden-Zutaten verrühren, bis sich Zucker und Maltose lösen.', 'Schweinenacken oder Schweinebauch in 5 cm breite Streifen schneiden.', 'Das Fleisch mit der Marinade einreiben.', 'Mindestens 8 Stunden, besser 24 Stunden, im Kühlschrank marinieren.', 'Zwei Drittel der Marinade für das Fleisch verwenden.', 'Ein Drittel separat aufbewahren und niemals mit rohem Fleisch vermischen.', 'Für die Glasur Maltose mit Wasser erwärmen, bis sie flüssig ist.', 'Das Fleisch bei 220 °C 15 Minuten backen.', 'Mit Glasur bestreichen und weitere 5 Minuten backen.', 'Erneut glasieren und weitere 5 Minuten backen.', 'Die letzte Glasur auftragen und 10 Minuten ruhen lassen.'],
-    wichtig: ['Maltose ergibt den authentischeren, glänzenderen Lack als Honig.', 'Roter fermentierter Tofu gibt Tiefe und den typischen Char-Siu-Geschmack.', 'Restmarinade, die rohes Fleisch berührt hat, muss vor Verwendung aufkochen.', 'Char Siu ist eine feuchte Marinade, kein Rub. Die trockene Adaption steht im Reiter Rubs (Nr. 26, Char Siu Dry Rub). Das fertige Gericht ist das Rezept „Char Siu“ (r808).'], quelle: 'Fußnoten [1072][1076][1081] im übergebenen Text, ohne Link; von der App nicht geprüft.' }
+  { n: 'Char Siu Marinade und Glasur', nat: '叉烧 · Kantonesisch: Char Siu', land: 'Hongkong / Guangdong', typ: 'Feuchte Marinade und Glasur, kein Rub (Nr. 26A, korrigierte Fassung)', fuer: 'Schweinenacken (ideal), Schweinebauch oder Schweineschulter, ohne Knochen und Haut, in Streifen von ca. 5 cm Breite und 15 bis 20 cm Länge; Mengen für 1 kg Fleisch. Nicht empfohlen: mageres Filet',
+    ing: [['hoisin', 60, '60 g Hoisin-Sauce'], ['sojasauce', 40, '40 ml helle Sojasauce'], ['sojasauce_dunkel', 20, '20 ml dunkle Sojasauce'], ['zucker', 50, '50 g Zucker'], ['reiswein', 30, '30 ml Shaoxing-Wein'], ['knoblauch', 15, '15 g Knoblauch, fein gehackt'], ['ingwer', 10, '10 g Ingwer, fein gerieben'], ['speisesalz', 3, '3 g Salz'], ['fermentierter_tofu_rot', 20, '20 g roter fermentierter Tofu'], [null, 0, '20 ml Flüssigkeit vom roten fermentierten Tofu']],
+    sp: [['fuenf_gewuerz', '5 g chinesisches Fünf-Gewürze-Pulver'], ['weisser_pfeffer', '2 g weißer Pfeffer'], ['rote_lebensmittelfarbe', 'Optional: wenige Tropfen rote Lebensmittelfarbe']],
+    glasur: [['maltose', 80, '80 g Maltose'], [null, 0, '40 ml Wasser'], ['honig', 20, 'Optional: 20 ml Honig']],
+    steps: ['Roten fermentierten Tofu in einer Schüssel zerdrücken.', 'Hoisin-Sauce, helle und dunkle Sojasauce, Zucker, Shaoxing-Wein, Knoblauch, Ingwer, Fünf-Gewürze, Salz und weißen Pfeffer hinzufügen und gründlich verrühren.', 'Die Flüssigkeit vom fermentierten Tofu einrühren, optional rote Lebensmittelfarbe. Die Marinade ist fertig, wenn sich Zucker und Salz vollständig gelöst haben.', 'Die Fleischstreifen in eine Schüssel oder einen Vakuumbeutel geben, die ganze Marinade darübergeben und gut einreiben.', 'Abgedeckt mindestens 8 Stunden, besser 24 Stunden im Kühlschrank marinieren und zwischendurch einmal wenden.', 'Für die Glasur Maltose und Wasser (optional Honig) bei niedriger Hitze erwärmen und rühren, bis sich die Maltose löst. Nicht stark kochen, warm und streichfähig halten. Die Glasur erst nach dem ersten Backen verwenden und nie mit rohem Fleisch oder roher Marinade mischen.', 'Backofen auf 220 °C Ober-/Unterhitze vorheizen, ein Gitter auf ein mit Alufolie ausgelegtes Blech stellen, die Fleischstreifen auflegen und 15 Minuten backen.', 'Das Fleisch heiß mit der Glasur bestreichen und weitere 5 Minuten backen, erneut glasieren und nochmals 5 Minuten backen.', 'Aus dem Ofen nehmen, eine letzte dünne Schicht Glasur auftragen, 10 Minuten ruhen lassen und in dünne Scheiben schneiden.', 'Alternative bei 200 °C: 20 Minuten backen, glasieren, 10 Minuten backen, erneut glasieren, weitere 5 bis 10 Minuten backen und zum Schluss kurz grillen, damit die Oberfläche karamellisiert.'],
+    wichtig: ['Maltose gehört in dieser korrigierten Fassung hauptsächlich in die Glasur, nicht doppelt in Marinade und Glasur. Wer eine süßere Marinade möchte, kann zusätzlich 10 bis 20 g Maltose verwenden und muss dann den Zucker verringern.', 'Roter fermentierter Tofu ist für den authentischen Geschmack empfohlen.', 'Fleisch wird trocken bei zu magerem Fleisch, zu langem Backen oder zu wenig Fett. Kein glänzender Lack: zu wenig oder zu dünne Maltose-Glasur, zu spät aufgetragen oder Fleisch beim Glasieren nicht heiß genug. Bitter wird es bei zu langem Grillen, verbrannter Maltose oder zu hoher Hitze in den letzten Minuten.', 'Lagerung: roh mariniert im Kühlschrank höchstens 24 Stunden, tiefgekühlt bis 1 Monat. Fertig gebacken im Kühlschrank 3 bis 4 Tage, tiefgekühlt bis 2 Monate; vor dem Verzehr bei 160 °C 5 bis 8 Minuten aufwärmen.', 'Char Siu ist eine feuchte Marinade, kein Rub. Die trockene Adaption steht im Reiter Rubs (Nr. 26, Char Siu Dry Rub). Das fertige Gericht ist das Rezept „Char Siu“ (r808).'], quelle: 'Fußnoten [1072][1075][1076][1081] im übergebenen Text, ohne Link; von der App nicht geprüft. Diese Fassung ersetzt die frühere Zutatenliste (Version 32).' }
 ];
 function viewMarinaden() {
   const stock = stockNow(), tracked = Object.keys(state.spices).length > 0;
@@ -74847,7 +74866,7 @@ function infoPanel() {
     row('Hongkonger Mondkuchen: Produktionsplan und Rangliste', '<b>Gemeinsamer gebackener Teig</b> (Rezept Klassischer gebackener Mondkuchen, Grundrezept): White Lotus, Salted Egg Yolk Lotus, Red Bean, Black Sesame, Five-Nut, Custard, Lava Custard, Matcha und Chocolate. <b>Gemeinsame Snow-Skin-Hülle</b> (Rezept Snow Skin Mooncake, Hülle): Mango, Coconut, Matcha, Black Sesame und Durian.<br><b>Produktionsreihenfolge:</b> 1. Golden Syrup und Teig am Vortag herstellen. 2. Füllungen am Vortag kochen und kühlen. 3. Gebackene Mondkuchen formen und backen. 4. Snow-Skin-Hülle dämpfen. 5. Snow-Skin-Mondkuchen formen. 6. Alles abkühlen lassen. 7. Gebackene Mondkuchen 1–2 Tage ruhen lassen. 8. Dann portionsweise einfrieren und vakuumieren. 9. Snow-Skin-Mondkuchen nur gekühlt lagern oder einfrieren.<br><b>Rangliste der Vorlage</b> (Authentizität / Geschmack / Einfachheit / Lagerfähigkeit): 1. Salted Egg Yolk Lotus (Sehr hoch / Sehr gut / Mittel / Sehr gut); 2. White Lotus (Sehr hoch / Sehr gut / Mittel / Sehr gut); 3. Lou Po Beng (Sehr hoch / Sehr gut / Mittel / Gut); 4. Red Bean (Hoch / Sehr gut / Einfach / Sehr gut); 5. Black Sesame (Hoch / Sehr gut / Mittel / Sehr gut); 6. Five-Nut (Hoch / Gut / Mittel / Sehr gut); 7. Custard (Hoch / Sehr gut / Mittel / Gut); 8. Lava Custard (Hoch / Sehr gut / Anspruchsvoll / Bedingt); 9. Matcha Snow Skin (Mittel / Gut / Mittel / Bedingt); 10. Mango Snow Skin (Mittel / Gut / Mittel / Bedingt); 11. Coconut Snow Skin (Mittel / Gut / Mittel / Bedingt); 12. Black Sesame Snow Skin (Mittel / Gut / Mittel / Bedingt); 13. Durian Snow Skin (Mittel / Intensiv / Mittel / Bedingt); 14. Chocolate (Mittel / Gut / Einfach / Rezeptabhängig).<br>Quelle: übergebener Text, von der App nicht geprüft; die Rangliste ist die Einschätzung der Vorlage.') +
     row('Frucht-Mochi: stabile Fruchtfüllung', '<b>Grundprinzip:</b> Für Vorratsproduktion Fruchtfüllungen immer einkochen und mit Stärke binden. <b>Grundrezept für 12 Portionen:</b> 250–300 g Fruchtpüree, 60–80 g Zucker, 30 ml Wasser, 10–12 g Speisestärke, 1 TL Zitronensaft; optional 100 g Shiroan. Fruchtpüree, Zucker, Wasser und Zitronensaft aufkochen, die Speisestärke mit kaltem Wasser anrühren und einrühren, 2–3 Minuten köcheln, bis die Masse dick wird, abkühlen lassen, in Portionen zu 25–30 g teilen und optional mit Shiroan umhüllen. <b>Geeignet:</b> Blaubeeren, Himbeeren, Mango, Pfirsich, Erdbeere, Yuzu, Passionsfrucht. <b>Nicht geeignet für lange Lagerung:</b> ganze frische Erdbeeren, große rohe Fruchtstücke, sehr wässrige Früchte ohne Stärkebindung. Rezepte dazu: Blueberry, Raspberry, Peach und Mango Mochi. Quelle: übergebener Text, von der App nicht geprüft.') +
     row('Mochi: Füllungsproduktion und Kosten', '<b>Gemeinsame Füllungsproduktion</b> (Chargengröße, Tiefkühlen): Anko (für Daifuku, Kusa, Sakura, Frucht-Mochi) 1 kg, bis 3 Monate. Shiroan (Daifuku, Matcha Daifuku, Yuzu, Frucht-Mochi) 1 kg, bis 3 Monate. Schwarze Sesampaste (Black Sesame Mochi, Mochi-Eis) 500 g, bis 3 Monate. Taropaste (Taro Mochi, Mochi-Eis) 800 g, bis 2 Monate. Matcha-Füllung (Matcha Daifuku, Mochi-Eis) 600 g, bis 2 Monate. Erdnussfüllung (Peanut Mochi) 500 g, trocken und luftdicht lagern, nicht einfrieren, da die Textur leidet. Schokoladen-Ganache (Chocolate Mochi, Mochi-Eis) 500 g, bis 1 Monat, vor der Verwendung auf 10–15 °C temperieren.<br><b>Kosten laut Vorlage</b> (Zutaten für 12 Stück, Preise von der App nicht geprüft): Matcha Daifuku 3,50–5,00 € (0,29–0,42 € je Stück), Black Sesame Mochi 3,00–4,50 € (0,25–0,38 €), Peanut Mochi 2,00–3,00 € (0,17–0,25 €), Chocolate Mochi 4,00–6,00 € (0,33–0,50 €), Taro Mochi 3,00–4,50 € (0,25–0,38 €). Hochwertige Mochi kosten in Deutschland laut Vorlage oft 1,50–3,00 € je Stück, die Ersparnis liegt bei etwa 70–90 %.<br><b>Einkauf laut Vorlage:</b> Shiratamako ist teurer als Mochiko, Mochiko ist für die meisten Rezepte ein guter Ersatz, für authentischste Daifuku bleibt Shiratamako die erste Wahl; Azukibohnen und Klebreismehl in größeren Packungen kaufen; Matcha und Pistazienpaste sind die teuersten Zutaten. Quelle: übergebener Text, von der App nicht geprüft.') +
-    row('50 Internationale Rubs, Nr. 26A: Char Siu Marinade und Glasur', '<b>Nr. 26A, feuchte Marinade und Glasur</b> (Hongkong / Guangdong, 叉烧, kein Rub), Mengen für 1 kg Schweinenacken oder Schweinebauch. <b>Marinade:</b> 60 g Hoisin-Sauce, 40 ml helle und 20 ml dunkle Sojasauce, 40 g Zucker, 30 ml Shaoxing-Wein, 30 g Maltose oder Honig, 15 g Knoblauch, 10 g Ingwer, 5 g Fünf-Gewürze-Pulver, 3 g Salz, 2 g weißer Pfeffer; optional 10 g roter fermentierter Tofu und wenige Tropfen rote Lebensmittelfarbe. <b>Glasur:</b> 40 g Maltose, 30 ml Wasser, optional 20 ml Honig. Mindestens 8 Stunden, besser 24 Stunden marinieren; zwei Drittel der Marinade fürs Fleisch, ein Drittel getrennt aufbewahren. Backen: 220 °C 15 Minuten, glasieren, 5 Minuten, glasieren, 5 Minuten, letzte Glasur, 10 Minuten ruhen lassen. Maltose ergibt den authentischeren Lack als Honig; Restmarinade, die rohes Fleisch berührt hat, vor Verwendung aufkochen. Die ganze Marinade mit Schritten steht unter Vorrat im Reiter „Marinaden“, Abschnitt „Feuchte Marinaden mit Glasur“. Quelle laut Text: Fußnoten [1072][1076][1081], im übergebenen Text ohne Link; von der App nicht geprüft.');
+    row('50 Internationale Rubs, Nr. 26A: Char Siu Marinade und Glasur (korrigierte Fassung)', '<b>Nr. 26A, feuchte Marinade und Glasur</b> (Hongkong / Guangdong, 叉烧, kein Rub), korrigierte Fassung für 1 kg Schweinenacken (ideal), Schweinebauch oder Schweineschulter. <b>Marinade:</b> 60 g Hoisin-Sauce, 40 ml helle und 20 ml dunkle Sojasauce, 50 g Zucker, 30 ml Shaoxing-Wein, 15 g Knoblauch, 10 g Ingwer, 5 g Fünf-Gewürze-Pulver, 3 g Salz, 2 g weißer Pfeffer, 20 g roter fermentierter Tofu und 20 ml seine Flüssigkeit; optional wenige Tropfen rote Lebensmittelfarbe. <b>Glasur:</b> 80 g Maltose, 40 ml Wasser, optional 20 ml Honig. Mindestens 8 Stunden, besser 24 Stunden marinieren. Backen: 220 °C 15 Minuten, glasieren, 5 Minuten, glasieren, 5 Minuten, letzte Glasur, 10 Minuten ruhen lassen; Alternative 200 °C mit 20, 10 und 5 bis 10 Minuten. Korrektur gegenüber der früheren Version: Maltose hauptsächlich in der Glasur, Zucker in der Marinade 50 g, roter fermentierter Tofu empfohlen statt optional. Die ganze Marinade mit Schritten steht unter Vorrat im Reiter „Marinaden“, Abschnitt „Feuchte Marinaden mit Glasur“. Quelle laut Text: Fußnoten [1072][1075][1076][1081], im übergebenen Text ohne Link; von der App nicht geprüft.');
     row('50 Internationale Rubs, Teil 3: Mittelmeerraum, Naher Osten und universelle Mischungen', '<b>Inhalt:</b> 12 Rubs (Nr. 39 bis 50) aus dem Mittelmeerraum, dem Nahen Osten und als universelle Mischungen; damit sind alle 50 Rubs der Reihe da. Jede Mischung ergibt laut Vorlage genau 100 g; die App hat alle 12 Summen nachgerechnet, sie stimmen, ebenso die Dosierungsübersicht. Im Reiter „Rubs“ unter Vorrat sind die Mengen auf 250 g hochgerechnet.<br><b>Die 12 Rubs</b> (Schärfe, Dosierung je kg): Greek Souvlaki 1/5, 10–15 g · Italian Porchetta 1/5, 10–15 g · Herbes de Provence 1/5, 8–12 g · Spanish Pimentón 1/5, 10–15 g · Turkish Kebab 3/5, 10–15 g · Lebanese Baharat 2/5, 8–12 g · Moroccan Ras el Hanout 2/5, 10–15 g · Garlic Herb Poultry 1/5, 10–15 g · Lemon Pepper Fish 2/5, 6–10 g · Smoky Pork Rib 2/5, 10–15 g · Peppercorn Steak 3/5, 8–12 g · Herb Lamb 1/5, 10–15 g.<br><b>Wichtige Hinweise der Vorlage:</b> Porchetta, Souvlaki, Pimentón, Baharat und Ras el Hanout sind klassische regionale Geschmacksrichtungen. Herbes de Provence ist eine klassische französische Kräutermischung, aber kein traditioneller Fleischrub. Lemon Pepper Fish, Garlic Herb Poultry, Smoky Pork Rib, Peppercorn Steak und Herb Lamb sind moderne universelle Mischungen. Rubs würzen Fleisch, machen es aber nicht automatisch haltbar; für Jerky müssen Erhitzung, Trocknung und Lagerung mit einem sicheren Verfahren erfolgen (siehe Jerky Teil 1 bis 4).<br><b>Annahmen der App:</b> „Dill“ ist als getrockneter Dill geführt, „Koriander“ als gemahlener Koriander, „Paprika“ als edelsüß. Der getrocknete grüne Pfeffer ist ein eigenes Gewürz, getrennt vom eingelegten grünen Pfeffer. Rubs sind keine Rezepte und haben keine Rezeptnummer. Quelle: übergebener Text, ohne Links und ohne Fußnoten; von der App nicht geprüft.');
     row('50 Internationale Rubs, Teil 2: China, Hongkong, Japan, Korea, Indien und Südostasien', '<b>Inhalt:</b> 16 Rubs (Nr. 23 bis 38) aus China, Hongkong, Japan, Korea, Indien und Südostasien. Jede Mischung ergibt laut Vorlage genau 100 g; die App hat alle 16 Summen nachgerechnet, sie stimmen, ebenso die Dosierungsübersicht. Die Titel nennen 50 Rubs; mit Teil 3 (Nr. 39 bis 50) liegen alle 50 vor. Kennzeichnung wie in Teil 1 (Klassisch, Adaption, Modern). Im Reiter „Rubs“ unter Vorrat sind die Mengen auf 250 g hochgerechnet.<br><b>Die 16 Rubs</b> (Schärfe, Dosierung je kg): Chinese Five Spice 1/5, 10–15 g · Sichuan Mala 5/5, 10–15 g · Xinjiang Cumin 3/5, 10–15 g · Char Siu Dry 1/5, 12–18 g · Cantonese Siu Yuk 2/5, 10–15 g auf die Fleischseite · Shaokao BBQ 3/5, 10–15 g · Shichimi Togarashi 3/5, 6–10 g · Yuzu Shio 2/5, 6–10 g · Gochugaru BBQ 4/5, 10–15 g · Bulgogi Dry 1/5, 12–18 g · Tandoori 3/5, 12–18 g · Tikka Masala 2/5, 12–18 g · Garam Masala 2/5, 8–12 g · Thai Larb 4/5, 10–15 g · Satay 2/5, 12–18 g · Rendang 3/5, 12–18 g.<br><b>Wichtige Hinweise der Vorlage:</b> Char Siu, Bulgogi, Tandoori, Satay und Rendang sind traditionell keine Trockenmischungen, sondern feuchte Marinaden oder Gerichte; die Versionen hier sind bewusst als trockene Adaptionen gekennzeichnet. Shichimi Togarashi und Yuzu Shio sind klassische japanische Gewürzmischungen, aber keine traditionellen Fleisch-Rubs. Sichuan Mala und Xinjiang Cumin sind die authentischsten chinesischen Geschmacksrichtungen für Jerky und gegrilltes Fleisch. Rubs würzen Fleisch, machen es aber nicht automatisch haltbar; für Jerky müssen Erhitzung, Trocknung und Lagerung mit einem sicheren Verfahren erfolgen (siehe Jerky Teil 1 bis 4).<br><b>Annahmen der App:</b> „Sesam“ ist als ganzer Sesam geführt (auch der geröstete), „Koriander“ als gemahlener Koriander, „Paprika“ als edelsüß, „Yuzuschale“ mit dem vorhandenen Gewürz Yuzuschale. Sojasaucenpulver ist mit den Allergenen Soja und Gluten geführt (Annahme, weil Sojasauce meist Weizen enthält). Allergene: Sesam (Shaokao, Shichimi, Gochugaru, Bulgogi), Soja und Gluten (Bulgogi). Die chinesischen, japanischen und koreanischen Namen der Vorlage stehen im Reiter bei den Rubs. Rubs sind keine Rezepte und haben keine Rezeptnummer. Quelle: übergebener Text, ohne Links und ohne Fußnoten; von der App nicht geprüft.');
     row('50 Internationale Rubs, Teil 1: USA, Karibik und Lateinamerika', '<b>Hinweis zur Vorlage:</b> Die Überschrift nennt 50 Rubs, dieser Teil enthält 22 (USA, Karibik, Lateinamerika). Jede Mischung ergibt laut Vorlage genau 100 g; die App hat alle 22 Summen nachgerechnet, sie stimmen. Im Reiter „Rubs“ sind die Mengen auf eine Vorratsmischung von 250 g hochgerechnet (alle Gramm mal 2,5; Dosierung je kg und Schärfe bleiben gleich). Die Dosierungsübersicht am Ende der Vorlage stimmt mit den Angaben bei den einzelnen Rubs überein. Dosierung bezieht sich auf die fertige Mischung je 1 kg Fleisch.<br><b>Kennzeichnung:</b> Klassisch = etablierte Trockengewürzmischung, Adaption = trockene Umsetzung einer traditionell feuchten Marinade oder Sauce, Modern = moderne bzw. freie Mischung. Die Vorlage nennt zusätzlich Klassisch inspiriert (Cajun, Creole, Chesapeake, Blackening, Mexican Adobo).<br><b>Die 22 Rubs</b> (Schärfe, Dosierung je kg): SPG 2/5, 8–12 g · Texas Brisket 2/5, 8–12 g · Memphis 2/5, 10–15 g · Kansas City 2/5, 10–15 g · Carolina Mustard 2/5, 10–15 g · East Carolina Pepper 4/5, 8–12 g · Magic Dust 2/5, 10–15 g · Cajun 3/5, 10–15 g · Creole 3/5, 10–15 g · Montreal Steak 2/5, 8–12 g · Coffee BBQ 2/5, 10–15 g · Santa Maria 2/5, 8–12 g · Nashville Hot 5/5, 8–12 g · Chesapeake Seafood 2/5, 6–10 g · Blackening 4/5, 8–12 g · Jamaican Jerk 4/5, 12–18 g · Cuban Mojo 1/5, 10–15 g · Puerto Rican Adobo Seco 1/5, 10–15 g · Mexican Adobo Seco 3/5, 10–15 g · Chile-Lime 3/5, 8–12 g · Chimichurri Seco 2/5, 8–12 g · Brazilian Churrasco 1/5, 8–12 g. Die Zutaten jedes Rubs stehen unter Vorrat im Reiter „Rubs“.<br><b>Annahmen der App:</b> „Paprika“ ohne Zusatz ist als Paprika edelsüß geführt, „Ingwer“ im Jerk-Rub als Ingwerpulver, „Petersilie“ im Chimichurri als getrocknete Petersilie. Rubs sind keine Rezepte und keine Gerichte, sie haben deshalb keine Rezeptnummer. Selleriesalz (Chesapeake) und Senfpulver (Carolina Mustard, Memphis, Chesapeake) sind Allergene (Sellerie, Senf). Quelle laut Text: Fußnoten [1057][1060][1066] beim Jamaican Jerk Rub, im übergebenen Text ohne Link; von der App nicht geprüft.');

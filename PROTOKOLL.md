@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-31 03:24 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-31 04:46 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,35 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag Version 37: Anleitung r355 bis r358 bestätigt
+
+- Der Nutzer hat die einheitliche Anleitung bestätigt (Rechtecke ausrollen und aufrollen, 180 °C Ober-/Unterhitze, 25 Minuten, Butter, 10 Minuten ausdampfen); 220 °C ist verworfen. Nur noch die bereinigte zweite Fassung gilt. Ergänzt: r356 Honig erst nach dem Abkühlen auf die Baguettes streichen. APP_VERSION 37.
+
+## Nachtrag Version 36: Subway-Brote r356, r357, r358 auf das Original korrigiert
+
+- Nach dem zweiten Perplexity-Abgleich haben alle vier Subway-Brote (r355 bis r358) denselben Grundteig nach foodwithlove.de „Baguettes à la Subway®“: 3 Baguettes, 400 g Mehl, 230 g Wasser, 10 g Zucker, 7 g Hefe, 10 g Salz, 50 g Olivenöl, Ei (55 g) nur zum Bestreichen, keine Milch. Gemeinsame Anleitung: Mehl in drei Gaben kneten, 1 Stunde gehen, zu Rechtecken ausrollen und aufrollen, 1 Stunde gehen, bei 180 °C 25 Minuten backen, Butter, 10 Minuten ausdampfen. r355 hat diese Anleitung übernommen (vorher 220 °C, Version 35).
+- Toppings (keine Teigzutaten, mitgerechnet): r356 Honig 20 g und Haferflocken 15 g, r357 Mozzarella 50 g und Oregano, r358 Sesam 25 g (Bereich 20 bis 30 g; Parmesan/Oregano optional, nicht gerechnet). r356 und r357 sind laut Abgleich moderne Adaptionen und tragen das Tag „Adaption“ statt „originalgetreu“.
+- Widersprüche in der übergebenen Datei: Der erste Teil nannte für r356 30 g Haferflocken und für r357 30 g Parmesan, der zweite (bereinigte) Teil 15 g Haferflocken und 50 g Mozzarella; übernommen ist der zweite Teil. APP_VERSION 36.
+
+## Nachtrag Version 35: Subway-Brot Italian (r355) auf das Original korrigiert
+
+- Nach dem vom Nutzer übergebenen Perplexity-Abgleich (8 Abweichungen) ersetzt die Fassung von foodwithlove.de „Baguettes à la Subway®“ die bisherige: 3 Baguettes statt 4 Brötchen, 400 g Mehl (vorher 500 g), 230 g Wasser ergänzt, 10 g Salz als eigene Zutat statt „Gewürze 8 g“, 50 g Olivenöl (vorher 25 g), keine Milch, Ei nur zum Bestreichen (nicht im Teig), Backen bei 220 °C. Name: „Subway-Brot Italian (Baguettes à la Subway)“.
+- Offen: r356 (Honey Oat), r357 (Cheese Oregano) und r358 (Sesam) nennen dieselbe foodwithlove-Seite als zweite Quelle und haben noch die alte Teigmenge (500 g Mehl, Milch, Ei im Teig). Sie werden erst nach einem Perplexity-Abgleich geändert. APP_VERSION 35.
+
+## Nachtrag Version 34: Char Siu Marinade (Nr. 26A) korrigiert
+
+- Auf Wunsch ersetzt die vom Nutzer übergebene „korrigierte authentische“ Fassung die Version 32: Maltose hauptsächlich in der Glasur (80 g Maltose, 40 ml Wasser, optional 20 ml Honig), Zucker in der Marinade 50 g, roter fermentierter Tofu (20 g plus 20 ml Flüssigkeit) statt optional, Fleischangaben (Nacken ideal, Bauch/Schulter möglich, Filet nicht empfohlen), Backen bei 220 °C (15/5/5/10 Minuten) und Alternative bei 200 °C, Fehlerliste, Lagerung. Angezeigt unter Vorrat → Marinaden → „Feuchte Marinaden mit Glasur“ und als Info-Zeile bei den Rubs.
+- Das Rezept „Char Siu“ (r808) bleibt unverändert, weil es aus der Hongkong-Liste stammt. Wenn es ebenfalls auf die neue Marinade angepasst werden soll, bitte Bescheid sagen. APP_VERSION 34.
+
+## Nachtrag Version 33: Chinesische Desserts auf die Originalfassung ohne Skyr korrigiert
+
+- Auf Wunsch („Die chinesischen Rezepte mit Skyr kann nicht sein“, danach „Es soll keine Rezepte entfernt werden, sondern auf Richtigkeit korrigiert werden“) bleiben alle sieben Rezepte mit denselben IDs erhalten und stehen jetzt als Originalfassung ohne Skyr in der Bibliothek: r300 Mangopudding (10 Portionen, Gelatine, Litschis), r301 Glückskekse (10 Portionen zu je 3 Keksen, ohne Dip), r302 Litschi-Ingwer-Sorbet (mit Eiklar, zwei Gefrierphasen), r303 Tanghulu (300 g Erdbeeren, 150 g Trauben, 350 g Zucker, 6 Spieße), r310 Orangen-Grand-Marnier-Sauce zu Nian Gao, r311 Ba Bao Fan (Klebreis, Lotuskerne, Goji, Jujuben, Kirschen, rote Bohnenpaste), r312 Chinesisches flambiertes Eis (Vanilleeis, Sandkuchen, Ausbackteig, Rum).
+- Neue Zutaten in `data_zutaten.js` und `data_bls.js` (Quelle „eigener Richtwert“ mit Begründung): Orangenlikör (Grand Marnier), Rum, Goji-Beeren, Jujuben, Sandkuchen.
+- Wo die Quellseite aus dieser Sitzung nicht abrufbar war, sind nicht belegte Mengen als Richtwerte in den Rezepttipps benannt (Litschimenge r300, Zucker/Ingwer r302, Wassermenge r303, Mengen r310/r311/r312, Teig und Frittierzeit r312).
+- `data_rezeptabgleich.js`: Quellenvergleichstexte (basis) für r300, r301, r302, r303, r312 auf die neue Fassung gesetzt, die alten Korrektur-Patches für r300, r301, r303 entfernt, r302/r312 aus der Skyr-Beibehalten-Liste genommen; der Vermerk „Quellen geprüft 29.10.2026“ bleibt.
+- Ausnahmen: r300 bis r303 und r310 bis r312 stehen in `ORIG_ON_REQUEST` (smoke6: Eiweiß unter 10 g bzw. Kalorien außerhalb 120 bis 350); r301 hat wegen 27 g je Portion eine dokumentierte Ausnahme beim Portionsgewicht (test_logic2).
+- Mangopudding gibt es zusätzlich weiter als r776 (Hongkong). Die übrigen Skyr-Rezepte (andere Küchen) sind unverändert; offen: Entscheidung über r263, r298, r335 bis r337, r340 bis r343 und die Skyr-Dips in r346/r347. Nächstes freies Rezept: r924. APP_VERSION 33.
 
 ## Nachtrag Version 32: Char Siu Marinade (Nr. 26A)
 
@@ -1081,14 +1110,14 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 | Mitgelieferte Rezepte | **838** (aktueller Stand) |
 | Verteilung nach Gruppe | Geflügel: 113, Rind: 116, Schwein: 119, Fisch: 81, Vegetarisch: 409 |
 | Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 65, Salat/Bowl: 20, Frühstück: 18, Smoothie: 16, Snack: 197, Dessert: 99, Aufstrich: 45, Sauce/Dips: 21 |
-| Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 470 (469) |
+| Einfrierbar: ja / eingeschränkt | 139 / 46 |
+| Zutaten im Stamm (davon mit Nährwerten) | 475 (474) |
 | Gewürze | 107 |
 | Bausteine (Meal-Prep) | **79** (Protein: 20, Beilage: 8, Sauce: 23, Gemüse: 5, Booster: 23) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine, Dämpfer, Stabmixer, Handmixer, Eismaschine, Wok, Thermometer, Vakuumierer, Dörrautomat, Mikrowelle, Reiskocher, Mooncake-Form, Waffeleisen, Küchenbrenner, Eisportionierer, Slow Cooker |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 3731 KB |
+| Größe `dist/index.html` | 3732 KB |
 
 ---
 
