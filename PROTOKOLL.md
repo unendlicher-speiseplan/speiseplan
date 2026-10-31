@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-31 01:02 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-10-31 03:24 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -12,12 +12,230 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 
 - **Rezepte des Auftraggebers wieder originalgetreu:** r354 (Beeren-Joghurt) und r402 (Thunfisch-Aufstrich) behalten Zutaten, Mengen **und** Zubereitung wie übergeben. Der Quellenabgleich bleibt als Hinweis erhalten; bei r354 steht zusätzlich ein Hygienehinweis zu Tiefkühlbeeren (BfR) im Tipp, ohne die Rezeptur zu ändern.
 - **Skyr-Rezepte unverändert:** Die Umschreibungen von r298, r302, r312, r337 und r343 sowie die reinen Tipp-Zusätze bei r340 bis r342 wurden zurückgenommen. Über die Skyr-Rezepte (r263, r298, r302, r312, r335 bis r337, r340 bis r343, Skyr-Dips in r346 und r347) hat der Auftraggeber noch nicht entschieden; bis dahin nichts ändern. Bei diesen Rezepten ist nur das Prüfdatum gesetzt.
-- **Keine Ersetzung ohne Rückfrage:** r411 verwendet jetzt Red Leicester (Nährwerte als Näherung nach Cheddar), r415 frische Weißbrotbrösel (BLS Weizenbrot/Weißbrot), r438 Ingweröl (Näherung nach Sonnenblumenöl) und r133 „Rinderroulade (Oberschale)“ mit dem BLS-Eintrag U163100 statt Rindersteak. **Noch offen, bitte beim Auftraggeber nachfragen:** r415 nutzt Kochsahne statt Single Cream; r416 nutzt Pitabrot statt Oatcakes (für beides gibt es keinen BLS-Wert).
+- **Keine Ersetzung ohne Rückfrage:** r411 verwendet jetzt Red Leicester (Nährwerte als Näherung nach Cheddar), r415 frische Weißbrotbrösel (BLS Weizenbrot/Weißbrot), r438 Ingweröl (Näherung nach Sonnenblumenöl) und r133 „Rinderroulade (Oberschale)“ mit dem BLS-Eintrag U163100 statt Rindersteak. **Erledigt in Version 17:** r415 und r416 sind auf Wunsch des Auftraggebers wieder auf die Originalzutaten (Single Cream, Oatcakes) umgestellt, siehe Nachtrag Version 17.
 - **Nährwerte aus dem BLS statt eigener Richtwerte:** 16 der 25 zuletzt als „eigene Werte“ eingetragenen Zutaten haben jetzt BLS-Werte (Artischocken in Öl, Makrele geräuchert, Meerrettich, Hummus, Granatapfelkerne, Roastbeef, Kresse, Rettich, Garnelen gegart, Dicke Bohnen, Röstzwiebeln, Kokosraspeln, Kokoswasser, Sonnenblumenöl) oder BLS-Näherungen (Hähnchenfleisch gegart, Stremellachs). Dadurch ändern sich die Nährwerte einiger Rezepte teils deutlich (zum Beispiel Röstzwiebeln 575 statt 460 kcal je 100 g). Ohne BLS-Eintrag bleiben bewusst eigene, begründete Richtwerte: exotische Sauce, süße Chilisauce, geräucherte Entenbrust, Zitronengras, Frühlingsrollenteig, Digestive-Kekse, Vanilleextrakt, Zitronenabrieb, Double Cream. Neue Zutaten: Rinderroulade, Red Leicester, frisches Weißbrot, Ingweröl.
 - **Ausnahmen vom Kalorien- und Eiweißrahmen sind jetzt im Rezept benannt:** r440 (rund 1290 kcal je Portion, Hauptgrund die geschätzte Teigmenge), r439 (Chilisauce komplett gerechnet) und r428 (leichte Rollen, Eiweiß unter 30 g).
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag Version 32: Char Siu Marinade (Nr. 26A)
+
+- Auf Wunsch ergänzt: „26A Char Siu Marinade“ aus der Rub-Reihe (Hongkong / Guangdong, feuchte Marinade und Glasur, ausdrücklich kein Rub). Sie steht unter Vorrat im Reiter „Marinaden“, neuer Abschnitt „Feuchte Marinaden mit Glasur“ (`MARINADEN_NASS` in `app_c.js`): Marinade (mit Vorratsmarkierung; Hoisin und Maltose sind Zutaten der App), Gewürze, Glasur, 11 Schritte, Hinweise, Quelle (Fußnoten [1072][1076][1081]). Mengen unverändert aus der Vorlage; die „oder“-Angaben (Maltose oder Honig, optionaler Tofu, optionaler Honig in der Glasur) stehen so wie in der Vorlage. Eine Info-Zeile fasst sie zusammen; der Char Siu Dry Rub (Nr. 26) verweist darauf. Das Rezept Char Siu r808 bleibt unverändert.
+- Keine Rezepte, nächstes freies Rezept: r924. APP_VERSION 32.
+
+## Nachtrag Version 31: Subway-Saucen komplett in Sauce/Dips
+
+- Auf Wunsch sind die 11 Subway-Saucen (BBQ, Caesar, Chipotle Southwest, X-spicy Chipotle, Honey & Wholegrain Mustard, Sweet Onion, Garlic & Herb, Balsamico, Olivenöl, Ranch, Ketchup) wieder Rezepte, jetzt in der Kategorie Sauce/Dips (r359 bis r369). Technisch: die Einträge r359 bis r369 sind aus `RETIRED` entfernt, die Rezepte der Charge 51 in `data_rezepte4.js` tragen `"meal": "Sauce/Dips"` (vorher „Sauce“), Zutaten, Schritte, Tipps und Quellen unverändert. Die IDs waren nie neu vergeben, die Rezepte kehren unter derselben Nummer zurück.
+- Als Bausteine im Prep-Katalog werden die 11 Saucen nicht mehr angeboten (79 statt 90 Bausteine; Dips 6, Grillsaucen 2, Dressings 3). Die alten Baustein-Einträge bleiben nur in `BAUSTEINE_ALT` (data_bausteine.js), damit gespeicherte Einträge in Vorrat oder Plan mit ihrer ID weiter aufgelöst werden; die IDs der übrigen Bausteine ändern sich nicht. Die 8 Subway-Beläge bleiben Bausteine (keine Saucen).
+- Die Chipotle-Saucen r361 und r362 haben weiter den Dubletten-Hinweis (gleiche Zutaten, andere Mengen); als Ausnahme in den Tests eingetragen.
+- Tests angepasst: Bibliothek 909 (vorher 898), ausgemustert 85 bzw. 14, Sauce/Dips 21 (vorher 10), Bausteine 79 (vorher 90). Nächstes freies Rezept bleibt r924.
+- APP_VERSION 31.
+
+## Nachtrag Version 30: 50 Internationale Rubs, Teil 3 (12 Rubs, Nr. 39 bis 50)
+
+- 12 Rubs (Mittelmeerraum, Naher Osten, universelle Mischungen) in `RUBS` ergänzt, Nummern 39 bis 50; damit sind alle 50 Rubs der Reihe in der App (Reiter „Rubs“ unter Vorrat, 250-g-Vorratsmenge). Alle 12 Summen ergeben 100 g, die Dosierungsübersicht stimmt. Eine Info-Zeile fasst Teil 3 zusammen; der Satz in der Teil-2-Zeile („bisher 38“) ist angepasst. Keine Rezepte, nächstes freies Rezept: r924.
+- Neue Gewürze in `SPICES`: Bohnenkraut, Lavendelblüten, Pul Biber, Zitronenschale getrocknet, grüner Pfeffer getrocknet (getrennt vom eingelegten grünen Pfeffer).
+- APP_VERSION 30.
+
+## Nachtrag Version 29: 50 Internationale Rubs, Teil 2 (16 Rubs, Nr. 23 bis 38)
+
+- 16 Rubs aus China, Hongkong, Japan, Korea, Indien und Südostasien in `RUBS` (`app_c.js`) ergänzt, Nummern 23 bis 38 wie in der Vorlage; sie erscheinen im Reiter „Rubs“ unter Vorrat (mit 250-g-Vorratsmenge, Namen in Originalschrift, Hinweisen). Alle 16 Summen ergeben 100 g, die Dosierungsübersicht stimmt mit den Einzelangaben überein. Eine Info-Zeile fasst Teil 2 zusammen. Keine Rezepte, nächstes freies Rezept: r924.
+- Neue Gewürze in `SPICES`: Gochugaru, Sansho-Pfeffer, Sojasaucenpulver (Allergene Soja und Gluten, Annahme), Sesam (ganz, auch geröstet; Allergen Sesam), Mandarinenschale getrocknet, Reispulver geröstet, Kaffirlimettenblattpulver, Zitronengraspulver. Vorhandene Gewürze genutzt: Fünf-Gewürze-Pulver, Togarashi, Yuzuschale, Garam Masala.
+- Die Einleitung im Reiter „Rubs“ nennt nun beide Teile.
+- APP_VERSION 29.
+
+## Nachtrag Version 28: Katalog-Marinaden auch unter Vorrat
+
+- Auf Wunsch stehen acht Marinaden aus dem Prep-Katalog (Premium Trüffel, Schwarzer Knoblauch, Buttrige Kräuter, Fresh Lemon, Scharfe Schote, Smoky Whiskey, Sweet Bacon, Alter Pfeffer) zusätzlich im Reiter „Marinaden“ unter Vorrat, in einem eigenen Abschnitt „Gefrierwürfel aus dem Prep-Katalog“ mit Zutaten (Vorratsmarkierung), Gewürzen, Schritten und Tipp. Die Bausteine im Katalog sind unverändert. Ob die Marinaden von Sizzle Brothers stammen, steht in den Daten nicht; die Zuordnung beruht auf dem Hinweis der Nutzerin.
+- Der Abschnitt der Jerky-Marinaden (Teil 3) hat jetzt eine eigene Überschrift.
+- APP_VERSION 28.
+
+## Nachtrag Version 27: Rubs auf 250 g Vorratsmischung
+
+- Auf Wunsch zeigt der Reiter „Rubs“ die Mischungen für 250 g statt 100 g (alle Mengen der Vorlage mal 2,5, z. B. SPG: 112,5 g Salz, 87,5 g Pfeffer, 50 g Knoblauchpulver). Je Rub steht, für wie viele kg Fleisch 250 g reichen (250 g geteilt durch die Dosierung je kg). Die Daten in `RUBS` bleiben bei 100 g; die Konstante `RUB_VORRAT_G` in `app_c.js` steuert die Menge.
+- APP_VERSION 27.
+
+## Nachtrag Version 26: 50 Internationale Rubs, Teil 1 (22 Rubs)
+
+- Die übergebene Liste „50 Internationale Rubs – Teil 1: USA, Karibik und Lateinamerika“ enthält 22 Rubs (nicht 50). Alle 22 Mischungen wurden nachgerechnet: jede ergibt 100 g; die Dosierungsübersicht der Vorlage stimmt mit den Einzelangaben überein.
+- Rubs sind keine Rezepte und haben keine Rezeptnummer (nächstes freies Rezept: r924). Sie stehen als `RUBS` in `app_c.js` und im neuen Reiter „Rubs“ unter Vorrat (neben Zutaten, Gewürze, Marinaden, Gerichte, Kochen) mit Typ, Land, Eignung, Schärfe, Dosierung je kg, Mischung für 100 g und Vorratsmarkierung (✓ ◐ ○). Eine Info-Zeile fasst Kennzeichnung und Übersicht zusammen.
+- Neue Gewürze in `SPICES`: Koriandersaat, Dillsaat, Selleriesalz (Allergen Sellerie), Orangenschale und Limettenschale getrocknet, Ancho- und Guajillo-Chilipulver, Knoblauchgranulat, Kaffee gemahlen.
+- Annahmen: „Paprika“ ohne Zusatz = edelsüß, „Ingwer“ (Jerk) = Pulver, „Petersilie“ (Chimichurri) = getrocknet.
+- Layout: Die Reiterleiste unter Vorrat scrollt bei schmalen Bildschirmen seitlich statt die Seite zu verbreitern (sechs Reiter).
+- APP_VERSION 26.
+
+## Nachtrag Version 25: Jerky Teil 4 (Dörrgerät, Backofen, Grill, Verpackung, Fehler)
+
+- Reine Information, keine neuen Rezepte (nächstes freies Rezept: r924). Vier neue Info-Zeilen: Dörrgerät; Backofen und Grill; Vakuumieren und Verpackung; Typische Fehler, Optimierung und Zusammenfassung (mit den beiden kurzen Ranglisten von Teil 4).
+- Hinweise der App in den Zeilen: Duck Jerky (Rezept 6–10 Stunden) weicht von Teil 4 für Geflügel (5–8 Stunden) ab, Zahl unverändert; Backofen 70–80 °C gegenüber Dörren 54–60 °C stehen so in der Vorlage.
+- APP_VERSION 25.
+
+## Nachtrag Version 24: Reiter „Marinaden“ im Vorrat
+
+- Auf Wunsch eigener Reiter „Marinaden“ unter Vorrat (neben Zutaten, Gewürze, Gerichte, Kochen): die neun Marinaden aus Jerky Teil 3 mit Mengen für 1 kg Fleisch, Gewürzen, Eignung, Marinierzeit und Kerntemperatur. Ein Häkchen zeigt, ob die Zutaten im Zutaten-Vorrat sind (✓ ausreichend, ◐ zu wenig, ○ nicht da); Gewürze sind nach dem Füllstand im Reiter Gewürze eingefärbt. Milliliter sind für die Vorratsprüfung wie Gramm gerechnet. Die Daten stehen als `MARINADEN` in `app_c.js` (keine Rezepte, keine neue Mahlzeit-Kategorie).
+- Der Reiter Gewürze bleibt unverändert und getrennt.
+- APP_VERSION 24.
+
+## Nachtrag Version 23: Jerky Teil 3 (Marinaden) und Dried Fish
+
+- Dried Fish (r-Nummer wie in Version 18): auf Wunsch ein neuer Schritt „auf mindestens 74 °C erhitzen und mit Thermometer prüfen“ vor dem Trocknen eingefügt (Teil 2 verlangt das für Fisch und Tintenfisch); Gerät Thermometer ergänzt; Tipp und Info-Zeile angepasst. Die Art des Erhitzens (Dämpfer) ist ein Vorschlag der App.
+- Teil 3 („Gemeinsame Marinaden, Gewürzvariationen und Produktionsreihenfolge“): zwei neue Info-Zeilen (neun Marinaden mit Mengen je 1 kg Fleisch; Fleischzubereitung, Produktionsreihenfolge, Hinweise). Keine neuen Rezepte, weil Marinaden keine Gerichte sind und eine frühere Entscheidung (Subway-Saucen entfernt, Bausteine im Meal-Prep-Baukasten) gegen zusätzliche Kategorien spricht; die Zutaten stehen schon in r910 bis r923. Nächstes freies Rezept: r924.
+- APP_VERSION 23.
+
+## Nachtrag Version 22: Chinesisches Jerky und Bak Kwa, Teil 2 (Vorratshaltung, Sicherheit, Wirtschaftlichkeit)
+
+Die übergebene Liste „Teil 2“ enthält keine neuen Rezepte, nur Informationen. Deshalb gibt es keine neuen Rezepte; das nächste freie Rezept ist r924.
+
+- Fünf neue Zeilen im Info-Panel (oben): Lagerung und Lagermethoden (A bis D, Fett-Oxidation), Lagerung je Produkt, Lebensmittelsicherheit, Wirtschaftlichkeit mit Produktionsplan für 10 kg, Empfehlung und Ranglisten.
+- Die Lagerzeiten (Kühlschrank / Tiefkühlen) in den Rezepten r910 bis r923 wurden an die Tabelle aus Teil 2 angepasst (Feld Lagerung bei elf Rezepten: Ma La, Cumin, Feng Gan, Sliced Pork Bak Kwa, Honey Pork, Spicy Chicken, Duck, Lamb, Turkey, Dried Fish, Dried Shredded Squid).
+- Dried Fish (Teil 1) hat keinen Erhitzungsschritt, Teil 2 verlangt für Fisch und Tintenfisch mindestens 74 °C. Die Schritte sind unverändert; im Tipp steht ein Hinweis. Ebenso bei Duck Jerky ein Hinweis (Teil 2 empfiehlt Entenbrust ohne Haut, das Rezept nutzt Entenfleisch mit Haut).
+- Rechenfehler der Vorlage (Gesamtsummen bei Zutatenkosten, Gewicht der drei Rind-Jerkys, Gesamt-Kaufpreis, Ersparnis bei Lamb und Duck) sind im Info-Panel genannt; die Zahlen der Vorlage sind unverändert übernommen.
+- Die Ranglisten sind laut Vorlage mit Teil 1 identisch und nicht doppelt angelegt.
+- APP_VERSION 22.
+
+## Nachtrag Version 21: Slow Cooker (31.10.2026)
+
+- **Slow Cooker** ist als 27. Gerät in `GERAETE` (der Auftraggeber besitzt ihn). In 4 Rezepten (Pulled Pork, Pulled Beef, Pulled Chicken aus dem Slow Cooker und Slow-Cooker-Rindereintopf) steht er in `devices`, der Hinweis im Tipp lautet jetzt „als Gerät geführt (Stufe LOW); alternativ der Multikocher“.
+- **Küchenmaschine und Monsieur Cuisine Connect (MCC)** sind laut Auftraggeber beide im Bestand und bleiben getrennte Geräte (die frühere Frage, ob sie dasselbe Gerät sind, ist damit beantwortet: nein). Monsieur Cuisine Connect bleibt wie bisher im Rezept-Editor und im KI-Prompt versteckt, weil das so festgelegt war.
+- Weiterhin nicht in der Liste: Fritteuse (im Dutch Oven frittieren), Smoker, Schnellkochtopf, Eierwaffel-Eisen, Takoyaki-Pfanne, Förmchen. Nächstes Rezept weiterhin **r924**.
+
+---
+
+## Nachtrag Version 20: Waffeleisen, Küchenbrenner, Eisportionierer (31.10.2026)
+
+- **Drei weitere Geräte** in `GERAETE` (jetzt 26 Einträge): **Waffeleisen, Küchenbrenner, Eisportionierer** (der Auftraggeber besitzt sie). In 15 Rezepten wurden sie in `devices` eingetragen (Eisportionierer in 13, Waffeleisen und Küchenbrenner je in einem) und die Hinweise im Tipp auf „als Gerät geführt“ umgestellt. Das **Eierwaffel- bzw. Egg-Waffle-Eisen** (Spezialform) ist kein normales Waffeleisen und steht weiter nicht in der Liste.
+- **Weiterhin nicht in der Liste:** Fritteuse (der Auftraggeber hat keine; im Dutch Oven frittieren), Slow Cooker, Smoker, Schnellkochtopf, Eierwaffel-Eisen, Takoyaki-Pfanne, Tart-, Keks- und Papierförmchen und weiteres Zubehör.
+- Keine neuen Rezepte; nächstes Rezept weiterhin **r924**. Testzähler unverändert.
+
+---
+
+## Nachtrag Version 19: Geräteliste erweitert (31.10.2026)
+
+- **Auf Wunsch des Auftraggebers** (er besitzt alle genannten Geräte außer der Fritteuse) hat `GERAETE` in `logic.js` elf neue Einträge: **Dämpfer, Stabmixer, Handmixer, Eismaschine, Wok, Thermometer, Vakuumierer, Dörrautomat, Mikrowelle, Reiskocher, Mooncake-Form**. Sie erscheinen im Gerätefilter, im Rezept-Editor und im KI-Prompt. Die Geräteliste hatte danach 23 Einträge (jetzt 26, siehe Version 20). **Weiterhin nicht in der Liste:** Fritteuse (der Auftraggeber hat keine; frittiert wird im Dutch Oven auf dem Herd), Eisportionierer, Slow Cooker, Waffeleisen, Smoker, Küchenbrenner, Schnellkochtopf, Tart-, Keks- und Papierförmchen und weiteres Zubehör (jeweils im Tipp vermerkt).
+- **Rezepte:** In 102 Rezepten (alle in `data_rezepte4.js`) wurden die Hinweise im Tipp („X steht nicht in der Geräteliste“) auf „als Gerät geführt“ umgestellt und die Geräte dem Feld `devices` hinzugefügt (Dämpfer 40, Thermometer 34, Vakuumierer 32, Mikrowelle 28, Dörrautomat 11, Dutch Oven 11, Eismaschine 9, Wok 6, Mooncake-Form 6, Stabmixer 3, Handmixer 1, Reiskocher 1). Zutaten, Mengen, Schritte und Nährwerte sind unverändert. Das Mischtool war ein Skript mit festen Ersetzungen je Satz; 51 Stellen mit „Geräteliste“ blieben bewusst stehen (nicht vorhandene Geräte).
+- **Fritteuse:** Bei den Rezepten mit „Fritteuse nicht in der Geräteliste, Herd (Topf mit Öl)“ steht jetzt, dass im **Dutch Oven** auf dem Herd frittiert wird (Füllstand höchstens zur Hälfte, Temperatur mit dem Thermometer prüfen); `devices` enthält Dutch Oven und Thermometer.
+- **Offen:** Ist die „Küchenmaschine“ des Auftraggebers die Monsieur Cuisine? (nicht beantwortet, deshalb nichts zusammengelegt). Bei neuen Rezepten werden die elf Geräte ab jetzt direkt in `devices` eingetragen; nur bei fehlenden Geräten kommt der Hinweis „steht nicht in der Geräteliste“.
+- Keine neuen Rezepte; nächstes Rezept weiterhin **r924**. Testzähler unverändert.
+
+---
+
+## Nachtrag r910 bis r923: Chinesisches Jerky, Trockenfleisch und Bak Kwa, Teil 1 (31.10.2026, Version 18)
+
+- **Neu:** 14 Rezepte, je Sorte getrennt, alle für 1 kg Rohware wie in der Vorlage: r910 Niu Rou Gan, r911 Ma La Beef Jerky, r912 Cumin Beef Jerky, r913 Feng Gan Niu Rou, r914 Klassisches Pork Bak Kwa, r915 Sliced Pork Bak Kwa, r916 Honey Pork Jerky, r917 Chicken Bak Kwa, r918 Spicy Chicken Jerky, r919 Duck Jerky, r920 Lamb Jerky, r921 Turkey Jerky, r922 Dried Fish, r923 Dried Shredded Squid. Zwei Info-Zeilen im Info-Panel (Sicherheit und Lagerung; Gewürzvarianten, Kosten, Rangliste). Nächstes Rezept beginnt bei **r924**.
+- **Zuordnung ohne neue Zutaten:** Rindfleisch = `rindergulasch` (Schulter), Schweinehack „idealerweise Schulter“ und Schweinefleisch = `schweineschulter`, Hähnchenhack = `haehnchenhack`, Entenbrust = `ente_fleisch` (mit Haut), Lamm = `lammkeule`, Fisch = `kabeljau`, Hell/Dunkel-Sojasauce = `sojasauce`/`sojasauce_dunkel`, Shaoxing = `reiswein`. Milliliter = Gramm, Honig mit 1,4 g je ml. Gewürze ohne Gramm (Fünf-Gewürze, Pfeffer, Chili, Kreuzkümmel, Sichuanpfeffer, Sternanis) stehen mit Menge im Schritt „Marinade“.
+- **Portionen (Annahme):** Snack aus 35 bis 48 g Trockenware; die Nährwerte sind aus dem Rohgewicht (rund 110 bis 135 g) errechnet, ohne Wasserverlust. Deshalb liegen 13 Rezepte unter 250 kcal und tragen „AUSNAHME VOM KALORIENRAHMEN“ im Tipp (nur Duck Jerky mit 273 kcal nicht). Lamm steht in der Gruppe „Rind“ wie die anderen Lammgerichte (die Frage nach einer eigenen Gruppe „Lamm“ ist weiter offen).
+- **Abweichungen und Hinweise (im Tipp vermerkt):** Marinierzeit bei Niu Rou Gan „mindestens 8, besser 24 Stunden“: 24 Stunden gerechnet. Dried Fish: Salz „80 bis 120 g“: 80 g; die Vorlage nennt hier **keine Erhitzung vor dem Trocknen** (anders als bei den Fleischrezepten); Shaoxing-Wein und Ingwer (in der Vorlage optional) sind eingerechnet, weil die App mindestens 3 Zutaten verlangt. Squid: Kerntemperatur 74 °C laut Vorlage. Die Rangliste nennt Sorten ohne Rezept (Cumin Lamb, Air-Dried Lamb, Black Pepper, BBQ, Spicy Pork, Chicken Jerky). Lagerzeiten fehlen bei vielen Rezepten und sind als Richtwert von Niu Rou Gan bzw. Pork Bak Kwa übertragen (so im Tipp gekennzeichnet). Bak Kwa nutzt Backofen und Grill; Dörrautomat, Thermometer und Vakuumiergerät sind nicht in der Geräteliste.
+- **Tests:** Bibliothek 898, SHIP 827, test_abgleich 827, `idNum(r) <= 923`, smoke2 „eigenes Rezept“ = 899, smoke3 seedLib = 897. Dubletten-Ausnahmen in `test_logic2.js` Zeile 16: r910, r911, r912, r914, r915, r916, r919. Das Kernangabe-Muster der Prüfung sucht „70 °C“; die Rezepte nennen 71/74 °C in den Schritten und „über 70 °C“ im Aufwärmen-Feld.
+- Generator: `chargen/_gen126.js` → `chargen/recherche_126_jerky_bakkwa_teil1.json`.
+
+---
+
+## Nachtrag Version 17: r415 und r416 mit Originalzutaten (31.10.2026)
+
+- Auf Wunsch des Auftraggebers: r415 „Britische Brotsoße“ verwendet wieder **Single Cream** (60 g, vorher Kochsahne), r416 „Bohnen-Feta-Aufstrich“ wieder **Oatcakes** (12 Stück, gerechnet als 150 g, Annahme; vorher 240 g Pita). Schritte, Tipp und `src` entsprechend angepasst.
+- Zwei neue Zutaten, beide ohne BLS-Eintrag (Modus `own`): `single_cream` (188 kcal, 2,8 g Eiweiß, 3,6 g KH, 18 g Fett je 100 g; rechnerisch aus ca. 55 Teilen Schlagsahne 30 % und 45 Teilen Milch 1,5 %) und `oatcakes` (430 kcal, 10 g Eiweiß, 55 g KH, 17 g Fett je 100 g; grober Richtwert nach üblichen Packungsangaben, Gluten). Die Nährwerte dieser beiden Rezepte ändern sich dadurch.
+- Keine neuen Rezepte; nächstes Rezept weiterhin **r910**. Testzähler unverändert (Bibliothek 884, SHIP 813).
+
+---
+
+## Nachtrag r909: Taro Mochi Ice Cream (31.10.2026, Version 16)
+
+- **Neu:** r909 „Taro Mochi Ice Cream – Mochi-Eis mit Taro-Vanilleeis (modern)“. Der Auftraggeber hat die Anlage ausdrücklich gewünscht. Eine Vorlage gibt es nicht; Teil 4 der Hongkonger-Gebäck-Liste nennt das Gericht nur als Verwendung der Taropaste. Das Rezept ist deshalb **nicht** als „originalgetreu“ getaggt und sagt das im Tipp („HINWEIS“) und im `src`.
+- **Aufbau:** Hülle und Arbeitsschritte wie Mochi-Eis-Grundrezept r875 (200 g Reismehl, 120 g Zucker, 360 g Wasser, 60 g Kartoffelstärke); Füllung 360 g Vanilleeis plus 120 g Taropaste (zusammen 480 g = 16 Kugeln à 30 g). **Annahmen der App, nicht aus einer Vorlage:** die 120 g Taropaste (gleiche Menge wie die Sesampaste bei Black Sesame Mochi Ice Cream r883) und das Untermischen in angetautes Eis. Wer den Geschmack ändern will, ändert nur diese Menge.
+- **Neue Zutat `taropaste`** (`data_zutaten.js`, Gruppe Sonstiges, Milch-Allergen): 227 kcal, 1,9 g Eiweiß, 32,5 g KH, 9,5 g Fett je 100 g, rechnerisch aus dem Grundrezept r907 (600 g Taro, 150 g Zucker, 120 g Kokosmilch, 60 g Butter, Ausbeute 800 g). BLS_REF-Modus `own` (kein BLS-Eintrag).
+- r907 (Gemeinsame Taropaste): Hinweis im Tipp angepasst („dazu hat die App noch kein eigenes Rezept“ entfällt).
+- Testzähler: Bibliothek 884, SHIP 813, test_abgleich 813, `idNum(r) <= 909`, smoke2 „eigenes Rezept“ = 885, smoke3 seedLib = 883. Dubletten-Ausnahme `r909` in `test_logic2.js` Zeile 16 (≥ 80 % gleiche Zutaten wie Mochi-Eis-Grundrezept, gewollt). Nächstes Rezept beginnt bei **r910**.
+- Generator: `chargen/_gen125.js` → `chargen/recherche_125_taro_mochi_eis.json`.
+
+---
+
+## Nachtrag r899 bis r908 und Hinweise (Hongkonger Gebäck, Teil 4: Gemeinsame Grundrezepte; 31.10.2026, Version 15)
+
+Übergebene Liste „Traditionelles Hongkonger Gebäck – Teil 4: Gemeinsame Grundrezepte, Füllungen und Produktionsoptimierung“ (10 Grundrezepte mit Zutaten, Schritten, Verwendung und Lagerung, dazu Produktionsreihenfolge und Hinweise). Auf die Bitte, die Rezepte mit Hinweisen anzupassen, wurde Folgendes gemacht:
+
+**Zehn neue Rezepte (r899 bis r908)**, Mahlzeit Snack, nach dem Vorbild des Daifuku-Grundteigs (r857): r899 Mürbeteig (24 Tarts), r900 Hefeteig (24 Buns), r901 Kekskruste für Bo Lo Bao, r902 Kokosfüllung, r903 Eiercreme für Dan Tat, r904 Anko-Füllung (ca. 1 kg), r905 Lotuspaste (ca. 1 kg), r906 schwarze Sesampaste (ca. 800 g), r907 Taropaste (ca. 800 g), r908 Fruchtfüllung (ca. 600 g). Mengen wie übergeben; „oder“ nach der Regel (zuerst genannt): Öl statt Schmalz (Anko, Lotus), Butter statt Schmalz und Kokosmilch statt Wasser (Sesampaste), Kokosmilch statt Vollmilch und Butter statt Öl (Taropaste). Fruchtpüree ohne Sorte: gerechnet als Mango (zuerst genannt). Nicht eingerechnet: kandierte Früchte (optional), Golden Syrup (optional). Portionen: 12 Portionen bei den 24er-Mengen (je 2 Stück), Taropaste 6, Sesampaste 10, Fruchtfüllung 4. Eiercreme und Fruchtfüllung liegen als Teilkomponenten unter 250 kcal je Portion und tragen „HINWEIS:“.
+
+**Hinweise an 22 vorhandenen Rezepten** (Text am Ende des Tipps, Mengen und Schritte unverändert): Dan Tat (r884), Bo Lo Bao (r885), Gai Mei Bao (r886), Ye Tat (r887), Jin Deui (r893), Anko (r856), Daifuku Mochi mit Anko (r858), Kusa Mochi (r860), Sakura Mochi (r861), Red Bean Mooncake (r844), White Lotus Mooncake (r842), Salted Egg Yolk Lotus Mooncake (r843), Black Sesame Mooncake (r845), Black Sesame Mochi (r871), Black Sesame Mochi Ice Cream (r883), Taro Mochi (r874) sowie Mango Mochi, Ichigo Daifuku, Blueberry, Raspberry, Peach und Yuzu Mochi (Fruchtfüllung). Jeder Hinweis nennt das Grundrezept, die Lagerung laut Teil 4 und, wo vorhanden, die Abweichungen der Mengen.
+
+**Auffälligkeiten und Widersprüche der Vorlage:**
+- Der gemeinsame Hefeteig (halbiert) weicht von Bo Lo Bao und Gai Mei Bao ab (Milch 150 ml gegenüber 237 g bzw. 170 g, Eigelb und Butter); die Teil-4-Kokosfüllung ist größer als die in Gai Mei Bao (Kokosraspel 150 g gegenüber 100 g).
+- Teil 4 nennt Ye Tat als Verwendung der Kokosfüllung; die Füllung von Ye Tat (Teil 1) enthält Eier, die Teil-4-Füllung nicht.
+- Eiercreme „nicht einfrieren“ (Teil 4) gegenüber Egg Tarts „tiefgekühlt 1 Monat“ (Teil 3): gemeint ist vermutlich die rohe Creme.
+- Anko-Grundrezept (500 g Bohnen, 350 g Zucker, 150 g Öl) gegenüber dem vorhandenen Anko-Rezept (r856: 300 g, 200 g, ohne Öl): beide bleiben als zwei Fassungen.
+- Anko: 200 ml Kochwasser aufbewahren, ohne weitere Verwendung; Wassermenge beim ersten Aufkochen fehlt.
+- Black Sesame Mooncake (r845) nimmt Wasser statt Kokosmilch und kleinere Mengen als die Sesampaste.
+- Taro Mochi Ice Cream gibt es seit Version 16 als r909 (Zusammenstellung auf Wunsch, nicht aus einer Vorlage); Dämpfer nicht in der Geräteliste.
+- Tests: Die Dubletten-Warnungen zwischen Anko-Füllung (r904) und Red Bean Mooncake (r844) sowie Lotuspaste (r905) und White Lotus Mooncake (r842) sind gewollt (gleiche Zutaten, anderer Zweck); in test_logic2.js (Ausnahmeliste) und smoke6.js (Aufstrich-Prüfung) eingetragen. Portionsgewicht-Warnungen der Teilkomponenten (r899, r901 bis r903, r906) sind über die ID-Klausel (bis r908) ausgenommen.
+
+**Info-Panel:** neue Zeile „Hongkonger Gebäck, Teil 4: Produktionsreihenfolge und wichtige Hinweise“ (Tag 1 bis 4, Hinweise, Lagerung der Grundmassen).
+
+Version der App: 15. Testzähler: Bibliothek 883, SHIP 812, letzte Rezept-ID r908, Aufstrich 45, Desserts 99.
+
+## Nachtrag Hongkonger Gebäck, Teil 3: nur Info, keine neuen Rezepte (31.10.2026, Version 14)
+
+Übergebene Liste „Traditionelles Hongkonger Gebäck – Teil 3: Produktionsplanung, Vorratshaltung, Wirtschaftlichkeit und Einkaufsliste“ enthält keine Rezepte mit Zubereitung, sondern Planung und Kennzahlen zu den 15 Gebäcken aus Teil 1 und Teil 2. Nach der Projektregel (reine Infotexte kommen ins Info-Panel) sind es vier neue Zeilen unter Mehr → Garen, Lagern, Sicherheit:
+
+- **Produktionsgruppen und Produktionsplan** (Gruppen A bis D, gemeinsamer Hefeteig für etwa 24 Buns und gemeinsamer Mürbeteig für etwa 24 Tarts als Mengenlisten, Plan für 100 Stück in drei Wochen),
+- **Vorratshaltung und Haltbarkeit** (Tiefkühlen, Vakuumieren, Trocknen, Haltbarkeitstabelle mit 15 Zeilen),
+- **Kosten und Einkaufsliste** (Kosten je 20 Stück, Einkaufsliste für 100 Stück),
+- **Hygiene und Ranglisten**.
+
+Entscheidungen und Auffälligkeiten:
+- Die beiden gemeinsamen Teige sind Mengenlisten ohne Schritte und deshalb **kein** eigenes Rezept (anders als der Daifuku-Grundteig r857, der Schritte hatte). Falls gewünscht, ließen sie sich mit den Schritten der Einzelrezepte (r884 bis r887) als Rezepte anlegen.
+- Die Tabelle „Kosten für 100 Stück“ der Vorlage zeigt tatsächlich 20 Stück je Sorte (so benannt in der Info-Zeile). Die Stückkosten gleichen Teil 1 und Teil 2.
+- Die Einkaufsliste nennt Sahne, getrocknete weiße Lotussamen, Lauge-Wasser und Mandelmehl, die in keinem Rezept aus Teil 1 und Teil 2 vorkommen; sie ist nicht aus den Rezepten der App abgeleitet.
+- Rangliste „Beste Wirtschaftlichkeit“ nennt Egg Waffles zuerst, obwohl sie die höchsten Eigenkosten je Stück haben (Hinweis in der Info-Zeile).
+- Die Haltbarkeitstabelle nennt Kühlschrank-Zeiten, die in den Rezepten r884 bis r898 teils fehlen (zum Beispiel Pineapple und Cocktail Buns 3 Tage, Paper Cakes 4 Tage, Egg Waffles und Sesame Balls 2 Tage). Die Rezepte sind nicht geändert; die Tabelle steht nur in der Info-Zeile.
+- Fußnoten [997] bis [1008] ohne Links; Vakuumierer und Dämpfer nicht in der Geräteliste.
+
+Version der App: 14. Testzähler unverändert: Bibliothek 873, SHIP 802, Aufstrich 45, Desserts 99.
+
+## Nachtrag r889 bis r898: Traditionelles Hongkonger Gebäck, Teil 2 (31.10.2026, Version 13)
+
+Übergebene Liste „Traditionelles Hongkonger Gebäck – Teil 2“: zehn neue Rezepte (alle Snack), Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten. Portionen sind Annahmen der App (die Vorlage nennt Stückzahlen; Rezepte haben höchstens 12 Portionen und für Snacks mindestens 250 kcal je Portion).
+
+- **r889 Hang Yan Beng (Almond Cookies, 30 Stück = 10 × 3)**, **r890 Hap Tou Sou (Walnut Cookies, 24 = 12 × 2)**, **r891 Gai Jai Beng (Chicken Biscuit, 30 = 10 × 3)**, **r892 Gai Daan Jai (Egg Waffle, 4 × 1)**, **r893 Jin Deui (Sesame Balls, 20 = 10 × 2)**, **r894 Ma Lai Gou (6 Stücke)**, **r895 Bak Tong Gou (6 Stücke)**, **r896 Put Chai Ko (12 = 4 × 3)**, **r897 Sa Yung (20 = 5 × 4)**, **r898 Dan Goon (Egg Rolls, 30 = 10 × 3)**. Herkunft China mit Tag Hongkong (offene Frage aus Abschnitt 6 bleibt).
+- **Gleicher Name, anderer Inhalt:** r892 neben r672 „Egg Waffles“ (dort Vollmilch, ohne Custard-Pulver und Tapiokastärke) und r893 neben r570 „Jian Dui“ (Schokoladenfüllung): als weitere Versionen angelegt, im Tipp benannt.
+- **Schmalz:** r889 und r891 enthalten Schweineschmalz (zuerst genannt bzw. einzige Angabe), deshalb Gruppe Schwein.
+- **„Oder“-Auswahl:** Mandelmehl oder gemahlene Mandeln → Mandeln; Erdnussöl (r890); Azuki-Bohnenpaste (r893, als Anko); weißer Zucker (r896). Rosenwein oder Shaoxing (r891): Rosenwein fehlt in der App, gerechnet mit dem Reiswein (Shaoxing), im Tipp vermerkt.
+- **Neue Zutaten:** gekochte Azukibohnen (Näherung nach Kidneybohnen Konserve), Erdnussöl (Näherung nach Rapsöl, vorsorglich Erdnuss), Custard-Pulver (Näherung nach Speisestärke). Tapiokastärke = vorhandenes Tapiokamehl; Evaporated Milk = Kondensmilch 7,5 %; Fünf-Gewürze und Mandel-Aroma als Gewürze ohne Gramm.
+- **Nicht eingerechnet (nur im Tipp):** Frittieröl und Zucker zum Wenden (r893, r897; die Nährwerte sind dort zu niedrig), optionaler Sesam und die Belag-Walnüsse (r890), optionale Mandeln (r889), Einfetten, Hefe-Warmwasser.
+- **Unklare Stelle der Vorlage:** r889 Schritt 10 „fest but light pressen“, als festes, gleichmäßiges Pressen übernommen, im Tipp vermerkt.
+- **Warnungen:** r889 bis r891 Portionsgewicht 67 bis 75 g, mit HINWEIS im Tipp (trockene, leichte Kekse).
+- **Geräte:** Dämpfer, Fritteuse, Thermometer, Eierwaffel-Eisen, Mooncake-Formen, Tart- und Papierförmchen stehen nicht in der Geräteliste (Tipp vermerkt); eingetragen sind nur Herd und Backofen.
+- **Info:** neue Zeile „Hongkonger Gebäck, Teil 2: Wirtschaftlichkeit, Vorrat und frisch“ (Kosten, Rangfolge Vorrat, Rangfolge frisch).
+
+Version der App: 13. Testzähler: Bibliothek 873, SHIP 802, Aufstrich 45, Desserts 99.
+
+## Nachtrag r884 bis r888: Traditionelles Hongkonger Gebäck, Teil 1 (31.10.2026, Version 12)
+
+Übergebene Liste „Traditionelles Hongkonger Gebäck – Teil 1“: fünf neue Rezepte (Snack, 12 Stück = 6 Portionen zu je 2 Stück, Annahme), Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten.
+
+- **r884 Dan Tat (Egg Tarts)**, **r885 Bo Lo Bao (Pineapple Bun)**, **r886 Gai Mei Bao (Cocktail Bun)**, **r887 Ye Tat (Coconut Tart)**, **r888 Zhi Bao Dan Gao (Paper Wrapped Sponge Cake)**. Als Herkunft China mit Tag Hongkong geführt (wie bei den übrigen Hongkonger Rezepten; offene Frage aus Abschnitt 6 bleibt).
+- **r887** hat denselben Namen wie r748 „Coconut Tart – Kokos-Törtchen (Hongkong, Dim Sum)“, aber anderen Inhalt (andere Mengen, Mürbeteig mit Speisestärke, Puderzucker, Kokosmilch statt Sahne-Mix): als weitere Version angelegt, im Tipp benannt.
+- **Zutaten:** Evaporated Milk = Kondensmilch 7,5 % (ungesüßt, BLS) mit 75 ml ≈ 77 g; Milch als Vollmilch (Vorlage nennt keinen Fettgehalt); neues Brotmehl (Näherung nach Weizenmehl Type 550, BLS C214200). Maße: Ei 55 g, Eigelb 18 g, 1 TL Vanilleextrakt 5 g, ½ TL Backpulver 2 g, 1 EL Zucker 12 g, 1 EL Mehl 10 g. Natron und Prisen Salz sind Gewürze ohne Gramm; die optionalen 30 g kandierten Früchte (Cocktail Bun) sind nicht eingerechnet.
+- **Kalorien:** r885 (708 kcal) und r887 (712 kcal) liegen wegen der Butter in Teig und Kruste bzw. Füllung hoch, aber im Rahmen 250–800 für Snacks; im Tipp erwähnt.
+- **Info:** neue Zeile „Hongkonger Gebäck, Teil 1: Wirtschaftlichkeit und Vorrat“ (Kosten, Rangfolge der Vorratskandidaten, Hinweise zum Tiefkühlen) unter Mehr → Garen, Lagern, Sicherheit.
+- Einfrieren: Souper-Cubes-Gefrierplan nicht vorgesehen; Lagerung laut Vorlage 1 bis 2 Monate tiefgekühlt.
+
+Version der App: 12. Testzähler: Bibliothek 863, SHIP 792, Aufstrich 45, Desserts 99.
+
+## Nachtrag r875 bis r883: Mochi-Eis (31.10.2026, Version 11)
+
+Übergebene Liste „Teil 4: Mochi-Eis – Japan und moderne asiatische Varianten“: neun neue Rezepte (Snack, je 2 Stück = 1 Portion, 16 Stück = 8 Portionen), Zutaten und Mengen wie in der Vorlage, Schritte in eigenen Worten.
+
+- **r875 Mochi-Eis – Grundrezept** (Hülle plus „Eiscreme nach Wahl“, als 480 g Vanilleeis nach BLS gerechnet, Näherung), **r876 Vanilla**, **r877 Matcha**, **r878 Mango** (Hongkong, als China mit Tag Hongkong geführt), **r879 Strawberry**, **r880 Chocolate**, **r881 Coconut** (Hongkong/Südostasien), **r882 Pistachio**, **r883 Black Sesame**. Jede Sorte rechnet die Hülle des Grundrezepts (200 g Mehl, 120 g Zucker, 360 ml Wasser, 60 g Stärke) und die eigene Eisfüllung ein; gleiche Zutaten sind zusammengezählt (Zucker Hülle + Eis).
+- **„Oder“-Auswahl:** Shiratamako (nicht Mochiko, mit „Reismehl / Klebreismehl“ gerechnet), Wasser (nicht Vollmilch), Kartoffelstärke (nicht Maisstärke), bei Vanilla Vanilleschote (Gewürz „Vanille“, nicht Extrakt). **Nicht eingerechnet (nur im Tipp):** 1 TL Vanilleextrakt in der Hülle, 1 EL Kokoscreme im Mango-Eis, die optionalen 4 Eigelb im Erdbeereis. Eigelb ist mit 18 g je Stück gerechnet (4 Eigelb = 72 g).
+- **Widersprüche der Vorlage, offen im Tipp (MENGENHINWEIS):** Die Eiszutaten ergeben 820–1052 g Masse, für 16 Kugeln à 30 g genügen 480 g; die Hülle ergibt rund 43 g Teig je Stück statt der genannten 20–22 g. Die App rechnet alle Zutaten wie übergeben, die Nährwerte je Portion (352–473 kcal) sind deshalb obere Werte. Beim Erdbeereis nennt die Vorlage rohes „optionales“ Eigelb ohne Erhitzen sowie rohe Erdbeeren trotz der Hygieneregel „Früchte nur pasteurisiert, gekocht oder als Püree“: beides als HINWEIS im Tipp, Rezeptur unverändert.
+- **Neue Zutaten:** Pistazienpaste (Näherung nach Pistazie, BLS H250100) und schwarze Sesampaste (Näherung nach Tahin, BLS Q901000). Zitronensaft, Kokosmilch, Vanilleeis und die übrigen Zutaten waren vorhanden.
+- **Geräte:** Mikrowelle, Eismaschine, Eisportionierer und Thermometer stehen nicht in der Geräteliste (Tipp vermerkt); als Gerät eingetragen sind nur Herd (Eigelbmasse) und Mixer (Erdbeeren).
+- **Einfrieren:** Souper-Cubes-Gefrierplan nicht vorgesehen (Stücke werden einzeln verpackt); Lagerung laut Vorlage 2–4 Wochen bei −18 °C, nicht auftauen und erneut einfrieren.
+- **Info:** neue Zeile „Mochi-Eis: Optimierung, Lagerung, Hygiene und Sicherheit“ (Zucker, Teigdicke, Verhältnis, Eiskristalle, Lagerung, Hygiene, Erstickungsrisiko, Mengen der Vorlage) unter Mehr → Garen, Lagern, Sicherheit.
+- **Taro-Mochi-Eis:** steht nicht in der Vorlage von Teil 4; auf Wunsch seit Version 16 als r909 angelegt (siehe Nachtrag r909).
+- Dubletten-Warnung bei r875 (ähnlich zum Daifuku-Grundteig) ist gewollt und in der Ausnahmeliste von test_logic2.js eingetragen.
+
+Version der App: 11. Testzähler: Bibliothek 858, SHIP 787, Aufstrich 45, Desserts 99.
 
 ## Nachtrag r870 bis r874: Moderne Dessert-Mochi (31.10.2026)
 
@@ -860,17 +1078,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **778** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 109, Rind: 111, Schwein: 114, Fisch: 79, Vegetarisch: 365 |
-| Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 65, Salat/Bowl: 20, Frühstück: 18, Smoothie: 16, Snack: 148, Dessert: 99, Aufstrich: 45, Sauce/Dips: 10 |
+| Mitgelieferte Rezepte | **838** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 113, Rind: 116, Schwein: 119, Fisch: 81, Vegetarisch: 409 |
+| Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 65, Salat/Bowl: 20, Frühstück: 18, Smoothie: 16, Snack: 197, Dessert: 99, Aufstrich: 45, Sauce/Dips: 21 |
 | Einfrierbar: ja / eingeschränkt | 140 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 461 (460) |
-| Gewürze | 85 |
-| Bausteine (Meal-Prep) | **90** (Protein: 20, Beilage: 8, Sauce: 27, Gemüse: 5, Booster: 30) |
+| Zutaten im Stamm (davon mit Nährwerten) | 470 (469) |
+| Gewürze | 107 |
+| Bausteine (Meal-Prep) | **79** (Protein: 20, Beilage: 8, Sauce: 23, Gemüse: 5, Booster: 23) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
-| Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine |
+| Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine, Dämpfer, Stabmixer, Handmixer, Eismaschine, Wok, Thermometer, Vakuumierer, Dörrautomat, Mikrowelle, Reiskocher, Mooncake-Form, Waffeleisen, Küchenbrenner, Eisportionierer, Slow Cooker |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 3416 KB |
+| Größe `dist/index.html` | 3731 KB |
 
 ---
 
@@ -1067,7 +1285,7 @@ Kategorie `Dessert` in `MEALS`, Platz `d` in `SLOTS`, angezeigt nur bei `state.d
 | Befehl | Ergebnis | Status |
 |---|---|---|
 | `node test_logic2.js` | 95 Prüfungen | bestanden |
-| `node test_logic3.js` | 351 Prüfungen | bestanden |
+| `node test_logic3.js` | 318 Prüfungen | bestanden |
 | `node test_bls.js` | 9 Prüfungen | bestanden |
 | `node smoke2.js` | 153 Prüfungen | bestanden |
 | `node smoke3.js` | 92 Prüfungen | bestanden |
@@ -1092,8 +1310,8 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 778 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
-- **Bausteine:** 90 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
+- **Rezepte:** 838 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Bausteine:** 79 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
 - **Autoplan:** rechnet je Platz mit einer Portion. Gut für etwa 1500 bis 1900 kcal. Proteinziele über etwa 130 g werden nur an einem Teil der Tage erreicht.
@@ -1301,7 +1519,7 @@ Aus der offenen 26er-Linkliste wurden **24 recherchierte Einzelrezepte als eigen
 
 **app_b.js**: `cuisines`, `filtered`, `activeFilterCount`, `recipeCard`, `renderList`, `distBlock`, `viewRezepte`, `nutriBlock`, `checksBlock`, `ingredientRows`, `spiceChips`, `recipeText`, `recipeSheet`, `newEd`, `edFrom`, `edToRecipe`, `edResultsHtml`, `editorSheet`, `kiImportPrompt`
 
-**app_c.js**: `seg`, `slotOptions`, `goalBar`, `viewPlanTab`, `dessertPlanSwitch`, `viewPlan`, `shopData`, `shopKey`, `shopText`, `viewShop`, `viewVorrat`, `expBadge`, `viewStock`, `usageCount`, `viewSpices`, `viewFreezer`, `viewKochen`, `stockResultsHtml`, `stockAddSheet`, `ingSheet`, `openAttr`, `calcPanel`, `infoPanel`, `backupPanel`, `profilePanel`, `statusPanel`, `libPanel`, `equipTable`, `equipPanel`, `viewMehr`
+**app_c.js**: `seg`, `slotOptions`, `goalBar`, `viewPlanTab`, `dessertPlanSwitch`, `viewPlan`, `shopData`, `shopKey`, `shopText`, `viewShop`, `viewVorrat`, `expBadge`, `viewStock`, `viewMarinaden`, `viewRubs`, `usageCount`, `viewSpices`, `viewFreezer`, `viewKochen`, `stockResultsHtml`, `stockAddSheet`, `ingSheet`, `openAttr`, `calcPanel`, `infoPanel`, `backupPanel`, `profilePanel`, `statusPanel`, `libPanel`, `equipTable`, `equipPanel`, `viewMehr`
 
 **app_d.js**: `render`, `renderSheet`, `openSheet`, `aiErr`, `exclText`, `profileText`, `runPlanKI`, `runVorratKI`, `runImportKI`, `confirmed`, `dropRecipeRefs`, `logEntry`, `invPortion`, `eatInv`, `markCooked`, `buyGrams`, `addMonthsIso`, `fillStep`, `recomputeEntry`, `newInvForm`, `runAuto`
 
