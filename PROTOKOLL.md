@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-10-31 04:46 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-11-01 03:10 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,163 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag Version 60: ChatGPT-Prüfung 3 von 3, Block 4 (r323 bis r327, r329, r330, r332 bis r334, r337, r339) auf die Originale umgestellt
+
+- Zwölf Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Griechischer Salat (Beilage), Hähnchen-Satay-Salat mit Tamari-Curry-Marinade, klassischer Kartoffelsalat mit Mayonnaise (Beilage, vegetarisch), Zehn-Minuten-Couscous-Salat mit Pesto, Quinoa-Salat mit Halloumi und gerösteter Paprika, Sommersalat mit schwarzen Bohnen, Mango und Feta (statt Lachs-Gemüse-Salat), Salade Niçoise mit Thunfisch in Olivenöl, Regenbogen-Obstspieße (2 Spieße), Granola nach BBC (trocken, ohne Skyr), Hähnchen-Nachos mit vorgegartem Hähnchen, Bananeneis aus der Eismaschine (statt Nicecream mit Skyr) und Ultimatives Vanilleeis mit Double Cream und Vanilleschote.
+- Sicherheitshinweise: Bei der Salade Niçoise werden die grünen Bohnen abweichend von der Quelle (5 Minuten) mindestens 10 Minuten gekocht (BZfE). Bei den Nachos wird das Hähnchen vor dem Überbacken vollständig durchgegart; die 8 Minuten im Ofen garen kein rohes Fleisch.
+- Annahmen, die im Tipp stehen: Gewichte aller Stückzutaten (Tomaten, Gurke, Oliven, Kartoffeln, Salatherzen, Obststücke), Hähnchengewicht beim Satay-Salat (300 g) und bei den Nachos (130 g gegart), Tamari als Sojasauce, Pesto als grünes Basilikum-Pesto, Zitronensaft beim Quinoa-Salat, 6 Portionen beim Bananeneis (die Quelle nennt 1 Portion für eine ganze Charge), Verwendung von Öl und Honig in den Schritten.
+- Neue Zutaten: Pekannüsse, Johannisbrotkernmehl, getrocknete Beeren und Kirschen, Thunfisch in Olivenöl, eingelegte Jalapeños, grünes Pesto, Mandarine. Alte Patches für die zwölf Rezepte entfernt. APP_VERSION 60.
+
+## Nachtrag Version 59: ChatGPT-Prüfung 3 von 3, Block 3 (r305, r313 bis r322) auf die Originale umgestellt
+
+- Elf Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Ingwer-Milchpudding (Vollmilch, 355 ml), gedämpfte Hefe-Dattelklößchen (Dattelpaste, Schmalz), Chinesische Pfannkuchen mit Ente, Pilzen und Pflaumensauce (jetzt Hauptgericht), Avocado-Erdbeer-Smoothie, Tropischer Frühstücks-Smoothie, Heidelbeer-Smoothie, Kiwi-Mango-Smoothie, Mango-Kokos-Smoothie, Kokos-Bananen-Smoothie, Blattsalat mit Honig-Senf-Dressing (jetzt Beilage) und Hähnchen-Caesar-Salat mit Sardelle und Mayonnaise-Dressing.
+- r312 (Chinesisches flambiertes Eis) bleibt unverändert: Im Original sind nur 500 g Eis für 6 Portionen genannt, Kuchen, Ausbackteig, Öl und Rum haben keine Mengen; die Grammwerte sind Richtwerte der App und im Rezepttext so gekennzeichnet.
+- Quellenhinweise zur manuellen Klärung: r314 (Quelle nennt 1 Portion bei zwei Entenbrüsten, App rechnet 4 Portionen) und r320 (App-Adresse „immune-boosting-smoothie“ zeigt das Kokos-Bananen-Rezept). Die frühere Dessertfassung von r314 und die Orangen-Karotten-Fassung von r320 gehörten nicht zu den Quellen.
+- Annahmen, die im Tipp stehen: Gewichte der Stückfrüchte (Mittelwerte der Bereiche), Mehl 3 Tassen = 400 g, Hefe 12 g, Gurke, Frühlingszwiebeln und Chili beim Entengericht, Verwendung von Essig und Öl in den Schritten von r314, Ciabatta, Hähnchen, Römersalat, Sardelle und Parmesan beim Caesar-Salat.
+- Neue Zutaten: Dattelpaste, Kokosdrink, Kokosjoghurt, Saatenmischung, Sardellenfilet, Ananassaft, getrocknete Pflaumen. Alte Patches für die elf Rezepte entfernt. APP_VERSION 59.
+
+## Nachtrag Version 58: ChatGPT-Prüfung 3 von 3, Block 2 (r290 bis r292, r296 bis r299, r302, r304) auf die Originale umgestellt, r301 und r303 fein korrigiert
+
+- Neun Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Erdnussbutter-Smoothie (Haferdrink, vegan), Mango-Smoothie (Orangensaft, als Glas von 250 ml gerechnet), Grünkohl-Smoothie (Avocado, Ananas, Cashews), Schokoladen-Küchlein mit flüssigem Kern, Zitronen-Baiser-Torte (aus dem Becher mit Skyr wieder zur echten Pie mit Mürbeteig, Füllung und Baiser; Anleitung online gelesen), Sofort-Frozen-Joghurt mit Beeren (mit Erhitzungsschritt für TK-Beeren nach BfR), Schoko-Käsekuchen ohne Backen (Kekse, Sahne, Vollfett-Frischkäse, ohne Ei), Litschi-Ingwer-Sorbet (Dosenlitschis samt Sirup und Stem Ginger, pasteurisiertes Eiklar statt rohem Eiweiß) und süße Mondkuchen mit Walnuss und roter Bohnenpaste (Sirupteig; nur der verwendete Sirupanteil von 71 g in den Zutaten).
+- r300 (Mangopudding) bleibt unverändert: Mengen passen, die Umrechnungen von Blatt und Stück auf Gramm (12 Blatt Gelatine = 24 g, 2 Mangos = 500 g Fruchtfleisch, 12 Litschis = 150 g) sind Richtwerte. r301 (Glückskekse) und r303 (Tanghulu) stimmen in den Mengen; ergänzt wurden nur die Prise Salz (r301) sowie 700 ml Wasser für den Sirup, das Abschrecken in Eiswasser und die Zeiten der Quelle (r303).
+- Annahmen, die im Tipp stehen: Glasgröße beim Mango-Smoothie (250 ml), Handvoll-Gewichte beim Grünkohl-Smoothie, Ei- und Zitronengewichte, Stem-Ginger-Stücke (12 g), Backtemperatur der Mondkuchen (im Prüfprotokoll nicht angegeben) und die Reihenfolge der Schritte beim Schoko-Käsekuchen.
+- Neue Zutaten: Haferdrink, Litschis in Sirup (Dose), Ingwer in Sirup, süße rote Bohnenpaste. Alte Patches für die neun Rezepte entfernt. APP_VERSION 58.
+
+## Nachtrag Version 57: ChatGPT-Prüfung 3 von 3, Block 1 (r272 bis r276, r278, r283, r286 bis r289) auf die Originale umgestellt
+
+- Elf Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Birnen in Rotwein an Vanilleeis (ohne Skyr), Apfel-Crumble (klassische Mehl-Butter-Streusel), Zitronen-Käsekuchen (Digestive-Boden, Mascarpone, Frischkäse, Topping aus saurer Sahne und Lemon Curd), Zitronen-Syllabub (nur Sahne, Zucker, Wein, Zitrone), Brownies (drei Schokoladensorten, auf 9 Stücke in Originalgröße umgerechnet), Schokoladentarte ohne Backen (Butterkeksboden, Schokoladen-Sahne-Creme), Cuban Sandwich (mit bereits gegartem Schweinebraten) und die vier Smoothies (Banane-Hafer, Beeren-Banane, Erdbeer-Banane-Orangensaft, Sonnenschein mit Ananas und Cashews).
+- r282 (Panini mit Mozzarella, Tomate, Rucola und Schinken) bleibt unverändert: Der Link war nur ein Kontaktgrill-Test, ein passendes Original gibt es nicht, die App-Fassung steht als eigene Variante.
+- Annahmen, die im Tipp stehen: Gewicht von Birnen und Eiskugeln, Ei- und Zitronenmengen beim Käsekuchen, Eimenge der Brownies, Brotgewicht beim Cuban Sandwich, Banane und Ingwer in den Smoothies. Ananas kommt im Sonnenschein-Smoothie zurück (in Smoothies erlaubt, nur in Hauptgerichten ausgeschlossen).
+- Neue Zutaten: Lemon Curd, Milchschokolade, Butterkekse, Karottensaft. Alte Patches für die elf Rezepte entfernt. Die Ausnahmen bei Eiweiß-, Kalorien- und Dessertrahmen stehen im Tipp und in den Tests (smoke6, test_logic2). APP_VERSION 57.
+
+## Nachtrag Version 56: ChatGPT-Prüfung 2 von 3, Block 9 und 10 (r250 bis r256, r269 bis r271) auf die Originale umgestellt
+
+- Damit ist die Prüfdatei 2 von 3 komplett bearbeitet (bis auf den noch ausstehenden Block 2, r198 bis r203). Alle zehn Rezepte stehen in der Originalfassung (Entscheidung A): Hackfleisch-Käse-Lauch-Suppe (zwei Schmelzkäsesorten, AUSNAHME beim Kalorienrahmen), Rindereintopf mit Muffin-Haube (ganze Originalcharge als 4 Portionen, ohne Ei und Butter), Rind-Stout-Eintopf (1 kg Fleisch, 500 ml Stout), Bohnen-Halloumi-Eintopf (rotes Pesto), Chinesisch geschmortes Rind (ein ganz anderes Gericht als die bisherige Fassung), Slow-Cooker-Rindereintopf, Tomaten-Paprika-Bohnentopf (wieder vegan), Skyr-Traubendessert, Himbeerdessert mit Spekulatius (mit Erhitzungsschritt für TK-Himbeeren nach BfR) und Himbeerkuchen (ein Kastenkuchen in 8 Stücken).
+- Annahmen, die im Tipp stehen: Abtropfgewicht der Bohnen (60 % des Füllgewichts), Gewichte von Lauch, Pastinaken, Möhren, Ingwer, Kräutern und Frühlingszwiebeln, Fettstufe von Quark und Milch, Rind- und Schweinefleisch als Schmorstück; Brot, Püree, Reis, Pak Choi, Speisestärke, Puderzucker und Milch bei r269 sind nicht mitgerechnet.
+- Neue Zutaten: Pintobohnen, Borlottibohnen, gemischte Bohnen (Dose), rotes Pesto, Magermilchjoghurt, Vanillepuddingpulver, fettreduzierter Schmelzkäse, Sahneschmelzkäse. Alte Patches für die zehn Rezepte entfernt. APP_VERSION 56.
+
+## Nachtrag Version 55: ChatGPT-Prüfung 2 von 3, Block 8 (r244 bis r249) auf die Originale umgestellt
+
+- Alle sechs Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Blumenkohleintopf (Putenhack, saure Sahne, ohne Kartoffeln), Low-Carb-Bauerntopf (Rinderhack, Möhren, Tomatenmark, Crème fraîche), Deftige Erbsensuppe (Bauchspeck, Mettenden, 12 Stunden Einweichen), Szegediner Gulasch (ohne Kartoffeln und Brühe, rund 1 Stunde Schmorzeit statt 15 Minuten), Grüne-Bohnen-Eintopf (mit Wienern und Bohnenkraut) und Burgunder Fleischtopf (rund 1,3 kg Fleisch, AUSNAHME beim Kalorienrahmen).
+- Annahmen, die im Tipp stehen: Kopf-, Bund-, Becher- und Stückgewichte, Würstchen (75 g je Paar), Brühemenge bei r248, Bratfett und Mehl bei r247, Rind/Schwein je zur Hälfte bei r249; Brot, Baguette, Dill und Crème-fraîche-Alternative sind nicht mitgerechnet.
+- Neue Zutaten: Bauchspeck (geräuchert), Mettenden. Alte Patches für r244 bis r249 entfernt. APP_VERSION 55.
+
+## Nachtrag Version 54: ChatGPT-Prüfung 2 von 3, Block 7 (r238 bis r243) auf die Originale umgestellt
+
+- Alle sechs Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Einfache Gemüsesuppe (nur Suppengrün, Butter, Wasser), Kartoffel-Rindfleisch-Suppe (Suppenfleisch, Liebstöckel, rund 2 Stunden Garzeit), Roros Grießnockerlsuppe (ohne Hähnchen), Hähnchen-Nudel-Suppe nach BBC (Faktor 2), Gewürzte Möhren-Linsen-Suppe (mit Milch statt Skyr) und Tomatensuppe aus frischen Tomaten (wieder vegan).
+- Annahmen, die im Tipp stehen: Gewicht eines Bundes Suppengrün (400 g), Stückgewichte von Karotten, Lauch, Pilzen und Frühlingszwiebeln, Milch mit 1,5 % Fett, Reisnudeln statt Weizennudeln; Brot, Naturjoghurt, Naan, Schnittlauch, Minze und Chili sind Serviervorschläge und nicht mitgerechnet.
+- Neue Zutaten: Rindersuppenfleisch, Liebstöckel (Gewürz). Kalorienangabe im Tipp von r236 auf 915 kcal korrigiert. Alte Patches für r238 bis r243 entfernt. APP_VERSION 54.
+
+## Nachtrag Version 53: ChatGPT-Prüfung 2 von 3, Block 6 (r232 bis r237) auf die Originale umgestellt
+
+- Alle sechs Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Healthy shakshuka (ohne Feta, 4 Eier, Kirschtomaten), Frittata mit Schinken, Pilzen und Spinat (8 Eier, Cheddar), Käse-Lauch-Suppe (gemischtes Hack, Schmelzkäse, Crème fraîche), Hühnersuppe mit ganzen Hähnchenschenkeln und TK-Suppengemüse, Pho Ga mit ganzem Huhn (AUSNAHME beim Kalorienrahmen) und Kräftige Rindfleischsuppe mit Beinscheiben und Markknochen.
+- Annahmen, die im Tipp stehen: Gewicht der Schenkel, des Huhns, der Reisnudelpackung (400 g) und der Knochen; Baguette (r234) und Muschelnudeln (r237) sind Serviervorschläge und nicht mitgerechnet.
+- Neue Zutaten: Kirschtomaten (Dose), Suppengrün, TK-Suppengemüse, Rinderbeinscheibe, Rindermarkknochen. Alte Patches für r232 bis r237 entfernt. APP_VERSION 53.
+
+## Nachtrag Version 52: ChatGPT-Prüfung 2 von 3, Block 5 (r219 bis r223, r231) auf die Originale umgestellt
+
+- Alle sechs Rezepte stehen jetzt in der Originalfassung (Entscheidung A): Grünkohlchips (500 g für 2 Portionen, ohne Sesam), Gesundes Bananenbrot (Haferflocken, Mandeln, Quark, Vanillinzucker), Bananenbrot ohne extra Fett und Zucker (Apfel, Vollkornmehl, Walnüsse), Bacon-Tomaten-Frischkäsehäppchen (Toast und Baconscheiben, 8 Häppchen), Nussige Hähnchenstreifen (Erdnuss-Paste, Madras-Curry, ohne Reis) und American Pancakes (Mehl mit Backtriebmittel, ohne Quark).
+- Skyr ist bei r220, r221 und r231 aus den Zutaten entfernt (im Tipp als mögliche Beilage genannt, nicht mitgerechnet); ebenso der Reis bei r223.
+- Neues Gewürz Madras-Currypulver. Alte Patches für r219 bis r223 und r231 entfernt. APP_VERSION 52.
+
+## Nachtrag Version 51: ChatGPT-Prüfung 2 von 3, Block 4 (r210, r211, r212, r214, r215, r217) auf die Originale umgestellt
+
+- Alle sechs Chefkoch-Rezepte stehen jetzt in der Originalfassung (Entscheidung A, auf 4 Portionen umgerechnet): Peking-Suppe ohne Hähnchen, Tofu und Reis; Gong Bao Chicken mit Ketjap Manis; Kung-Pao-Huhn 2 (Erdnüsse frittiert, nur ein Teil des Öls gerechnet); Jiaozi mit Heißwasserteig (400 g Mehl, 260 ml Wasser), Hack-Zucchini-Karotten-Füllung und Sojasaucen-Dip (ca. 64 Stück); Rind mit Paprika und Zwiebeln (600 g Rind, 300 g Reis, 1 Stunde Marinade); Blumenkohl-Hähnchen-Pfanne mit China-Sauce.
+- Annahmen, die im Tipp stehen: Handvoll-Mengen bei r210 mit je ca. 30 g, China-Sauce bei r217 als 250-ml-Flasche, Blumenkohl 600 g. Beim Hähnchen in r217 ist das Zurückgeben in die Pfanne ergänzt (fehlt im Original).
+- Neue Zutaten: Ketjap Manis, Bambussprossen, gegarte Sojabohnen, schwarzer Reisessig, China-Sauce; neues Gewürz getrocknete Chilischoten. Alte Patches für r210 bis r217 entfernt. APP_VERSION 51.
+
+## Nachtrag Version 50: ChatGPT-Prüfung 2 von 3, Block 3 (r204 bis r209) auf die Originale umgestellt
+
+- Alle sechs Rezepte stehen jetzt in der Originalfassung (Entscheidung A, Mengen auf 4 Portionen umgerechnet): Sichuan-Schwein mit Brokkoli (ohne Reis), Pork & parsnip cobbler (Suet-Kruste, Rotwein-Aprikosen-Füllung, Schulter statt Filet), Schweineschulter mit Cider (680 ml Brühe), Schwein mit Bohnen in Austernsauce (nur 140 g Bohnen), Airfryer-Schweinebauch (nur Fleisch, 625 g) und Chefkoch-Nudeln (500 g Woknudeln, 110 g Öl).
+- Sicherheit: Die Bohnen in r207 werden mindestens 10 Minuten vorgekocht (BZfE), das Hähnchen in r209 muss im Kern 70 °C für 2 Minuten erreichen (BfR).
+- Neue Zutaten: Mehl mit Backtriebmittel, Rindernierenfett (Suet), getrocknete Aprikosen, Orangenabrieb, Chilibohnenpaste, Rotweinessig, Woknudeln (gebrauchsfertig). Alte Patches für r204 bis r209 entfernt. Block 2 (r198 bis r203) steht noch aus. APP_VERSION 50.
+
+## Nachtrag Version 49: Zwölf weitere früher verifizierte Rezepte auf die Originale umgestellt (r105 bis r114, r142, r143)
+
+- Damit sind alle 24 früher verifizierten Rezepte (r84, r91, r95 bis r114, r142, r143) in der Originalfassung (A).
+- r142 war ein anderes Gericht (trocken eingeriebener Ofenbraten statt philippinisches Schmorgericht); neu als „Adobo-Schweinebraten aus dem Ofen (Roast Adobo Pork Loin)“, 117 g je Portion, Ausnahme beim Portionsgewicht im Test.
+- Neue Zutaten: Hühnercremesuppe (Dose), Biscuit-Teig, Schweinelachs, leichte Kokosmilch, Babymais, Weinbrand; neues Gewürz Adobo-Gewürz. Alte Sonderblöcke für r108, Patches für r143 und r142-Bohnenkorrektur entfernt. Wie in Version 48 sind die Anleitungen von Claude sinngemäß zu den Original-Zutaten geschrieben (Original-Wortlaut lag nicht vor). APP_VERSION 49.
+
+## Nachtrag Version 48: Zwölf der früher verifizierten Hähnchen-Rezepte auf die Originale umgestellt (Übergabe „24 verifiziert“, Fassung A)
+
+- Entscheidung des Nutzers: alle Prüfblöcke nach Option A, auch die 24 früher verifizierten Rezepte. Dieser Teil: r84, r91, r95, r96, r97, r98, r99, r100, r101, r102, r103, r104; als Nächstes r105 bis r114, r142, r143.
+- Grundlage waren die Zutatenlisten der Übergabedatei (auf 4 Portionen umgerechnet) und die Zusammenfassungen der Zubereitung (Garart, Zeiten). Die Original-Anleitungen lagen nicht im Wortlaut vor; die Schritte sind von Claude sinngemäß zu den Original-Zutaten geschrieben und in jedem Tipp so gekennzeichnet.
+- Neue Zutaten: Butternut-Kürbis (mit Saisoneintrag) und Wasserkastanien (Dose). Alte Sonderblöcke für r96 und r98 in der Abgleich-Datei entfernt, Abgleichstexte und Herkunftsangaben auf „Originalfassung“ gesetzt. APP_VERSION 48.
+
+## Nachtrag Version 47: Die sechs Fälle mit eigener Fassung (B) durch die Originale ersetzt
+
+- Entscheidung des Nutzers: bestehende Fassung ersetzen, nicht zusätzlich anlegen. Betroffen: r138, r178, r191 (Datei 1/3) sowie r192, r193, r196 (Datei 2/3, Block 1). In Datei 1/3, Block 1 gab es keine B-Fälle.
+- r138 „Panierte Schweinekoteletts mit Pilzrahmsoße“ (Allrecipes, 6 → 4 Portionen, Koteletts je 200 g geschätzt, Öl zur Hälfte gerechnet); r178 „Halloumi aus dem Airfryer“ (BBC, Snack, 2 Portionen angenommen); r191 „Sous-vide-Filetsteaks, durchgegart“ (Serious Eats, 4 Filetsteaks 800 g, 70-°C-Bad); r192 „Paprikagemüse Sous-Vide“ und r193 „Glasierte Sous-vide-Möhren“ (beide Kategorie Beilage); r196 „Würstchen-Weiße-Bohnen-Auflauf“ (BBC, Chipolata mit Bratwurst 300 g angenähert, Bohnen 240 g abgetropft).
+- Alte Text-Patches und Sonderbehandlungen für diese IDs in der Abgleich-Datei entfernt; Abgleichstexte und Herkunftsangaben auf „Originalfassung“ gesetzt. APP_VERSION 47.
+
+## Nachtrag Version 46: Drei Gerichte nach ChatGPT-Prüfung (Datei 2/3, Block 1) auf das Original umgestellt, drei bleiben eigene Fassungen
+
+- ChatGPT hat Datei 2/3, Block 1 (r192 bis r197) geprüft; offen in Datei 2/3 sind danach 52 IDs, als Nächstes r198 bis r203.
+- **A (Originalfassung):** r194 „Geschmortes Hähnchen aus dem Topf mit Weißwein und Brühe“ (BBC, ganzes Hähnchen 2,4 kg, essbarer Anteil 1.475 g geschätzt, volle Menge als 4 Portionen, ca. 830 kcal je Portion); r195 „Wurst-Bohnen-Eintopf mit Schweinswürstchen und Chorizo“ (BBC, 4 bis 6 Portionen als volle Menge, Bohnen 240 g abgetropft geschätzt); r197 „Würziger Wurzelgemüse-Linsen-Eintopf mit Kartoffeln und Curry“ (BBC; Currypulver statt Paste, Joghurt und Naan nur Serviervorschlag). Neue Zutat: huehnerbruehwuerfel.
+- **B (eigene Fassung bleibt, Quelle nur Anregung):** r192 Sous-vide-Paprika-Bowl und r193 Möhren-Bowl (die Originale sind reine Beilagen), r196 Hackbällchen-Bohnen-Eintopf (das Original ist ein Ofengericht mit Chipolata-Würstchen). Herkunftsangabe und Abgleichstext sagen das jetzt klar. **Offen: ob zusätzlich die Original-Beilagen (Paprikagemüse, glasierte Möhren) bzw. die Wurstvariante als eigene Rezepte angelegt werden sollen.**
+- Alte Text-Patches für r194, r195, r197 in der Abgleich-Datei entfernt. Keine neuen Test-Ausnahmen. APP_VERSION 46.
+
+## Nachtrag Version 45: Drei Gerichte nach ChatGPT-Prüfung auf das Original umgestellt (Block 10, Fassung A), r191 nur richtig beschriftet
+
+- ChatGPT hat Datei 1/3, Block 10 (r179, r189, r190, r191) geprüft; damit ist Datei 1/3 vollständig (58 von 58). Für r179, r189, r190 gilt **A (Originalfassung)**, Anleitungen sinngemäß in eigenen Worten.
+- **r179** „Indisches Mango-Hähnchen-Curry mit Kokosmilch und Kichererbsen“ (Chefkoch, 3 Portionen → 4): 400 g Hähnchen, Dosenmango, Dosenkichererbsen, Kokosmilch, saure Sahne, 267 g Reis. **Das Original nennt die Dosengrößen nicht;** angesetzt sind Mango 250 g abgetropft je Dose, Kichererbsen 240 g, Kokosmilch 400 ml (Annahmen, im Rezepttext markiert); dadurch rund 910 kcal je Portion. Neue Zutat: mango_dose.
+- **r189** „Sous-vide-Schweinebraten mit Schwarte“ (Chefkoch): 1,2 kg Schulter mit Schwarte, Pfeffer, Kümmel, Knoblauch, 200 ml Rapsöl im Beutel (in der Nährwertrechnung nur 20 g als aufgenommen angesetzt, Annahme), 20 bis 21 Stunden bei 64 °C (vorher 70 °C), dann 200 °C Kruste. Der Rat des Originals, das Fleisch vor dem Wasserbad aus dem Kühlschrank zu nehmen, ist bewusst nicht übernommen. Beilagen (Sauerkraut, Kartoffeln, Sauce) entfallen.
+- **r190** „Sous-vide-Pulled-Pork mit Barbecue-Rub“ (Serious Eats, 8 bis 12 Portionen): Faktor 0,4 (10 Portionen angenommen), 1 kg Schulter, Rub aus Paprika, braunem Zucker, Salz, Senfsamen, Koriandersamen, Oregano, Knoblauch, Pfeffer, Chiliflocken; 74 °C, 18 bis 24 Stunden, Ofenkruste (Richtwert 150 °C, 1½ Stunden, nicht am Original geprüft). Pökelsalz (Prague Powder) und Flüssigrauch bewusst nicht übernommen. BBQ-Sauce, Krautsalat und Brot entfallen.
+- **r191** bleibt die eigene Fassung (Entscheidung B): Rinderhüftsteak 600 g mit Kartoffeln und Bohnen; das Original nennt andere Steaks (Ribeye, Strip, Porterhouse, T-Bone oder Filet, 680 bis 900 g) und keine Beilagen und ist nur Technikquelle. **Offen: ob auf eine Originalvariante umgestellt werden soll (und welche Steakwahl).**
+- Alte Text-Patches für r179, r189, r190, r191 in der Abgleich-Datei entfernt. Keine neuen Test-Ausnahmen. APP_VERSION 45.
+
+## Nachtrag Version 44: Elf Airfryer-, Meeresfrüchte- und Fisch-Gerichte nach ChatGPT-Prüfung auf das Original umgestellt (Blöcke 8 und 9, Fassung A), r178 nur richtig beschriftet
+
+- ChatGPT hat Datei 1/3, Block 8 (r167 bis r172, alle BBC Good Food Airfryer) und Block 9 (r173 bis r178) geprüft; beide Blöcke wurden zusammen umgesetzt. Für r167 bis r177 gilt Fassung **A (Originalfassung)**, Anleitungen sinngemäß in eigenen Worten, Mengen auf 4 Portionen umgerechnet und ca. gerundet. Beilagen, die das Original nur als optionalen Vorschlag nennt (Reis, Gemüse, Blattsalat, Brot, Ketchup, Apfelmus, Naan), sind nicht mitgerechnet.
+- **Block 8:** r167 „Hähnchenbrust aus dem Airfryer“ (Filetgewicht 700 g angenommen); r168 „Brathähnchen aus dem Airfryer“ (ganzes Hähnchen, **Annahme: zwei Drittel der 6-Portionen-Menge**, also rund 1,5 kg, in der Liste 920 g essbarer Anteil); r169 „Hähnchenschenkel aus dem Airfryer“ (4 Oberschenkel à ca. 175 g angenommen); r170 „Lachs aus dem Airfryer“ (4 × 130 g); r171 „Schweinebraten mit Kruste aus dem Airfryer“ (**Annahme: 1 kg Schulter mit Schwarte** als zwei Drittel von 1,5 kg); r172 „Hähnchen-Nuggets aus dem Airfryer“ (mit Panko, 2 Eier). Bei r167 bis r171 stehen die Gewürze als Summenposition „Gewürze & Kräuter“ (Schätzung aus den Teelöffelangaben), damit das Rezept die Mindestzahl von 3 Zutaten erreicht.
+- **Block 9:** r173 „Einfache Meeresfrüchte-Chowder“ (Bacon, Fischfond, Fisch-Pie-Mix, gegarte Meeresfrüchte); r174 „Meeresfrüchte-Pasta in 20 Minuten“ (Nudeln in 1 l Brühe gegart, TK-Mix); r175 „Chili-Garnelen-Linguine“ (zwei Drittel von 6, mit Zuckerschoten, Basilikum und Limetten-Dressing; Garnelengewicht 300 g geschätzt); r176 „Garnelen-Tikka-Masala“ (Currypaste 40 g angenommen, brauner Basmatireis, Mandeln); r177 „Einfachster Meeresfrüchte-Reis mit Chorizo“ (Langkornreis und Kurkuma, keine traditionelle Paella).
+- **r178** bleibt die eigene Bowl (Entscheidung B, wie r138): die Quelle beschreibt nur gebratene Halloumischeiben (keine Bowl, keine Portionszahl). Quelle und Herkunft sagen jetzt klar, dass nur die Garzeit des Halloumis (200 °C, 8 + 2 bis 5 Minuten) aus der Quelle stammt. **Offen: ob die Originalfassung (nur Halloumi) zusätzlich gewünscht ist.**
+- Alte Text-Patches für r167 bis r178 in der Abgleich-Datei wurden entfernt, damit sie die neuen Texte nicht überschreiben.
+- Neue Zutaten (eigener Richtwert, mit BLS-Eintrag): haehnchenoberschenkel (BLS V4A5100), fischmix_pie, meeresfruechte_mix, langkornreis, brauner_basmatireis, tikka_currypaste, fromage_frais; neue Gewürze macis und gemischte_kraeuter. Wiederverwendet: haehnchen_ganz, panko (statt normaler Semmelbrösel wie im Original), zuckerschote, gewuerze.
+- Test-Ausnahme: r170 (Portionsgewicht 135 g, kleine Originalportion). APP_VERSION 44.
+
+## Nachtrag Version 43: Zwölf Fisch- und vegetarische Gerichte nach ChatGPT-Prüfung auf das Original umgestellt (Blöcke 6 und 7, Fassung A)
+
+- ChatGPT hat Datei 1/3, Block 6 (r150 bis r154, r160) und Block 7 (r161 bis r166) geprüft; beide Blöcke wurden zusammen nach Entscheidung A umgesetzt (Anleitungen sinngemäß in eigenen Worten, Mengen auf 4 Portionen umgerechnet und ca. gerundet).
+- **Block 6:** r150 „Ofen-Tilapia mit Zitrone und Gemüse (Easy Baked Tilapia)“; r151 „Indisches Fischcurry mit Senf-Marinade und Cashew-Paste“ (ohne Kokosmilch und Reis, Fischgewicht 600 g angenommen); r152 „Gegrillter Kabeljau mit Cajun-Gewürz und Zitronenbutter“ (auf dem Kontaktgrill); r153 „Tilapia mit Parmesankruste“ (Fischgewicht 600 g und Ölmenge angenommen); r154 „Thunfisch-Nudel-Auflauf mit Pilzcremesuppe und Chips“ (zwei Drittel von 6 Portionen); r160 „Vegetarisches Chili mit Veggie-Hack und Bohnen“ (Hälfte von 8 Portionen).
+- **Block 7:** r161 „Vegetarisches Korma mit Sahne und Cashewkernen“ (ohne Blumenkohl, Kichererbsen, Kokosmilch, Reis); r162 „Gemüse-Lasagne mit Champignons und grüner Paprika“ (ein Drittel von 12); r163 „Ingwer-Gemüse-Pfanne“ (zwei Drittel von 6, ohne Tofu und Reis, Bohnen vorgegart); r164 „Panierter Auberginen-Auflauf“ (0,4 von 10; Vorbacken sinngemäß); r165 „Frittierte Falafel mit Joghurt-Gurken-Sauce“ (Frittieröl 30 g aufgenommen geschätzt; Pita und Tomaten optional, nicht gerechnet); r166 „Klassischer Mac and Cheese mit drei Käsesorten“ (4/7 der Menge).
+- Neue Zutaten (eigener Richtwert, mit BLS-Eintrag): pilzcremesuppe, kartoffelchips, veggie_crumbles, gruene_chilis_dose, lasagneplatten, pastasauce, schmelzkaese; neue Gewürze knoblauchsalz, fischgewuerz, cajun_gewuerz, zitronenpfeffer. Wiederverwendet: zuckerschote (Zuckerschoten).
+- Test-Ausnahmen: r152 (Portionsgewicht 133 g) und r163 (Portionsgewicht 125 g), kleine Originalportionen. APP_VERSION 43.
+
+## Nachtrag Version 42: Zwölf Rind-, Schweine- und Lachs-Gerichte nach ChatGPT-Prüfung auf das Original umgestellt (Blöcke 3 und 5, Fassung A)
+
+- ChatGPT hat Datei 1/3, Block 3 (r130 bis r135) und Block 5 (r144 bis r149) geprüft; beide Blöcke wurden zusammen umgesetzt, wie die Entscheidungen A aus den Blöcken 1, 2 und 4 (Anleitungen sinngemäß in eigenen Worten, Mengen auf 4 Portionen umgerechnet und ca. gerundet).
+- **Block 3:** r130 „Schnelle Rindfleisch-Gemüse-Pfanne (Quick Beef Stir-Fry)“ (ohne Ingwer, Honig, Essig, Stärke, Reis); r131 „Rinder-Lo-Mein (Beef Lo Mein)“ (Flanksteak, Spaghetti, Erdnuss- und Sesamöl, brauner Zucker, Austernsauce, Chili-Knoblauch-Paste; die Gemüsesorten sind eine Schätzung, das Original nennt nur 4 Tassen gemischtes Gemüse); r132 „Südasiatisches Kartoffel-Keema“ (Original hat Kartoffeln und keine Erbsen; Titel „Keema Matar“ ersetzt); r133 „Klassische Rinderrouladen“ (4 Rouladen, Frühstücksspeck, Butterschmalz, Rotwein, Fond; Rotkohl und Kartoffeln entfallen, der alte Patch wurde entfernt); r134 „Rinder-Empanadas, frittiert“ (fertige Teigscheiben, Sofrito, Sazón; die Quelle nennt 20 Stück, die Packung enthält 10 Scheiben, gerechnet sind 10 Empanadas; Frittieröl nur als aufgenommene Menge von 40 g geschätzt); r135 „Rindfleisch mit Brokkoli (Restaurant-Style Beef and Broccoli)“ (340 g Rind laut Zutatenliste, Austernsauce, Sherry, Sesamöl).
+- **Block 5:** r144 „Schweinesteaks mit Äpfeln und Senf“ (der alte Tipp-Patch wurde entfernt); r145 „Fisch-Tacos mit Bierteig und Joghurt-Mayonnaise-Sauce“ (nur 227 g Fisch laut halbiertem Original; Frittieröl 25 g aufgenommen geschätzt); r146 „Einfacher Pfannenlachs mit Knoblauch und Basilikum“ (Original ist Pfannen-, kein Ofenlachs); r147 „Lachs auf Zedernholzplanke mit Soja-Marinade“ (1.210 g Lachs, bewusst nicht normalisiert; Ofen-Umsetzung als Richtwert, alter Sicherheits-Patch entfernt); r148 „Ofenlachs mit Dill und Zwiebelpulver“ (kleine Portion von 114 g Fisch; Zitrone nur als Serviervorschlag mit 15 g Saft mitgerechnet, damit drei Zutaten vorhanden sind); r149 „Lachs im Folienpaket mit Olivenöl-Kräuter-Marinade“ (verdoppelt aus 2 Portionen, sehr viel Öl, Salz und Pfeffer, Garzeit nicht gesichert).
+- Neue Zutaten (eigener Richtwert, mit BLS-Eintrag): chili_knoblauch_paste, butterschmalz, kochsherry, sofrito, empanada_teig; neues Gewürz sazon. Wiederverwendet: passata (Tomatensauce), chili_frisch (Jalapeño), speisestaerke (Maisstärke), schweineschulter (Schweinesteaks), rinderroulade (Round Steak, Rinderoberschale).
+- Test-Ausnahmen: r148 (Portionsgewicht 124 g, kleine Originalportion) sowie r146 und r148 (Dublettenwarnung, gleiche Basis Lachs, Butter, Zitrone, beide originalgetreu). APP_VERSION 42.
+
+## Nachtrag Version 41: Fünf Schweine-/Rind-Gerichte nach ChatGPT-Prüfung auf das Original umgestellt (Block 4), r138 nur richtig beschriftet
+
+- ChatGPT hat Datei 1/3, Block 4 geprüft (r136 bis r141; die Datei kam doppelt, beide Kopien identisch). **Block 3 (r130 bis r135) fehlt noch.** Für r136, r137, r139, r140, r141 gilt wie bei den Blöcken 1 und 2 Fassung **A (Originalfassung)**, Anleitungen sinngemäß in eigenen Worten.
+- **r136** „Irischer Rindfleischeintopf mit Stout (Beef and Guinness Stew)“: Bacon, Rinderschulter, Hühnerbrühe; Kartoffeln im Topf, Soja, Essig, Lorbeer und Petersilie entfallen. **r137** „Schweine-Carnitas (Pork Carnitas)“: Hühnerbrühe, Chilipulver; Orange, Tortillas, Krautsalat entfallen. **r139** „Asiatisches Schweinefilet aus dem Ofen (Asian Pork Tenderloin)“: ganzes Filet 907 g, Sesamöl, Worcestersauce, brauner Zucker, 230 °C; der Wok entfällt (der alte Rohmarinaden-Patch wurde entfernt, die neue Anleitung verbietet die rohe Weiterverwendung der Marinade). **r140** „Kräuter-Schweinefilet aus dem Ofen (The Best Easy Pork Tenderloin)“: nur Filet, Kräuter der Provence, Öl, Brühe; mit 131 g je Portion bewusst kleine Portion (Ausnahme in test_logic2). **r141** „Char Siu (Chinese Barbeque Pork)“: Reiswein, Hoisin, Ketchup, viel mehr Honig und Soja; **Pökelsalz bewusst weggelassen**, Ofen statt Grill als Richtwert.
+- **r138** bleibt das eigenständige Rezept (Schweineschulter in Soja-Tomaten-Glasur, Entscheidung B nach ausdrücklicher Empfehlung der ChatGPT-Prüfung, weil der Link ein anderes Gericht zeigt: „Easy Baked Pork Chops“ mit Pilzrahmsoße). Quellenhinweis und Herkunft sagen jetzt klar, dass der Link nur eine Vergleichsseite ist. Offen: ob das Kotelett-Originalrezept zusätzlich als neues Rezept angelegt werden soll.
+- Neue Zutaten (eigener Richtwert): bacon, rinderschulter; neues Gewürz kraeuter_provence. APP_VERSION 41.
+
+## Nachtrag Version 40: Sechs weitere Rind-Gerichte nach ChatGPT-Prüfung auf das Original umgestellt (Fassung A)
+
+- ChatGPT hat Datei 1/3, Block 2 geprüft (r124 bis r129). Wie bei Block 1 gilt Fassung **A (Originalfassung)**; der Auftraggeber hat Block 2 ohne Zusatz zur Umsetzung geschickt, daher nach der Entscheidung zu Block 1 gehandelt. Rezept-IDs bleiben, Anleitungen sind sinngemäß in eigenen Worten (Originalseiten von hier nicht lesbar).
+- **r124** „Geschmorte Pökelrinderbrust (Braised Corned Beef Brisket)“: fertig gepökelte Rinderbrust 1512 g, Bräunungssauce, Zwiebel, Knoblauch, 135 °C etwa 6 Stunden; Kohl, Karotten, Kartoffeln, Senf entfallen (nur Beilagenvorschlag). **r125** „Short Ribs in Stout und Rinderfond“ (statt Soja-Ingwer-Sud; Tag „proteinreich“ entfernt, da nur rund 21 g Eiweiß je Portion). **r126** „Filet Wellington (Beef Wellington)“ mit Rinderfilet, Leberpastete, Blätterteig, nur 20 g Champignons wie im Original; Backtemperaturen aus der bisherigen Fassung und im Tipp als nicht am Original verifiziert gekennzeichnet. **r127** „Scharfes Rinder-Chili mit Bier, Kaffee und Kakao (Spicy Beef Chili)“ (Hack plus Steak, Stout, Kaffee, Kakao, 2 Dosen Kidneybohnen, kein Reis). **r128** „Rinder-Enchiladas mit Cheddar und Oliven“ (Enchiladasauce, Taco-Gewürz; Aufteilung Käse/Sauce zwischen Füllung und Belag im Tipp als nicht gesichert vermerkt). **r129** „Rinderfiletbraten mit Steinpilz-Estragon-Sauce“ (statt Senfkruste).
+- Neue Zutaten (BLS-Hinweis „eigener Richtwert“): poekelrinderbrust, braeunungssauce, leberpastete, short_ribs, enchiladasauce, steinpilze_getrocknet, estragonessig (mit Säureenergie e: 17), kalbsfond. Beilagen der früheren Fassungen sind nicht mitgerechnet. APP_VERSION 40.
+
+## Nachtrag Version 39: Sechs Rind-Gerichte nach ChatGPT-Prüfung auf das Original umgestellt (Fassung A)
+
+- ChatGPT hat Datei 1/3, Block 1 geprüft (r115, r116, r117, r118, r121, r123); der Auftraggeber hat für alle sechs **A (Originalfassung)** entschieden. Zutaten, Titel, Anleitung und Herkunft folgen jetzt dem verlinkten Original, umgerechnet auf 4 Portionen (Mengen ungefähr, „ca.“). Die Anleitungen sind sinngemäß in eigenen Worten, weil die Originalseiten von hier aus nicht lesbar sind; Rezept-IDs bleiben.
+- **r115** heißt jetzt „Carne-Asada-Tacos nach Taqueria-Art“ (Viertel von 16 Tacos: Flanksteak 340 g, Marinade mit Soja, geröstete Salsa mit New-Mexico-Chili, Relish, optional Cotija; Avocado, Joghurt und Orange entfallen). **r116** „Lasagne al forno mit Salsiccia, Rinderhack und Ricotta“ (Drittel von 12 Portionen, ohne Béchamel). **r117** American Goulash (Hälfte von 8: Wasser statt Brühe, normale Nudeln, kein Käse, grüne Paprika optional). **r118** „Pakistanisches Rinderhack-Curry (Pakistani Ground Beef Curry)“, weil das Original keine Kartoffeln hat (Reis nur Serviervorschlag, nicht gerechnet). **r121** „Rind-Gemüse-Schmortopf nach britischer Art“ ohne Stampfkartoffeln, Pastinake, Erbsen, Rotwein und Soja (Worcestersauce, Brühwürfel, Wasser). **r123** „Geschmorte Rinderbrust mit Bier-Chilisauce“ (echte Rinderbrust 907 g statt Rindergulasch; Bier, Chilisauce, brauner Zucker).
+- Neue Zutaten (mit BLS-Hinweis „eigener Richtwert“): flanksteak, salsiccia, cotija, chilisauce_tomate, rinderbruehwuerfel, erbsen_dose; neues Gewürz new_mexico_chili. Der Verweis im Erbsen-Keema auf das frühere Aloo Keema wurde angepasst. In `data_rezeptabgleich.js` stehen neue Quellentexte, der r121-Patch enthält nur noch Zeiten, und ein Endblock setzt die Herkunftsangaben.
+- Offen: die übrigen 168 Rezepte der ChatGPT-Dateien und die 24 bereits geprüften Rezepte (A/B-Entscheidung). APP_VERSION 39.
+
+## Nachtrag Version 38: Neue Kategorie „Beilage“
+
+- Auf Wunsch („Mach eine Kategorie Beilage. Suche nach allen Beilagen und schiebe es dorthin“) gibt es die Kategorie `Beilage` in `MEALS` (logic.js), wie Aufstrich und Sauce/Dips ohne Platz im Wochenplan und ohne Kalorien- oder Eiweißziel; Mindestportion 80 g wie beim Snack. Der Filter im Reiter Rezepte zeigt sie automatisch.
+- Verschoben (24, IDs unverändert): r441 Sushi-Reis (vorher Hauptgericht), r512 Roti aus Vollkornmehl (Hauptgericht), r689 Rote Bete mit Balsamico, r697 Grüner Spargel, r702 Glasierte Möhren, r709 Indischer Blumenkohl mit Reis, r711 Karotten mit Kreuzkümmel (alle vorher Salat/Bowl) und die 17 selbst gemachten Nudeln r823 bis r839 (vorher Snack).
+- Bewusst nicht verschoben (Grenzfälle): Subway-Brote r355 bis r358 (Sandwich-Basis), Roti Canai r485, Msemen r658, Reibekuchen r676, Kartoffelchips r719/r720, Congee r759, Tofu selbst gemacht r820, Hongkong-Grundrezepte r899 bis r909. Neuer Test in smoke6.js. APP_VERSION 38.
 
 ## Nachtrag Version 37: Anleitung r355 bis r358 bestätigt
 
@@ -1108,16 +1265,16 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 | Kennzahl | Wert |
 |---|---|
 | Mitgelieferte Rezepte | **838** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 113, Rind: 116, Schwein: 119, Fisch: 81, Vegetarisch: 409 |
-| Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 65, Salat/Bowl: 20, Frühstück: 18, Smoothie: 16, Snack: 197, Dessert: 99, Aufstrich: 45, Sauce/Dips: 21 |
-| Einfrierbar: ja / eingeschränkt | 139 / 46 |
-| Zutaten im Stamm (davon mit Nährwerten) | 475 (474) |
-| Gewürze | 107 |
+| Verteilung nach Gruppe | Geflügel: 112, Rind: 115, Schwein: 119, Fisch: 80, Vegetarisch: 412 |
+| Verteilung nach Mahlzeit | Hauptgericht: 356, Suppe/Eintopf: 65, Salat/Bowl: 9, Frühstück: 18, Smoothie: 16, Snack: 181, Dessert: 98, Beilage: 29, Aufstrich: 45, Sauce/Dips: 21 |
+| Einfrierbar: ja / eingeschränkt | 138 / 41 |
+| Zutaten im Stamm (davon mit Nährwerten) | 570 (569) |
+| Gewürze | 120 |
 | Bausteine (Meal-Prep) | **79** (Protein: 20, Beilage: 8, Sauce: 23, Gemüse: 5, Booster: 23) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine, Dämpfer, Stabmixer, Handmixer, Eismaschine, Wok, Thermometer, Vakuumierer, Dörrautomat, Mikrowelle, Reiskocher, Mooncake-Form, Waffeleisen, Küchenbrenner, Eisportionierer, Slow Cooker |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 3732 KB |
+| Größe `dist/index.html` | 3818 KB |
 
 ---
 
@@ -1314,14 +1471,14 @@ Kategorie `Dessert` in `MEALS`, Platz `d` in `SLOTS`, angezeigt nur bei `state.d
 | Befehl | Ergebnis | Status |
 |---|---|---|
 | `node test_logic2.js` | 95 Prüfungen | bestanden |
-| `node test_logic3.js` | 318 Prüfungen | bestanden |
+| `node test_logic3.js` | 317 Prüfungen | bestanden |
 | `node test_bls.js` | 9 Prüfungen | bestanden |
 | `node smoke2.js` | 153 Prüfungen | bestanden |
 | `node smoke3.js` | 92 Prüfungen | bestanden |
-| `node smoke4.js` | 63 Prüfungen | bestanden |
+| `node smoke4.js` | 65 Prüfungen | bestanden |
 | `node test_saison.js` | 57 Prüfungen | bestanden |
 | `node smoke5.js` | 85 Prüfungen | bestanden |
-| `node smoke6.js` | 107 Prüfungen | bestanden |
+| `node smoke6.js` | 112 Prüfungen | bestanden |
 | `node test_look.js` | 99 Prüfungen | bestanden |
 | `node test_quellen.js` | 24 Prüfungen | bestanden |
 | `node test_abgleich.js` | 1593 Prüfungen | bestanden |
