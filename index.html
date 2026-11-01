@@ -308,7 +308,7 @@ button.badge { border: 0; cursor: pointer; font-family: inherit; }
 <script>
 /* ===== Daten & Logik (ohne DOM, testbar) ===== */
 // Versionsnummer der App: bei jeder Auslieferung erhöhen (fortlaufende ganze Zahl). Sie steht in der Kopfzeile und unter Mehr.
-const APP_VERSION = '60';
+const APP_VERSION = '70';
 const ALLERGENE = {
   gluten: 'Glutenhaltiges Getreide', krebs: 'Krebstiere', ei: 'Eier', fisch: 'Fisch', erdnuss: 'Erdnüsse',
   soja: 'Soja', milch: 'Milch', schale: 'Schalenfrüchte', sellerie: 'Sellerie', senf: 'Senf',
@@ -361,7 +361,7 @@ const EXCL_KEYS = [];
 // Ananas und Süßkartoffel (Batate) sind erlaubt, aber nicht als Hauptgericht: blockiert in Hauptgericht, Suppe/Eintopf, Salat/Bowl und in Meal-Prep-Bausteinen (Stand 28.10.2026; Süßkartoffel zuvor ganz ausgeschlossen)
 const FIXE_BEDINGT = ['Ananas', 'Süßkartoffel', 'Batate'];
 const EXCL_HAUPT_KEYS = ['ananas', 'pineapple', 'suesskartoffel', 'sueskartoffel', 'batate', 'sweetpotato'];
-const AUSSCHLUSS_HINWEIS_ANANAS = 'Ananas, Süßkartoffel und Batate sind nur in Frühstück, Snack und Dessert erlaubt';
+const AUSSCHLUSS_HINWEIS_ANANAS = 'Ananas ist nur in Frühstück, Snack und Dessert erlaubt, Süßkartoffel und Batate zusätzlich in Salat/Bowl';
 const EXCL_COMPOUND = ['suesskartoffel', 'sueskartoffel', 'sweetpotato'];
 
 function I(id, name, cat, kcal, p, c, f, x) {
@@ -651,7 +651,9 @@ function recipeTexts(r) {
   return parts.join(' \n ');
 }
 function isHauptRezept(r) { return !!r && (!!r.mod || MAIN_MEALS.includes(r.meal)); } // Bausteine (mod) sind Bestandteile von Hauptmahlzeiten
-function recipeExclusionHits(r, extra) { return exclusionHits(recipeTexts(r), extra, isHauptRezept(r)); }
+// Auf Wunsch (01.11.2026) darf Süßkartoffel (Batate) in Salat/Bowl vorkommen; Ananas bleibt dort wie in Hauptgerichten und Suppen/Eintöpfen gesperrt.
+const SUESS_KEYS = ['suesskartoffel', 'sueskartoffel', 'batate', 'sweetpotato'];
+function recipeExclusionHits(r, extra) { const h = exclusionHits(recipeTexts(r), extra, isHauptRezept(r)); return (r && r.meal === 'Salat/Bowl' && !r.mod) ? h.filter(k => !SUESS_KEYS.includes(k)) : h; }
 
 function calcRecipe(r) {
   const tot = { kcal: 0, p: 0, c: 0, f: 0, g: 0 };
@@ -728,7 +730,7 @@ function validateRecipe(r, library, profile, targets) {
   const badAmt = (r.ing || []).filter(([id, g]) => !(g > 0 && g <= 3000));
   add('Mengen positiv & plausibel', badAmt.length === 0, badAmt.length ? 'Auffällige Menge bei: ' + badAmt.map(x => x[0]).join(', ') : '');
   const ex = recipeExclusionHits(r, profile && profile.excl);
-  add('Persönliche Ausschlüsse', ex.length === 0, ex.length ? 'Treffer: ' + ex.join(', ') + (ex.some(k => EXCL_HAUPT_KEYS.includes(k)) ? ' (' + AUSSCHLUSS_HINWEIS_ANANAS + ')' : '') : 'Keine Treffer (Ananas, Süßkartoffel, Batate + Varianten nur außerhalb von Hauptgerichten erlaubt)');
+  add('Persönliche Ausschlüsse', ex.length === 0, ex.length ? 'Treffer: ' + ex.join(', ') + (ex.some(k => EXCL_HAUPT_KEYS.includes(k)) ? ' (' + AUSSCHLUSS_HINWEIS_ANANAS + ')' : '') : 'Keine Treffer (Ananas, Süßkartoffel, Batate + Varianten nur außerhalb von Hauptgerichten erlaubt, Süßkartoffel auch in Salat/Bowl)');
   const en = energyCheck(r);
   add('Energie-Plausibilität', en.ok, en.kcal + ' kcal vs. ' + en.calc + ' kcal aus Makros');
   const gw = cr.pp.g;
@@ -1410,6 +1412,17 @@ const ZUTATEN_PLUS = [
   I('jalapenos_eingelegt', 'Jalapeño-Ringe eingelegt (Glas, abgetropft; eigener Richtwert)', 'Konserven', 27, 0.9, 4, 0.9),
   I('pesto_gruen', 'Grünes Pesto (Basilikum, Glas; eigener Richtwert)', 'Konserven', 450, 5.5, 4, 45, { al: ['milch'] }),
   I('mandarine', 'Mandarine (geschält)', 'Obst', 46, 0.7, 10, 0.3, { fod: 1, fr: 1 }),
+  I('joghurt_griechisch_mager', 'Griechischer Joghurt fettarm (0,2 % Fett; eigener Richtwert)', 'Milchprodukte', 57, 10, 4, 0.2, { al: ['milch'], lak: 1 }),
+  I('zartbitter_vegan', 'Zartbitterschokolade vegan (ohne Milchbestandteile; eigener Richtwert)', 'Trockenprodukte', 534, 6.6, 49.6, 32.3),
+  I('walnuesse_ziehen', 'Walnüsse zum Ziehenlassen (werden abgeseiht und nicht gegessen; ohne Nährwert)', 'Trockenprodukte', 0, 0, 0, 0, { al: ['schale'] }),
+  I('haselnuesse_ziehen', 'Haselnüsse zum Ziehenlassen (werden abgeseiht und nicht gegessen; ohne Nährwert)', 'Trockenprodukte', 0, 0, 0, 0, { al: ['schale'] }),
+  I('leinoel', 'Leinöl', 'Gewürze & Öle', 899, 0, 0, 99.9),
+  I('hanfoel', 'Hanföl', 'Gewürze & Öle', 899, 0, 0, 99.9),
+  I('acerolasaft', 'Acerolasaft (Direktsaft; eigener Richtwert)', 'Konserven', 25, 0.4, 5.5, 0.2),
+  I('hirse', 'Hirse (roh)', 'Trockenprodukte', 360, 10.6, 69, 3.9),
+  I('dinkelnudeln', 'Dinkelnudeln (roh; eigener Richtwert)', 'Trockenprodukte', 350, 13, 68, 2.5, { al: ['gluten'] }),
+  I('asia_sosse_histaminarm', 'Histaminarme Asia-Soße (Fertigprodukt; Zusammensetzung unbekannt, eigener Richtwert)', 'Konserven', 70, 2, 14, 0.5),
+  I('kuerbiskernoel', 'Kürbiskernöl', 'Gewürze & Öle', 899, 0, 0, 99.9),
   I('pilzcremesuppe', 'Kondensierte Pilzcremesuppe (Dose, unverdünnt; eigener Richtwert)', 'Konserven', 80, 1.4, 7, 5, { al: ['gluten', 'milch'] }),
   I('kartoffelchips', 'Kartoffelchips (gesalzen)', 'Trockenprodukte', 536, 6, 50, 34),
   I('veggie_crumbles', 'Veggie-Hack / Burger-Crumbles (vegetarisch, Soja-Weizen-Basis; eigener Richtwert)', 'Sonstiges', 150, 17, 9, 4.5, { al: ['soja', 'gluten'], hul: 1 }),
@@ -2170,6 +2183,17 @@ Object.assign(BLS_REF, {
   "jalapenos_eingelegt": { m: "own", c: "", n: "Eingelegte Jalapeños, abgetropft: Richtwert (rund 27 kcal je 100 g).", e: 0, o: [27, 0.9, 4, 0.9] },
   "pesto_gruen": { m: "own", c: "", n: "Grünes Basilikum-Pesto aus dem Glas: Richtwert (rund 450 kcal je 100 g); enthält meist Parmesan und Pinienkerne.", e: 0, o: [450, 5.5, 4, 45] },
   "mandarine": { m: "own", c: "", n: "Mandarine geschält: Richtwert (rund 46 kcal je 100 g).", e: 0, o: [46, 0.7, 10, 0.3] },
+  "joghurt_griechisch_mager": { m: "own", c: "", n: "Griechischer Joghurt fettarm (bis 0,2 % Fett): Richtwert (rund 57 kcal und 10 g Eiweiß je 100 g).", e: 0, o: [57, 10, 4, 0.2] },
+  "zartbitter_vegan": { m: "own", c: "", n: "Vegane Zartbitterschokolade ohne Milchbestandteile: Richtwert, gleiche Werte wie Zartbitterschokolade; Soja (Lecithin) und Spuren je Produkt prüfen.", e: 0, o: [534, 6.6, 49.6, 32.3] },
+  "walnuesse_ziehen": { m: "own", c: "", n: "Walnüsse, die nur in Sahne und Milch ziehen und danach abgeseiht werden: ohne Nährwert gerechnet (Fettübergang ins Eis nicht erfasst).", e: 0, o: [0, 0, 0, 0] },
+  "haselnuesse_ziehen": { m: "own", c: "", n: "Haselnüsse, die nur in Sahne und Milch ziehen und danach abgeseiht werden: ohne Nährwert gerechnet (Fettübergang ins Eis nicht erfasst).", e: 0, o: [0, 0, 0, 0] },
+  "leinoel": { m: "own", c: "", n: "Leinöl: Richtwert (rund 899 kcal je 100 g), nicht erhitzen.", e: 0, o: [899, 0, 0, 99.9] },
+  "hanfoel": { m: "own", c: "", n: "Hanföl: Richtwert (rund 899 kcal je 100 g), nicht erhitzen.", e: 0, o: [899, 0, 0, 99.9] },
+  "acerolasaft": { m: "own", c: "", n: "Acerolasaft (Direktsaft): Richtwert (rund 25 kcal je 100 g).", e: 0, o: [25, 0.4, 5.5, 0.2] },
+  "hirse": { m: "own", c: "", n: "Hirse roh: Richtwert (rund 360 kcal je 100 g).", e: 0, o: [360, 10.6, 69, 3.9] },
+  "dinkelnudeln": { m: "own", c: "", n: "Dinkelnudeln roh: Richtwert (rund 350 kcal je 100 g).", e: 0, o: [350, 13, 68, 2.5] },
+  "asia_sosse_histaminarm": { m: "own", c: "", n: "Histaminarme Asia-Soße (Fertigprodukt): Zusammensetzung unbekannt, Richtwert (rund 70 kcal je 100 g), bitte Etikett prüfen.", e: 0, o: [70, 2, 14, 0.5] },
+  "kuerbiskernoel": { m: "own", c: "", n: "Kürbiskernöl: Richtwert (rund 899 kcal je 100 g), nicht erhitzen.", e: 0, o: [899, 0, 0, 99.9] },
 });
 Object.assign(BLS_REF, {
   "taropaste": { m: "own", c: "", n: "Taropaste: kein BLS-Eintrag; rechnerisch aus dem Grundrezept „Gemeinsame Taropaste“ der App (600 g Taro, 150 g Zucker, 120 g Kokosmilch, 60 g Butter, Ausbeute laut Vorlage ca. 800 g). Taro ist selbst eine Näherung nach Kartoffeln. Gekaufte Pasten können abweichen; die Packungsangaben sind maßgeblich.", e: 0, o: [227, 1.9, 32.5, 9.5] }
@@ -14339,11 +14363,11 @@ SEED2.push(
     ],
     [
      "china_sauce",
-     275
+     110
     ],
     [
      "wasser",
-     500
+     200
     ],
     [
      "sojasauce",
@@ -14370,7 +14394,7 @@ SEED2.push(
     "China-Sauce, Wasser, Sojasauce und Brühepulver zugeben, mit Salz, Pfeffer und Paprikapulver würzen. Das angebratene Hähnchen zurück in die Pfanne geben (das Original sagt das nicht ausdrücklich) und zugedeckt etwa 20 Minuten köcheln lassen, bis der Blumenkohl gar ist und das Hähnchen im Kern mindestens 70 °C für 2 Minuten erreicht hat.",
     "Abschmecken und servieren. Dazu passt Reis (nicht mitgerechnet)."
    ],
-   "tips": "Fassung nach dem Chefkoch-Rezept „Blumenkohl-Hähnchen-Pfanne“ (4 Portionen im Original, unverändert). Mengen ungefähr (ca.) gerundet. Zutaten und Mengen stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Zubereitung lag dort nur in Kurzform vor (Reihenfolge, Zeiten), die Schritte sind von Claude sinngemäß ausformuliert. Das Original ist bei Mengen unvollständig: Es nennt „1 Flasche China-Sauce“ ohne Marke und Größe und als Wasser „2 Flaschenfüllungen“. Angesetzt ist eine Flasche mit 250 ml (rund 275 g) und entsprechend 500 ml Wasser; das ist eine Annahme. Der Blumenkohl („1 Stück“) ist mit 600 g geschätzt, das Bund Lauchzwiebeln mit rund 100 g. Sojasauce (1 TL, rund 6 g) und Instantbrühe (2 TL, rund 6 g) sind umgerechnet. Das Öl zum Anbraten steht nicht in der Zutatenliste, ist aber nötig (rund 10 g). Getrocknete Chili ist optional. Die Zeitangabe der Seite (20 Minuten) ist zu kurz, weil allein das Köcheln 20 Minuten dauert. Zwiebel, Paprika, Knoblauch, Kochsahne, Senf, Petersilie, Curry und Kurkuma gehören nicht zum Original. Allergene: Soja und Gluten (Sojasauce, Sauce, Brühe), Etikett der China-Sauce prüfen. Das vorherige Rezept (Blumenkohl-Hähnchen-Curry-Pfanne mit Sahne und Reis) wurde damit ersetzt.",
+   "tips": "Fassung nach dem Chefkoch-Rezept „Blumenkohl-Hähnchen-Pfanne“ (4 Portionen im Original, unverändert). Mengen ungefähr (ca.) gerundet. Zutaten und Mengen stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Zubereitung lag dort nur in Kurzform vor (Reihenfolge, Zeiten), die Schritte sind von Claude sinngemäß ausformuliert. Das Original ist bei Mengen unvollständig: Es nennt „1 Flasche China-Sauce“ ohne Marke und Größe und als Wasser „2 Flaschenfüllungen“. Auf Wunsch (Rückfrage 01.11.2026, 250 ml waren zu viel) angesetzt: 100 ml China-Sauce (rund 110 g) und 200 ml Wasser (zwei Flaschenfüllungen zu je 100 ml). Das ist eine Annahme, weil das Original keine Flaschengröße nennt; handelsübliche Flaschen reichen von etwa 125 bis 500 ml, eine feste Größe gibt es nicht. Der Blumenkohl („1 Stück“) ist mit 600 g geschätzt, das Bund Lauchzwiebeln mit rund 100 g. Sojasauce (1 TL, rund 6 g) und Instantbrühe (2 TL, rund 6 g) sind umgerechnet. Das Öl zum Anbraten steht nicht in der Zutatenliste, ist aber nötig (rund 10 g). Getrocknete Chili ist optional. Die Zeitangabe der Seite (20 Minuten) ist zu kurz, weil allein das Köcheln 20 Minuten dauert. Zwiebel, Paprika, Knoblauch, Kochsahne, Senf, Petersilie, Curry und Kurkuma gehören nicht zum Original. Allergene: Soja und Gluten (Sojasauce, Sauce, Brühe), Etikett der China-Sauce prüfen. Das vorherige Rezept (Blumenkohl-Hähnchen-Curry-Pfanne mit Sahne und Reis) wurde damit ersetzt.",
    "storage": "Im Kühlschrank bis zu 2 Tage.",
    "reheat": "Bei mittlerer Hitze durchgehend auf mindestens 70 °C erhitzen.",
    "freeze": {
@@ -19109,7 +19133,7 @@ SEED2.push(
     "Rucola obenauf geben, mit der oberen Hälfte schließen und leicht andrücken.",
     "Den Kontaktgrill vorheizen. Die Panini 4 bis 6 Minuten grillen, bis die Kruste knusprig ist und der Käse geschmolzen ist. Schräg halbieren und warm essen."
    ],
-   "tips": "Quellenabgleich: Der Kontaktgrill-Vergleich von essen & trinken verweist auf ein eigenständiges vegetarisches Rezept „Panini mit Tomate und Rucola“: Ciabatta, Basilikum-Mandel-Parmesan-Pesto, Tomaten, Mozzarella, Rucola, Balsamico, ohne Schinken. Das Quellenrezept röstet Brot kurz im Backofengrill und serviert es belegt, die App grillt das gefüllte Brot im Kontaktgrill und fügt Schinken hinzu. Die App-Zutaten wurden gemäß Projektregel bewusst NICHT ohne Zustimmung ersetzt. Für die vegetarische Variante den Schinken weglassen und 50 g mehr Mozzarella verwenden. Den Rucola bei Wunsch erst nach dem Grillen einlegen, dann bleibt er frisch. Enthält Gluten und Milch. Tomaten, Schinken und Balsamico enthalten Histamin.",
+   "tips": "Quellenabgleich: Der Kontaktgrill-Vergleich von essen & trinken verweist auf ein eigenständiges vegetarisches Rezept „Panini mit Tomate und Rucola“: Ciabatta, Basilikum-Mandel-Parmesan-Pesto, Tomaten, Mozzarella, Rucola, Balsamico, ohne Schinken. Das Quellenrezept röstet Brot kurz im Backofengrill und serviert es belegt, die App grillt das gefüllte Brot im Kontaktgrill und fügt Schinken hinzu. Die App-Zutaten wurden gemäß Projektregel bewusst NICHT ohne Zustimmung ersetzt. Für die vegetarische Variante den Schinken weglassen und 50 g mehr Mozzarella verwenden. Den Rucola bei Wunsch erst nach dem Grillen einlegen, dann bleibt er frisch. Enthält Gluten und Milch. Tomaten, Schinken und Balsamico enthalten Histamin. Entscheidung 01.11.2026: Die Schinken-Panini-Fassung bleibt als eigene Kontaktgrill-Variante bestehen; das vegetarische Quellenrezept ist nur Inspiration.",
    "storage": "Im Kühlschrank bis zu 2 Tage. Besser frisch essen, die Kruste wird weich.",
    "reheat": "Kurz auf dem Kontaktgrill oder in der Pfanne erwärmen, bis alles durch und mindestens 70 °C heiß ist.",
    "freeze": {
@@ -20249,7 +20273,7 @@ SEED2.push(
     ],
     [
      "litschi",
-     150
+     110
     ]
    ],
    "spices": [],
@@ -20259,7 +20283,7 @@ SEED2.push(
     "Die Gelatinemilch unter das Mangopüree rühren, auf 10 kleine Gläser oder Förmchen verteilen und mindestens 4 Stunden kalt stellen, bis der Pudding fest ist.",
     "Die Litschis entsteinen, klein schneiden und vor dem Servieren auf die Puddings geben."
    ],
-   "tips": "Originalfassung nach essen & trinken ohne Skyr: 10 kleine Portionen aus zwei Mangos, 120 ml Limette, 250 ml Milch, 40 g Zucker, 12 Blatt Gelatine und Litschis, etwa 30 Minuten plus Kühlen. Die Menge der Litschis (150 g) und die Einzelschritte sind Richtwerte der App. Gelatine ist tierisch (nicht vegan). Enthält Milch.",
+   "tips": "Originalfassung nach essen & trinken ohne Skyr: 10 kleine Portionen aus zwei Mangos, 120 ml Limette, 250 ml Milch, 40 g Zucker, 12 Blatt Gelatine und Litschis, etwa 30 Minuten plus Kühlen. Die Litschis stehen im Original als „12 Litschis“ (Stück, ohne Gramm); angesetzt sind rund 110 g geschält und entsteint (ca., Annahme etwa 9 g je Frucht, Rückfrage 01.11.2026). Die Einzelschritte sind Richtwerte der App. Gelatine ist tierisch (nicht vegan). Enthält Milch.",
    "storage": "Im Kühlschrank bis zu 2 Tage, abgedeckt.",
    "reheat": "Kalt servieren.",
    "freeze": {
@@ -20997,15 +21021,19 @@ SEED2.push(
     ],
     [
      "mehl",
-     80
+     38
     ],
     [
-     "eier",
-     55
+     "speisestaerke",
+     13
+    ],
+    [
+     "zucker",
+     6
     ],
     [
      "wasser",
-     80
+     70
     ],
     [
      "rapsoel",
@@ -21013,18 +21041,20 @@ SEED2.push(
     ],
     [
      "rum",
-     40
+     110
     ]
    ],
-   "spices": [],
+   "spices": [
+    "salz"
+   ],
    "steps": [
     "Das Vanilleeis mit dem Eisportionierer zu 8 Kugeln (je 40 g) formen, auf ein Tablett mit Backpapier legen und 1 Stunde hart gefrieren.",
     "Den Sandkuchen fein zerkrümeln, die Kugeln rundum dünn damit umhüllen, fest andrücken und weitere 2 bis 3 Stunden einfrieren, bis sie steinhart sind.",
-    "Aus Mehl, Ei und Wasser einen glatten Ausbackteig rühren. Rapsöl in einem hohen Topf auf etwa 180 °C erhitzen (Thermometer).",
+    "Für den Ausbackteig Mehl, Speisestärke, Zucker, eine Prise Salz und das Wasser glatt verrühren. Der Teig soll etwas dicker als Pfannkuchenteig sein; Wasser nach und nach zugeben. Rapsöl in einem hohen Topf auf etwa 180 °C erhitzen (Thermometer).",
     "Die Kugeln direkt aus dem Gefrierer zügig durch den Teig ziehen und im heißen Öl etwa 20 bis 30 Sekunden goldgelb ausbacken, mit der Schaumkelle herausheben und kurz abtropfen lassen. Je 2 Kugeln auf einen Teller legen.",
-    "Den Rum in einem kleinen Topf nur handwarm erwärmen, mit langem Streichholz über den Kugeln entzünden und sofort servieren. Dabei Abstand halten, Haare zurückbinden, nichts Brennbares in der Nähe, die Flasche stets weit entfernt lassen."
+    "Pro Kugel etwa 1 EL Rum (rund 14 g) in einem kleinen Topf nur handwarm erwärmen, mit langem Streichholz über den Kugeln entzünden und sofort servieren. Dabei Abstand halten, Haare zurückbinden, nichts Brennbares in der Nähe, die Flasche stets weit entfernt lassen."
    ],
-   "tips": "Originalfassung nach Chefkoch: Vanilleeis mit Sandkuchen umhüllen, 2 bis 3 Stunden gefrieren, in Ausbackteig frittieren und mit Rum flambieren. Mengen, Teigzusammensetzung und Frittierzeit sind Richtwerte der App. Von der Frittieröl-Menge ist nur die Aufnahme (40 g) gerechnet; zum Ausbacken sind etwa 600 ml Öl im hohen Topf nötig. Heißes Öl und offene Flamme: nur Erwachsene, Feuerlöschdecke griffbereit, Wasser nie auf brennendes Fett. Enthält Alkohol, Gluten, Ei und Milch.",
+   "tips": "Originalfassung nach Chefkoch: Vanilleeis mit Sandkuchen umhüllen, 2 bis 3 Stunden gefrieren, in Ausbackteig frittieren und mit Rum flambieren. Die Chefkoch-Seite nennt für Ausbackteig, Öl und Rum keine Mengen. Auf Wunsch (01.11.2026) stammen Teig und Rum aus einer Zweitquelle für dasselbe Gericht (erdbeerschokola.de, „Gebackenes Eis, chinesisches flambiertes Dessert“, 500 g Eis für 10 Portionen): 20 g Maisstärke, 60 g Mehl, 1 EL Zucker, 1 Prise Salz, 18 bis 20 EL Wasser (Teig etwas dicker als Pfannkuchenteig) und etwa 1 EL Rum je Kugel; ohne Ei. Hier auf 8 Kugeln aus 320 g Eis umgerechnet (Faktor ca. 0,64: 13 g Stärke, 38 g Mehl, 6 g Zucker); die Wassermenge (70 g) ist ein Richtwert nach Konsistenz, weil 18 bis 20 EL zu der beschriebenen Dicke nicht passen. Rum: 8 Kugeln zu je 1 EL (rund 110 g); der Alkohol brennt nur teilweise ab, die Alkoholenergie ist mitgerechnet. Sandkuchenmenge (120 g), Frittierzeit und Öl (nur Aufnahme 40 g gerechnet; für das Ausbacken sind etwa 600 ml im hohen Topf nötig) sind Richtwerte der App. Heißes Öl und offene Flamme: nur Erwachsene, Feuerlöschdecke griffbereit, Wasser nie auf brennendes Fett. Enthält Alkohol, Gluten, Ei (Sandkuchen) und Milch.",
    "storage": "Nicht aufbewahren, sofort essen.",
    "reheat": "Nicht aufwärmen.",
    "freeze": {
@@ -21033,7 +21063,7 @@ SEED2.push(
     "months": 0,
     "note": "Die frittierte Hülle weicht beim Auftauen auf; nur das umhüllte Eis vor dem Frittieren einfrieren."
    },
-   "src": "Quellenabgleich 29.10.2026: Originalfassung ohne Skyr nach Chefkoch „Chinesisches flambiertes Eis“ (https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html); Zutaten laut Quellenabgleich, nicht belegte Mengen sind Richtwerte; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Quellenabgleich 29.10.2026: Originalfassung ohne Skyr nach Chefkoch „Chinesisches flambiertes Eis“ (https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html); Zutaten laut Quellenabgleich, nicht belegte Mengen sind Richtwerte; Zeiten sind Richtwerte, nicht getestet; Ausbackteig und Rum nach Zweitquelle erdbeerschokola.de (Rückfrage 01.11.2026)",
    "origin": "China"
   }),
   R({
@@ -22809,7 +22839,7 @@ SEED2.push(
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "Deutschland",
-   "servings": 6,
+   "servings": 4,
    "prep": 50,
    "cook": 0,
    "level": "leicht",
@@ -22860,16 +22890,16 @@ SEED2.push(
     "Die Sahne steif schlagen und vorsichtig unterheben. Die Masse kalt stellen (Richtwert 1 bis 2 Stunden, Zeit nicht in der Quelle).",
     "In der Eismaschine etwa 40 Minuten gefrieren lassen und danach in einen Behälter füllen. Bei Bedarf im Gefrierfach nachhärten."
    ],
-   "tips": "Fassung nach dem Chefkoch-Rezept „Bananen-Eis“ (Webseite: „1 Portion“, tatsächlich aber eine ganze Eismaschinen-Charge; hier als Charge mit rund 6 Portionen zu je etwa 125 ml gerechnet, Annahme, Spanne 5 bis 8 Portionen). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 2 sehr reife Bananen (rund 225 g Fruchtfleisch, Spanne 200 bis 250 g), Saft von ½ Zitrone (rund 20 ml, Spanne 15 bis 25 ml), 1 g Johannisbrotkernmehl (die Webseite nennt zusätzlich „1 TL“; 1 g ist die verlässlichere Zahl), 300 ml Milch (rund 310 g, als Vollmilch angesetzt, Fettstufe nicht genannt), 125 g Zucker, 1 Päckchen Vanillezucker (rund 8 g) und 200 ml Sahne (rund 195 g, als Schlagsahne 30 % angesetzt). Die Eismaschine und das Thermometer stehen nicht in der Geräteliste; ohne Eismaschine die Masse im Gefrierfach alle 30 Minuten durchrühren. Skyr, Zimt und gefrorene Bananen gehören nicht zum Original (vorher: Nicecream aus gefrorenen Bananen). AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 251 kcal und 3,1 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Milch. Das vorherige Rezept (Bananen-Eis aus gefrorenen Bananen mit Skyr) wurde damit ersetzt.",
+   "tips": "Fassung nach dem Chefkoch-Rezept „Bananen-Eis“ (Webseite: „1 Portion“, tatsächlich aber eine ganze Eismaschinen-Charge; hier als Charge mit 4 Portionen gerechnet, so entschieden am 01.11.2026 (Annahme, Spanne 4 bis 8 Portionen)). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 2 sehr reife Bananen (rund 225 g Fruchtfleisch, Spanne 200 bis 250 g), Saft von ½ Zitrone (rund 20 ml, Spanne 15 bis 25 ml), 1 g Johannisbrotkernmehl (die Webseite nennt zusätzlich „1 TL“; 1 g ist die verlässlichere Zahl), 300 ml Milch (rund 310 g, als Vollmilch angesetzt, Fettstufe nicht genannt), 125 g Zucker, 1 Päckchen Vanillezucker (rund 8 g) und 200 ml Sahne (rund 195 g, als Schlagsahne 30 % angesetzt). Die Eismaschine und das Thermometer stehen nicht in der Geräteliste; ohne Eismaschine die Masse im Gefrierfach alle 30 Minuten durchrühren. Skyr, Zimt und gefrorene Bananen gehören nicht zum Original (vorher: Nicecream aus gefrorenen Bananen). AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 377 kcal und 4,6 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Milch. Das vorherige Rezept (Bananen-Eis aus gefrorenen Bananen mit Skyr) wurde damit ersetzt.",
    "storage": "Im Gefrierfach bis zu 1 Monat; vor dem Servieren 10 Minuten antauen lassen.",
    "reheat": "Kalt servieren.",
    "freeze": {
     "ok": "ja",
     "block": 125,
     "months": 1,
-    "note": "Ist selbst ein Eisdessert und wird in 125-ml-Portionen im Gefrierfach aufbewahrt."
+    "note": "Ist selbst ein Eisdessert und wird in Portionsbehältern (Blöcke zu 125 ml) im Gefrierfach aufbewahrt."
    },
-   "src": "Eigene Fassung (Claude) nach Chefkoch „Bananen-Eis“ (https://www.chefkoch.de/rezepte/1484001253619546/Bananen-Eis.html); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), gesamte Charge als 6 Portionen gerechnet (Annahme), Anleitung sinngemäß",
+   "src": "Eigene Fassung (Claude) nach Chefkoch „Bananen-Eis“ (https://www.chefkoch.de/rezepte/1484001253619546/Bananen-Eis.html); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), gesamte Charge als 4 Portionen gerechnet (Entscheidung 01.11.2026), Anleitung sinngemäß",
    "origin": "Deutschland"
   }),
   R({
@@ -22991,130 +23021,57 @@ SEED2.push(
   }
   ),
   R({
-   "name": "No-Churn-Eis mit Skyr und Baiserschaum",
+   "name": "No-Churn-Eis mit Kondensmilch und Double Cream (No-churn ice cream)",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "Großbritannien",
    "servings": 4,
-   "prep": 25,
-   "cook": 10,
-   "level": "mittel",
-   "devices": [
-    "Herd"
-   ],
+   "prep": 10,
+   "cook": 0,
+   "level": "leicht",
+   "devices": [],
    "tags": [
     "Eis",
-    "proteinreich",
     "Dessert",
     "Gefrierer",
-    "Meal Prep"
+    "Meal Prep",
+    "ohne Eismaschine"
    ],
    "mp": true,
    "ing": [
     [
-     "eiklar",
-     66
+     "kondensmilch_gezuckert",
+     99
     ],
     [
-     "zucker",
-     40
+     "doppelrahm_sahne",
+     300
     ],
     [
-     "skyr",
-     400
-    ],
-    [
-     "sahne",
-     60
+     "vanilleextrakt",
+     2.5
     ]
    ],
-   "spices": [
-    "vanille"
-   ],
+   "spices": [],
    "steps": [
-    "Eiklar und Zucker in einer hitzefesten Schüssel über einem Wasserbad (siedend, die Schüssel berührt das Wasser nicht) 3 bis 4 Minuten schlagen, bis die Masse 70 bis 75 °C erreicht und der Zucker gelöst ist.",
-    "Vom Wasserbad nehmen und mit dem Handrührgerät 5 bis 6 Minuten zu einem festen, glänzenden Schaum schlagen, bis er abgekühlt ist.",
-    "Die Sahne separat halbsteif schlagen. Skyr mit Vanille glatt rühren, die Sahne unterheben, dann den Baiserschaum in zwei Portionen vorsichtig unterziehen.",
-    "In eine Kastenform füllen, abdecken und mindestens 6 Stunden einfrieren. Ein Rühren ist nicht nötig. Vor dem Servieren 10 Minuten antauen lassen."
+    "Die gezuckerte Kondensmilch, die Double Cream und den Vanilleextrakt in eine große, gut gekühlte Schüssel geben.",
+    "Mit dem Handrührgerät oder in der Küchenmaschine steif aufschlagen, bis die Masse feste Spitzen bildet.",
+    "In einen gefrierfesten Behälter füllen, glatt streichen, abdecken und mindestens 6 Stunden einfrieren (Richtwert, Gefrierzeit nicht in der Quelle). Vor dem Servieren 10 Minuten antauen lassen."
    ],
-   "tips": "Das klassische No-Churn-Eis arbeitet mit geschlagener Sahne und gezuckerter Kondensmilch; hier steckt das Volumen im erhitzten Baiserschaum (kein rohes Eiklar). Weniger Sahne, mehr Skyr: das Eis wird fester als das Original. Enthält Milch und Ei.",
-   "storage": "Im Gefrierer bis zu 2 Monate.",
-   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "tips": "Fassung nach dem BBC-Good-Food-Rezept „No-churn ice cream“ (8 Portionen im Original, auf 4 Portionen halbiert, Faktor ½; ohne Ei und ohne Eismaschine). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind ½ Dose gezuckerte Kondensmilch aus 397 g (rund 99 g für 4 Portionen), 300 ml britische Double Cream (rund 300 g, als Doppelrahm-Sahne mit rund 48 % Fett angesetzt; nicht mit Schlagsahne 30 % gleichzusetzen) und ½ TL Vanilleextrakt (rund 2,5 ml). Eiklar, Zucker und Skyr gehören nicht zum Original. Die Quelle nennt für die Arbeit nur wenige Minuten, die Gefrierzeit kommt dazu. AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 418 kcal und 3,2 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Milch. Das vorherige Rezept (No-Churn-Eis mit Skyr und Baiserschaum) wurde damit ersetzt.",
+   "storage": "Im Gefrierfach bis zu 2 Monate; vor dem Servieren 10 Minuten antauen lassen.",
+   "reheat": "Kalt servieren.",
    "freeze": {
     "ok": "ja",
     "block": 125,
     "months": 2,
-    "note": "In 125-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+    "note": "Ist selbst ein Eisdessert; in 125-ml-Blöcken im Gefrierfach aufbewahren, 10 Minuten antauen lassen."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/no-churn-ice-cream (bbcgoodfood.com, No-churn ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach BBC Good Food „No-churn ice cream“ (https://www.bbcgoodfood.com/recipes/no-churn-ice-cream); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 8 Portionen auf 4 halbiert (ca.), Anleitung sinngemäß",
    "origin": "Großbritannien"
   }),
   R({
-   "name": "Schokoladeneis mit Skyr und Zartbitter",
-   "meal": "Dessert",
-   "group": "Vegetarisch",
-   "cuisine": "Großbritannien",
-   "servings": 4,
-   "prep": 15,
-   "cook": 8,
-   "level": "leicht",
-   "devices": [
-    "Herd"
-   ],
-   "tags": [
-    "Eis",
-    "proteinreich",
-    "Dessert",
-    "Gefrierer",
-    "Meal Prep"
-   ],
-   "mp": true,
-   "ing": [
-    [
-     "milch15",
-     250
-    ],
-    [
-     "kakao",
-     20
-    ],
-    [
-     "zartbitter",
-     40
-    ],
-    [
-     "zucker",
-     40
-    ],
-    [
-     "skyr",
-     300
-    ]
-   ],
-   "spices": [
-    "vanille",
-    "salz"
-   ],
-   "steps": [
-    "Milch, Kakao und Zucker in einem Topf unter Rühren erhitzen, bis der Kakao gelöst ist und die Milch leicht köchelt (2 Minuten).",
-    "Vom Herd nehmen, die gehackte Schokolade zugeben und glatt rühren. Vanille und eine Prise Salz zugeben, abkühlen lassen.",
-    "Den Skyr unterrühren, bis die Masse glatt ist. In eine flache Schale füllen und 4 bis 5 Stunden einfrieren; in den ersten 2 Stunden alle 30 Minuten durchrühren.",
-    "Vor dem Servieren 10 Minuten antauen lassen und in Kugeln stechen."
-   ],
-   "tips": "Das Original ist unbekannt (Seite gesperrt): Dies ist ein einfaches Schokoladeneis ohne Ei, das mit Skyr statt Sahne gebaut ist. Kakao und Schokolade enthalten Histamin. Enthält Milch; Schokolade kann Spuren von Nüssen enthalten.",
-   "storage": "Im Gefrierer bis zu 2 Monate.",
-   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
-   "freeze": {
-    "ok": "ja",
-    "block": 250,
-    "months": 2,
-    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
-   },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/chocolate-ice-cream (bbcgoodfood.com, Chocolate ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
-   "origin": "Großbritannien"
-  }),
-  R({
-   "name": "Himbeer-Ripple-Eis mit Skyr und Quark",
+   "name": "Schokoladeneis mit Double Cream und Kondensmilch (Chocolate ice cream)",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "Großbritannien",
@@ -23127,119 +23084,188 @@ SEED2.push(
    ],
    "tags": [
     "Eis",
-    "proteinreich",
     "Dessert",
     "Gefrierer",
-    "Meal Prep"
+    "Meal Prep",
+    "ohne Eismaschine"
    ],
    "mp": true,
    "ing": [
     [
-     "skyr",
-     400
-    ],
-    [
-     "magerquark",
+     "zartbitter",
      100
     ],
     [
-     "zucker",
-     40
-    ],
-    [
-     "himbeeren",
+     "doppelrahm_sahne",
      250
-    ]
-   ],
-   "spices": [
-    "vanille"
-   ],
-   "steps": [
-    "Die Himbeeren mit 15 g Zucker 4 bis 5 Minuten köcheln, bis sie zerfallen, durch ein Sieb streichen und abkühlen lassen.",
-    "Skyr, Quark, restlichen Zucker (25 g) und Vanille glatt verrühren.",
-    "Die Eismasse in eine Schale füllen, das Himbeerpüree darüber verteilen und mit einer Gabel in wenigen Zügen locker durchziehen, damit Schlieren bleiben.",
-    "5 bis 6 Stunden einfrieren. Vor dem Servieren 10 Minuten antauen lassen und in Kugeln stechen."
-   ],
-   "tips": "Das Original ist unbekannt (Seite gesperrt): Dies ist ein Himbeer-Ripple-Eis nach dem Titel, mit Skyr und Quark statt Sahne. Die Kerne der Himbeeren sind fein; bei Bedarf das Püree sieben. Enthält Milch.",
-   "storage": "Im Gefrierer bis zu 2 Monate.",
-   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
-   "freeze": {
-    "ok": "ja",
-    "block": 250,
-    "months": 2,
-    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
-   },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/raspberry-ripple-ice-cream (bbcgoodfood.com, Raspberry ripple ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
-   "origin": "Großbritannien"
-  }),
-  R({
-   "name": "Buntes Beeren-Bananen-Eis am Stiel mit Skyr",
-   "meal": "Dessert",
-   "group": "Vegetarisch",
-   "cuisine": "Großbritannien",
-   "servings": 3,
-   "prep": 15,
-   "cook": 0,
-   "level": "leicht",
-   "devices": ["Mixer"],
-   "tags": [
-    "Eis",
-    "proteinreich",
-    "Dessert",
-    "Gefrierer",
-    "Meal Prep"
-   ],
-   "mp": true,
-   "ing": [
-    [
-     "skyr",
-     300
     ],
     [
-     "beeren_tk",
-     150
+     "kondensmilch_gezuckert",
+     170
     ],
     [
-     "banane",
-     100
+     "vanilleextrakt",
+     2.5
     ],
     [
-     "honig",
-     15
+     "kakao",
+     7.5
+    ],
+    [
+     "milchschokolade",
+     25
     ]
    ],
    "spices": [],
    "steps": [
-    "Beeren leicht antauen lassen, Banane in Stücke brechen.",
-    "Alles mit Skyr und Honig im Standmixer zu einer glatten Masse pürieren.",
-    "In drei kleine Becher oder Eisförmchen füllen, Holzstiele einstecken und mindestens 5 Stunden einfrieren.",
-    "Zum Lösen die Förmchen kurz in warmes Wasser tauchen."
+    "Die Zartbitterschokolade hacken und im Wasserbad oder in der Mikrowelle langsam schmelzen, danach leicht abkühlen lassen.",
+    "Die Double Cream mit der gezuckerten Kondensmilch und dem Vanilleextrakt steif aufschlagen.",
+    "Das Kakaopulver und die geschmolzene Schokolade vorsichtig unterheben, zuletzt die Milchschokoladen-Chips unterziehen.",
+    "In einen gefrierfesten Behälter füllen, abdecken und mindestens 6 Stunden einfrieren. Vor dem Servieren 10 Minuten antauen lassen, nach Wunsch mit Meersalzflocken bestreuen (optional, nicht mitgerechnet)."
    ],
-   "tips": "Das Original (Silly Twits ice cream) ist unbekannt, die Seite ist gesperrt: Dies ist ein einfaches buntes Eis am Stiel nach dem Titel, ohne Zucker außer dem Honig. Für kleine Kinder passt Honig nicht (unter 1 Jahr nicht geben): dann durch Ahornsirup ersetzen. Enthält Milch.",
-   "storage": "Im Gefrierer bis zu 2 Monate.",
-   "reheat": "Vor dem Essen 2 Minuten antauen lassen.",
+   "tips": "Fassung nach dem BBC-Good-Food-Rezept „Chocolate ice cream“ (laut Quelle 6 bis 8 Portionen, hier auf 4 Portionen mit Faktor ½ gerechnet, bezogen auf 8 Portionen; bei 6 Portionen ist der Faktor ⅔, also rund 133 g Zartbitterschokolade, 333 ml Double Cream, 227 g Kondensmilch, 3,3 ml Vanilleextrakt, 10 g Kakao und 33 g Milchschokoladen-Chips). Kein Ei, keine Eismaschine. Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 100 g Zartbitterschokolade (mindestens 70 %), 250 ml Double Cream (rund 250 g, als Doppelrahm-Sahne mit rund 48 % Fett angesetzt), 170 g gezuckerte Kondensmilch (Dosen à 340 g), ½ TL Vanilleextrakt (rund 2,5 ml), 1½ EL Kakaopulver (Annahme rund 7,5 g) und 25 g Vollmilch-Schokoladenchips (als Milchschokolade angesetzt). Milch, Magerquark-artige Zutaten, Skyr und zusätzlicher Zucker gehören nicht zum Original; die Süße kommt aus Kondensmilch und Schokolade. AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 592 kcal und 6,9 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Milch; Schokolade kann Soja und Spuren von Nüssen enthalten. Kakao und Schokolade enthalten Histamin. Das vorherige Rezept (Schokoladeneis mit Skyr und Zartbitter) wurde damit ersetzt.",
+   "storage": "Im Gefrierfach bis zu 2 Monate; vor dem Servieren 10 Minuten antauen lassen.",
+   "reheat": "Kalt servieren.",
    "freeze": {
     "ok": "ja",
-    "block": 250,
+    "block": 125,
     "months": 2,
-    "note": "Fertige Eis am Stiel einzeln in 250-ml-Blöcken einfrieren."
+    "note": "Ist selbst ein Eisdessert; in 125-ml-Blöcken im Gefrierfach aufbewahren, 10 Minuten antauen lassen."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/silly-twits-ice-cream (bbcgoodfood.com, Silly Twits ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach BBC Good Food „Chocolate ice cream“ (https://www.bbcgoodfood.com/recipes/chocolate-ice-cream); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 8 Portionen auf 4 halbiert (ca.), Anleitung sinngemäß",
    "origin": "Großbritannien"
   }),
   R({
-   "name": "Veganes Schokoladeneis mit Tofu und Banane",
+   "name": "Himbeer-Ripple-Eis mit Double Cream und Ei (Raspberry ripple ice cream)",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 4,
+   "prep": 30,
+   "cook": 10,
+   "level": "mittel",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Eis",
+    "Dessert",
+    "Gefrierer",
+    "Meal Prep",
+    "ohne Eismaschine"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "himbeeren",
+     83
+    ],
+    [
+     "zucker",
+     75
+    ],
+    [
+     "eier",
+     35
+    ],
+    [
+     "eigelb",
+     25
+    ],
+    [
+     "doppelrahm_sahne",
+     200
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Für den Himbeer-Coulis die Himbeeren mit etwa einem Drittel des Zuckers (Aufteilung ist eine Annahme) kurz aufkochen, bis sie zerfallen; bei Tiefkühlbeeren sprudelnd aufkochen und mindestens 2 Minuten durchkochen (BfR). Durch ein Sieb streichen und vollständig abkühlen lassen.",
+    "Pasteurisiertes Ei, Eigelb und den restlichen Zucker in einer hitzefesten Schüssel über einem heißen Wasserbad (die Schüssel berührt das Wasser nicht) mit dem Handrührgerät aufschlagen, bis die Masse dick, hell und auf etwa 70 bis 75 °C erwärmt ist (allgemeiner Richtwert, nicht aus der Quelle). Dann aus dem Wasserbad nehmen und kalt weiterschlagen, bis sie abgekühlt ist.",
+    "Die Double Cream steif schlagen und vorsichtig unter die Ei-Zucker-Masse heben.",
+    "Die Hälfte der Eismasse in einen gefrierfesten Behälter füllen, einen Teil des Coulis darüberträufeln, den Rest der Eismasse einfüllen und den übrigen Coulis mit einer Gabel locker durchziehen, damit Schlieren bleiben.",
+    "Abdecken und mindestens 6 Stunden einfrieren. Vor dem Servieren 10 Minuten antauen lassen."
+   ],
+   "tips": "Fassung nach dem BBC-Good-Food-Rezept „Raspberry ripple ice cream“ (12 Portionen im Original, auf 4 Portionen gerechnet, Faktor ⅓). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind rund 83 g Himbeeren (250 g ÷ 3), 75 g feiner Zucker (225 g ÷ 3), ⅔ großes Ei (Annahme rund 35 g, Spanne 33 bis 37 g), 1⅓ große Eigelb (Annahme rund 25 g, Spanne 23 bis 27 g) und 200 ml Double Cream (600 ml ÷ 3, rund 200 g, als Doppelrahm-Sahne mit rund 48 % Fett angesetzt). Wie sich der Zucker auf Coulis und Eier verteilt, nennt die Prüfung nicht (Annahme: ein Drittel zu den Himbeeren). Eier und Eigelb bitte pasteurisiert verwenden (Flüssigei), weil das kurze Wasserbad keine verlässliche Pasteurisierung ist und das Eis danach nicht durcherhitzt wird (BfR). Zusätzliche Himbeeren, Mango, Streusel und Eiswaffeln sind nur Serviervorschläge und nicht mitgerechnet. Skyr, Magerquark und Vanille gehören nicht zum Original. AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 342 kcal und 3,1 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Milch und Ei. Das vorherige Rezept (Himbeer-Ripple-Eis mit Skyr und Quark) wurde damit ersetzt.",
+   "storage": "Im Gefrierfach bis zu 2 Monate; vor dem Servieren 10 Minuten antauen lassen.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 2,
+    "note": "Ist selbst ein Eisdessert; in 125-ml-Blöcken im Gefrierfach aufbewahren, 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach BBC Good Food „Raspberry ripple ice cream“ (https://www.bbcgoodfood.com/recipes/raspberry-ripple-ice-cream); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 12 Portionen auf 4 gerechnet (ca.), Anleitung sinngemäß",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Silly-Twits-Eis aus Ei und Double Cream (Silly Twits ice cream)",
+   "meal": "Dessert",
+   "group": "Vegetarisch",
+   "cuisine": "Großbritannien",
+   "servings": 3,
+   "prep": 20,
+   "cook": 0,
+   "level": "mittel",
+   "devices": [],
+   "tags": [
+    "Eis",
+    "Dessert",
+    "Gefrierer",
+    "Meal Prep",
+    "ohne Eismaschine"
+   ],
+   "mp": true,
+   "ing": [
+    [
+     "eier",
+     110
+    ],
+    [
+     "zucker",
+     70
+    ],
+    [
+     "doppelrahm_sahne",
+     150
+    ],
+    [
+     "vanilleextrakt",
+     2.5
+    ]
+   ],
+   "spices": [],
+   "steps": [
+    "Die Eier trennen (pasteurisiertes Ei verwenden, Eiweiß und Eigelb getrennt). Das Eiweiß steif schlagen und die Hälfte des Zuckers (Aufteilung ist eine Annahme) einrieseln lassen, bis ein fester, glänzender Schnee entsteht.",
+    "Das Eigelb mit dem restlichen Zucker und dem Vanilleextrakt hell und cremig aufschlagen.",
+    "Die Double Cream steif schlagen, zuerst die Eigelbmasse, dann den Eischnee vorsichtig unterheben.",
+    "In einen gefrierfesten Behälter füllen, abdecken und mindestens 6 Stunden einfrieren (Richtwert, Zeit nicht in der Quelle). Vor dem Servieren 10 Minuten antauen lassen."
+   ],
+   "tips": "Fassung nach dem BBC-Good-Food-Rezept „Silly Twits ice cream“ (6 Portionen im Original, auf 3 Portionen halbiert, Faktor ½). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 2 Eier (Größe M, rund 110 g; Original 4 Eier), 70 g feiner Zucker (140 g ÷ 2), 150 ml Double Cream (300 ml ÷ 2, rund 150 g, als Doppelrahm-Sahne mit rund 48 % Fett angesetzt) und ½ TL Vanilleextrakt (rund 2,5 ml). Das Rezept wird nicht erhitzt; deshalb nur pasteurisiertes Ei (Flüssigei oder Eier mit Pasteurisierungsangabe) verwenden (BfR). Es ist kein Eis am Stiel; Skyr, Beerenmischung, Banane und Honig gehören nicht zum Original. AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 368 kcal und 5,6 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Milch und Ei. Das vorherige Rezept (Buntes Beeren-Bananen-Eis am Stiel mit Skyr) wurde damit ersetzt.",
+   "storage": "Im Gefrierfach bis zu 2 Monate; vor dem Servieren 10 Minuten antauen lassen.",
+   "reheat": "Kalt servieren.",
+   "freeze": {
+    "ok": "ja",
+    "block": 125,
+    "months": 2,
+    "note": "Ist selbst ein Eisdessert; in 125-ml-Blöcken im Gefrierfach aufbewahren, 10 Minuten antauen lassen."
+   },
+   "src": "Eigene Fassung (Claude) nach BBC Good Food „Silly Twits ice cream“ (https://www.bbcgoodfood.com/recipes/silly-twits-ice-cream); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 6 Portionen auf 3 halbiert (ca.), Anleitung sinngemäß",
+   "origin": "Großbritannien"
+  }),
+  R({
+   "name": "Veganes Schokoladeneis mit Kokosmilch (Vegan chocolate ice cream)",
    "meal": "Dessert",
    "group": "Vegetarisch",
    "cuisine": "Großbritannien",
    "servings": 3,
    "prep": 15,
-   "cook": 0,
+   "cook": 10,
    "level": "leicht",
-   "devices": ["Mixer"],
+   "devices": [
+    "Herd"
+   ],
    "tags": [
     "Eis",
-    "proteinreich",
     "Dessert",
     "Gefrierer",
     "vegan",
@@ -23248,50 +23274,46 @@ SEED2.push(
    "mp": true,
    "ing": [
     [
-     "sojadrink",
-     250
+     "kokosmilch",
+     240
     ],
     [
-     "tofu",
-     150
+     "zucker",
+     52.5
     ],
     [
      "kakao",
-     25
-    ],
-    [
-     "banane",
-     120
-    ],
-    [
-     "ahornsirup",
-     40
-    ],
-    [
-     "erdnussmus",
      15
+    ],
+    [
+     "zartbitter_vegan",
+     30
+    ],
+    [
+     "speisestaerke",
+     5
     ]
    ],
    "spices": [
-    "vanille",
-    "salz"
+    "salz",
+    "vanille"
    ],
    "steps": [
-    "Die Banane in Scheiben schneiden. Alle Zutaten in einen Standmixer geben und 1 bis 2 Minuten sehr fein pürieren, bis keine Tofustückchen mehr zu spüren sind.",
-    "Abschmecken, bei Bedarf mit etwas Ahornsirup nachsüßen.",
-    "In eine flache Schale füllen und 4 bis 5 Stunden einfrieren; in den ersten 2 Stunden alle 30 Minuten kräftig durchrühren.",
-    "Vor dem Servieren 10 Minuten antauen lassen und in Kugeln stechen."
+    "Die vegane Schokolade hacken. Die Speisestärke mit etwas kaltem Wasser (Annahme, nicht gerechnet) glatt rühren.",
+    "Kokosmilch, Kakao, Zucker, Schokolade, Vanille (rund 4,5 ml Extrakt) und eine Prise Salz in einem Topf unter Rühren erhitzen, bis Zucker und Schokolade gelöst sind.",
+    "Die Stärkemischung einrühren und unter Rühren kurz aufkochen, bis die Masse andickt. Vollständig abkühlen lassen (kalt stellen).",
+    "In der Eismaschine cremig rühren. Ohne Gerät in eine flache Schale füllen, einfrieren und in den ersten Stunden regelmäßig kräftig durchrühren (Richtwert alle 30 Minuten, Zeit nicht in der Quelle). Vor dem Servieren 10 Minuten antauen lassen."
    ],
-   "tips": "Das Original ist unbekannt (Seite gesperrt): Dies ist ein veganes Schokoladeneis nach dem Titel; der Tofu liefert Eiweiß und Cremigkeit (nach dem Mixen kaum zu schmecken). Enthält Soja und Erdnüsse (Erdnussmus). Kakao enthält Histamin.",
-   "storage": "Im Gefrierer bis zu 2 Monate.",
-   "reheat": "Vor dem Servieren 10 Minuten antauen lassen.",
+   "tips": "Fassung nach dem BBC-Good-Food-Rezept „Vegan chocolate ice cream“ (10 Portionen im Original, auf 3 Portionen gerechnet, Faktor 0,3). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 240 g Kokosmilch aus der Dose (nicht light; 800 g × 0,3), 52,5 g Zucker (175 g × 0,3), 15 g Kakaopulver (50 g × 0,3), 30 g vegane Zartbitterschokolade (100 g × 0,3) und rund 5 g Speisestärke (Annahme für 0,6 EL). Salz (rund 0,3 TL) und Vanilleextrakt (rund 4,5 ml) stehen als Gewürze ohne Menge. Sojadrink, Tofu, Banane, Ahornsirup und Erdnussmus gehören nicht zum Original. Die Eismaschine steht nicht in der Geräteliste. Das Gesamtvolumen entspricht nur wenigen Kugeln. AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 329 kcal und 4 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Kokos; Schokolade kann Soja enthalten. Kakao enthält Histamin. Das vorherige Rezept (Veganes Schokoladeneis mit Tofu und Banane) wurde damit ersetzt.",
+   "storage": "Im Gefrierfach bis zu 2 Monate; vor dem Servieren 10 Minuten antauen lassen.",
+   "reheat": "Kalt servieren.",
    "freeze": {
     "ok": "ja",
-    "block": 250,
+    "block": 125,
     "months": 2,
-    "note": "In 250-ml-Blöcken einfrieren; 10 Minuten antauen lassen."
+    "note": "Ist selbst ein Eisdessert; in 125-ml-Blöcken im Gefrierfach aufbewahren, 10 Minuten antauen lassen."
    },
-   "src": "Eigene Fassung (Claude) nach allgemeinem Kochwissen, nicht von Perplexity. Der Auftraggeber nannte den Link https://www.bbcgoodfood.com/recipes/vegan-chocolate-ice-cream (bbcgoodfood.com, Vegan chocolate ice cream); die Seite ist für meine Werkzeuge gesperrt und wurde nicht gelesen, die Zutaten des Originals sind unbekannt, Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach BBC Good Food „Vegan chocolate ice cream“ (https://www.bbcgoodfood.com/recipes/vegan-chocolate-ice-cream); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 10 Portionen auf 3 gerechnet (ca.), Anleitung sinngemäß",
    "origin": "Großbritannien"
   })
 );
@@ -23832,7 +23854,7 @@ SEED2.push(
    "mp": true,
    "ing": [
     [
-     "haselnuesse",
+     "haselnuesse_ziehen",
      355
     ],
     [
@@ -23854,6 +23876,10 @@ SEED2.push(
     [
      "mascarpone",
      225
+    ],
+    [
+     "vanilleextrakt",
+     15
     ]
    ],
    "spices": [
@@ -23865,11 +23891,11 @@ SEED2.push(
     "Haselnüsse, Sahne, Milch und die ausgekratzte Vanilleschote (optional) in einem 3-Liter-Topf bei mittlerer Hitze unter gelegentlichem Rühren zum Kochen bringen. Vom Herd nehmen, abdecken, auf Raumtemperatur abkühlen lassen und dann über Nacht, höchstens 36 Stunden, im Kühlschrank ziehen lassen.",
     "Die Mischung erneut zum Kochen bringen und durch ein feines Sieb in eine große Schüssel abseihen; die Nüsse dabei gut andrücken, um möglichst viel Flüssigkeit zu gewinnen. Die Nüsse werden für die Eismasse nicht mehr gebraucht.",
     "Den Topf so weit abkühlen lassen, dass er sicher anfassbar ist. Zucker, Eigelbe, Salz und das Vanillemark zugeben und glatt rühren. Die warme Haselnussmilch und die zimmerwarme Mascarpone nach und nach einrühren.",
-    "Bei mittlerer bis niedriger Hitze unter ständigem Rühren erwärmen; sobald die Masse warm ist, auf mittlere Hitze erhöhen und rühren, bis sie dickflüssig und dampfend heiß ist (etwa 74 °C). Durch ein feines Sieb in einen Behälter abseihen, Vanilleextrakt oder Haselnusslikör einrühren.",
+    "Bei mittlerer bis niedriger Hitze unter ständigem Rühren erwärmen; sobald die Masse warm ist, auf mittlere Hitze erhöhen und rühren, bis sie dickflüssig und dampfend heiß ist (etwa 74 °C). Durch ein feines Sieb in einen Behälter abseihen, 15 g Vanilleextrakt oder Frangelico (Haselnusslikör) einrühren, eine der beiden Varianten, nicht beide.",
     "Die Masse abdecken und im Kühlschrank (oder Eisbad) auf höchstens 4 °C abkühlen lassen. In der Eismaschine cremig gefrieren lassen, in einen gefrierfesten Behälter füllen und mindestens 2 Stunden im Gefrierfach fest werden lassen (oder direkt als Soft Eis genießen).",
     "In acht Portionen aufteilen und mit gerösteten Haselnüssen garnieren."
    ],
-   "tips": "Auf Wunsch folgt diese Fassung den Zutaten und Mengen des eingereichten Rezepttextes (adaptiert von Serious Eats, Stella Parks), ohne Skyr und ohne Kürzungen. Der Text nennt 691 kcal und 13 g Eiweiß pro Portion bei 8 Portionen; die App rechnet selbst. Sie liegt damit weit über dem Kalorienrahmen für Desserts (350 kcal), das Eiweißziel von 10 g wird erreicht. Die App rechnet alle 355 g Haselnüsse ein, obwohl die abgeseihten Nüsse nicht im Eis landen (der Text nennt sie für selbstgemachtes Nutella, höchstens 1 Woche im Kühlschrank); die tatsächliche Portion liegt daher etwas niedriger. Mit Vanilleextrakt oder Frangelico (nicht eingerechnet). Benötigt wird eine Eismaschine. Enthält Schalenfrüchte, Milch und Ei. Die Eicreme wird auf etwa 74 °C erhitzt.",
+   "tips": "Fassung nach dem Serious-Eats-Rezept „Hazelnut mascarpone ice cream“ (8 Portionen im Original, unverändert, Faktor 1). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. QUELLENWIDERSPRUCH zur manuellen Klärung: Die Haselnussmenge steht im Original doppelt, als 355 g und als „9 oz“ (das wären nur rund 255 g). Die App übernimmt vorläufig die metrische Angabe 355 g; die Menge wurde nicht eigenmächtig geändert. Die Nüsse ziehen nur in Sahne und Milch (über Nacht, höchstens 36 Stunden) und werden danach abgeseiht; sie sind deshalb als eigene Zutat „Haselnüsse zum Ziehenlassen“ ohne Nährwert gerechnet. Der Fettübergang aus den Nüssen ins Eis ist nicht erfasst, die Nährwerte können daher etwas zu niedrig liegen (die Quelle nennt höhere Werte). Weitere Mengen: 285 g Sahne (Original: Heavy Cream mit höherem Fettgehalt, hier als Schlagsahne 30 % angesetzt), 225 g Vollmilch, 170 g Zucker, 140 g Eigelb, 225 g Mascarpone, 3 g Salz (Gewürz), 1 Vanilleschote (optional) und 15 g Vanilleextrakt oder Frangelico (eine Variante; bei Frangelico entsteht zusätzlich Alkoholenergie, die nicht gerechnet ist). Benötigt wird eine Eismaschine (nicht in der Geräteliste); die Eicreme wird auf etwa 74 °C erhitzt und auf höchstens 4 °C gekühlt. Enthält Schalenfrüchte, Milch und Ei.",
    "storage": "Im Gefrierfach luftdicht verschlossen, die Oberfläche mit Frischhaltefolie bedecken, bis zu 1 Monat (Angabe der Vorlage).",
    "reheat": "Vor dem Servieren einige Minuten antauen lassen.",
    "freeze": {
@@ -23878,7 +23904,7 @@ SEED2.push(
     "months": 1,
     "note": "Je Portion ein 125-ml-Block; die Vorlage nennt höchstens 1 Monat im Gefrierfach."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (adaptiert aus Serious Eats „Hazelnut Mascarpone Ice Cream“, https://www.seriouseats.com/hazelnut-mascarpone-ice-cream) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, ohne Skyr, in eigenen Worten; die Seite ist für Claude gesperrt und wurde nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach Serious Eats „Hazelnut Mascarpone Ice Cream“ (https://www.seriouseats.com/hazelnut-mascarpone-ice-cream); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 8 Portionen unverändert (ca.), Haselnussmenge laut metrischer Angabe, Anleitung sinngemäß",
    "origin": "USA"
   })
 );
@@ -23891,7 +23917,7 @@ SEED2.push(
    "group": "Vegetarisch",
    "cuisine": "USA",
    "servings": 8,
-   "prep": 30,
+   "prep": 130,
    "cook": 20,
    "level": "mittel",
    "devices": [
@@ -23911,7 +23937,11 @@ SEED2.push(
    "ing": [
     [
      "walnuesse",
-     225
+     113.5
+    ],
+    [
+     "walnuesse_ziehen",
+     113.5
     ],
     [
      "sahne",
@@ -23931,19 +23961,18 @@ SEED2.push(
     ]
    ],
    "spices": [
-    "vanille",
     "salz"
    ],
    "steps": [
-    "Den Backofen auf 175 °C vorheizen. Die Walnüsse auf einem Blech verteilen, 8 bis 10 Minuten rösten, bis sie duften und leicht gebräunt sind, abkühlen lassen und grob hacken.",
-    "Sahne, Milch und die Hälfte der gehackten Walnüsse im Topf bei mittlerer Hitze unter gelegentlichem Rühren zum Kochen bringen. Vom Herd nehmen, abdecken und 30 Minuten ziehen lassen, dann durch ein feines Sieb abseihen. Die eingelegten Nüsse beiseitestellen (als Topping verwendbar).",
-    "Den Topf so weit abkühlen lassen, dass er sicher anfassbar ist. Eigelbe, Ahornsirup und Salz zugeben und glatt rühren, dann die warme Walnussmilch nach und nach einrühren.",
-    "Bei mittlerer bis niedriger Hitze unter ständigem Rühren erwärmen; sobald die Masse warm ist, auf mittlere Hitze erhöhen und rühren, bis sie dickflüssig und dampfend heiß ist (etwa 74 °C). Durch ein feines Sieb in einen Behälter abseihen und Vanilleextrakt einrühren.",
-    "Die Masse abdecken und im Kühlschrank (oder Eisbad) auf höchstens 4 °C abkühlen lassen, mindestens 4 Stunden oder über Nacht.",
-    "In der Eismaschine cremig gefrieren lassen und kurz vor Ende die restlichen gehackten Walnüsse zugeben. In einen gefrierfesten Behälter füllen und mindestens 2 Stunden im Gefrierfach fest werden lassen (oder direkt als weiches Eis genießen).",
-    "In acht Portionen aufteilen und nach Wunsch mit gerösteten Walnüssen oder einem Klecks Ahornsirup garnieren."
+    "Den Backofen auf 175 °C vorheizen. Die Walnüsse auf einem Blech verteilen, 8 bis 10 Minuten rösten, bis sie duften und leicht gebräunt sind, abkühlen lassen und grob hacken. Die Nüsse in zwei gleiche Hälften teilen.",
+    "Sahne, Milch und die erste Hälfte der gehackten Walnüsse im Topf bei mittlerer Hitze unter gelegentlichem Rühren zum Kochen bringen. Vom Herd nehmen, abdecken und 1 bis 2 Stunden ziehen lassen, dann durch ein feines Sieb abseihen. Die abgeseihten Nüsse werden nicht mehr gebraucht und verworfen.",
+    "Den Topf so weit abkühlen lassen, dass er sicher anfassbar ist. Eigelbe, dunklen Ahornsirup und Salz (½ bis 1 TL, nach Geschmack) zugeben und glatt rühren, dann die warme Walnussmilch nach und nach einrühren.",
+    "Bei mittlerer bis niedriger Hitze unter ständigem Rühren erwärmen, bis die Masse dickflüssig ist und etwa 77 °C erreicht (Original: 170 °F). Durch ein feines Sieb in einen Behälter abseihen.",
+    "Die Masse abdecken und im Kühlschrank (oder Eisbad) auf etwa 4 °C abkühlen lassen, mindestens 4 Stunden oder über Nacht.",
+    "In der Eismaschine cremig gefrieren lassen und kurz vor Ende die zweite Hälfte der gehackten Walnüsse zugeben. In einen gefrierfesten Behälter füllen und mindestens 4 Stunden im Gefrierfach fest werden lassen (oder direkt als weiches Eis genießen).",
+    "In acht Portionen aufteilen und nach Wunsch mit einem Klecks Ahornsirup garnieren (nicht mitgerechnet)."
    ],
-   "tips": "Auf Wunsch folgt diese Fassung den Zutaten und Mengen des eingereichten Rezepttextes (adaptiert von Serious Eats), ohne Skyr und ohne Kürzungen: kein Zucker, der Ahornsirup (dunkel) ersetzt ihn vollständig. Der Text nennt „ca. 6 bis 8“ Portionen und keine Nährwerte; hier sind 8 Portionen angenommen, mit 6 Portionen steigen die Werte auf rund das 1,3-Fache. Die Umrechnung nimmt 475 ml Sahne als 475 g, 240 ml Milch als 240 g und 180 ml Ahornsirup als etwa 240 g. Das Eis liegt weit über dem Kalorienrahmen für Desserts (350 kcal); das Eiweißziel von 10 g wird knapp verfehlt. Die in der Milch eingelegten Walnüsse sind vollständig eingerechnet, obwohl ein Teil als Topping oder Rest übrig bleibt. Benötigt eine Eismaschine. Enthält Schalenfrüchte, Milch und Ei.",
+   "tips": "Fassung nach dem Serious-Eats-Rezept „Maple walnut ice cream“ (8 Portionen im Original, unverändert, Faktor 1). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 8 oz Walnüsse ohne Salz (rund 227 g, hier 225 g aus der Prüfung auf 2 × 113,5 g gerundet), 475 ml Heavy Cream (rund 475 g, hier als Schlagsahne 30 % angesetzt; Original mit höherem Fettgehalt), 237 ml Vollmilch (rund 240 g), 6 große Eigelb (rund 108 g, Spanne 105 bis 120 g) und ¾ Cup dunkler Ahornsirup (rund 180 ml, Annahme 240 g). Die erste Hälfte der Walnüsse zieht nur in Sahne und Milch und wird verworfen; sie steht deshalb als eigene Zutat „Walnüsse zum Ziehenlassen“ ohne Nährwert in der Liste (der Fettübergang ins Eis ist nicht erfasst, die Nährwerte können etwas zu niedrig liegen). Nur die zweite Hälfte kommt ins Eis. Die Quelle enthält keine Vanille und keinen zusätzlichen Zucker; der Ahornsirup süßt allein. Benötigt wird eine Eismaschine (nicht in der Geräteliste). Enthält Walnüsse, Milch und Ei.",
    "storage": "Im Gefrierfach luftdicht verschlossen, die Oberfläche mit Frischhaltefolie bedecken, bis zu 1 Monat (Angabe der Vorlage).",
    "reheat": "Vor dem Servieren einige Minuten antauen lassen.",
    "freeze": {
@@ -23952,7 +23981,7 @@ SEED2.push(
     "months": 1,
     "note": "Je Portion ein 125-ml-Block; die Vorlage nennt höchstens 1 Monat im Gefrierfach."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (adaptiert aus Serious Eats „Maple Walnut Ice Cream“, https://www.seriouseats.com/maple-walnut-ice-cream-recipe) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, ohne Skyr, in eigenen Worten; die Seite ist für Claude gesperrt und wurde nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach Serious Eats „Maple Walnut Ice Cream“ (https://www.seriouseats.com/maple-walnut-ice-cream-recipe); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 8 Portionen unverändert (ca.), Anleitung sinngemäß",
    "origin": "USA"
   })
 );
@@ -23987,7 +24016,7 @@ SEED2.push(
      350
     ],
     [
-     "zucker",
+     "puderzucker",
      20
     ],
     [
@@ -24001,17 +24030,21 @@ SEED2.push(
     [
      "vanilleeis",
      400
+    ],
+    [
+     "zitronenabrieb",
+     2
     ]
    ],
    "spices": [],
    "steps": [
     "Kartoffelpresse (oder Spätzlepresse) und vier Servierschalen etwa 1 Stunde vorher ins Gefrierfach stellen, die weiße Schokolade in den Kühlschrank legen.",
-    "Die Erdbeeren waschen, putzen und klein schneiden. Mit dem Puderzucker (als Zucker gerechnet) und dem Zitronensaft in einem hohen Gefäß mit dem Stabmixer pürieren und kühl stellen.",
+    "Die Erdbeeren waschen, putzen und klein schneiden. Mit dem Puderzucker (2 EL) und dem Zitronensaft in einem hohen Gefäß mit dem Stabmixer pürieren und kühl stellen.",
     "Die Sahne steif schlagen und auf die vorgekühlten Schalen verteilen.",
     "Pro Portion 2 Kugeln Vanilleeis in die gut gekühlte Presse geben und direkt auf die Sahne in die Schalen drücken. Geht es zu schwer, das Eis kurz antauen lassen.",
-    "Das Spaghetti-Eis mit der Erdbeersoße übergießen, die gekühlte weiße Schokolade darüberraspeln und mit der abgeriebenen Bio-Zitronenschale (1 Teelöffel, nicht eingerechnet) bestreuen. Sofort servieren."
+    "Das Spaghetti-Eis mit der Erdbeersoße übergießen, die gekühlte weiße Schokolade darüberraspeln und mit der abgeriebenen Bio-Zitronenschale (1 Teelöffel) bestreuen. Sofort servieren."
    ],
-   "tips": "Auf Wunsch folgt diese Fassung den Zutaten und Mengen des eingereichten Rezepttextes (adaptiert aus essen & trinken, Raik Frenzel), ohne Skyr und ohne Kürzungen. Der Text nennt 509 kcal und 5 g Eiweiß pro Portion; die App rechnet selbst. Sie liegt damit über dem Kalorienrahmen für Desserts (350 kcal) und deutlich unter dem Eiweißziel von 10 g. Puderzucker ist als Zucker gerechnet, 150 ml Sahne als 150 g, die Zitronenschale ist nicht eingerechnet. Je Portion sind 2 Kugeln Eis angesetzt; der Text nennt 2 bis 3 Kugeln, für Kinder 1 bis 2. Die Presse muss gut vorgekühlt sein, cremiges Eis lässt sich leichter pressen, Soße und Schokolade sofort zugeben. Braucht eine Kartoffel- oder Spätzlepresse. Enthält Milch; Schokolade kann Spuren von Nüssen enthalten.",
+   "tips": "Fassung nach dem Essen-und-Trinken-Rezept „Spaghetti-Eis“ (4 Portionen im Original, unverändert, Faktor 1). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 100 g weiße Schokolade, 350 g Erdbeeren, 2 EL Puderzucker (Annahme rund 20 g, früher als normaler Zucker angesetzt), 1 TL Zitronensaft (rund 5 ml), 150 ml Schlagsahne (rund 150 g), 400 g Vanilleeis und 1 TL abgeriebene Schale einer Bio-Zitrone (Annahme rund 2 g). Je Portion sind 2 Kugeln Eis angesetzt; der Text nennt 2 bis 3 Kugeln, für Kinder 1 bis 2. Zeit: 25 Minuten plus rund 1 Stunde Vorkühlzeit für Presse und Schalen. Die Presse muss gut vorgekühlt sein, cremiges Eis lässt sich leichter pressen, Soße und Schokolade sofort zugeben. Braucht eine Kartoffel- oder Spätzlepresse. AUSNAHME: Das Dessert liegt außerhalb des Dessert-Rahmens (rund 502 kcal und 5,5 g Eiweiß je Portion), weil die Mengen unverändert aus dem Original stammen. Enthält Milch; weiße Schokolade kann Soja und Spuren von Nüssen enthalten.",
    "storage": "Nicht aufbewahren, sofort essen: Die Spaghetti-Form geht beim Einfrieren verloren (Angabe der Vorlage).",
    "reheat": "Nicht aufwärmen, sofort servieren.",
    "freeze": {
@@ -24020,7 +24053,7 @@ SEED2.push(
     "months": 0,
     "note": "Die Spaghetti-Form geht beim Einfrieren verloren; frisch zubereiten und sofort essen."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (adaptiert aus essen & trinken „Spaghetti-Eis“, https://www.essen-und-trinken.de/rezepte/spaghetti-eis-13354700.html) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, ohne Skyr, in eigenen Worten; die Seite ist laut robots.txt nicht abrufbar und wurde nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach Essen und Trinken „Spaghetti-Eis“ (https://www.essen-und-trinken.de/rezepte/spaghetti-eis-13354700.html); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 4 Portionen unverändert (ca.), Anleitung sinngemäß",
    "origin": "Deutschland"
   })
 );
@@ -24033,10 +24066,13 @@ SEED2.push(
    "group": "Vegetarisch",
    "cuisine": "Großbritannien",
    "servings": 4,
-   "prep": 5,
-   "cook": 0,
+   "prep": 10,
+   "cook": 5,
    "level": "leicht",
-   "devices": ["Mixer"],
+   "devices": [
+    "Herd",
+    "Mixer"
+   ],
    "tags": [
     "Eis",
     "Joghurteis",
@@ -24052,7 +24088,7 @@ SEED2.push(
      250
     ],
     [
-     "joghurt10",
+     "joghurt_griechisch_mager",
      250
     ],
     [
@@ -24062,11 +24098,11 @@ SEED2.push(
    ],
    "spices": [],
    "steps": [
-    "Die gefrorene Beerenmischung, den griechischen Joghurt und den Honig in einen Mixer oder Foodprozessor geben.",
-    "Etwa 20 Sekunden mixen, bis eine glatte, eiscremeartige Masse entsteht.",
-    "Sofort auf vier Schälchen verteilen und servieren."
+    "Tiefgekühlte Beeren vorher in einem kleinen Topf gleichmäßig und vollständig durchkochen (auch im Kern auf ungefähr 90 °C erhitzen, BfR), rasch abkühlen lassen und flach wieder durchfrieren (etwa 2 bis 3 Stunden). Alternativ frische Beeren selbst einfrieren.",
+    "Die gefrorenen Beeren mit dem griechischen Joghurt und dem Honig in den Mixer oder die Küchenmaschine geben.",
+    "Etwa 20 Sekunden mixen, bis eine glatte, eiscremeartige Masse entsteht, und sofort auf vier Schälchen verteilen."
    ],
-   "tips": "Diese Fassung folgt auf Wunsch den Zutaten und Mengen des eingereichten Rezepttextes (adaptiert von BBC Good Food, Cassie Best), ohne Ersatz und ohne Kürzungen. Der Text nennt 80 kcal, 7 g Eiweiß und 0,4 g Fett je Portion; das passt zu fettfreiem griechischem Joghurt. Die App rechnet mit dem vorhandenen griechischen Joghurt mit 10 % Fett und kommt deshalb auf mehr Kalorien und weniger Eiweiß. Honig: 1 Esslöffel ist als 20 g angesetzt (Honig oder Agavensirup, hier Honig). Die Beeren müssen gefroren sein, sonst wird die Masse zu flüssig; normalen Joghurt nicht verwenden. Sofort essen, das Eis schmilzt schnell. Als Abwandlung nennt der Text Mango, Erdbeeren oder Kirschen. Enthält Milch.",
+   "tips": "Fassung nach dem BBC-Good-Food-Rezept „Instant frozen berry yogurt“ (4 Portionen im Original, unverändert, Faktor 1). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Gerechnet sind 250 g gefrorene Beerenmischung, 250 g griechischer Joghurt und 1 EL Honig (Annahme rund 20 g, Spanne 20 bis 21 g); Agavensirup ist im Original nur eine Alternative zum Honig. Die Quelle nennt keine Fettstufe für den Joghurt. Ihre Nährwertangabe (rund 80 kcal, 7 g Eiweiß, 0,4 g Fett je Portion) passt zu fettarmem griechischem Joghurt; deshalb ist hier fettarmer Joghurt angesetzt (Annahme), nicht der früher verwendete mit 10 % Fett. Das Original mixt tiefgekühlte Beeren direkt; wegen der Noroviren-Gefahr bei Tiefkühlbeeren (BfR) steht in der App ein Erhitzungs-, Abkühl- und Wiedereinfrierschritt, der die Vorbereitung verlängert (die Quelle nennt 5 Minuten). Die Beeren müssen gefroren sein, sonst wird die Masse zu flüssig. Sofort essen, das Eis schmilzt schnell. Als Abwandlung nennt die Quelle Mango, Erdbeeren oder Kirschen. Hinweis: Dieses Rezept entspricht r298 (dort 2 statt 4 Portionen). Enthält Milch.",
    "storage": "Am besten sofort essen. Reste luftdicht im Gefrierfach aufbewahren und vor dem Servieren kurz antauen lassen (Angabe der Vorlage).",
    "reheat": "Vor dem Servieren kurz antauen lassen.",
    "freeze": {
@@ -24075,7 +24111,7 @@ SEED2.push(
     "months": 1,
     "note": "Nur Reste: luftdicht einfrieren, vor dem Servieren kurz antauen lassen; frisch aus dem Mixer schmeckt es am besten."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (adaptiert aus BBC Good Food „Instant frozen berry yogurt“, https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, in eigenen Worten; die Seite ist für Claude gesperrt und wurde nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach BBC Good Food „Instant frozen berry yogurt“ (https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 4 Portionen unverändert (ca.), Anleitung sinngemäß",
    "origin": "Großbritannien"
   })
 );
@@ -26986,7 +27022,7 @@ SEED2.push(
 /* ===== Rezeptcharge 56: 1 Aufstrich, Chefkoch (Seite gesperrt, eingereichter Text; eigene Fassung von Claude; geprüft mit check_recipes.js, Rohdaten in chargen/) ===== */
 SEED2.push(
   R({
-   "name": "Thunfischcreme (Thunfischaufstrich ohne Kapern)",
+   "name": "Thunfischcreme (Thunfischaufstrich mit Kapern)",
    "meal": "Aufstrich",
    "group": "Fisch",
    "cuisine": "Deutschland",
@@ -27007,6 +27043,10 @@ SEED2.push(
     [
      "thunfisch",
      300
+    ],
+    [
+     "kapern",
+     12
     ],
     [
      "fruehlingszwiebel",
@@ -27034,15 +27074,13 @@ SEED2.push(
     "pfeffer"
    ],
    "steps": [
-    "Den Thunfisch abtropfen lassen und in eine Schüssel geben.",
-    "Mit einer Gabel grob zerteilen.",
+    "Den Thunfisch abtropfen lassen und zusammen mit den Kapern fein hacken oder mit einer Gabel fein zerdrücken, dann in eine Schüssel geben.",
     "Die Frühlingszwiebeln fein schneiden und dazugeben.",
     "Mayonnaise, Crème fraîche, Petersilie und den Spritzer Zitronensaft hinzufügen.",
-    "Alles gut vermengen.",
-    "Mit Salz und Pfeffer abschmecken.",
+    "Alles gut vermengen und mit Salz und Pfeffer abschmecken.",
     "In ein Glas füllen und im Kühlschrank lagern."
    ],
-   "tips": "Diese Fassung folgt auf Wunsch den Zutaten und Mengen des eingereichten Rezepttextes (angepasst aus dem Chefkoch-Rezept „Thunfischcreme“, ohne Kapern), ohne Ersatz. Annahmen, die nicht im Text stehen: 1 Dose Thunfisch = 150 g abgetropft (2 Dosen = 300 g), gerechnet als Thunfisch im eigenen Saft; „wahlweise in Öl“ bringt mehr Fett. 1 Bund Frühlingszwiebeln = 100 g, 3 EL Mayonnaise = 45 g, 3 EL Crème fraîche = 45 g, 1 gehäufter TL Petersilie = 3 g (der Text sagt nicht, ob frisch oder getrocknet; gerechnet als frisch), 1 Spritzer Zitronensaft = 5 g. Zum Servieren laut Text: Salat, Brot, Cräcker oder Gemüsesticks. Enthält Fisch, Ei, Senf (Mayonnaise) und Milch. Dosenthunfisch ist histaminhaltig.",
+   "tips": "Fassung nach dem Chefkoch-Rezept „Thunfischcreme“ (4 Portionen, unverändert, Faktor 1), jetzt mit den Kapern des Originals (die frühere App-Fassung war ausdrücklich „ohne Kapern“). Mengen ungefähr (ca.) gerundet. Zutaten, Mengen, Temperaturen und Zeiten stammen aus der ChatGPT-Prüfung vom 01.11.2026 (Originalseite gelesen); die Schritte sind von Claude sinngemäß ausformuliert. Die Quelle nennt keine Dosen- oder Bundgewichte; als Annahme gerechnet sind 2 Dosen Thunfisch im eigenen Saft zusammen 300 g abgetropft (Thunfisch in Öl ist laut Quelle möglich und bringt mehr Fett), 1 Bund Frühlingszwiebeln 100 g, 1 EL Kapern rund 12 g (Spanne 10 bis 15 g), 3 EL Mayonnaise rund 45 g, 3 EL Crème fraîche rund 45 g, 1 gehäufter TL Petersilie rund 3 g (Annahme: frisch) und 1 Spritzer Zitronensaft rund 5 g. Brot, Salat, Cräcker oder Gemüsesticks sind nur Serviervorschläge. Kapern sind salzig; entsprechend weniger nachsalzen. Enthält Fisch, Ei, Senf (Mayonnaise) und Milch. Dosenthunfisch ist histaminhaltig. Kalt lagern. Das vorherige Rezept (Thunfischcreme ohne Kapern) wurde damit ersetzt.",
    "storage": "Im Kühlschrank bis zu 2 bis 3 Tage haltbar (Angabe der Vorlage).",
    "reheat": "Kalt servieren, nicht erhitzen.",
    "freeze": {
@@ -27051,7 +27089,7 @@ SEED2.push(
     "months": 0,
     "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
    },
-   "src": "Eigene Fassung (Claude), nach einem vom Auftraggeber eingereichten Rezepttext (angepasst aus dem Chefkoch-Rezept „Thunfischcreme“, https://www.chefkoch.de/rezepte/1853321300443257/Thunfischcreme.html) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, in eigenen Worten; die Chefkoch-Seite ist für Claude gesperrt und wurde nicht gelesen; Zeiten sind Richtwerte, nicht getestet",
+   "src": "Eigene Fassung (Claude) nach Chefkoch „Thunfischcreme“ (https://www.chefkoch.de/rezepte/1853321300443257/Thunfischcreme.html); Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen), Zutaten für 4 Portionen unverändert (ca.), Dosen- und Bundgewichte als Annahme, Anleitung sinngemäß",
    "origin": "Deutschland"
   })
 );
@@ -66664,6 +66702,910 @@ SEED2.push(
  })
 );
 
+
+SEED2.push(
+  /* ---------- Histaminarme Salate (Version 63) ---------- */
+  R({
+ "group": "Vegetarisch",
+ "level": "leicht",
+ "tags": [
+  "Salat",
+  "histaminarm",
+  "vegan",
+  "frisch"
+ ],
+ "mp": false,
+ "origin": "Österreich",
+ "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+ "reheat": "Wird kalt gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+ },
+ "name": "Kartoffelsalat mit Sauerrahm und Leinöl (histaminarm)",
+ "meal": "Salat/Bowl",
+ "servings": 3,
+ "prep": 15,
+ "cook": 25,
+ "devices": [
+  "Herd"
+ ],
+ "ing": [
+  [
+   "kartoffeln",
+   500
+  ],
+  [
+   "schnittlauch",
+   15
+  ],
+  [
+   "saure_sahne",
+   200
+  ],
+  [
+   "leinoel",
+   4.5
+  ],
+  [
+   "wasser",
+   50
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "paprika_suess"
+ ],
+ "steps": [
+  "Die Kartoffeln in der Schale weich kochen, abkühlen lassen, schälen und in Scheiben schneiden.",
+  "Den Sauerrahm mit Salz (1 TL), Pfeffer (2 Prisen), Paprikapulver edelsüß (1,5 TL) und dem Leinöl glatt rühren und mit dem Wasser (50 ml) verdünnen.",
+  "Das Dressing mit den Kartoffelscheiben vorsichtig vermengen.",
+  "Den Schnittlauch klein schneiden, drei Viertel unterheben und den Rest darüberstreuen."
+ ],
+ "tips": "Beste Basis der Sammlung: Nutzerbewertung 4,3 von 5 bei 118 Stimmen (GuteKueche). Leinöl nicht erhitzen und kühl lagern. Sauerrahm ist hier als saure Sahne mit 10 % Fett angesetzt. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen). Enthält Milch.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, GuteKueche, https://www.gutekueche.at/kartoffelsalat-histaminfrei-rezept-45827); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1168]; 3 Portionen, 40 Minuten laut Vorlage",
+ "cuisine": "Österreich"
+}),
+  R({
+   "group": "Vegetarisch",
+   "level": "leicht",
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "origin": "Österreich",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "name": "Grüner Salat mit Möhre und Gurke (histaminarm)",
+   "meal": "Salat/Bowl",
+   "servings": 2,
+   "prep": 10,
+   "cook": 0,
+   "devices": [],
+   "ing": [
+    [
+     "salat",
+     150
+    ],
+    [
+     "karotte",
+     80
+    ],
+    [
+     "gurke",
+     200
+    ],
+    [
+     "olivenoel",
+     27
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Den Blattsalat waschen und gut trocken schleudern, die Möhre raspeln und die Gurke in Scheiben schneiden.",
+    "Alles in einer Schüssel vermengen.",
+    "Mit Olivenöl (2 EL), Salz und Pfeffer anmachen und sofort servieren."
+   ],
+   "tips": "Die Vorlage hat noch keine Nutzerbewertung. Kein Essig, keine Tomaten. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, GuteKueche, https://www.gutekueche.at/gruener-salat-histaminarm-rezept-52822); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1157]; 2 Portionen, 10 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])",
+   "cuisine": "Österreich"
+  }),
+  R({
+   "group": "Vegetarisch",
+   "level": "leicht",
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "origin": "Österreich",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "name": "Karottensalat mit Ingwer und Hanföl (histaminarm)",
+   "meal": "Salat/Bowl",
+   "servings": 2,
+   "prep": 15,
+   "cook": 0,
+   "devices": [],
+   "ing": [
+    [
+     "karotte",
+     300
+    ],
+    [
+     "ingwer",
+     5
+    ],
+    [
+     "hanfoel",
+     27
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Die Möhren raspeln und den frischen Ingwer (1 TL) fein reiben.",
+    "Möhren mit Ingwer, Hanföl (2 EL) und Salz vermengen.",
+    "Kurz ziehen lassen und frisch servieren."
+   ],
+   "tips": "Bewertung der Vorlage noch offen. Zitrone ist laut Vorlage optional, nur falls verträglich (nicht mitgerechnet). Hanföl nicht erhitzen und kühl lagern. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, GuteKueche, https://www.gutekueche.at/histaminarmer-karottensalat-rezept-53193); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1155]; 2 Portionen, 15 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])",
+   "cuisine": "Österreich"
+  }),
+  R({
+   "group": "Vegetarisch",
+   "level": "leicht",
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "origin": "Österreich",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "name": "Blumenkohlsalat mit Olivenöl und Kräutern (Karfiolsalat, histaminarm)",
+   "meal": "Salat/Bowl",
+   "servings": 2,
+   "prep": 10,
+   "cook": 10,
+   "devices": [
+    "Herd"
+   ],
+   "ing": [
+    [
+     "blumenkohl",
+     400
+    ],
+    [
+     "olivenoel",
+     27
+    ],
+    [
+     "petersilie",
+     5
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Den Blumenkohl in Röschen teilen und waschen.",
+    "Die Röschen in wenig Wasser kurz dünsten oder blanchieren, bis sie bissfest sind (Richtwert etwa 5 bis 8 Minuten, nicht in der Vorlage), und abkühlen lassen.",
+    "Mit Olivenöl (2 EL), Salz, Pfeffer und den gehackten frischen Kräutern vermengen und frisch servieren."
+   ],
+   "tips": "Bewertung der Vorlage noch offen. „Frische Kräuter“ sind als Petersilie angesetzt (Annahme, ca. 5 g), „1 kleiner Blumenkohl“ als rund 400 g Röschen. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, GuteKueche, https://www.gutekueche.at/karfiolsalat-histaminarm-rezept-53397); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1162]; 2 Portionen, 20 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])",
+   "cuisine": "Österreich"
+  }),
+  R({
+   "group": "Vegetarisch",
+   "level": "leicht",
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "origin": "Deutschland",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "name": "Gurken-Möhren-Salat mit Sesam und Petersilie (histaminarm)",
+   "meal": "Salat/Bowl",
+   "servings": 2,
+   "prep": 10,
+   "cook": 0,
+   "devices": [],
+   "ing": [
+    [
+     "gurke",
+     400
+    ],
+    [
+     "karotte",
+     160
+    ],
+    [
+     "zwiebel",
+     40
+    ],
+    [
+     "sesam",
+     8
+    ],
+    [
+     "petersilie",
+     6
+    ],
+    [
+     "olivenoel",
+     27
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Gurke und Möhren reiben oder in Scheiben schneiden.",
+    "Die kleine Zwiebel und die Petersilie (2 EL) hacken.",
+    "Alles mit Sesam (1 EL), Olivenöl (2 EL) und Salz vermengen und frisch servieren."
+   ],
+   "tips": "Vegan, glutenfrei und laktosefrei. SIGHI-Kategorie-0-Fassung: Die histaminarme Asia-Soße der ersten Vorlage (HistaFood) ist weggelassen (Fertigprodukt mit unbekannter Zusammensetzung), nicht ersetzt.  Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen). Enthält Sesam.",
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, HistaFood, https://histafood.eu/blogs/rezepte/gurken-mohren-salat); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1110]; 1 bis 2 Portionen (hier 2), 10 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])",
+   "cuisine": "Deutschland"
+  }),
+  R({
+   "group": "Vegetarisch",
+   "level": "leicht",
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "origin": "Deutschland",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "name": "Warmer Spargel-Kartoffel-Salat (histaminarm)",
+   "meal": "Salat/Bowl",
+   "servings": 2,
+   "prep": 10,
+   "cook": 15,
+   "devices": [
+    "Herd"
+   ],
+   "ing": [
+    [
+     "spargel",
+     360
+    ],
+    [
+     "kartoffeln",
+     375
+    ],
+    [
+     "fruehlingszwiebel",
+     40
+    ],
+    [
+     "paprika",
+     80
+    ],
+    [
+     "olivenoel",
+     54
+    ],
+    [
+     "kresse",
+     10
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Die kleinen Kartoffeln kochen und vierteln.",
+    "Den weißen und grünen Spargel schälen bzw. putzen, klein schneiden und dünsten.",
+    "Paprika und Frühlingszwiebeln klein schneiden.",
+    "Alles mit Olivenöl (4 EL), Salz und Kresse vermengen und warm servieren."
+   ],
+   "tips": "Vegan und histaminarm laut Vorlage (HistaFood). Kartoffeln „6–9 kleine“ als rund 375 g und Spargel 6 + 6 Stangen als rund 360 g angesetzt (Annahmen). SIGHI-Kategorie-0-Fassung: Der Acerolasaft der ersten Vorlage (HistaFood) ist weggelassen, nicht ersetzt. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, HistaFood, https://histafood.eu/blogs/rezepte/warmer-spargel-salat-mit-kartoffeln); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1116]; 2 Portionen, 25 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])",
+   "cuisine": "Deutschland"
+  }),
+  R({
+ "group": "Vegetarisch",
+ "level": "leicht",
+ "tags": [
+  "Salat",
+  "histaminarm",
+  "vegan",
+  "frisch"
+ ],
+ "mp": false,
+ "origin": "Deutschland",
+ "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+ "reheat": "Wird kalt gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+ },
+ "name": "Sommerlicher Hirse-Salat mit Gurke und Paprika (histaminarm)",
+ "meal": "Salat/Bowl",
+ "servings": 4,
+ "prep": 10,
+ "cook": 20,
+ "devices": [
+  "Herd"
+ ],
+ "ing": [
+  [
+   "hirse",
+   200
+  ],
+  [
+   "gurke",
+   350
+  ],
+  [
+   "paprika",
+   150
+  ],
+  [
+   "karotte",
+   80
+  ],
+  [
+   "olivenoel",
+   27
+  ],
+  [
+   "petersilie",
+   10
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Die Hirse nach Packungsanweisung kochen und abkühlen lassen.",
+  "Gurke, Paprika und Möhre klein schneiden, die frischen Kräuter hacken.",
+  "Alles mit Olivenöl (2 EL), Salz und den Kräutern vermengen und frisch servieren."
+ ],
+ "tips": "Vegan, glutenfrei und laktosefrei laut Vorlage (Eat Tolerant). 3 bis 4 Portionen laut Vorlage, hier 4 gerechnet. Gemüsemengen sind Annahmen (je 1 Gurke, Paprika, Möhre); „frische Kräuter“ als Petersilie (ca. 10 g). Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, Eat Tolerant, https://eattolerant.de/salate/sommerlicher-hirse-salat-glutenfrei-histaminarm-laktosefrei-vegan/); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1118]; ca. 30 Minuten laut Vorlage",
+ "cuisine": "Deutschland"
+}),
+  R({
+   "group": "Vegetarisch",
+   "level": "leicht",
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "origin": "Deutschland",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "name": "Quinoa-Gemüse-Bowl mit Süßkartoffel, Brokkoli und Radieschen (histaminarm)",
+   "meal": "Salat/Bowl",
+   "servings": 2,
+   "prep": 15,
+   "cook": 25,
+   "devices": [
+    "Herd",
+    "Backofen"
+   ],
+   "ing": [
+    [
+     "quinoa",
+     200
+    ],
+    [
+     "suesskartoffel",
+     250
+    ],
+    [
+     "brokkoli",
+     200
+    ],
+    [
+     "gurke",
+     200
+    ],
+    [
+     "radieschen",
+     100
+    ],
+    [
+     "romanasalat",
+     60
+    ],
+    [
+     "olivenoel",
+     14
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Die Quinoa nach Packungsanweisung kochen.",
+    "Die Süßkartoffel würfeln, den Brokkoli in Röschen teilen und beides bei 180 °C etwa 20 Minuten im Backofen garen, bis sie weich sind.",
+    "Gurke, Radieschen und Römersalat klein schneiden.",
+    "Alles mit der Quinoa und dem Olivenöl (1 EL) vermengen und mit Salz abschmecken."
+   ],
+   "tips": "Eigene SIGHI-orientierte Zusammenstellung (keine Originalquelle). Avocado nur verwenden, wenn individuell verträglich (nicht mitgerechnet). Mengen für Süßkartoffel (1 Stück ca. 250 g) und „2 Handvoll“ Radieschen und Salat sind Annahmen. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, eigene SIGHI-orientierte Zusammenstellung ohne Originalquelle); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1109]; 2 Portionen, 30 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])",
+   "cuisine": "Deutschland"
+  }),
+  R({
+ "group": "Vegetarisch",
+ "level": "leicht",
+ "tags": [
+  "Salat",
+  "histaminarm",
+  "vegan",
+  "frisch"
+ ],
+ "mp": false,
+ "origin": "Deutschland",
+ "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+ "reheat": "Wird kalt gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+ },
+ "name": "Nudel-Paprika-Salat mit Dinkelnudeln (histaminarm)",
+ "meal": "Salat/Bowl",
+ "servings": 4,
+ "prep": 10,
+ "cook": 15,
+ "devices": [
+  "Herd"
+ ],
+ "ing": [
+  [
+   "dinkelnudeln",
+   400
+  ],
+  [
+   "paprika",
+   180
+  ],
+  [
+   "gurke",
+   200
+  ],
+  [
+   "karotte",
+   80
+  ],
+  [
+   "olivenoel",
+   27
+  ],
+  [
+   "petersilie",
+   10
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Die Nudeln nach Packungsanweisung kochen und abkühlen lassen.",
+  "Paprika, Gurke und Möhre klein schneiden, die frischen Kräuter hacken.",
+  "Alles mit Olivenöl (2 EL), Salz und den Kräutern vermengen und frisch servieren."
+ ],
+ "tips": "Eigene SIGHI-orientierte Zusammenstellung (keine Originalquelle). Die Vorlage nennt Dinkel- oder Maisnudeln; hier sind Dinkelnudeln angesetzt (mit Maisnudeln glutenfrei). Kein Essig und kein gereifter Käse verwenden. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen). Enthält Gluten (Dinkel).",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, eigene SIGHI-orientierte Zusammenstellung ohne Originalquelle); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1111]; 4 Portionen, 30 Minuten laut Vorlage",
+ "cuisine": "Deutschland"
+}),
+  R({
+   "group": "Vegetarisch",
+   "level": "leicht",
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "origin": "Deutschland",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Rohes Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "name": "Weißkohlsalat ohne Essig mit Möhre und Apfel (histaminarm)",
+   "meal": "Salat/Bowl",
+   "servings": 4,
+   "prep": 20,
+   "cook": 0,
+   "devices": [],
+   "ing": [
+    [
+     "weisskohl",
+     400
+    ],
+    [
+     "karotte",
+     80
+    ],
+    [
+     "apfel",
+     150
+    ],
+    [
+     "olivenoel",
+     40
+    ],
+    [
+     "petersilie",
+     8
+    ]
+   ],
+   "spices": [
+    "salz"
+   ],
+   "steps": [
+    "Den Weißkohl fein hobeln und die Möhre raspeln.",
+    "Den Apfel würfeln (oder weglassen, wenn er nicht vertragen wird).",
+    "Alles mit Olivenöl (3 EL), Salz und den gehackten frischen Kräutern vermengen.",
+    "Den Salat 10 bis 15 Minuten ziehen lassen und frisch servieren."
+   ],
+   "tips": "Eigene SIGHI-orientierte Zusammenstellung (keine Originalquelle), ohne Essig zubereitet. Apfel nur falls verträglich (hier mitgerechnet, ca. 150 g). 1 TL Ahornsirup ist optional und nicht mitgerechnet. Mengen ungefähr (ca.) umgerechnet: Gramm für Stück-, Löffel- und Handvoll-Angaben sind Annahmen. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, eigene SIGHI-orientierte Zusammenstellung ohne Originalquelle); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1111]; 4 Portionen, 20 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])",
+   "cuisine": "Deutschland"
+  })
+);
+
+SEED2.push(
+  /* ---------- Kartoffelsalat histaminarm mit Kürbiskernöl (Version 64) ---------- */
+  R({
+ "name": "Kartoffelsalat mit Sauerrahm und Kürbiskernöl (histaminarm)",
+ "meal": "Salat/Bowl",
+ "group": "Vegetarisch",
+ "cuisine": "Österreich",
+ "origin": "Österreich",
+ "servings": 1,
+ "prep": 15,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Salat",
+  "histaminarm",
+  "vegetarisch",
+  "frisch"
+ ],
+ "mp": false,
+ "ing": [
+  [
+   "kartoffeln",
+   300
+  ],
+  [
+   "fruehlingszwiebel",
+   40
+  ],
+  [
+   "schnittlauch",
+   10
+  ],
+  [
+   "saure_sahne",
+   30
+  ],
+  [
+   "kuerbiskernoel",
+   9
+  ],
+  [
+   "wasser",
+   15
+  ],
+  [
+   "kuerbiskerne",
+   4
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Die Kartoffeln kochen oder dämpfen (Richtwert etwa 20 bis 25 Minuten, nicht in der Vorlage).",
+  "Abkühlen lassen, schälen und in Scheiben schneiden.",
+  "Die Jungzwiebel und den Schnittlauch fein schneiden.",
+  "Den Sauerrahm mit Meersalz (3 Prisen), Kürbiskernöl (2 TL) und Wasser (1 EL) glatt rühren.",
+  "Kartoffeln, Zwiebel und Schnittlauch vermengen und das Dressing unterheben.",
+  "Mit den gehackten Kürbiskernen (1 TL) bestreuen und frisch servieren."
+ ],
+ "tips": "Das Dressing ist ohne Essig. Sauerrahm nur verwenden, wenn er individuell verträglich ist; er ist hier als saure Sahne mit 10 % Fett angesetzt. Kürbiskernöl nicht erhitzen und kühl lagern. Die Vorlage hat noch keine Nutzerbewertung. 1 Portion laut Vorlage (zum Mitnehmen oder für mehrere Personen einfach vervielfachen). Mengen ungefähr (ca.) umgerechnet: Gramm für Stück- und Löffelangaben sind Annahmen (3 Kartoffeln rund 300 g, Jungzwiebel rund 40 g, ½ Bund Schnittlauch rund 10 g, 2 EL Sauerrahm rund 30 g, 2 TL Kürbiskernöl rund 9 g, 1 EL Wasser 15 g, 1 TL Kürbiskerne rund 4 g). „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen). Enthält Milch.",
+ "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+ "reheat": "Wird kalt gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Kartoffeln und Dressing werden nach dem Auftauen wässrig."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, GuteKueche, https://www.gutekueche.at/kartoffelsalat-histaminarm-rezept-52495); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1176]; 1 Portion, 30 Minuten laut Vorlage"
+})
+);
+
+SEED2.push(
+  /* ---------- Gurken-Joghurt-Salat histaminarm (Version 67) ---------- */
+  R({
+ "name": "Gurken-Joghurt-Salat mit Dille (histaminarm)",
+ "meal": "Salat/Bowl",
+ "group": "Vegetarisch",
+ "cuisine": "Schweiz",
+ "origin": "Schweiz",
+ "servings": 2,
+ "prep": 15,
+ "cook": 0,
+ "level": "leicht",
+ "devices": [],
+ "tags": [
+  "Salat",
+  "histaminarm",
+  "vegetarisch",
+  "frisch"
+ ],
+ "mp": false,
+ "ing": [
+  [
+   "gurke",
+   800
+  ],
+  [
+   "saure_sahne",
+   200
+  ],
+  [
+   "joghurt35",
+   100
+  ],
+  [
+   "senf",
+   5
+  ],
+  [
+   "dill",
+   20
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Die Gurken fein schneiden oder hobeln.",
+  "Den Sauerrahm, den Naturjoghurt und den Senf (1 TL) glatt rühren.",
+  "Die Dille hacken und dazugeben.",
+  "Mit Salz und Pfeffer abschmecken.",
+  "Die Gurken unterheben und frisch servieren."
+ ],
+ "tips": "Ohne Essig zubereitet. Histamin-Hinweis der Vorlage: Joghurt und Senf können individuell problematisch sein; bei Unsicherheit den Joghurt durch mehr Sauerrahm ersetzen oder weglassen und den Senf weglassen, falls er nicht sicher vertragen wird (die App rechnet mit beidem, wie in der Vorlage). Quelle mit 93 Bewertungen (ichkoche). Mengen ungefähr (ca.) umgerechnet: 2 Gurken sind als rund 800 g angesetzt, 1 Bund Dille als rund 20 g, 1 TL Senf als rund 5 g; der Naturjoghurt ist als Naturjoghurt 3,5 % Fett angesetzt (Annahme, die Vorlage nennt keine Fettstufe), der Sauerrahm als saure Sahne mit 10 % Fett. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen). Enthält Milch und Senf.",
+ "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+ "reheat": "Wird kalt gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Gurken und Joghurt-Dressing werden nach dem Auftauen wässrig."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, ichkoche, https://www.ichkoche.ch/l/histaminarm-salat-gemuese-rezepte); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnoten [1184][1185]; 2 Portionen, 15 Minuten laut Vorlage"
+})
+);
+
+SEED2.push(
+  /* ---------- Brokkolisalat histaminarm (Version 68) ---------- */
+  R({
+   "name": "Brokkolisalat mit Möhre und Gurke (histaminarm)",
+   "meal": "Salat/Bowl",
+   "group": "Vegetarisch",
+   "cuisine": "Deutschland",
+   "origin": "Deutschland",
+   "servings": 2,
+   "prep": 10,
+   "cook": 5,
+   "level": "leicht",
+   "devices": [
+    "Herd"
+   ],
+   "tags": [
+    "Salat",
+    "histaminarm",
+    "vegan",
+    "frisch",
+    "SIGHI 0"
+   ],
+   "mp": false,
+   "ing": [
+    [
+     "brokkoli",
+     400
+    ],
+    [
+     "karotte",
+     80
+    ],
+    [
+     "gurke",
+     200
+    ],
+    [
+     "olivenoel",
+     27
+    ],
+    [
+     "petersilie",
+     5
+    ]
+   ],
+   "spices": [
+    "salz",
+    "pfeffer"
+   ],
+   "steps": [
+    "Den Brokkoli in Röschen teilen.",
+    "Die Röschen kurz dünsten oder blanchieren, bis sie bissfest sind (Richtwert etwa 3 bis 5 Minuten, nicht in der Vorlage).",
+    "Abkühlen lassen.",
+    "Die Möhre raspeln und die Gurke in Scheiben schneiden.",
+    "Alles mit Olivenöl (2 EL), Salz, Pfeffer und den gehackten frischen Kräutern vermengen und frisch servieren."
+   ],
+   "tips": "Histamin-Hinweis der Vorlage: kein Essig verwenden, kein Joghurt und kein Feta hinzufügen, nur frisch zubereiten. Der Link der Vorlage führt zur Chefkoch-Suchseite „histaminarm“ und nicht zu einem einzelnen Rezept; die Sternebewertung ist offen. Mengen ungefähr (ca.) umgerechnet: ½ Gurke als rund 200 g, 1 Möhre als rund 80 g, „frische Kräuter“ als Petersilie (ca. 5 g, Annahme). „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+   "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+   "reheat": "Wird kalt gegessen.",
+   "freeze": {
+    "ok": "nein",
+    "block": 0,
+    "months": 0,
+    "note": "Gemüse und Dressing werden nach dem Auftauen wässrig."
+   },
+   "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, Chefkoch-Suchseite https://www.chefkoch.de/rs/s0/histaminarm/Rezepte.html, kein Einzelrezept-Link); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1192]; 2 Portionen, 10 Minuten laut Vorlage; Zutatenliste mit SIGHI-Kategorie 0 bestätigt (Sammlung „nur SIGHI Kategorie 0“, Fußnote [1231])"
+  })
+);
+
+SEED2.push(
+  /* ---------- Gurken-Karotten-Salat histaminarm (Version 69) ---------- */
+  R({
+ "name": "Gurken-Karotten-Salat mit Schnittlauch (histaminarm angepasst)",
+ "meal": "Salat/Bowl",
+ "group": "Vegetarisch",
+ "cuisine": "Deutschland",
+ "origin": "Deutschland",
+ "servings": 2,
+ "prep": 15,
+ "cook": 0,
+ "level": "leicht",
+ "devices": [],
+ "tags": [
+  "Salat",
+  "histaminarm",
+  "vegan",
+  "frisch"
+ ],
+ "mp": false,
+ "ing": [
+  [
+   "gurke",
+   400
+  ],
+  [
+   "karotte",
+   160
+  ],
+  [
+   "zwiebel",
+   40
+  ],
+  [
+   "olivenoel",
+   27
+  ],
+  [
+   "schnittlauch",
+   10
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Die Gurke und die Karotten raspeln.",
+  "Die kleine Zwiebel fein würfeln.",
+  "Alles in einer Schüssel vermengen.",
+  "Mit Olivenöl (2 EL), Salz, Pfeffer und dem frischen Schnittlauch anmachen.",
+  "Nach Wunsch etwas frischen Ingwer dazugeben (optional, nicht mitgerechnet) und frisch servieren."
+ ],
+ "tips": "Histaminarm angepasste Fassung des Chefkoch-Rezepts „Gurken-Karotten-Salat“: Das Original enthält Joghurt und Essig, beides ist hier weggelassen (nicht ersetzt); kein Honig verwenden. Das ist daher nicht die Originalzutatenliste. Die Sternebewertung des Originals ist offen. Mengen ungefähr (ca.) umgerechnet: 1 Salatgurke als rund 400 g, 2 Karotten als rund 160 g, 1 kleine Zwiebel als rund 40 g, 1 Handvoll Schnittlauch als rund 10 g. „Histaminarm“ ist die Einstufung der Vorlage (SIGHI-orientiert), keine Garantie; die individuelle Verträglichkeit entscheidet. Salate frisch zubereiten und möglichst sofort essen, Reste nicht lange aufbewahren (Histamin kann beim Lagern zunehmen).",
+ "storage": "Frisch zubereiten und sofort essen; Reste höchstens bis zum nächsten Tag im Kühlschrank.",
+ "reheat": "Wird kalt gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Rohes Gemüse wird nach dem Auftauen wässrig."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Rezeptsammlung „Histaminarme Salate“, Chefkoch, histaminarm angepasst: Joghurt und Essig weggelassen, https://www.chefkoch.de/rezepte/2155501345907500/Gurken-Karotten-Salat.html); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnote [1198]; 2 Portionen, 15 Minuten laut Vorlage"
+})
+);
+
 /* ===== Bibliothek ab r77 (Entscheidung des Auftraggebers, 28.10.2026, aktualisiert) =====
    Ausgemustert bleiben nur die früheren eigenen Rezepte r01 bis r76. Die von Perplexity gelieferten (r77 bis r94) und die nach Online-Recherche geschriebenen Rezepte (r95 ff., Quelle "Eigene Fassung nach Recherche (Claude)") sind wieder in der Bibliothek, auf ausdrücklichen Wunsch des Auftraggebers ("alle Rezepte einbauen").
    Wieder nur Perplexity: in der Schleife unten nach dem ersten if den Zweig else if (!/^Perplexity/.test(a[i].src || "")) { RETIRED[...] = ...; a.splice(i, 1); } ergänzen (Sicherung: data_rezepte5.js.bak_perp).
@@ -68214,7 +69156,7 @@ const SAISON_NEUTRAL = {
   granatapfelkerne: 'Granatapfel-Importware, ganzjährig im Handel', kokoswasser: 'Kokoswasser als verarbeitetes Importgetränk, ohne lokale Saison',
   zitronengras: 'Meist importiert, im deutschen Handel ganzjährig verfügbar',
   apfelsaft: 'Äpfel mit eigener Saison, Saft ohne eigene Saison',
-  suesskartoffel: 'Überwiegend Importware, ganzjährig im Handel; nur in Frühstück, Snack und Dessert erlaubt',
+  suesskartoffel: 'Überwiegend Importware, ganzjährig im Handel; nur in Frühstück, Snack, Dessert und Salat/Bowl erlaubt',
   taro: 'Importware (Asialäden), ganzjährig im Handel',
   mangopueree: 'Verarbeitetes Püree aus Importware (Mango), ganzjährig im Handel'
 };
@@ -71817,8 +72759,8 @@ const QUELLEN_REZEPTABGLEICH = {
  r312: {"url": "https://www.chefkoch.de/rezepte/438371135866566/Chinesisches-flambiertes-Eis.html", "basis": "Original: Vanilleeis mit Sandkuchen umhüllen, 2–3 h gefrieren, in Ausbackteig frittieren, danach Rumflamme. App: Originalfassung mit Vanilleeis, Sandkuchen, Ausbackteig und Rum; Mengen, Teig und Frittierzeit sind Richtwerte. Offene Flamme und heißes Öl: nur Erwachsene."},
  r313: {url:'https://www.chefkoch.de/rezepte/654001166948846/Gedaempfte-Dattelkloesschen.html',basis:'Original: Chefkoch „Gedämpfte Dattelklößchen“ für 4 Portionen: gedämpfte Hefeklöße aus Mehl, Hefe, Mineralwasser, Backpulver, Zucker und Schmalz mit Dattelpaste gefüllt. App: Originalfassung unverändert (Mehl 3 Tassen als 400 g angenommen), ohne Quark, Ei und Walnüsse; die Gehzeit von rund 75 Minuten ist in der Vorbereitung eingerechnet (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026).'},
  r337: {url:'https://www.chefkoch.de/rezepte/1484001253619546/Bananen-Eis.html',basis:'Original: Chefkoch „Bananen-Eis“ („1 Portion“, tatsächlich eine Eismaschinen-Charge) aus Bananen, Zitronensaft, Johannisbrotkernmehl, Milch, Zucker, Vanillezucker und geschlagener Sahne. App: gesamte Charge als 6 Portionen zu je 125 ml (Annahme), ohne Skyr und Zimt; Eismaschine nicht in der Geräteliste (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026).'},
- r353: {"url": "https://www.essen-und-trinken.de/rezepte/spaghetti-eis-13354700.html", "otherUrls": ["https://www.chefkoch.de/rezepte/1152361221481605/Spaghetti-Eis-Dessert.html"], "basis": "essen & trinken Spaghetti-Eis: vier Portionen mit 400 g Vanilleeis, 150 ml Sahne, 350 g Erdbeeren, 100 g weißer Schokolade und Puderzucker. Presse und Schalen eine Stunde vorkühlen und direkt anrichten. App enthält die entsprechenden Kernzutaten und Zubereitung. Die bereits zuvor gelesene CHEFKOCH-Spaghetti-Eis-Dessert-Seite ist dagegen eine Kühlschrankcreme und nicht dieselbe Vorlage."},
- r402: {url:'https://www.chefkoch.de/rezepte/1853321300443257/Thunfischcreme.html',basis:'Original für vier Portionen: zwei Dosen Thunfisch, ein Bund Frühlingszwiebeln, jeweils drei EL Mayonnaise/Crème fraîche, ein EL Kapern, Petersilie, Zitronensaft; alles ohne Garen in etwa zehn Minuten vermischen. Die App entspricht der vom Nutzer gewünschten Variante ohne Kapern; Mengen Thunfisch/Frühlingszwiebeln geschätzt, Quelle geöffnet.'},
+ r353: {"url": "https://www.essen-und-trinken.de/rezepte/spaghetti-eis-13354700.html", "otherUrls": ["https://www.chefkoch.de/rezepte/1152361221481605/Spaghetti-Eis-Dessert.html"], "basis": "Original: Essen und Trinken „Spaghetti-Eis“ für 4 Portionen aus Vanilleeis, Erdbeersoße, Sahne und weißer Schokolade. App: Originalfassung unverändert, jetzt mit Puderzucker und Zitronenschale (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
+ r402: {url:'https://www.chefkoch.de/rezepte/1853321300443257/Thunfischcreme.html',basis:'Original: Chefkoch „Thunfischcreme“ für 4 Portionen aus Thunfisch, Kapern, Frühlingszwiebeln, Mayonnaise, Crème fraîche, Petersilie und Zitronensaft. App: Originalfassung unverändert, jetzt mit Kapern (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026).'},
  r174: {url:'https://www.bbcgoodfood.com/recipes/20minute-seafood-pasta',basis:'Original: Quick seafood linguine (früher 20-minute seafood pasta) für 4 Portionen aus 300 g Linguine, 240 g aufgetauter TK-Meeresfrüchtemischung, 400 g Dosentomaten, 1 l Hühnerbrühe, Zwiebel, Knoblauch, Paprikapulver und Petersilie; Nudeln in der Brühe gegart (ca. 7 Minuten), Meeresfrüchte zuletzt ca. 3 Minuten. App: Originalfassung (ChatGPT-Prüfung 31.10.2026, Entscheidung A).'},
  r178: {url:'https://www.bbcgoodfood.com/recipes/air-fryer-halloumi',basis:'Original: BBC Good Food „Air fryer halloumi“ aus 225 g Halloumi in 6 Scheiben, 1 TL Öl und optional geräuchertem Paprikapulver; Airfryer 200 °C etwa 8 Minuten, wenden, 2–5 Minuten weiter. Portionszahl im Original nicht genannt. App: Originalfassung als Snack, 2 Portionen angenommen (ChatGPT-Prüfung 31.10.2026, Entscheidung A, Fassung ersetzt am 31.10.2026).'},
  r208: {url:'https://www.bbcgoodfood.com/recipes/air-fryer-pork-belly',basis:'Original: BBC Good Food „Air-fryer pork belly“ für 6 Portionen aus 750 bis 1000 g Schweinebauch mit Schwarte, etwas Öl und Knoblauchgranulat, 200 °C für 30 Minuten, danach 180 °C für 20 bis 30 Minuten. App: Originalfassung für 4 Portionen (Faktor ⅔) ohne Beilagen (ChatGPT-Prüfung 31.10.2026, Entscheidung A, Fassung ersetzt am 01.11.2026).'},
@@ -71840,7 +72782,7 @@ const QUELLEN_REZEPTABGLEICH = {
  r233: {"url": "https://www.bbcgoodfood.com/recipes/ham-mushroom-spinach-frittata", "basis": "Original: BBC Good Food „Ham, mushroom & spinach frittata“ für 2 Portionen aus Champignons, Schinken, Spinat, 4 Eiern und Cheddar, ofenfeste Pfanne, ca. 9 Minuten. App: Originalfassung für 4 Portionen (Faktor 2) (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r232: {"url": "https://www.bbcgoodfood.com/recipes/healthy-shakshuka", "basis": "Original: BBC Good Food „Healthy shakshuka“ für 2 Portionen aus Rapsöl, roter Zwiebel, roter und gelber Paprika, Knoblauch, Kreuzkümmel, Koriandersamen, Rauchpaprika, Kirschtomaten aus der Dose, Babyspinat und 4 Eiern, Kräuter zum Schluss. App: Originalfassung, ohne Feta (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r298: {"url": "https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt", "basis": "Original: BBC Good Food „Instant frozen berry yogurt“ für 4 Portionen aus gefrorenen Beeren, griechischem Joghurt und Honig oder Agavensirup. App: Originalfassung für 2 Portionen (Faktor ½), ohne Skyr, Magerquark und Vanille, mit Erhitzungsschritt für TK-Beeren (BfR) (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
- r354: {"url": "https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt", "basis": "BBC Sofort-Beerenjoghurt: 250 g TK-Beeren, 250 g griechischer Joghurt, 1 EL Honig; rohe 20-Sekunden-Zubereitung des Originals wird aus Hygieneschutz nicht unbesehen übernommen. Vorab durchgegarte und wieder gefrorene Beerenbasis für Eis verwenden. Die bisherige 5-Minuten-Angabe gilt nur bei vorbereiteten sicheren Beeren."},
+ r354: {"url": "https://www.bbcgoodfood.com/recipes/instant-frozen-berry-yogurt", "basis": "Original: BBC Good Food „Instant frozen berry yogurt“ für 4 Portionen aus gefrorenen Beeren, griechischem Joghurt und Honig. App: Originalfassung unverändert, Joghurt fettarm (Annahme), zusätzlicher Erhitzungsschritt für Tiefkühlbeeren (BfR); Dublette zu r298 (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r292: {"url": "https://www.bbcgoodfood.com/recipes/kale-smoothie", "basis": "Original: BBC Good Food „Kale smoothie“ für 2 Portionen (vegan) aus Grünkohl, Avocado, Limettensaft, TK-Ananas, Ingwer, Cashewkernen, optional Banane und Wasser. App: Originalfassung für 1 Portion (Faktor ½) mit geschätzten Handvoll-Gewichten, ohne Apfel, Skyr und Milch (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r275: {"url": "https://www.bbcgoodfood.com/recipes/lemon-syllabub", "basis": "Original: BBC Good Food „Lemon syllabub“ für 4 Portionen aus 284 ml Sahne, 50 g Zucker, 50 ml Weißwein sowie Saft und Abrieb einer halben Zitrone. App: Originalfassung, ohne Skyr und Vanille, Zitronenmengen geschätzt (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r274: {"url": "https://www.bbcgoodfood.com/recipes/luscious-lemon-baked-cheesecake", "basis": "Original: BBC Good Food „Luscious lemon baked cheesecake“ für 10 Stücke aus Digestive-Keksen, Butter, Mascarpone, Frischkäse, Eiern, Eigelben, Zitrone, Mehl, Zucker und einem Topping aus saurer Sahne und Lemon Curd. App: Originalfassung für 8 Stücke (Faktor 0,8), Ei- und Zitronenmengen geschätzt (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
@@ -71885,11 +72827,11 @@ const QUELLEN_REZEPTABGLEICH = {
  r333: {"url": "https://www.bbcgoodfood.com/recipes/crunchy-granola-berries-cherries", "basis": "Original: BBC Good Food „Crunchy granola with berries & cherries“ für rund 12 Schalen: Hafer, Pekan- und Erdnüsse, Sesam, Sonnenblumenkerne, Sonnenblumenöl und Honig, 20 bis 25 Minuten bei 190 °C, danach getrocknete Beeren und Kirschen. App: auf 4 Schalen gerechnet (Faktor ⅓), ohne Skyr, Eiklar, frisches Obst und Zimt (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r334: {"url": "https://www.bbcgoodfood.com/recipes/homemade-chicken-nachos", "basis": "Original: BBC Good Food „Homemade chicken nachos“ für 4 Snackportionen aus Tortilla-Chips, bereits gegartem Hähnchen, Frühlingszwiebeln, Red Leicester und Jalapeños, 8 Minuten bei 200 °C. App: Originalfassung auf 2 Portionen halbiert (Faktor ½) mit Hinweis zum Vorgaren des Hähnchens, ohne schwarze Bohnen, Dosentomaten, Skyr und Avocado (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r339: {"url": "https://www.bbcgoodfood.com/recipes/ultimate-vanilla-ice-cream", "basis": "Original: BBC Good Food „Ultimate vanilla ice cream“ für 8 große Kugeln aus Double Cream, Vollmilch, Zucker, Vanilleschote und Eigelb von 3 Eiern, in der Eismaschine gefroren. App: Originalfassung unverändert, mit Double Cream (Doppelrahm) statt Schlagsahne 30 % und echter Vanilleschote (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
- r340: {"url": "https://www.bbcgoodfood.com/recipes/no-churn-ice-cream", "basis": "BBC: No-Churn-Eis für 8 aus 600 ml Schlagsahne, ungefähr 199 g gesüßter Kondensmilch und Vanille; ohne Ei, aufschlagen, direkt einfrieren. App enthält stattdessen Eiklar, Skyr und wenig Sahne; ist eine andere Eisbasis, nicht die BBC-Originalrezeptur."},
- r341: {"url": "https://www.bbcgoodfood.com/recipes/chocolate-ice-cream", "basis": "BBC: Schokoladeneis aus 200 g dunkler Schokolade, 500 ml Sahne, 340 g Kondensmilch, Kakao, Schokotropfen, Vanille; ohne Skyr, mindestens sechs Stunden gefrieren. App hat Milch/Skyr mit weniger Schokolade und Fett; proteinbetonte Eigenfassung."},
- r342: {"url": "https://www.bbcgoodfood.com/recipes/raspberry-ripple-ice-cream", "basis": "BBC: 12 Portionen mit 250 g Himbeeren, 225 g Zucker, 2 ganzen Eiern plus 4 Eigelben und 600 ml Sahne. Eimasse im Wasserbad geschlagen; ohne Eismaschine gefrieren. App mit Skyr/Quark ohne Ei und mit 40 g Zucker; grundlegend andere, eifreie Eigenfassung."},
- r343: {"url": "https://www.bbcgoodfood.com/recipes/silly-twits-ice-cream", "basis": "BBC Silly-Twits-Ice-Cream: 6 Portionen, 4 rohe Eier, 140 g Zucker, 300 ml Sahne und Vanille, ohne Garen vor dem Einfrieren. App verwendet Banane, Skyr, Beeren und Honig und keine rohen Eier; keine Originalübernahme. Tiefkühlbeeren vor Rohverzehr erhitzen."},
- r344: {"url": "https://www.bbcgoodfood.com/recipes/vegan-chocolate-ice-cream", "basis": "BBC veganes Schokoladeneis: zwei 400-g-Dosen Kokosmilch, 175 g Zucker, 50 g Kakao, 100 g vegane Schokolade und Stärke; zuerst ca. 20 Minuten kochen, dann 20–30 Minuten Eismaschine oder regelmäßig rühren. App mit Sojadrink, Tofu, Banane und Erdnussmus ist ein abweichendes veganes Eis."},
+ r340: {"url": "https://www.bbcgoodfood.com/recipes/no-churn-ice-cream", "basis": "Original: BBC Good Food „No-churn ice cream“ für 8 Portionen aus gezuckerter Kondensmilch, Double Cream und Vanilleextrakt, ohne Ei und ohne Eismaschine. App: auf 4 Portionen halbiert (Faktor ½), ohne Skyr und Eiklar (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
+ r341: {"url": "https://www.bbcgoodfood.com/recipes/chocolate-ice-cream", "basis": "Original: BBC Good Food „Chocolate ice cream“ für 6 bis 8 Portionen aus Zartbitterschokolade, Double Cream, gezuckerter Kondensmilch, Vanilleextrakt, Kakao und Milchschokoladen-Chips. App: auf 4 Portionen gerechnet (Faktor ½ von 8), Faktor ⅔ für 6 Portionen im Tipp, ohne Skyr (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
+ r342: {"url": "https://www.bbcgoodfood.com/recipes/raspberry-ripple-ice-cream", "basis": "Original: BBC Good Food „Raspberry ripple ice cream“ für 12 Portionen aus Himbeer-Coulis, Ei-Zucker-Schaum und Double Cream. App: auf 4 Portionen gerechnet (Faktor ⅓), pasteurisierte Eier, ohne Skyr und Quark (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
+ r343: {"url": "https://www.bbcgoodfood.com/recipes/silly-twits-ice-cream", "basis": "Original: BBC Good Food „Silly Twits ice cream“ für 6 Portionen aus Eiern, Zucker, Double Cream und Vanilleextrakt, ungekocht. App: auf 3 Portionen halbiert (Faktor ½), pasteurisierte Eier, kein Eis am Stiel, ohne Skyr, Beeren und Banane (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
+ r344: {"url": "https://www.bbcgoodfood.com/recipes/vegan-chocolate-ice-cream", "basis": "Original: BBC Good Food „Vegan chocolate ice cream“ für 10 Portionen aus Kokosmilch, Zucker, Kakao, veganer Schokolade und Speisestärke. App: auf 3 Portionen gerechnet (Faktor 0,3), ohne Tofu, Sojadrink und Banane (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r200: {"url": "https://www.bbcgoodfood.com/recipes/pork-stroganoff", "basis": "BBC Schweine-Stroganoff: 4 Portionen mit 400 g Filet, 500 g Champignons, ca. 300 ml Sauerrahm, 200 ml Fond, zwei Zwiebeln, Dijon und Rauchpaprika; Pilze einzeln braten, Zwiebeln 10–12 Minuten karamellisieren, Sauce nach Sauerrahm nur kurz erwärmen. App mit mehr Filet/Reis und weniger Pilzen/Sahne; eigene Variante."},
  r194: {"url": "https://www.bbcgoodfood.com/recipes/pot-roast-chicken-stock", "basis": "Original: Tom Kerridge „Pot-roast chicken with stock“ für 4 Portionen mit Resten aus einem ganzen Hähnchen (2,4 kg), 4 Zwiebeln, Thymian, Knoblauch, 6 Pfefferkörnern, 175 ml Weißwein und 1,2 l Hühnerbrühe; ca. 2 Stunden bei 170 °C im geschlossenen Bräter. App: Originalfassung, essbarer Anteil des Hähnchens geschätzt (ChatGPT-Prüfung 31.10.2026, Entscheidung A)."},
  r202: {"url": "https://www.bbcgoodfood.com/recipes/pulled-pork", "basis": "BBC Pulled Pork: etwa 12 Portionen, Schweineschulter, trockene BBQ-Würzung, nach eigener Größe 4–8 Stunden Ofengaren bis zupfbar; fertiges gezupftes Fleisch einfrierbar. App nutzt 1 kg Schulter, Dutch Oven, BBQ-Sauce, Wraps und Salat, typischerweise etwa vier Stunden bei 150 °C; eigene vollständige Mahlzeit."},
@@ -71900,8 +72842,8 @@ const QUELLEN_REZEPTABGLEICH = {
  r283: {"url": "https://www.seriouseats.com/cuban-sandwich-recipe", "basis": "Original: Serious Eats „Cuban Sandwich“ für 2 Sandwiches aus weichem kubanischem Weißbrot, Senf, Schweizer Käse, Gewürzgurken, süßem Schinken und bereits gegartem Schweinebraten, Butter außen; optional Salami. App: Originalfassung, der Schweinebraten ist als fertig gegart vorausgesetzt, Brotgewicht geschätzt (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r304: {"url": "https://www.seriouseats.com/sweet-chinese-mooncakes-with-walnut-red-bean", "basis": "Original: Serious Eats „Sweet Mooncakes With Spiced Walnut and Red Bean Filling“ für 4 Mondkuchen aus Sirupteig, Walnussfüllung mit Fünf-Gewürze-Pulver und süßer roter Bohnenpaste. App: Originalfassung, nur der verwendete Sirupanteil (71 g) in den Zutaten, ohne Quark und Kidneybohnen (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r305: {"url": "https://www.seriouseats.com/chinese-ginger-milk-curd-recipe-11868260", "basis": "Original: Serious Eats „Chinese ginger milk curd“ für 2 Portionen aus frischem Ingwersaft (80 g Ingwer ergeben 2 EL), 355 ml Vollmilch und 15 g Zucker; gelatine- und stärkefrei, das Ingwerenzym lässt die Milch stocken. App: Originalfassung unverändert, Vollmilch statt 1,5-%-Milch (Pflicht für das Stocken), mit Temperaturschritten 77 bis 79 °C und 70 bis 75 °C (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
- r351: {"url": "https://www.seriouseats.com/hazelnut-mascarpone-ice-cream", "basis": "Serious Eats Haselnuss-Mascarpone-Eis: Basis aus 355 g Haselnüssen, 285 g Sahne, 225 g Milch, 170 g Zucker, 140 g Eigelb und 225 g Mascarpone; Nüsse über Nacht infundieren, Custard kochen, abkühlen und in Eismaschine gefrieren. App verwendet dieselben Kernmengen, Zeit/Temperatur müssen zum Gerät passen."},
- r352: {"url": "https://www.seriouseats.com/maple-walnut-ice-cream-recipe", "basis": "Serious Eats Ahorn-Walnuss-Eis: Walnüsse ungefähr 225 g, Sahne etwa 475 ml, Vollmilch 240 ml, 6 Eigelbe und knapp 180 ml dunkler Ahornsirup; Walnüsse 1–2 Stunden ziehen lassen, Eigelbmasse auf ungefähr 77 °C erhitzen, gekühlt in Eismaschine gefrieren. App hat vergleichbare Zutaten mit eigenen Handgriffen."},
+ r351: {"url": "https://www.seriouseats.com/hazelnut-mascarpone-ice-cream", "basis": "Original: Serious Eats „Hazelnut mascarpone ice cream“ für 8 Portionen mit Haselnussinfusion in Sahne und Milch, Eicreme und Mascarpone. App: Originalfassung unverändert; Haselnussmenge widersprüchlich (355 g metrisch gegen 9 oz), vorläufig 355 g, zur manuellen Klärung (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
+ r352: {"url": "https://www.seriouseats.com/maple-walnut-ice-cream-recipe", "basis": "Original: Serious Eats „Maple walnut ice cream“ für 8 Portionen mit gerösteten Walnüssen (halb zum Ziehen, halb als Einlage), Ahornsirup-Eicreme, ohne Vanille. App: Originalfassung unverändert, Ziehnüsse ohne Nährwert (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
  r190: {"url": "https://www.seriouseats.com/sous-vide-barbecue-pulled-pork-shoulder-recipe", "basis": "Original: Serious Eats „Sous Vide Barbecue Pulled Pork Shoulder“ für 8–12 Portionen aus 2,25–3,25 kg Schweineschulter mit Rub aus Paprika, braunem Zucker, Salz, Senfsamen, Koriander, Oregano, Knoblauch, Pfeffer und Chili; 18–24 Stunden bei 74 °C. App: Originalfassung mit Faktor 0,4 (10 Portionen angenommen), ohne Pökelsalz, Sauce, Krautsalat und Brot (ChatGPT-Prüfung 31.10.2026, Entscheidung A)."},
  r193: {"url": "https://www.seriouseats.com/sous-vide-glazed-carrots-recipe", "basis": "Original: Serious Eats „Sous Vide Glazed Carrots“ für 4–6 Portionen aus 454 g Möhren, 30 g Butter und 12 g Zucker, bei 84 °C etwa 1 Stunde, danach kurz in der Pfanne glasiert; eine Beilage. App: Originalfassung als Beilage, volle Charge als 4 Portionen (ChatGPT-Prüfung 31.10.2026, Entscheidung A, Fassung ersetzt am 31.10.2026)."},
  r191: {"url": "https://www.seriouseats.com/sous-vide-steaks-recipe", "basis": "Original: Serious Eats „Sous Vide Steaks“ für 4 Portionen aus 2 großen Steaks (rund 900 g) oder 4 Filetsteaks (680–900 g), optional Thymian, Knoblauch, Schalotten, Öl und Butter zum Anbraten, ohne Beilagen; Badtemperatur je Gargrad, durchgegart ab etwa 69 °C, 1–3 Stunden. App: Originalfassung mit 4 Filetsteaks (800 g) im 70-°C-Bad (durchgegart) (ChatGPT-Prüfung 31.10.2026, Entscheidung A, Fassung ersetzt am 31.10.2026)."},
@@ -71911,12 +72853,8 @@ const QUELLEN_REZEPTABGLEICH = {
  r321: {"url": "https://www.essen-und-trinken.de/rezepte/salat-mit-honig-senf-dressing-12066152.html", "basis": "Original: Essen und Trinken „Salat mit Honig-Senf-Dressing“ für 2 Portionen aus Blattsalat und Dressing aus Weißweinessig, Senf, Honig, Rapsöl und Wasser. App: Originalfassung unverändert als Beilage, ohne Hähnchenbrust, Tomate, Gurke, Karotte und Vollkornbrot (ChatGPT-Prüfung 01.11.2026, Entscheidung A, Fassung ersetzt am 01.11.2026)."},
 };
 const REZEPT_PATCHES = {
- r344: {"tips": "BBC veganes Schokoladeneis: zwei 400-g-Dosen Kokosmilch, 175 g Zucker, 50 g Kakao, 100 g vegane Schokolade und Stärke; zuerst ca. 20 Minuten kochen, dann 20–30 Minuten Eismaschine oder regelmäßig rühren. App mit Sojadrink, Tofu, Banane und Erdnussmus ist ein abweichendes veganes Eis."},
  r200: {"tips": "BBC Schweine-Stroganoff: 4 Portionen mit 400 g Filet, 500 g Champignons, ca. 300 ml Sauerrahm, 200 ml Fond, zwei Zwiebeln, Dijon und Rauchpaprika; Pilze einzeln braten, Zwiebeln 10–12 Minuten karamellisieren, Sauce nach Sauerrahm nur kurz erwärmen. App mit mehr Filet/Reis und weniger Pilzen/Sahne; eigene Variante."},
  r202: {"tips": "BBC Pulled Pork: etwa 12 Portionen, Schweineschulter, trockene BBQ-Würzung, nach eigener Größe 4–8 Stunden Ofengaren bis zupfbar; fertiges gezupftes Fleisch einfrierbar. App nutzt 1 kg Schulter, Dutch Oven, BBQ-Sauce, Wraps und Salat, typischerweise etwa vier Stunden bei 150 °C; eigene vollständige Mahlzeit."},
- r351: {"tips": "Serious Eats Haselnuss-Mascarpone-Eis: Basis aus 355 g Haselnüssen, 285 g Sahne, 225 g Milch, 170 g Zucker, 140 g Eigelb und 225 g Mascarpone; Nüsse über Nacht infundieren, Custard kochen, abkühlen und in Eismaschine gefrieren. App verwendet dieselben Kernmengen, Zeit/Temperatur müssen zum Gerät passen."},
- r352: {"tips": "Serious Eats Ahorn-Walnuss-Eis: Walnüsse ungefähr 225 g, Sahne etwa 475 ml, Vollmilch 240 ml, 6 Eigelbe und knapp 180 ml dunkler Ahornsirup; Walnüsse 1–2 Stunden ziehen lassen, Eigelbmasse auf ungefähr 77 °C erhitzen, gekühlt in Eismaschine gefrieren. App hat vergleichbare Zutaten mit eigenen Handgriffen."},
- r353: {"tips": "essen & trinken Spaghetti-Eis: vier Portionen mit 400 g Vanilleeis, 150 ml Sahne, 350 g Erdbeeren, 100 g weißer Schokolade und Puderzucker. Presse und Schalen eine Stunde vorkühlen und direkt anrichten. App enthält die entsprechenden Kernzutaten und Zubereitung. Die bereits zuvor gelesene CHEFKOCH-Spaghetti-Eis-Dessert-Seite ist dagegen eine Kühlschrankcreme und nicht dieselbe Vorlage. Aus der Chefkoch-Spaghetti-Eis-Dessert-Seite wurde kein Rezeptinhalt übernommen."},
 
 
  r199: {"tips": "BBC „Easy roast pork shoulder“: 2 kg Schulter mit Schwarte, 1 EL Öl, Salz und Zwiebel; zuerst 240 °C O/U zum Aufpoppen der Schwarte, anschließend niedrigere Temperatur für insgesamt ca. 3,5 h. App: 1 kg Schulter, Knoblauch und Röstgemüse; zuerst anbraten, bei 160 °C schmoren statt Krustenbraten."},
@@ -71929,9 +72867,6 @@ const REZEPT_PATCHES = {
    prep:25,cook:210
  },
 
- r353: {
-   tips:'Diese App-Karte ist echtes Spaghetti-Eis aus Vanilleeis und Erdbeersauce nach einer vom Nutzer gelieferten essen-&-trinken-Vorlage. Der neu geprüfte Chefkoch-Link „Spaghetti-Eis-Dessert“ beschreibt dagegen KEIN Eis, sondern eine Mascarpone-Quark-Sahne-Creme, die mindestens zwei Stunden kalt stehen muss. Beide Gerichte sind deutlich verschieden: Rezept-ID r353 nicht in eine Kühlschrankcreme umwandeln und Chefkoch nicht als eigentliche Grundlage der App-Karte bezeichnen.'
- },
 
 
 
@@ -72388,6 +73323,16 @@ BMAP.b71.prep = 10;
  r.src = 'Eigene Fassung (Claude) nach '+nach+'; Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen) auf die App-Portionen umgerechnet (ca.), Anleitung sinngemäß; Quellenabgleich 29.10.2026';
 });
 
+
+/* Korrektur 01.11.2026 (ChatGPT-Prüfung 3 von 3, Block 5, Entscheidung A): r340 bis r344, r351 bis r354 und r402 stehen als Originalfassungen direkt im Rezepttext (data_rezepte4.js). */
+['r340','r341','r342','r343','r344','r351','r352','r353','r354','r402'].forEach(id => {
+ const r=SEED.find(x=>x.id===id);
+ if(!r) throw new Error('Rezept fehlt: '+id);
+ r.quellenGeprueft='2026-10-29';
+ const nach = ({r340:'BBC Good Food „No-churn ice cream“',r341:'BBC Good Food „Chocolate ice cream“',r342:'BBC Good Food „Raspberry ripple ice cream“',r343:'BBC Good Food „Silly Twits ice cream“',r344:'BBC Good Food „Vegan chocolate ice cream“',r351:'Serious Eats „Hazelnut mascarpone ice cream“',r352:'Serious Eats „Maple walnut ice cream“',r353:'Essen und Trinken „Spaghetti-Eis“',r354:'BBC Good Food „Instant frozen berry yogurt“',r402:'Chefkoch (chefkoch.de) „Thunfischcreme“'})[id];
+ r.src = 'Eigene Fassung (Claude) nach '+nach+'; Zutaten und Mengen aus der ChatGPT-Prüfung vom 01.11.2026 (Original online gelesen) auf die App-Portionen umgerechnet (ca.), Anleitung sinngemäß; Quellenabgleich 29.10.2026';
+});
+
 /* ===== App: Rezepte, Rezeptdetail, Rezept-Editor ===== */
 function cuisines() { return [...new Set(lib().map(r => r.cuisine).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de')); }
 function filtered() {
@@ -72587,7 +73532,7 @@ function editorSheet() {
     '<textarea id="ed_paste" data-inp="edf" data-k="paste" placeholder="Rezepttext hier einfügen">' + esc(e.paste) + '</textarea>' + (SAMPLE_IMG ? '<input type="file" accept="image/*" id="ed_img" data-chg="edimg">' : '') +
     '<div class="row"><button type="button" class="btn primary" data-act="edki" ' + (e.busy ? 'disabled' : '') + '>' + (e.busy ? '<span class="spin"></span>Liest Rezept …' : 'Übernehmen') + '</button></div>' + (e.unmapped.length ? '<p class="note" style="color:var(--warn)">Nicht im Zutatenstamm gefunden und weggelassen: ' + esc(e.unmapped.join(', ')) + '. Bitte ergänzen oder ersetzen.</p>' : '') + '</div></details>' : '';
   return '<div class="row between"><h2>' + (e.id ? 'Rezept bearbeiten' : 'Eigenes Rezept') + '</h2><button type="button" class="btn small" data-act="closesheet">Abbrechen</button></div>' +
-    '<p class="note">Nährwerte, Allergene und Einkaufsliste entstehen aus den Zutaten. Ausgeschlossene Zutaten (deine eigenen) werden blockiert; Ananas, Süßkartoffel und Batate sind nur in Frühstück, Snack und Dessert erlaubt.</p>' + kiBox +
+    '<p class="note">Nährwerte, Allergene und Einkaufsliste entstehen aus den Zutaten. Ausgeschlossene Zutaten (deine eigenen) werden blockiert; Ananas ist nur in Frühstück, Snack und Dessert erlaubt, Süßkartoffel und Batate zusätzlich in Salat/Bowl.</p>' + kiBox +
     '<div class="panel stack-s">' + inp('name', 'Name', 'z. B. Linseneintopf meiner Oma') + '<div class="grid2"><div class="field"><label for="ed_meal">Mahlzeit</label>' + sel('meal', MEALS, e.meal) + '</div><div class="field"><label for="ed_group">Fleisch/Fisch/Veg.</label>' + sel('group', GRUPPEN, e.group) + '</div></div>' +
     '<div class="grid2">' + inp('cuisine', 'Küche / Herkunft', 'z. B. Italien') + '<div class="field"><label for="ed_level">Aufwand</label>' + sel('level', ['leicht', 'mittel', 'anspruchsvoll'], e.level) + '</div></div>' +
     '<div class="grid3">' + inp('servings', 'Portionen', '4') + inp('prep', 'Vorbereiten (Min.)', '15') + inp('cook', 'Garen (Min.)', '20') + '</div>' +
@@ -73076,7 +74021,7 @@ function aiErr(e) {
   const m = { not_granted: 'Die KI-Funktion wurde nicht erlaubt.', rate_limited: 'Zu viele Anfragen oder Kontingent erreicht. Versuche es später erneut.', invalid_json: 'Die Antwort war nicht verwertbar. Bitte erneut versuchen.', session_expired: 'Bitte in Claude neu anmelden.', sampling_disabled: 'KI ist für dieses Konto nicht verfügbar.', refused: 'Die Anfrage wurde abgelehnt. Formuliere sie anders.', upstream_error: 'Vorübergehender Fehler. Bitte erneut versuchen.', cancelled: '' };
   return c in m ? m[c] : 'Anfrage fehlgeschlagen (' + (c || 'unbekannt') + ').';
 }
-function exclText() { return FIXE_AUSSCHLUESSE.concat(state.profile.excl).join(', ') + (state.profile.excl.length ? ', ' : '') + 'Ananas, Süßkartoffel, Batate nur in Frühstück, Snack und Dessert erlaubt, nie in Hauptgerichten, Suppen, Eintöpfen, Salaten und Bowls'; }
+function exclText() { return FIXE_AUSSCHLUESSE.concat(state.profile.excl).join(', ') + (state.profile.excl.length ? ', ' : '') + 'Ananas nur in Frühstück, Snack und Dessert erlaubt, nie in Hauptgerichten, Suppen, Eintöpfen, Salaten und Bowls; Süßkartoffel und Batate zusätzlich in Salat/Bowl erlaubt'; }
 function profileText() {
   const p = state.profile;
   return 'Zu vermeidende Allergene: ' + (p.avoidAllergens.map(a => ALLERGENE[a]).join(', ') || 'keine angegeben') + '. Zu vermeidende Unverträglichkeiten: ' + (p.avoidIntol.map(a => UNVERTR[a]).join(', ') || 'keine angegeben') + '.';

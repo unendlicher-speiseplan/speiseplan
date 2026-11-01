@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-11-01 03:10 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-11-01 06:30 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,56 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag Version 70: Salate nur mit SIGHI-Kategorie 0
+
+- Sammlung „nur SIGHI Kategorie 0“: Acht Salate sind schon in der App (Grüner Salat, Karottensalat, Blumenkohlsalat, Gurken-Möhren-Salat, Warmer Spargel-Kartoffel-Salat, Quinoa-Gemüse-Bowl, Weißkohlsalat, Brokkolisalat) und tragen jetzt den Tag „SIGHI 0“.
+- Zwei Rezepte auf die SIGHI-0-Fassung geändert (nicht ersetzt, nur weggelassen): Gurken-Möhren-Salat ohne histaminarme Asia-Soße, Spargel-Kartoffel-Salat ohne Acerolasaft (Name ohne „mit Acerolasaft“). APP_VERSION 70.
+
+## Nachtrag Version 69: Gurken-Karotten-Salat histaminarm (r937)
+
+- Neu unter Salat/Bowl: Gurken-Karotten-Salat mit Schnittlauch (2 Portionen), histaminarm angepasst nach Chefkoch (Joghurt und Essig weggelassen, nicht ersetzt); Gramm für Stück- und Löffelangaben sind Annahmen (ca.). APP_VERSION 69.
+
+## Nachtrag Version 68: Brokkolisalat histaminarm (r936)
+
+- Neu unter Salat/Bowl: Brokkolisalat mit Möhre und Gurke (2 Portionen) nach Chefkoch-Suchseite (kein Einzelrezept-Link); Gramm für Stück- und Löffelangaben sind Annahmen (ca.). APP_VERSION 68.
+
+## Nachtrag Version 67: Gurken-Joghurt-Salat histaminarm (r935)
+
+- Neu unter Salat/Bowl: Gurken-Joghurt-Salat mit Dille (2 Portionen) nach ichkoche; Gramm für Stück- und Löffelangaben sind Annahmen (ca.), Naturjoghurt als 3,5 % Fett angesetzt. Joghurt und Senf sind wie in der Vorlage enthalten, der Histamin-Hinweis steht im Tipp. APP_VERSION 67.
+
+## Nachtrag Version 66: Süßkartoffel in Salat/Bowl erlaubt
+
+- Auf Wunsch (01.11.2026) ist Süßkartoffel (Batate) jetzt allgemein in Salat/Bowl erlaubt, nicht nur in r931. Ananas bleibt in allen Hauptmahlzeiten gesperrt; Süßkartoffel bleibt in Hauptgerichten und Suppen/Eintöpfen gesperrt. Die Quinoa-Gemüse-Bowl (r931) trägt die Süßkartoffel jetzt im Namen. Hinweistexte der App, der Saison-Zeile und des Rezept-Prompts angepasst. APP_VERSION 66.
+
+## Nachtrag Version 65: Histaminarme Salate unter Salat/Bowl
+
+- Alle elf histaminarmen Salate (r924 bis r934) stehen jetzt unter Salat/Bowl statt teils unter Beilage. Die Süßkartoffel in der Quinoa-Gemüse-Bowl (r931) darf auf Wunsch im Salat bleiben; der Test „Süßkartoffel nur außerhalb der Hauptmahlzeiten“ nimmt r931 aus. APP_VERSION 65.
+
+## Nachtrag Version 64: Kartoffelsalat histaminarm mit Kürbiskernöl (r934)
+
+- Neu: Kartoffelsalat mit Sauerrahm und Kürbiskernöl (1 Portion, Beilage, ohne Essig) nach GuteKueche; Gramm für Stück- und Löffelangaben sind Annahmen (ca.). Neue Zutat: Kürbiskernöl. APP_VERSION 64.
+
+## Nachtrag Version 63: Rezeptsammlung „Histaminarme Salate“ (10 neue Rezepte)
+
+- Neu: Kartoffelsalat mit Sauerrahm und Leinöl, Grüner Salat, Karottensalat mit Ingwer und Hanföl, Blumenkohlsalat (Karfiolsalat), Gurken-Möhren-Salat, Warmer Spargel-Kartoffel-Salat, Hirse-Salat, Quinoa-Gemüse-Bowl, Nudel-Paprika-Salat und Weißkohlsalat ohne Essig. Alle mit „histaminarm“ im Namen; die Einstufung stammt aus der Vorlage (SIGHI-orientiert).
+- Quellen: sechs Rezepte mit Link (GuteKueche, HistaFood, Eat Tolerant), vier eigene SIGHI-orientierte Zusammenstellungen ohne Originalquelle. Gramm für Stück- und Löffelangaben sind Annahmen (ca.), Nährwerte daraus errechnet.
+- Neue Zutaten: Leinöl, Hanföl, Acerolasaft, Hirse, Dinkelnudeln, histaminarme Asia-Soße (Fertigprodukt, Zusammensetzung unbekannt, Richtwert). APP_VERSION 63.
+
+## Nachtrag Version 62: Klärungsentscheidungen zu den 198 Rezepten umgesetzt
+
+- r217 Blumenkohl-Hähnchen-Pfanne: China-Sauce 100 ml (statt 250 ml) und 200 ml Wasser (zwei Flaschenfüllungen), als Annahme im Tipp (Originalseite nennt keine Flaschengröße).
+- r300 Mangopudding: Litschis laut Original 12 Stück, angesetzt ca. 110 g (statt 150 g).
+- r312 Chinesisches flambiertes Eis: Ausbackteig und Rum nach Zweitquelle erdbeerschokola.de (Stärke, Mehl, Zucker, Salz, ohne Ei; 1 EL Rum je Kugel), auf 8 Kugeln umgerechnet; Wassermenge, Sandkuchen, Öl und Frittierzeit bleiben Richtwerte.
+- r337 Bananeneis: Charge jetzt 4 Portionen (statt 6).
+- Bestätigt ohne Änderung: r282 bleibt eigene Schinken-Panini-Variante (Quelle nur Inspiration), r314 bleibt 4 Portionen, r320 bleibt Kokos-Bananen-Smoothie, r351 bleibt bei 355 g Haselnüssen, r298 und r354 bleiben getrennte IDs. APP_VERSION 62.
+
+## Nachtrag Version 61: ChatGPT-Prüfung 3 von 3, Block 5 (r340 bis r344, r351 bis r354, r402) auf die Originale umgestellt
+
+- Zehn Rezepte stehen jetzt in der Originalfassung (Entscheidung A): No-Churn-Eis mit Kondensmilch, Schokoladeneis mit Double Cream, Himbeer-Ripple-Eis mit Ei, Silly-Twits-Eis (Eier und Sahne), veganes Schokoladeneis mit Kokosmilch, Haselnuss-Mascarpone-Eis, Maple-Walnut-Eis (ohne Vanille), Spaghetti-Eis (mit Puderzucker und Zitronenschale), Instant Frozen Berry Yogurt und Thunfischcreme mit Kapern.
+- Sicherheitshinweise: Eis aus rohen Eiern (r342, r343) nur mit pasteurisiertem Ei (BfR). Beim Berry Yogurt (r354) werden Tiefkühlbeeren vorab durcherhitzt, abgekühlt und wieder eingefroren (BfR, wie bei r298).
+- Zur manuellen Klärung: r351 Haselnussmenge widersprüchlich in der Quelle (355 g metrisch gegen 9 oz, vorläufig 355 g); r354 ist inhaltlich eine Dublette zu r298 (4 statt 2 Portionen); Gefrierzeiten und Zuckeraufteilung bei r340 bis r343 sind Richtwerte/Annahmen.
+- Neue Zutaten: griechischer Joghurt fettarm, vegane Zartbitterschokolade, Walnüsse und Haselnüsse zum Ziehenlassen (ohne Nährwert, werden abgeseiht). Alte Patches für die zehn Rezepte entfernt. APP_VERSION 61.
 
 ## Nachtrag Version 60: ChatGPT-Prüfung 3 von 3, Block 4 (r323 bis r327, r329, r330, r332 bis r334, r337, r339) auf die Originale umgestellt
 
@@ -1264,17 +1314,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **838** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 112, Rind: 115, Schwein: 119, Fisch: 80, Vegetarisch: 412 |
-| Verteilung nach Mahlzeit | Hauptgericht: 356, Suppe/Eintopf: 65, Salat/Bowl: 9, Frühstück: 18, Smoothie: 16, Snack: 181, Dessert: 98, Beilage: 29, Aufstrich: 45, Sauce/Dips: 21 |
+| Mitgelieferte Rezepte | **852** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 112, Rind: 115, Schwein: 119, Fisch: 80, Vegetarisch: 426 |
+| Verteilung nach Mahlzeit | Hauptgericht: 356, Suppe/Eintopf: 65, Salat/Bowl: 23, Frühstück: 18, Smoothie: 16, Snack: 181, Dessert: 98, Beilage: 29, Aufstrich: 45, Sauce/Dips: 21 |
 | Einfrierbar: ja / eingeschränkt | 138 / 41 |
-| Zutaten im Stamm (davon mit Nährwerten) | 570 (569) |
+| Zutaten im Stamm (davon mit Nährwerten) | 581 (580) |
 | Gewürze | 120 |
 | Bausteine (Meal-Prep) | **79** (Protein: 20, Beilage: 8, Sauce: 23, Gemüse: 5, Booster: 23) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine, Dämpfer, Stabmixer, Handmixer, Eismaschine, Wok, Thermometer, Vakuumierer, Dörrautomat, Mikrowelle, Reiskocher, Mooncake-Form, Waffeleisen, Küchenbrenner, Eisportionierer, Slow Cooker |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 3818 KB |
+| Größe `dist/index.html` | 3863 KB |
 
 ---
 
@@ -1496,7 +1546,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 838 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 852 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 79 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
