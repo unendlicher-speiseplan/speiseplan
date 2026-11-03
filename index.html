@@ -308,7 +308,7 @@ button.badge { border: 0; cursor: pointer; font-family: inherit; }
 <script>
 /* ===== Daten & Logik (ohne DOM, testbar) ===== */
 // Versionsnummer der App: bei jeder Auslieferung erhöhen (fortlaufende ganze Zahl). Sie steht in der Kopfzeile und unter Mehr.
-const APP_VERSION = '70';
+const APP_VERSION = '84';
 const ALLERGENE = {
   gluten: 'Glutenhaltiges Getreide', krebs: 'Krebstiere', ei: 'Eier', fisch: 'Fisch', erdnuss: 'Erdnüsse',
   soja: 'Soja', milch: 'Milch', schale: 'Schalenfrüchte', sellerie: 'Sellerie', senf: 'Senf',
@@ -669,6 +669,8 @@ function calcRecipe(r) {
   });
   const n = Math.max(1, r.servings || 1);
   const pp = { kcal: Math.round(tot.kcal / n), p: round1(tot.p / n), c: round1(tot.c / n), f: round1(tot.f / n), g: Math.round(tot.g / n) };
+  /* Bausteine: Gramm je Block = geschätztes Gewicht nach dem Garen (cooked) geteilt durch die Blockzahl, nicht die Summe der rohen Zutaten */
+  if (r.meal === 'Baustein' && r.cooked > 0) pp.g = Math.round(r.cooked / n);
   return { tot, pp, rows, missing };
 }
 function derive(r) {
@@ -1423,6 +1425,20 @@ const ZUTATEN_PLUS = [
   I('dinkelnudeln', 'Dinkelnudeln (roh; eigener Richtwert)', 'Trockenprodukte', 350, 13, 68, 2.5, { al: ['gluten'] }),
   I('asia_sosse_histaminarm', 'Histaminarme Asia-Soße (Fertigprodukt; Zusammensetzung unbekannt, eigener Richtwert)', 'Konserven', 70, 2, 14, 0.5),
   I('kuerbiskernoel', 'Kürbiskernöl', 'Gewürze & Öle', 899, 0, 0, 99.9),
+  I('rindertalg', 'Rindertalg / Rinderfett, ausgelassen (Beef Tallow)', 'Gewürze & Öle', 900, 0, 0, 100),
+  I('chilis_rot_getrocknet', 'Rote Chilischoten, getrocknet (ganz; eigener Richtwert)', 'Trockenprodukte', 318, 12, 29, 17),
+  I('douchi', 'Douchi (fermentierte schwarze Sojabohnen; eigener Richtwert)', 'Gewürze & Öle', 195, 20, 10, 8, { al: ['soja'], his: 2 }),
+  I('kandiszucker', 'Kandiszucker', 'Trockenprodukte', 400, 0, 100, 0),
+  I('shiitake_getrocknet', 'Shiitake-Pilze, getrocknet', 'Trockenprodukte', 296, 9.6, 64, 1),
+  I('huehnerkarkasse', 'Hühnerkarkasse oder Hühnerflügel mit Knochen für Brühe (nur der in die Brühe übergehende Anteil; eigener Richtwert)', 'Fleisch & Geflügel', 24, 3, 0, 1.3),
+  I('schweineknochen', 'Schweineknochen für Brühe (nur der in die Brühe übergehende Anteil; eigener Richtwert)', 'Fleisch & Geflügel', 24, 3, 0, 1.3),
+  I('teriyakisauce', 'Teriyaki-Sauce (Fertigprodukt; eigener Richtwert)', 'Gewürze & Öle', 89, 5.9, 15.6, 0, { al: ['soja', 'gluten'], his: 2 }),
+  I('ponzusauce', 'Ponzu-Sauce (Fertigprodukt, Zitrus-Sojasauce; eigener Richtwert)', 'Gewürze & Öle', 42, 2.5, 8, 0, { al: ['soja', 'gluten'], his: 2 }),
+  I('wasabipaste', 'Wasabi-Paste (Tube; eigener Richtwert)', 'Gewürze & Öle', 110, 3, 20, 2),
+  I('nektarine', 'Nektarine (ohne Stein)', 'Obst', 44, 1.1, 8.9, 0.3),
+  I('dinkelreis', 'Dinkelreis (roh, Dinkelkörner; eigener Richtwert)', 'Trockenprodukte', 335, 12, 66, 2.5, { al: ['gluten'], fod: 1 }),
+  I('feldsalat', 'Feldsalat', 'Gemüse', 14, 1.8, 0.7, 0.4),
+  I('buchweizen', 'Buchweizen (geschält, roh; eigener Richtwert)', 'Trockenprodukte', 345, 10.5, 70, 2.7),
   I('pilzcremesuppe', 'Kondensierte Pilzcremesuppe (Dose, unverdünnt; eigener Richtwert)', 'Konserven', 80, 1.4, 7, 5, { al: ['gluten', 'milch'] }),
   I('kartoffelchips', 'Kartoffelchips (gesalzen)', 'Trockenprodukte', 536, 6, 50, 34),
   I('veggie_crumbles', 'Veggie-Hack / Burger-Crumbles (vegetarisch, Soja-Weizen-Basis; eigener Richtwert)', 'Sonstiges', 150, 17, 9, 4.5, { al: ['soja', 'gluten'], hul: 1 }),
@@ -1482,7 +1498,28 @@ const SPICES = [
   { id: 'macis', name: 'Macis (Muskatblüte)' },
   { id: 'gemischte_kraeuter', name: 'Gemischte Kräuter, getrocknet (Mixed Herbs)' }, { id: 'adobo_gewuerz', name: 'Adobo-Gewürz (Goya, mit Pfeffer)' }, { id: 'chilischoten_getrocknet', name: 'Chilischoten, getrocknet (ganz)' }, { id: 'madras_curry', name: 'Madras-Currypulver' }, { id: 'liebstoeckel', name: 'Liebstöckel, gehackt (frisch oder getrocknet)' },
   { id: 'new_mexico_chili', name: 'New-Mexico-Chilischote, getrocknet (1 Stück)' },
-  { id: 'schwarztee_blaetter', name: 'Schwarztee, lose (z. B. Assam oder Ceylon; wird abgeseiht, nicht gegessen)' }
+  { id: 'schwarztee_blaetter', name: 'Schwarztee, lose (z. B. Assam oder Ceylon; wird abgeseiht, nicht gegessen)' },
+  { id: 'kraeuter_frisch', name: 'Frische Kräuter (Menge nicht angegeben)' },
+  { id: 'minze_garnitur', name: 'Minze, frisch (zum Servieren; in der Zutatenliste der Vorlage nicht genannt, nicht mitgerechnet)' },
+  { id: 'asia_gewuerzmischung', name: 'Asia-Gewürzmischung (Zusammensetzung herstellerabhängig, kann Allergene enthalten)' },
+  { id: 'koriander_garnitur', name: 'Koriander, frisch (zum Garnieren; Menge nicht angegeben)' },
+  { id: 'brauner_zucker_abschmecken', name: 'Zucker zum Abschmecken (brauner Zucker in der Marinade; Menge nicht angegeben)' },
+  { id: 'wasabi_nicht_gelistet', name: 'Wasabi (steht in der Zubereitung der Vorlage, nicht in der Zutatenliste; Menge nicht angegeben)' },
+  { id: 'fruehlingszwiebel_nicht_gelistet', name: 'Frühlingszwiebeln (stehen in der Zubereitung der Vorlage, nicht in der Zutatenliste; Menge nicht angegeben)' },
+  { id: 'ahornsirup_optional', name: 'Ahornsirup (optional, Menge nicht angegeben)' },
+  { id: 'olivenoel_braten', name: 'Olivenöl zum Braten (Menge nicht genannt, nicht mitgerechnet)' },
+  { id: 'fruehlingszwiebel_garnitur', name: 'Frühlingszwiebeln (zum Garnieren; Menge nicht angegeben)' },
+  { id: 'sesam_garnitur', name: 'Sesam (zum Garnieren; Menge nicht angegeben)', al: ['sesam'] },
+  { id: 'lachs_gewuerzmischung', name: 'Lachs-Gewürzmischung (Zusammensetzung herstellerabhängig, Menge nicht angegeben)' },
+  { id: 'reisessig_abschmecken', name: 'Reisessig zum Abschmecken (Menge nicht angegeben)' },
+  { id: 'kresse_garnitur', name: 'Kresse (zum Bestreuen; Menge nicht angegeben)' },
+  { id: 'wasabi_nuesse_garnitur', name: 'Wasabi-Nüsse (meist Erdnüsse mit Teighülle, herstellerabhängig; zum Bestreuen, Menge nicht angegeben)', al: ['erdnuss', 'gluten'] },
+  { id: 'chili_nuesse_garnitur', name: 'Chili-Nüsse (meist Erdnüsse mit Teighülle, herstellerabhängig; zum Bestreuen, Menge nicht angegeben)', al: ['erdnuss', 'gluten'] },
+  { id: 'knoblauch_optional', name: 'Knoblauch (optional, Menge nicht angegeben)', fod: 1 },
+  { id: 'schnittlauch_optional', name: 'Schnittlauch (optional, Menge nicht angegeben)' },
+  { id: 'gyros_gewuerz', name: 'Gyros-Gewürz (Menge nicht angegeben, Mischung herstellerabhängig)' },
+  { id: 'minze_ohne_menge', name: 'Minze, frisch (Menge nicht angegeben)' },
+  { id: 'zitrone_ohne_menge', name: 'Zitrone (Menge nicht angegeben, zum Würzen)' }
 ].map(s => Object.assign({ al: [], fod: 0 }, s));
 const SMAP = {};
 SPICES.forEach(s => { SMAP[s.id] = s; });
@@ -2194,6 +2231,20 @@ Object.assign(BLS_REF, {
   "dinkelnudeln": { m: "own", c: "", n: "Dinkelnudeln roh: Richtwert (rund 350 kcal je 100 g).", e: 0, o: [350, 13, 68, 2.5] },
   "asia_sosse_histaminarm": { m: "own", c: "", n: "Histaminarme Asia-Soße (Fertigprodukt): Zusammensetzung unbekannt, Richtwert (rund 70 kcal je 100 g), bitte Etikett prüfen.", e: 0, o: [70, 2, 14, 0.5] },
   "kuerbiskernoel": { m: "own", c: "", n: "Kürbiskernöl: Richtwert (rund 899 kcal je 100 g), nicht erhitzen.", e: 0, o: [899, 0, 0, 99.9] },
+  "rindertalg": { m: "own", c: "", n: "Rindertalg, ausgelassen: Richtwert (reines Fett, rund 900 kcal je 100 g).", e: 0, o: [900, 0, 0, 100] },
+  "chilis_rot_getrocknet": { m: "own", c: "", n: "Rote Chilischoten, getrocknet: Richtwert nach üblichen Tabellenwerten für getrocknete Chilis (ohne Ballaststoffe gerechnet).", e: 0, o: [318, 12, 29, 17] },
+  "douchi": { m: "own", c: "", n: "Douchi (fermentierte schwarze Sojabohnen): kein BLS-Eintrag; eigener Richtwert, sehr salzig.", e: 0, o: [195, 20, 10, 8] },
+  "kandiszucker": { m: "own", c: "", n: "Kandiszucker: Näherung nach Zucker (reine Saccharose).", e: 0, o: [400, 0, 100, 0] },
+  "shiitake_getrocknet": { m: "own", c: "", n: "Shiitake, getrocknet: Richtwert nach üblichen Tabellenwerten (Kohlenhydrate ohne Ballaststoffe).", e: 0, o: [296, 9.6, 64, 1] },
+  "huehnerkarkasse": { m: "own", c: "", n: "Hühnerkarkasse oder Hühnerflügel für Brühe: eigener Richtwert für den in die Brühe übergehenden Anteil (Knochen und Fleisch werden abgeseiht); keine Quellenangabe.", e: 0, o: [24, 3, 0, 1.3] },
+  "schweineknochen": { m: "own", c: "", n: "Schweineknochen für Brühe: eigener Richtwert für den in die Brühe übergehenden Anteil (Knochen werden abgeseiht); keine Quellenangabe.", e: 0, o: [24, 3, 0, 1.3] },
+  "teriyakisauce": { m: "own", c: "", n: "Teriyaki-Sauce (Fertigprodukt): kein BLS-Eintrag; eigener Richtwert nach üblichen Tabellenwerten (rund 89 kcal je 100 g), je nach Hersteller verschieden.", e: 0, o: [89, 5.9, 15.6, 0] },
+  "ponzusauce": { m: "own", c: "", n: "Ponzu-Sauce (Fertigprodukt): kein BLS-Eintrag; eigener Richtwert, je nach Hersteller verschieden.", e: 0, o: [42, 2.5, 8, 0] },
+  "wasabipaste": { m: "own", c: "", n: "Wasabi-Paste (Tube): kein BLS-Eintrag; eigener Richtwert, je nach Hersteller verschieden (oft mit Meerrettich).", e: 0, o: [110, 3, 20, 2] },
+  "nektarine": { m: "own", c: "", n: "Nektarine ohne Stein: Richtwert nach üblichen Tabellenwerten (rund 44 kcal je 100 g).", e: 0, o: [44, 1.1, 8.9, 0.3] },
+  "dinkelreis": { m: "own", c: "", n: "Dinkelreis (Dinkelkörner, roh): kein BLS-Eintrag; eigener Richtwert nach üblichen Packungsangaben, je nach Hersteller verschieden.", e: 0, o: [335, 12, 66, 2.5] },
+  "feldsalat": { m: "own", c: "", n: "Feldsalat: Richtwert nach üblichen Tabellenwerten (rund 14 kcal je 100 g).", e: 0, o: [14, 1.8, 0.7, 0.4] },
+  "buchweizen": { m: "own", c: "", n: "Buchweizen (geschält, roh): kein BLS-Eintrag; eigener Richtwert nach üblichen Tabellenwerten (rund 345 kcal je 100 g), je nach Hersteller verschieden.", e: 0, o: [345, 10.5, 70, 2.7] },
 });
 Object.assign(BLS_REF, {
   "taropaste": { m: "own", c: "", n: "Taropaste: kein BLS-Eintrag; rechnerisch aus dem Grundrezept „Gemeinsame Taropaste“ der App (600 g Taro, 150 g Zucker, 120 g Kokosmilch, 60 g Butter, Ausbeute laut Vorlage ca. 800 g). Taro ist selbst eine Näherung nach Kartoffeln. Gekaufte Pasten können abweichen; die Packungsangaben sind maßgeblich.", e: 0, o: [227, 1.9, 32.5, 9.5] }
@@ -67606,6 +67657,3072 @@ SEED2.push(
 })
 );
 
+SEED2.push(
+  /* ---------- Ntomatorizo Griechischer Tomatenreis (Version 71) ---------- */
+  R({
+ "name": "Ntomatorizo – Griechischer Tomatenreis (Ντοματόριζο)",
+ "meal": "Beilage",
+ "group": "Vegetarisch",
+ "cuisine": "Griechenland",
+ "origin": "Griechenland",
+ "servings": 4,
+ "prep": 10,
+ "cook": 35,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Reis",
+  "griechisch",
+  "vegan",
+  "Beilage",
+  "Meal Prep"
+ ],
+ "mp": true,
+ "ing": [
+  [
+   "langkornreis",
+   300
+  ],
+  [
+   "zwiebel",
+   80
+  ],
+  [
+   "knoblauch",
+   6
+  ],
+  [
+   "olivenoel",
+   40
+  ],
+  [
+   "tomaten_dose",
+   400
+  ],
+  [
+   "tomatenmark",
+   30
+  ],
+  [
+   "wasser",
+   550
+  ],
+  [
+   "zucker",
+   5
+  ]
+ ],
+ "spices": [
+  "lorbeer",
+  "nelken",
+  "piment",
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Die Zwiebel und den Knoblauch fein hacken.",
+  "Das Olivenöl (3 EL) in einem Topf erhitzen.",
+  "Zwiebel und Knoblauch darin glasig dünsten.",
+  "Das Tomatenmark (2 EL) zugeben und kurz mitrösten.",
+  "Die stückigen Tomaten, den Zucker (1 TL), das Lorbeerblatt, die Nelken (2 bis 3), das Piment, Salz und schwarzen Pfeffer zugeben und kurz aufkochen lassen.",
+  "Den Reis zugeben und gut vermengen, dann das Wasser (500 bis 600 ml; hier 550 ml) oder Gemüsebrühe zugeben und alles aufkochen.",
+  "Die Hitze reduzieren und zugedeckt etwa 15 bis 20 Minuten köcheln lassen, bis der Reis die Flüssigkeit aufgenommen hat.",
+  "Den Topf vom Herd nehmen und den Reis 10 Minuten zugedeckt ruhen lassen.",
+  "Lorbeerblatt, Nelken und Piment vor dem Servieren entfernen. Nach Wunsch mit Petersilie bestreuen (optional, nicht mitgerechnet) und mit Feta servieren (optional, nicht mitgerechnet)."
+ ],
+ "tips": "Klassisches griechisches Gericht: Der Reis wird direkt in der Tomatensauce gegart, nicht separat. Langkornreis ist die klassische Wahl, Tomatenmark verstärkt den typischen Restaurantgeschmack, der Zucker gleicht die Säure der Tomaten aus, Lorbeer, Nelken und Piment geben die typische Tiefe. In Restaurants oft als kleine Reiskugel serviert; passt zu Grillfleisch, Souvlaki, Fisch und Ofengemüse. Mengen wie in der Vorlage für 4 Portionen; 400 g stückige oder passierte Tomaten sind als gehackte Dosentomaten angesetzt, „Wasser oder Gemüsebrühe“ als Wasser (550 ml, Mitte von 500 bis 600 ml); Petersilie und Feta sind optional und nicht mitgerechnet. HISTAMIN-HINWEIS der Vorlage: Tomaten gehören bei SIGHI zu den Lebensmitteln, die gemieden werden sollten; der Tomatenreis ist für eine histaminarme Ernährung nicht geeignet, außer Tomaten werden individuell gut vertragen. Reis nach dem Kochen rasch abkühlen lassen und nicht lange warm halten. Vegan, wenn ohne Feta.",
+ "storage": "Im Kühlschrank bis zu 1 Tag; gekochten Reis rasch abkühlen lassen und nicht lange warm halten.",
+ "reheat": "Durchgehend auf mindestens 70 °C erhitzen.",
+ "freeze": {
+  "ok": "ja",
+  "block": 250,
+  "months": 2,
+  "note": "Reis rasch abkühlen lassen und portionsweise einfrieren; beim Erwärmen etwas Wasser zugeben."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Ντοματόριζο / Ntomatorizo, Griechischer Tomatenreis; Quellen laut Text: SBS Greek „Domatorizo – Greek tomato rice“, Real Greek Recipes „Greek Tomato Rice (Ntomatorizo)“, Travel & Food „Ntomatorizo, Greek tomato rice“); Zutaten und Mengen wie übergeben (Gramm bei Stück- und Löffelangaben als ca.-Werte), Schritte in eigenen Worten; Quelle laut Text: Fußnoten [1248][1253][1259]; 4 Portionen"
+})
+);
+
+SEED2.push(
+  /* ---------- Hotpot-Brühen: Sichuan-Málà-Paste und milde Knochenbrühe (Version 72) ---------- */
+  R({
+ "name": "Hotpot-Brühe scharf – Traditionelle Sichuan-Málà-Brühe mit Instant-Gewürzpaste (麻辣火锅)",
+ "meal": "Suppe/Eintopf",
+ "group": "Rind",
+ "cuisine": "China (Sichuan)",
+ "origin": "China (Sichuan)",
+ "servings": 4,
+ "prep": 40,
+ "cook": 35,
+ "level": "mittel",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Hotpot",
+  "Sichuan",
+  "Málà",
+  "Brühe",
+  "Suppenbasis",
+  "Gewürzpaste",
+  "Instant",
+  "scharf",
+  "China",
+  "Meal Prep"
+ ],
+ "mp": true,
+ "ing": [
+  [
+   "rindertalg",
+   100
+  ],
+  [
+   "rapsoel",
+   28
+  ],
+  [
+   "chilibohnenpaste",
+   50
+  ],
+  [
+   "chilis_rot_getrocknet",
+   30
+  ],
+  [
+   "douchi",
+   15
+  ],
+  [
+   "ingwer",
+   30
+  ],
+  [
+   "knoblauch",
+   30
+  ],
+  [
+   "fruehlingszwiebel",
+   50
+  ],
+  [
+   "reiswein",
+   30
+  ],
+  [
+   "kandiszucker",
+   10
+  ],
+  [
+   "wasser",
+   1500
+  ]
+ ],
+ "spices": [
+  "sichuanpfeffer",
+  "sternanis",
+  "zimt",
+  "lorbeer",
+  "fenchelsamen"
+ ],
+ "steps": [
+  "Die getrockneten roten Chilis (30 g) entstielen und nach Wunsch teilweise entkernen.",
+  "Die Chilis 20 bis 30 Minuten in heißem Wasser einweichen, abgießen und grob pürieren.",
+  "Ingwer (30 g) und Knoblauch (30 g) fein hacken, die Frühlingszwiebeln (50 g) in Stücke schneiden.",
+  "Das ausgelassene Rinderfett (100 g) und das Rapsöl (30 ml) in einem schweren Topf bei niedriger bis mittlerer Hitze schmelzen.",
+  "Ingwer, Knoblauch und Frühlingszwiebeln zugeben und 5 bis 8 Minuten sanft anschwitzen, ohne dass sie verbrennen.",
+  "Pixian Doubanjiang (50 g), Douchi (15 g) und die vorbereiteten Chilis einrühren.",
+  "Die Mischung unter häufigem Rühren 8 bis 10 Minuten langsam erhitzen, bis sie intensiv duftet und das Fett eine tiefrote Farbe hat.",
+  "Sichuanpfeffer (8 g, ganz), Sternanis (2 Stück), Cassia-Zimt (1 kleines Stück), Lorbeerblätter (2 Stück), Fenchelsamen (3 g) und Kandiszucker (10 g) zugeben.",
+  "Den Shaoxing-Reiswein (30 ml) zugeben und weitere 2 bis 3 Minuten sanft erhitzen. Die fertige Gewürzpaste ist das Hotpot-Konzentrat.",
+  "Sofort verwenden: Die Paste mit 1.500 ml heißer Brühe oder heißem Wasser aufgießen, aufkochen und 10 bis 15 Minuten leicht köcheln lassen, abschmecken und bei Bedarf mit Wasser verdünnen. Bei reiner Wasserzugabe optional Brühepulver nach Herstellerdosierung für 1,5 Liter in die fertige Paste einrühren (nicht mitgerechnet). Das ergibt etwa 1,5 Liter scharfe Brühe.",
+  "Instant-Variante, Vorrat anlegen: Die Paste ohne Wasserzugabe portionsweise abfüllen, rasch abkühlen und einfrieren (eine ganze Portion Paste für 1,5 Liter Brühe, eine halbe Portion für einen Yin-Yang-Hotpot).",
+  "Am Hotpot-Tag: Eine vollständige Portion tiefgekühlte Paste in den Hotpot geben, 1.500 ml Wasser oder Brühe zugeben, aufkochen und 10 bis 15 Minuten leicht köcheln lassen. Abschmecken und bei Bedarf mit Wasser verdünnen.",
+  "Für einen Yin-Yang-Hotpot: ½ Portion Paste mit 750 ml Wasser oder Brühe aufkochen und wie oben köcheln lassen. Die andere Hälfte ist für die milde Brühe vorgesehen."
+ ],
+ "tips": "BRÜHE, KEINE VOLLSTÄNDIGE MAHLZEIT: Das Rezept ist die Brühe als Grundlage für den Hotpot; die Zutaten zum Garen im Hotpot (Fleisch, Gemüse, Tofu, Nudeln) gehören nicht dazu. Die Nährwerte beziehen sich nur auf die Brühe und liegen deshalb unter dem Richtwert für Hauptmahlzeiten (AUSNAHME VOM KALORIEN- UND EIWEISSRAHMEN, originalgetreu). Zutaten, Mengen und Schritte wie in der Vorlage, einschließlich der Instant-Variante. Die Gewürzpaste ist das Hotpot-Konzentrat: eine ganze Portion Paste mit 1.500 ml Wasser oder Brühe ergibt ca. 1,5 Liter scharfe Brühe, für einen Yin-Yang-Hotpot nur eine halbe Portion Paste mit 750 ml (zusammen mit der milden Brühe, Rezept „Hotpot-Brühe mild“: ½ Portion Málà-Paste mit 750 ml Wasser und 200 ml Knochenbrühekonzentrat mit 550 ml Wasser, zusammen ca. 750 ml milde und 750 ml scharfe Brühe). Die Paste und das Brühekonzentrat getrennt lagern und dosieren. Die Vorlage nennt 4 bis 6 Personen, die App rechnet 4 Portionen (je ca. 375 ml Brühe). SCHÄRFE (Vorlage): Die Paste ist kräftig und scharf; für eine mildere Fassung zunächst nur die Hälfte verwenden. SICHERHEIT (Vorlage): Die hausgemachte Paste ist nicht ungekühlt haltbar. Besonders Knoblauch in Öl kann bei falscher Lagerung ein Botulismusrisiko darstellen; die Paste deshalb nicht bei Raumtemperatur in Schraubgläsern aufbewahren. Auch Vakuumieren oder späteres Aufkochen ersetzt keine sichere Lagerung. Die scharfe Knoblauch-Öl-Paste bei Kühlschranklagerung innerhalb von vier Tagen verbrauchen. ALLERGENE (Vorlage): Pixian Doubanjiang enthält Sojabohnen und möglicherweise Weizen, Douchi Sojabohnen, Shaoxing-Wein je nach Hersteller möglicherweise Weizen. Annahmen der App: Für das Aufgießen ist Wasser gerechnet (Brühe ist laut Vorlage gleichwertig möglich); 30 ml Rapsöl ≈ 28 g und 30 ml Shaoxing-Wein ≈ 30 g; Kandiszucker als eigene Zutat mit dem Nährwert von Zucker; Cassia-Zimt als Zimt; die Gewürze Sichuanpfeffer, Sternanis, Zimt, Lorbeer und Fenchel sind ohne Nährwert gerechnet; die Chilis sind trocken eingewogen, das Einweichwasser ist nicht mitgerechnet. Die Nährwerte rechnen alle Zutaten ein, auch das gesamte Rinderfett. Auf Wunsch unter Suppe/Eintopf eingeordnet, weil es eine Brühe ist; die Vorlage nennt für den Hotpot selbst keine Zutaten zum Garen. Nicht praktisch getestet.",
+ "storage": "Paste im Kühlschrank innerhalb von 4 Tagen verbrauchen; nicht bei Raumtemperatur und nicht in Schraubgläsern ungekühlt aufbewahren (Botulismusrisiko durch Knoblauch in Öl, Vorlage).",
+ "reheat": "Gefrorene Paste direkt in den Topf geben, mit 1.500 ml Wasser oder Brühe aufgießen, aufkochen und 10 bis 15 Minuten leicht köcheln lassen.",
+ "freeze": {
+  "ok": "ja",
+  "block": 125,
+  "months": 2,
+  "note": "Paste ohne Wasserzugabe portionsweise abfüllen, rasch abkühlen und bei −18 °C einfrieren (Vorlage: Verwendung für gute Qualität innerhalb von etwa 2 bis 3 Monaten). Tiefgekühlt direkt mit Wasser oder Brühe in den Topf geben und vollständig aufkochen. Blockgröße 125 ml entspricht grob einer halben Portion Paste (Annahme der App; die Vorlage nennt keine Blockgröße)."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext („Chinesischer Hotpot – Zwei traditionelle Brühen mit Instant-Konzentraten“); Quellen laut Text zur Einordnung: sichuankitchenrecipes.com „Sichuan hot pot base“ (https://sichuankitchenrecipes.com/2022/12/23/sichuan-hot-pot-base/), thewoksoflife.com „Chinese hot pot soup base“ (https://thewoksoflife.com/chinese-hot-pot-soup-base/) und „Chinese hot pot at home“ (https://thewoksoflife.com/chinese-hot-pot-at-home/); laut Text sind die Konzentrationsmengen eine Anpassung für die heimische Vorratsküche und entsprechen nicht wortgetreu einer einzelnen Originalquelle; Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Vorlage: 4 bis 6 Personen, die App rechnet 4 Portionen"
+}),
+  R({
+ "name": "Hotpot-Brühe mild – Chinesische Brühe mit Instant-Knochenbrühekonzentrat (清汤火锅)",
+ "meal": "Suppe/Eintopf",
+ "group": "Geflügel",
+ "cuisine": "China",
+ "origin": "China",
+ "servings": 4,
+ "prep": 15,
+ "cook": 135,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Hotpot",
+  "Brühe",
+  "Suppenbasis",
+  "Knochenbrühe",
+  "Konzentrat",
+  "Instant",
+  "mild",
+  "China",
+  "Meal Prep"
+ ],
+ "mp": true,
+ "ing": [
+  [
+   "huehnerkarkasse",
+   700
+  ],
+  [
+   "schweineknochen",
+   300
+  ],
+  [
+   "wasser",
+   2300
+  ],
+  [
+   "shiitake_getrocknet",
+   15
+  ],
+  [
+   "ingwer",
+   25
+  ],
+  [
+   "fruehlingszwiebel",
+   50
+  ],
+  [
+   "jujuben",
+   20
+  ],
+  [
+   "goji",
+   10
+  ],
+  [
+   "reiswein",
+   20
+  ]
+ ],
+ "spices": [
+  "weisser_pfeffer",
+  "salz"
+ ],
+ "steps": [
+  "Hühnerkarkasse oder Hühnerflügel mit Knochen (ca. 700 g) und, falls verwendet, die Schweineknochen (ca. 300 g) in einen großen Topf geben.",
+  "Mit Wasser bedecken, kurz aufkochen und das erste Kochwasser abgießen.",
+  "Knochen und Topf abspülen, damit die spätere Brühe möglichst klar bleibt.",
+  "Die Knochen mit 2.300 ml frischem Wasser erneut aufsetzen.",
+  "Ingwer (25 g) in Scheiben schneiden und zusammen mit den getrockneten Shiitake (15 g), den Frühlingszwiebeln (50 g), den Jujuben (2 Stück, ca. 20 g) und den Goji-Beeren (10 g) zugeben.",
+  "Alles langsam erhitzen und bei schwacher Hitze 1½ bis 2 Stunden sanft köcheln lassen. Aufsteigenden Schaum dabei abschöpfen.",
+  "Optional in den letzten 15 Minuten den Shaoxing-Reiswein (20 ml) zugeben.",
+  "Die Brühe durch ein feines Sieb abgießen.",
+  "Klassisch, direkte Verwendung: Auf etwa 1.500 ml ergänzen oder einkochen und mit weißem Pfeffer (ca. 1 g) und Salz nach Geschmack abschmecken.",
+  "Instant-Konzentrat: Die abgesiebte, noch ungesalzene Brühe erneut in einen Topf geben und ohne Deckel langsam einkochen, bis nur noch 400 ml konzentrierte Brühe übrig sind. Die Menge mit einem Messbecher kontrollieren.",
+  "Das Konzentrat rasch abkühlen und in einer Portion zu 400 ml oder in zwei Portionen zu je 200 ml einfrieren.",
+  "Am Hotpot-Tag (ca. 1,5 Liter milde Brühe): 400 ml gefrorenes Konzentrat und 1.100 ml Wasser zusammen vollständig aufkochen und mit Salz und weißem Pfeffer abschmecken.",
+  "Für einen Yin-Yang-Hotpot: 200 ml Konzentrat mit 550 ml Wasser aufkochen und abschmecken (ca. 750 ml milde Brühe)."
+ ],
+ "tips": "BRÜHE, KEINE VOLLSTÄNDIGE MAHLZEIT: Das Rezept ist die Brühe als Grundlage für den Hotpot; die Zutaten zum Garen im Hotpot (Fleisch, Gemüse, Tofu, Nudeln) gehören nicht dazu. Die Nährwerte beziehen sich nur auf die Brühe und liegen deshalb unter dem Richtwert für Hauptmahlzeiten (AUSNAHME VOM KALORIEN- UND EIWEISSRAHMEN, originalgetreu). Zutaten, Mengen und Schritte wie in der Vorlage, einschließlich der klassischen Zubereitung und der Instant-Variante. Ergibt ca. 1,5 Liter milde Hotpot-Brühe; die Vorlage nennt 4 bis 6 Personen, die App rechnet 4 Portionen (je ca. 375 ml). Beide Wege führen zur gleichen Brühe: direkt auf 1.500 ml einstellen oder auf 400 ml Konzentrat einkochen und am Hotpot-Tag mit 1.100 ml Wasser verdünnen. Im Yin-Yang-Hotpot zusammen mit der scharfen Brühe (Rezept „Hotpot-Brühe scharf“): 200 ml Knochenbrühekonzentrat mit 550 ml Wasser neben ½ Portion Málà-Paste mit 750 ml Wasser. Konzentrat und Gewürzpaste getrennt lagern und dosieren. SICHERHEIT (Vorlage): Die hausgemachten Konzentrate sind nicht ungekühlt haltbar. Die milde Brühe möglichst innerhalb von 3 bis 4 Tagen verwenden oder direkt einfrieren; Vakuumieren oder späteres Aufkochen ersetzt keine sichere Lagerung. ALLERGENE (Vorlage): Huhn, gegebenenfalls Schwein und Pilze; Shaoxing-Wein je nach Hersteller möglicherweise Weizen. Annahmen der App: Die Schweineknochen und der Reiswein sind in der Vorlage als optional genannt, stehen aber in der Zutatentabelle und sind deshalb mitgerechnet; die Knochen werden abgeseiht, als Nährwert ist nur ein eigener Richtwert für den in die Brühe übergehenden Anteil angesetzt (24 kcal je 100 g, keine Quellenangabe); das Wasser (2.300 ml) ist vollständig gerechnet, ein Teil verdampft beim Köcheln, fertig sind ca. 1,5 Liter; die Kochzeit zählt nur das Auskochen (das Einkochen zum Konzentrat nennt die Vorlage zeitlich nicht); Salz ist nach Geschmack und nicht gerechnet. Auf Wunsch unter Suppe/Eintopf eingeordnet, weil es eine Brühe ist. Nicht praktisch getestet.",
+ "storage": "Fertige Brühe möglichst innerhalb von 3 bis 4 Tagen im Kühlschrank verbrauchen oder direkt einfrieren; nicht ungekühlt aufbewahren (Vorlage).",
+ "reheat": "Gefrorenes Konzentrat (400 ml) direkt mit 1.100 ml Wasser in den Topf geben und vollständig aufkochen, dann mit Salz und weißem Pfeffer abschmecken.",
+ "freeze": {
+  "ok": "ja",
+  "block": 250,
+  "months": 2,
+  "note": "Das noch ungesalzene, auf 400 ml eingekochte Konzentrat rasch abkühlen und bei −18 °C einfrieren (Vorlage: 400 ml als eine Portion oder 2 Portionen zu je 200 ml; Verwendung für gute Qualität innerhalb von etwa 2 bis 3 Monaten). Die App kennt nur Blockgrößen von 125, 250 und 500 ml; 250 ml ist als nächstliegende Größe eingetragen (Annahme). Tiefgekühlt direkt mit Wasser in den Topf geben und vollständig aufkochen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext („Chinesischer Hotpot – Zwei traditionelle Brühen mit Instant-Konzentraten“); Quellen laut Text zur Einordnung: sichuankitchenrecipes.com „Sichuan hot pot base“ (https://sichuankitchenrecipes.com/2022/12/23/sichuan-hot-pot-base/), thewoksoflife.com „Chinese hot pot soup base“ (https://thewoksoflife.com/chinese-hot-pot-soup-base/) und „Chinese hot pot at home“ (https://thewoksoflife.com/chinese-hot-pot-at-home/); laut Text sind die Konzentrationsmengen eine Anpassung für die heimische Vorratsküche und entsprechen nicht wortgetreu einer einzelnen Originalquelle; Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Vorlage: 4 bis 6 Personen, die App rechnet 4 Portionen"
+})
+);
+
+SEED2.push(
+  /* ---------- Vegetarische Leberwurst, Linsen-Leberwurst nach SWR (Version 74) ---------- */
+  R({
+ "name": "Vegetarische Leberwurst – Linsen-Leberwurst nach SWR (Linsencreme mit Majoran)",
+ "meal": "Aufstrich",
+ "group": "Vegetarisch",
+ "cuisine": "Deutschland",
+ "origin": "Deutschland",
+ "servings": 4,
+ "prep": 15,
+ "cook": 40,
+ "level": "leicht",
+ "devices": [
+  "Herd",
+  "Stabmixer"
+ ],
+ "tags": [
+  "Aufstrich",
+  "vegetarisch",
+  "Linsen",
+  "Leberwurst-Alternative",
+  "Majoran",
+  "SWR",
+  "Brotaufstrich"
+ ],
+ "mp": false,
+ "ing": [
+  [
+   "braune_linsen",
+   100
+  ],
+  [
+   "gemuesebruehe",
+   400
+  ],
+  [
+   "schalotten",
+   40
+  ],
+  [
+   "sellerieknolle",
+   50
+  ],
+  [
+   "butter",
+   150
+  ],
+  [
+   "sonnenblumenoel",
+   20
+  ],
+  [
+   "senf",
+   15
+  ]
+ ],
+ "spices": [
+  "majoran",
+  "rauchsalz",
+  "pfeffer",
+  "liebstoeckel"
+ ],
+ "steps": [
+  "Die Schalotte oder kleine Zwiebel fein würfeln.",
+  "Sellerie oder Petersilienwurzel (50 g) schälen und würfeln.",
+  "1 EL Sonnenblumenöl in einem Topf erhitzen.",
+  "Zwiebel und Sellerie darin anschwitzen.",
+  "Die braunen Alblinsen (100 g) zugeben.",
+  "Mit der Gemüsebrühe (ca. 400 ml) ablöschen.",
+  "Den Deckel aufsetzen.",
+  "Etwa 30 Minuten weich kochen.",
+  "Die Linsen abgießen und dabei etwas Brühe auffangen.",
+  "Die Linsen mit dem Pürierstab pürieren.",
+  "Die weiche Butter (150 g), den Senf (1 EL) und das restliche Öl (1 EL) zugeben.",
+  "Alles glatt mixen.",
+  "Bei Bedarf mit etwas aufgefangener Brühe verdünnen.",
+  "Mit Majoran (20 g, getrocknet), Räuchersalz und schwarzem Pfeffer abschmecken, nach Wunsch mit Liebstöckel (optional).",
+  "Abkühlen lassen.",
+  "Mindestens 2 Stunden im Kühlschrank kühlen.",
+  "In Gläser füllen."
+ ],
+ "tips": "Zutaten und Schritte wie in der Vorlage für 4 bis 6 Portionen; die App rechnet 4 Portionen (Annahme). Braune Linsen sind laut Vorlage die beste Basis, die Butter sorgt für die cremige, streichfähige Konsistenz, Majoran ist die entscheidende Würze, Räuchersalz verstärkt den leberwurstähnlichen Geschmack, Senf gibt Tiefe und Würze, Liebstöckel ist optional, aber sehr passend. Die Vorlage nennt das Rezept die beste Wahl, weil es ohne Tomatenmark und ohne Reiswaffeln auskommt und eine echte Leberwurst-Textur hat. Servieren auf Krustenbrot oder Vollkornbrot, mit Senf, Essiggurken oder Radieschen, als Vesper. HISTAMIN-HINWEIS der Vorlage: Für eine histaminarme Ernährung ist das Rezept nicht ideal, weil Butter, Senf und Gemüsebrühe individuell problematisch sein können. Histaminärmer (Vorschlag der Vorlage, hier nicht umgesetzt, das Rezept bleibt wie übergeben): Butter reduzieren oder durch neutrales Öl ersetzen, Senf weglassen, keine fertige Gemüsebrühe verwenden, nur Linsen, Zwiebel, Öl, Majoran und Salz. Annahmen der App: Alblinsen als braune Linsen; 1 Schalotte ≈ 40 g; Sellerie (statt Petersilienwurzel) als Knollensellerie; 1 EL Öl ≈ 10 g und 1 EL Senf ≈ 15 g; die Gemüsebrühe ist vollständig gerechnet, obwohl etwas Brühe abgegossen wird; Räuchersalz als Rauchsalz; Salz, Pfeffer und Liebstöckel ohne Menge. Hinweis der App: Die Menge von 20 g getrocknetem Majoran ist ungewöhnlich hoch; sie ist wie in der Vorlage übernommen, nach Geschmack beginnen und nachwürzen. Die Kühlzeit (mindestens 2 Stunden) steht nicht in der Zeit. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Die Vorlage macht keine Angabe zur Haltbarkeit; Hinweis der App: in Gläsern abgedeckt im Kühlschrank höchstens 3 Tage.",
+ "reheat": "Nicht nötig; kalt als Aufstrich servieren.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext („Vegetarische Leberwurst – Linsen-Leberwurst nach SWR“); Quelle laut Text: SWR „Wir nennen es: vegetarische Leberwurst“ (https://www.swr.de/leben/rezepte/vegetarisch-und-vegan/rezept-vegetarische-leberwurst-swr1-pfaennle-2021-winter-100.html), Fußnoten [1282] und [1212] (Histamin-Hinweis); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; 4 bis 6 Portionen laut Vorlage, die App rechnet 4"
+})
+);
+
+SEED2.push(
+  /* ---------- Sechs fertige Bowls (Version 75) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "servings": 2,
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Teriyaki-Hähnchen-Bowl",
+ "group": "Geflügel",
+ "cuisine": "Japanisch inspiriert",
+ "origin": "Japanisch inspiriert",
+ "prep": 10,
+ "cook": 20,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Teriyaki",
+  "Hähnchen",
+  "Reis",
+  "Edamame",
+  "japanisch inspiriert"
+ ],
+ "ing": [
+  [
+   "jasminreis",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "haehnchenbrust",
+   300
+  ],
+  [
+   "olivenoel",
+   10
+  ],
+  [
+   "teriyakisauce",
+   66
+  ],
+  [
+   "brokkoli",
+   150
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "edamame",
+   100
+  ],
+  [
+   "fruehlingszwiebel",
+   15
+  ],
+  [
+   "sesam",
+   10
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Jasminreis (150 g) waschen und mit 300 ml Wasser aufkochen.",
+  "Bei niedriger Hitze zugedeckt etwa 15 Minuten garen.",
+  "Vom Herd nehmen und 10 Minuten quellen lassen.",
+  "Den Brokkoli in Röschen teilen.",
+  "Die Karotten in dünne Scheiben schneiden.",
+  "Den Brokkoli etwa 4 Minuten blanchieren.",
+  "Das Hähnchenbrustfilet in Streifen schneiden.",
+  "Die Hähnchenstreifen in Olivenöl (1 EL) goldbraun braten und dabei vollständig durchgaren.",
+  "Die Teriyaki-Sauce (60 ml) zugeben und kurz einkochen lassen.",
+  "Die Edamame nach Packungsanleitung erhitzen.",
+  "Den Reis in Bowls verteilen.",
+  "Hähnchen, Brokkoli, Karotten und Edamame darauf anrichten.",
+  "Mit Sesam (10 g) und Frühlingszwiebel bestreuen. Mit Salz und Pfeffer abschmecken."
+ ],
+ "tips": "Moderne japanisch inspirierte Bowl, kein traditionelles japanisches Rezept (Hinweis der Vorlage). Enthält Soja und Sesam. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: 60 ml Teriyaki-Sauce ≈ 66 g (Fertigprodukt, Nährwert nach üblichen Tabellenwerten, je nach Hersteller verschieden); 1 EL Olivenöl ≈ 10 g; 1 Frühlingszwiebel ≈ 15 g; Salz und Pfeffer ohne Menge. Das Hähnchen vollständig durchgaren (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis und Hähnchen durchgehend auf mindestens 70 °C erhitzen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 001); keine Quelle im Text angegeben; Standardrezept ohne Quellenlink; Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "servings": 2,
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Lachs-Teriyaki-Bowl",
+ "group": "Fisch",
+ "cuisine": "Japanisch inspiriert",
+ "origin": "Japanisch inspiriert",
+ "prep": 15,
+ "cook": 40,
+ "level": "mittel",
+ "devices": [
+  "Herd",
+  "Backofen"
+ ],
+ "tags": [
+  "Bowl",
+  "Teriyaki",
+  "Lachs",
+  "Sushireis",
+  "Avocado",
+  "japanisch inspiriert"
+ ],
+ "ing": [
+  [
+   "sushireis",
+   150
+  ],
+  [
+   "wasser",
+   200
+  ],
+  [
+   "lachs",
+   250
+  ],
+  [
+   "teriyakisauce",
+   66
+  ],
+  [
+   "sesam",
+   10
+  ],
+  [
+   "brokkoli",
+   150
+  ],
+  [
+   "zucchini",
+   100
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "avocado",
+   140
+  ],
+  [
+   "limettensaft",
+   30
+  ],
+  [
+   "olivenoel",
+   10
+  ]
+ ],
+ "spices": [],
+ "steps": [
+  "Den Sushi-Reis (150 g) waschen und mit 200 ml Wasser aufkochen.",
+  "Bei niedriger Hitze etwa 15 Minuten garen.",
+  "Vom Herd nehmen und 10 Minuten quellen lassen.",
+  "Den Backofen auf 90 °C Ober-/Unterhitze vorheizen.",
+  "Den Lachs (2 Filets, je ca. 125 g) mit der Teriyaki-Sauce (60 ml) marinieren.",
+  "Den Lachs in eine ofenfeste Form geben.",
+  "35 bis 40 Minuten bei 90 °C garen.",
+  "Das Gemüse (Brokkoli, Zucchini, Karotten) in der Pfanne mit Olivenöl (1 EL) kurz anbraten.",
+  "Die Avocado in Scheiben schneiden.",
+  "Den Reis in Bowls verteilen.",
+  "Gemüse, Lachs und Avocado darauf anrichten, mit Sesam (10 g) bestreuen.",
+  "Mit Limettensaft abschmecken."
+ ],
+ "tips": "Moderne japanisch inspirierte Bowl (Hinweis der Vorlage). Enthält Fisch, Soja und Sesam. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: 60 ml Teriyaki-Sauce ≈ 66 g; 1 Avocado ≈ 140 g essbarer Anteil; 1 Limette als Saft ≈ 30 g; 1 EL Olivenöl ≈ 10 g. Die Vorlage nennt 35 Minuten, allein der Lachs braucht aber 35 bis 40 Minuten im Ofen; die App rechnet deshalb 55 Minuten (15 Minuten Vorbereitung, 40 Minuten Garen). Die Zeit-Temperatur-Angabe (90 °C, 35 bis 40 Minuten) stammt aus der Vorlage und wurde von der App nicht geprüft; für Schwangere, Kleinkinder, Ältere und Immungeschwächte lieber höhere Kerntemperaturen wählen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Lachs nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 002); keine Quelle im Text angegeben; Standardrezept ohne Quellenlink; Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "servings": 2,
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Vegane Quinoa-Bowl mit Knusper-Tofu",
+ "group": "Vegetarisch",
+ "cuisine": "Modern-vegan",
+ "origin": "Modern-vegan",
+ "prep": 10,
+ "cook": 25,
+ "level": "leicht",
+ "devices": [
+  "Herd",
+  "Mixer"
+ ],
+ "tags": [
+  "Bowl",
+  "vegan",
+  "Quinoa",
+  "Tofu",
+  "Cashew-Dressing",
+  "NDR"
+ ],
+ "ing": [
+  [
+   "quinoa",
+   150
+  ],
+  [
+   "gemuesebruehe",
+   300
+  ],
+  [
+   "tofu",
+   200
+  ],
+  [
+   "speisestaerke",
+   10
+  ],
+  [
+   "olivenoel",
+   20
+  ],
+  [
+   "karotte",
+   150
+  ],
+  [
+   "zuckerschote",
+   100
+  ],
+  [
+   "radieschen",
+   45
+  ],
+  [
+   "rucola",
+   50
+  ],
+  [
+   "sprossen",
+   30
+  ],
+  [
+   "erdnuesse",
+   30
+  ],
+  [
+   "cashews",
+   50
+  ],
+  [
+   "limettensaft",
+   15
+  ],
+  [
+   "wasser",
+   80
+  ],
+  [
+   "koriander_frisch",
+   3
+  ]
+ ],
+ "spices": [
+  "kreuzkuemmel",
+  "salz",
+  "pfeffer",
+  "minze_garnitur"
+ ],
+ "steps": [
+  "Die Quinoa (150 g) waschen.",
+  "Mit der Gemüsebrühe (300 ml) aufkochen.",
+  "Zugedeckt etwa 10 Minuten garen.",
+  "Weitere 10 bis 15 Minuten quellen lassen.",
+  "Die Möhren würfeln.",
+  "Die Radieschen hobeln.",
+  "Die Zuckerschoten 3 Minuten blanchieren.",
+  "Den Tofu würfeln, würzen (Kreuzkümmel, Salz, Pfeffer) und in Speisestärke (1 EL) wälzen.",
+  "Den Tofu in Olivenöl (2 EL) knusprig braten.",
+  "Für das Dressing Cashewkerne (50 g), Limettensaft (½ Limette), Koriander (1 Stängel), Wasser (80 ml) und Kreuzkümmel mixen.",
+  "Die Quinoa in Bowls verteilen.",
+  "Gemüse und Tofu darauf anrichten.",
+  "Mit Erdnüssen (30 g), Minze und Dressing servieren."
+ ],
+ "tips": "Fassung nach NDR „Vegane Quinoa-Bowl mit Knusper-Tofu“ (Fußnote [1384] der Vorlage). Vegan. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: 2 Möhren ≈ 150 g; 3 Radieschen ≈ 45 g; 1 EL Speisestärke ≈ 10 g; 2 EL Olivenöl ≈ 20 g; ½ Limette als Saft ≈ 15 g; 1 Stängel Koriander ≈ 3 g. Rucola (50 g) und Sprossen (30 g) stehen in der Zutatenliste, kommen in der Zubereitung der Vorlage aber nicht vor; sie sind als Unterlage und Topping mitgerechnet. Die Minze steht im letzten Schritt der Vorlage, aber nicht in der Zutatenliste; sie ist ohne Menge angegeben und nicht gerechnet. Kreuzkümmel, Salz und Pfeffer ohne Menge. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Quinoa und Tofu durchgehend auf mindestens 70 °C erhitzen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 003); Quelle laut Text: NDR „Vegane Quinoa-Bowl mit Knusper-Tofu“ (Fußnote [1384], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "servings": 2,
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Mediterrane Kichererbsen-Bowl",
+ "group": "Vegetarisch",
+ "cuisine": "Mediterran inspiriert",
+ "origin": "Mediterran inspiriert",
+ "prep": 10,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Quinoa",
+  "Kichererbsen",
+  "Feta",
+  "Oliven",
+  "mediterran inspiriert",
+  "vegetarisch"
+ ],
+ "ing": [
+  [
+   "quinoa",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "kichererbsen",
+   200
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "gurke",
+   100
+  ],
+  [
+   "tomate",
+   150
+  ],
+  [
+   "feta",
+   50
+  ],
+  [
+   "oliven",
+   30
+  ],
+  [
+   "olivenoel",
+   20
+  ],
+  [
+   "zitronensaft",
+   40
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "kraeuter_frisch"
+ ],
+ "steps": [
+  "Die Quinoa (150 g) waschen und mit 300 ml Wasser garen.",
+  "Paprika und Gurke würfeln.",
+  "Die Kirschtomaten halbieren.",
+  "Den Feta zerbröseln.",
+  "Den Zitronensaft (1 Zitrone) mit Olivenöl (2 EL), Salz und Pfeffer verrühren.",
+  "Die Quinoa in Bowls verteilen.",
+  "Kichererbsen, Gemüse, Feta und Oliven darauf anrichten.",
+  "Mit dem Dressing beträufeln.",
+  "Mit frischen Kräutern garnieren."
+ ],
+ "tips": "Moderne mediterrane Bowl, kein traditionelles griechisches Gericht (Hinweis der Vorlage). Enthält Milchprodukte. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: gekochte Kichererbsen als Dosenware (abgetropft); Kirschtomaten als frische Tomate; 1 Zitrone als Saft ≈ 40 g; 2 EL Olivenöl ≈ 20 g; frische Kräuter ohne Menge und nicht gerechnet; Salz und Pfeffer ohne Menge. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Nicht nötig; die Bowl wird kalt oder zimmerwarm gegessen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 004); keine Quelle im Text angegeben; Standardrezept ohne Quellenlink; Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "servings": 2,
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Asiatische Bowl mit Pak Choi und Tofu",
+ "group": "Vegetarisch",
+ "cuisine": "Asiatisch inspiriert",
+ "origin": "Asiatisch inspiriert",
+ "prep": 10,
+ "cook": 20,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "vegan",
+  "Quinoa",
+  "Tofu",
+  "Pak Choi",
+  "Kimchi",
+  "asiatisch inspiriert",
+  "DM"
+ ],
+ "ing": [
+  [
+   "quinoa",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "tofu",
+   200
+  ],
+  [
+   "pak_choi",
+   100
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "kimchi",
+   50
+  ],
+  [
+   "sojasauce",
+   30
+  ],
+  [
+   "limettensaft",
+   30
+  ],
+  [
+   "rapsoel",
+   10
+  ],
+  [
+   "ingwer",
+   3
+  ],
+  [
+   "palmzucker",
+   5
+  ]
+ ],
+ "spices": [],
+ "steps": [
+  "Die Quinoa (150 g) waschen und garen.",
+  "Den Tofu würfeln und anbraten (Öl, 1 EL).",
+  "Mit Sojasauce ablöschen.",
+  "Pak Choi und Möhren anbraten.",
+  "Das Dressing aus Sojasauce (2 EL insgesamt), Limettensaft (1 Limette), Ingwer (1 TL) und Kokosblütenzucker (1 TL) verrühren.",
+  "Die Quinoa in Bowls verteilen.",
+  "Tofu, Pak Choi, Möhren und Kimchi anrichten.",
+  "Mit dem Dressing beträufeln."
+ ],
+ "tips": "Fassung nach DM „Asiatische Bowl mit Quinoa“ (Fußnote [1387] der Vorlage). Vegan, wenn der Kimchi ohne Fischsauce ist (Zutat vor dem Kauf prüfen). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: Kokosblütenzucker als Palmzucker (nächstliegende Zutat der App); 2 EL Sojasauce ≈ 30 g; 1 Limette als Saft ≈ 30 g; 1 EL Öl als Rapsöl ≈ 10 g; 1 TL Ingwer ≈ 3 g; 1 TL Zucker ≈ 5 g. Die 2 EL Sojasauce sind laut Vorlage für das Ablöschen und das Dressing zusammen gerechnet. Kimchi in der App nach Chinakohl genähert. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Quinoa und Tofu durchgehend auf mindestens 70 °C erhitzen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 005); Quelle laut Text: DM „Asiatische Bowl mit Quinoa“ (Fußnote [1387], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "servings": 2,
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Buddha-Bowl mit Tofu und Rote Bete",
+ "group": "Vegetarisch",
+ "cuisine": "Modern-vegetarisch",
+ "origin": "Modern-vegetarisch",
+ "prep": 15,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Buddha-Bowl",
+  "Quinoa",
+  "Tofu",
+  "Rote Bete",
+  "Joghurt-Dressing",
+  "vegetarisch",
+  "EDEKA"
+ ],
+ "ing": [
+  [
+   "quinoa",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "tofu",
+   200
+  ],
+  [
+   "rote_bete",
+   100
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "rotkohl",
+   100
+  ],
+  [
+   "avocado",
+   70
+  ],
+  [
+   "erdnuesse",
+   30
+  ],
+  [
+   "joghurt35",
+   100
+  ],
+  [
+   "rapsoel",
+   10
+  ],
+  [
+   "limettensaft",
+   15
+  ],
+  [
+   "honig",
+   20
+  ],
+  [
+   "currypaste",
+   6
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Die Quinoa (150 g) mit 300 ml Wasser garen.",
+  "Den Tofu würfeln.",
+  "Rote Bete und Möhren reiben.",
+  "Den Rotkohl fein schneiden.",
+  "Die Avocado (½) in Scheiben schneiden.",
+  "Joghurt (100 g), Rapsöl (1 EL), Limettensaft (1 EL), Honig (1 EL) und rote Currypaste (1 TL) verrühren.",
+  "Die Quinoa in Bowls verteilen.",
+  "Gemüse, Tofu und Avocado anrichten.",
+  "Mit Erdnüssen (30 g) und Dressing servieren."
+ ],
+ "tips": "Fassung nach EDEKA „Buddha Bowl“ (Fußnote [1389] der Vorlage). Vegetarisch (mit Honig und Joghurt). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: Joghurt als Naturjoghurt 3,5 % Fett (die Vorlage nennt keine Sorte); Rote Bete als gegarte, vakuumierte Rote Bete (geriebene Rote Bete roh steht nicht im Stamm der App); ½ Avocado ≈ 70 g essbarer Anteil; rote Currypaste als Thai-Currypaste (enthält oft Garnelenpaste, Zutat vor dem Kauf prüfen), 1 TL ≈ 6 g; 1 EL Rapsöl ≈ 10 g, 1 EL Limettensaft ≈ 15 g, 1 EL Honig ≈ 20 g; Salz und Pfeffer ohne Menge. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Quinoa durchgehend auf mindestens 70 °C erhitzen; Gemüse, Tofu und Dressing kalt servieren.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 006); Quelle laut Text: EDEKA „Buddha Bowl“ (Fußnote [1389], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Sechs weitere fertige Bowls (Version 76) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Griechische Hähnchen-Bowl mit Bulgur und Tzatziki",
+ "group": "Geflügel",
+ "cuisine": "Griechisch inspiriert",
+ "origin": "Griechisch inspiriert",
+ "servings": 2,
+ "prep": 35,
+ "cook": 10,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Hähnchen",
+  "Bulgur",
+  "Tzatziki",
+  "Feta",
+  "griechisch inspiriert",
+  "Kochen Hana"
+ ],
+ "ing": [
+  [
+   "bulgur",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "haehnchenbrust",
+   300
+  ],
+  [
+   "olivenoel",
+   20
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "knoblauch",
+   6
+  ],
+  [
+   "tomate",
+   150
+  ],
+  [
+   "gurke",
+   275
+  ],
+  [
+   "feta",
+   50
+  ],
+  [
+   "oliven",
+   30
+  ],
+  [
+   "joghurt10",
+   100
+  ]
+ ],
+ "spices": [
+  "oregano",
+  "kreuzkuemmel",
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Bulgur (150 g) mit 300 ml kochendem Wasser übergießen und quellen lassen.",
+  "Das Hähnchenbrustfilet in Streifen schneiden.",
+  "Das Hähnchen mit Olivenöl, Zitronensaft, Knoblauch, Oregano (1 TL), Kreuzkümmel (1 TL), Salz und Pfeffer marinieren.",
+  "Mindestens 30 Minuten ziehen lassen.",
+  "Die Kirschtomaten (150 g) halbieren.",
+  "Die Gurke (100 g) würfeln.",
+  "Den Feta zerbröseln.",
+  "Die Oliven halbieren.",
+  "Für das Tzatziki den griechischen Joghurt (100 g) mit geriebener Gurke (½ Gurke), Knoblauch, Öl, Zitronensaft, Salz und Pfeffer verrühren.",
+  "Das Hähnchen in der Pfanne etwa 6 bis 8 Minuten braten und dabei vollständig durchgaren.",
+  "Den Bulgur in Bowls verteilen.",
+  "Hähnchen, Gemüse, Feta und Oliven anrichten.",
+  "Mit Tzatziki servieren."
+ ],
+ "tips": "Fassung nach Kochen Hana „Griechische Hähnchen Bowl“ (Fußnote [1408] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: Gurke 275 g insgesamt (100 g für die Bowl plus ½ Gurke ≈ 175 g für das Tzatziki); Kirschtomaten als frische Tomate; griechischer Joghurt mit 10 % Fett; 2 EL Olivenöl ≈ 20 g und 1 Zitrone als Saft ≈ 40 g sowie 2 Knoblauchzehen ≈ 6 g, jeweils für Marinade und Tzatziki zusammen (die Vorlage teilt sie nicht auf); Salz und Pfeffer ohne Menge. Die Quellzeit des Bulgurs nennt die Vorlage nicht (nach Packungsanleitung). Die Vorlage nennt 35 Minuten, allein das Marinieren dauert aber mindestens 30 Minuten und das Braten 6 bis 8 Minuten; die App rechnet deshalb 45 Minuten. Das Hähnchen vollständig durchgaren, die Marinade nicht roh weiterverwenden (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Hähnchen und Bulgur durchgehend auf mindestens 70 °C erhitzen; Gemüse und Tzatziki kalt servieren.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 007); Quelle laut Text: Kochen Hana „Griechische Hähnchen Bowl“ (Fußnote [1408], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Falafel-Bowl mit Couscous und Tahini-Dressing",
+ "group": "Vegetarisch",
+ "cuisine": "Levantinisch inspiriert",
+ "origin": "Levantinisch inspiriert",
+ "servings": 4,
+ "prep": 25,
+ "cook": 15,
+ "level": "mittel",
+ "devices": [
+  "Herd",
+  "Mixer"
+ ],
+ "tags": [
+  "Bowl",
+  "vegan",
+  "Falafel",
+  "Couscous",
+  "Tahini",
+  "levantinisch inspiriert",
+  "Stoneline"
+ ],
+ "ing": [
+  [
+   "couscous",
+   200
+  ],
+  [
+   "gemuesebruehe",
+   400
+  ],
+  [
+   "kichererbsen",
+   400
+  ],
+  [
+   "zwiebel",
+   150
+  ],
+  [
+   "knoblauch",
+   6
+  ],
+  [
+   "petersilie",
+   30
+  ],
+  [
+   "mehl",
+   20
+  ],
+  [
+   "backpulver",
+   4
+  ],
+  [
+   "gurke",
+   100
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "tomate",
+   150
+  ],
+  [
+   "rucola",
+   50
+  ],
+  [
+   "minze",
+   20
+  ],
+  [
+   "tahini",
+   60
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "wasser",
+   80
+  ],
+  [
+   "granatapfelkerne",
+   30
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "olivenoel_braten",
+  "ahornsirup_optional"
+ ],
+ "steps": [
+  "Die Kichererbsen (400 g) abgießen.",
+  "Mit Zwiebel, Knoblauch, Petersilie und Gewürzen grob mixen.",
+  "Mehl (2 EL) und Backpulver (1 TL) hinzufügen.",
+  "Kleine Bällchen formen.",
+  "10 Minuten ruhen lassen.",
+  "Die Falafel in Olivenöl goldbraun braten.",
+  "Den Couscous (200 g) mit heißer Gemüsebrühe (400 ml) übergießen.",
+  "10 Minuten quellen lassen.",
+  "Gurke, Paprika und Tomaten klein schneiden.",
+  "Die rote Zwiebel fein schneiden.",
+  "Tahini (60 g) mit Zitronensaft, Knoblauch und Wasser (80 ml) glatt rühren.",
+  "Mit Salz, Pfeffer und optional Ahornsirup abschmecken.",
+  "Den Couscous in Bowls verteilen.",
+  "Gemüse und Falafel anrichten.",
+  "Mit Tahini-Dressing, Granatapfelkernen (30 g) und Minze (20 g) servieren."
+ ],
+ "tips": "Fassung nach Stoneline „Falafel-Bowl mit Tahini-Dressing“ (Fußnote [1407] der Vorlage). Mengen und Schritte wie in der Vorlage für 4 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Vegan; enthält Gluten (Couscous, Mehl) und Sesam (Tahini). Annahmen der App: gekochte Kichererbsen als Dosenware (abgetropft); Zwiebel 150 g insgesamt (1 Zwiebel ≈ 80 g für die Falafel plus 1 rote Zwiebel ≈ 70 g für die Bowl); 2 Knoblauchzehen ≈ 6 g für Falafel und Dressing zusammen; 1 Bund Petersilie ≈ 30 g; 2 EL Mehl ≈ 20 g; 1 TL Backpulver ≈ 4 g; Kirschtomaten als frische Tomate; 1 Zitrone als Saft ≈ 40 g. Die Vorlage nennt „Gewürze“ für die Falafel, ohne sie aufzuführen (außer Salz und Pfeffer); das Olivenöl zum Braten steht nicht in der Zutatenliste und ist nicht mitgerechnet; Ahornsirup ist optional und ohne Menge. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Falafel und Couscous durchgehend auf mindestens 70 °C erhitzen; Gemüse und Dressing kalt servieren.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 008); Quelle laut Text: Stoneline „Falafel-Bowl mit Tahini-Dressing“ (Fußnote [1407], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Garnelen-Bowl mit Mango und Limette",
+ "group": "Fisch",
+ "cuisine": "Asiatisch inspiriert",
+ "origin": "Asiatisch inspiriert",
+ "servings": 2,
+ "prep": 10,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Garnelen",
+  "Mango",
+  "Basmatireis",
+  "Limette",
+  "asiatisch inspiriert",
+  "Just Spices"
+ ],
+ "ing": [
+  [
+   "basmatireis",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "garnelen",
+   200
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "mango",
+   100
+  ],
+  [
+   "koriander_frisch",
+   30
+  ],
+  [
+   "limettensaft",
+   30
+  ],
+  [
+   "sonnenblumenoel",
+   10
+  ],
+  [
+   "salat",
+   60
+  ]
+ ],
+ "spices": [
+  "salz",
+  "asia_gewuerzmischung"
+ ],
+ "steps": [
+  "Den Basmatireis (150 g) waschen und mit 300 ml Wasser garen.",
+  "Die Paprika in Stücke schneiden.",
+  "Die Mango würfeln.",
+  "Den Koriander hacken.",
+  "Die Garnelen in Öl (1 EL) bei hoher Hitze etwa 3 Minuten braten, bis sie durchgegart sind.",
+  "Mit Salz und Asia-Gewürzmischung würzen.",
+  "Limettenabrieb unterheben.",
+  "Den Reis in Bowls verteilen.",
+  "Salat, Paprika, Mango und Garnelen anrichten.",
+  "Mit Limettensaft und Koriander servieren."
+ ],
+ "tips": "Fassung nach Just Spices „Garnelen Bowl“ (Fußnote [1399] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Krebstiere. Annahmen der App: Garnelen roh und geschält; 1 Bund Koriander ≈ 30 g; 1 Limette als Saft ≈ 30 g (der Abrieb stammt von derselben Limette und ist nicht gerechnet); 1 EL Sonnenblumenöl ≈ 10 g; 2 Handvoll Salat ≈ 60 g Blattsalat; Salz ohne Menge. Die Asia-Gewürzmischung ist herstellerabhängig und ohne Menge angegeben (kann Allergene wie Sesam oder Soja enthalten, Zutatenliste prüfen). Garnelen vollständig durchgaren und nicht lange warm halten (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Garnelen nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 009); Quelle laut Text: Just Spices „Garnelen Bowl“ (Fußnote [1399], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Avocado-Spinat-Bowl mit Garnelen",
+ "group": "Fisch",
+ "cuisine": "Asiatisch inspiriert",
+ "origin": "Asiatisch inspiriert",
+ "servings": 4,
+ "prep": 10,
+ "cook": 20,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Garnelen",
+  "Avocado",
+  "Spinat",
+  "Reis",
+  "asiatisch inspiriert",
+  "EDEKA"
+ ],
+ "ing": [
+  [
+   "langkornreis",
+   200
+  ],
+  [
+   "wasser",
+   400
+  ],
+  [
+   "garnelen",
+   300
+  ],
+  [
+   "spinat",
+   100
+  ],
+  [
+   "avocado",
+   140
+  ],
+  [
+   "zwiebel",
+   80
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "rapsoel",
+   20
+  ],
+  [
+   "sesam",
+   10
+  ],
+  [
+   "sojasauce",
+   30
+  ],
+  [
+   "limettensaft",
+   30
+  ],
+  [
+   "sesamoel",
+   5
+  ],
+  [
+   "sambal",
+   5
+  ]
+ ],
+ "spices": [
+  "koriander_garnitur",
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Zwiebel und Knoblauch in Öl (2 EL) glasig dünsten.",
+  "Den Spinat (100 g) hinzufügen und auftauen lassen.",
+  "Mit Salz und Pfeffer würzen.",
+  "Den Reis (200 g) mit 400 ml Wasser garen.",
+  "Die Garnelen (300 g) 3 bis 5 Minuten braten, bis sie durchgegart sind.",
+  "Den Sesam (10 g) kurz mitbraten.",
+  "Die Avocado in Spalten schneiden.",
+  "Sojasauce (2 EL), Limettensaft (1 Limette), Sesamöl (1 TL) und Sambal Oelek (1 TL) verrühren.",
+  "Reis, Spinat, Garnelen und Avocado in Bowls verteilen.",
+  "Mit dem Sojasauce-Mix beträufeln.",
+  "Mit Koriander garnieren."
+ ],
+ "tips": "Fassung nach EDEKA „Avocado-Spinat-Bowl“ (Fußnote [1396] der Vorlage). Mengen und Schritte wie in der Vorlage für 4 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Krebstiere, Soja und Sesam. Annahmen der App: „Reis“ als Langkornreis; „Garnelen“ roh und geschält; „Öl“ als Rapsöl, 2 EL ≈ 20 g; die Zutatenliste nennt Babyspinat, die Zubereitung „auftauen lassen“ (das passt zu Tiefkühlspinat); gerechnet ist 100 g frischer Spinat, bei Tiefkühlspinat nach Packungsanleitung auftauen und gut ausdrücken; 1 Avocado ≈ 140 g essbarer Anteil; 1 Limette als Saft ≈ 30 g; 2 EL Sojasauce ≈ 30 g; 1 TL Sesamöl und 1 TL Sambal Oelek ≈ 5 g; Koriander, Salz und Pfeffer ohne Menge. Garnelen vollständig durchgaren (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Garnelen nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 010); Quelle laut Text: EDEKA „Avocado-Spinat-Bowl“ (Fußnote [1396], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Karibische Garnelen-Bowl mit Wasabi-Limetten-Creme",
+ "group": "Fisch",
+ "cuisine": "Karibisch inspiriert",
+ "origin": "Karibisch inspiriert",
+ "servings": 2,
+ "prep": 15,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd",
+  "Mixer"
+ ],
+ "tags": [
+  "Bowl",
+  "Garnelen",
+  "Basmatireis",
+  "Limette",
+  "Avocado",
+  "karibisch inspiriert",
+  "Service-Bund"
+ ],
+ "ing": [
+  [
+   "basmatireis",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "garnelen",
+   200
+  ],
+  [
+   "chili_frisch",
+   10
+  ],
+  [
+   "limettensaft",
+   60
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "ingwer",
+   3
+  ],
+  [
+   "rapsoel",
+   20
+  ],
+  [
+   "gurke",
+   100
+  ],
+  [
+   "radieschen",
+   50
+  ],
+  [
+   "avocado",
+   70
+  ],
+  [
+   "saure_sahne",
+   50
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "brauner_zucker_abschmecken",
+  "wasabi_nicht_gelistet"
+ ],
+ "steps": [
+  "Chili, Limettensaft, Knoblauch und Ingwer mixen.",
+  "Das Öl (2 EL) hinzufügen.",
+  "Mit Salz und braunem Zucker abschmecken.",
+  "Die Garnelen (200 g) damit marinieren.",
+  "Den Basmatireis (150 g) mit 300 ml Wasser garen.",
+  "Die Garnelen braten oder dünsten, bis sie durchgegart sind.",
+  "Gurke und Radieschen klein schneiden.",
+  "Die Avocado in Scheiben schneiden.",
+  "Den Sauerrahm (50 g) mit Wasabi, Limettensaft, Salz und Zucker verrühren.",
+  "Den Reis in Bowls verteilen.",
+  "Gemüse und Garnelen anrichten.",
+  "Mit der Wasabi-Limetten-Creme servieren."
+ ],
+ "tips": "Fassung nach Service-Bund „Bowl Karibik mit Garnelen“ (Fußnote [1405] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Krebstiere und Milchprodukte. Hinweis zur Vorlage: Wasabi steht in der Zubereitung (Creme), aber nicht in der Zutatenliste, und hat keine Menge; er ist nicht mitgerechnet. Annahmen der App: Garnelen roh und geschält; 1 Chili ≈ 10 g; 2 Limetten als Saft ≈ 60 g (für Marinade und Creme zusammen); 1 TL Ingwer ≈ 3 g; „Öl“ als Rapsöl, 2 EL ≈ 20 g; ½ Avocado ≈ 70 g essbarer Anteil; Sauerrahm als Saure Sahne (10 % Fett); Salz, Pfeffer und Zucker (brauner Zucker in der Marinade, Zucker in der Creme) ohne Menge; der Pfeffer steht in der Zutatenliste, kommt in den Schritten aber nicht vor. Garnelen vollständig durchgaren (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Garnelen nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 011); Quelle laut Text: Service-Bund „Bowl Karibik mit Garnelen“ (Fußnote [1405], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Reis-Bowl mit Garnelen in Mojo-Soße",
+ "group": "Fisch",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 2,
+ "prep": 15,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Garnelen",
+  "Reis",
+  "Mojo",
+  "Orange",
+  "Avocado",
+  "international inspiriert",
+  "Kitchen Stories"
+ ],
+ "ing": [
+  [
+   "langkornreis",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "garnelen",
+   200
+  ],
+  [
+   "gurke",
+   175
+  ],
+  [
+   "avocado",
+   140
+  ],
+  [
+   "orange",
+   150
+  ],
+  [
+   "limettensaft",
+   30
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "olivenoel",
+   20
+  ]
+ ],
+ "spices": [
+  "oregano",
+  "kreuzkuemmel",
+  "koriander_garnitur",
+  "salz",
+  "pfeffer",
+  "fruehlingszwiebel_nicht_gelistet"
+ ],
+ "steps": [
+  "Den Reis (150 g) mit 300 ml Wasser garen.",
+  "Die Gurke vierteln und in Scheiben schneiden.",
+  "Die Frühlingszwiebeln in Ringe schneiden.",
+  "Den Koriander hacken.",
+  "Die Orange schälen und in Segmente schneiden.",
+  "Die Avocado in Scheiben schneiden.",
+  "Den Knoblauch mit Orangensaft, Limettensaft, Olivenöl (2 EL), Oregano (1 TL) und Kreuzkümmel (1 TL) verrühren.",
+  "Die Garnelen (200 g) mit der Hälfte der Soße marinieren.",
+  "Die Garnelen etwa 3 Minuten pro Seite braten, bis sie durchgegart sind.",
+  "Die restliche Soße hinzufügen.",
+  "Den Reis in Bowls verteilen.",
+  "Garnelen, Gurkensalat und Avocado anrichten.",
+  "Mit Koriander garnieren."
+ ],
+ "tips": "Fassung nach Kitchen Stories „Reis Bowl mit Garnelen in Mojo-Soße“ (Fußnote [1404] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Krebstiere. Hinweis zur Vorlage: Die Frühlingszwiebeln stehen in der Zubereitung, aber nicht in der Zutatenliste, und haben keine Menge; sie sind nicht mitgerechnet. Annahmen der App: „Reis“ als Langkornreis; Garnelen roh und geschält; ½ Gurke ≈ 175 g; 1 Avocado ≈ 140 g essbarer Anteil; 1 Orange ≈ 150 g (geschält, der Saft für die Soße stammt aus derselben Orange); 1 Limette als Saft ≈ 30 g; 2 EL Olivenöl ≈ 20 g; Koriander, Salz und Pfeffer ohne Menge. Garnelen vollständig durchgaren; die Marinade, in der rohe Garnelen lagen, nicht roh weiterverwenden: die Vorlage fügt die restliche Soße (die nicht mit den Garnelen in Berührung kam) erst nach dem Braten hinzu (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Garnelen nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 012); Quelle laut Text: Kitchen Stories „Reis Bowl mit Garnelen in Mojo-Soße“ (Fußnote [1404], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowls 013 bis 018 (Version 77) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Sommer-Bowl mit Lachs und mariniertem Gemüse",
+ "group": "Fisch",
+ "cuisine": "Asiatisch inspiriert",
+ "origin": "Asiatisch inspiriert",
+ "servings": 4,
+ "prep": 15,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd",
+  "Airfryer"
+ ],
+ "tags": [
+  "Bowl",
+  "Lachs",
+  "Airfryer",
+  "Nektarine",
+  "Ponzu",
+  "asiatisch inspiriert",
+  "SWR"
+ ],
+ "ing": [
+  [
+   "langkornreis",
+   300
+  ],
+  [
+   "wasser",
+   600
+  ],
+  [
+   "lachs",
+   400
+  ],
+  [
+   "ponzusauce",
+   88
+  ],
+  [
+   "rapsoel",
+   40
+  ],
+  [
+   "wasabipaste",
+   5
+  ],
+  [
+   "limettensaft",
+   60
+  ],
+  [
+   "essig",
+   30
+  ],
+  [
+   "zucker",
+   25
+  ],
+  [
+   "sesamoel",
+   20
+  ],
+  [
+   "fruehlingszwiebel",
+   30
+  ],
+  [
+   "nektarine",
+   300
+  ],
+  [
+   "gurke",
+   350
+  ],
+  [
+   "radieschen",
+   100
+  ],
+  [
+   "karotte",
+   150
+  ],
+  [
+   "cashews",
+   50
+  ],
+  [
+   "sesam",
+   20
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Lachs trocken tupfen und in Würfel schneiden.",
+  "Ponzu-Sauce (80 ml), Öl (2 EL) und Wasabi (1 TL) verrühren.",
+  "Den Lachs damit bestreichen und marinieren.",
+  "Den Reis (300 g) waschen und mit 600 ml Wasser garen.",
+  "Limettensaft (2 Limetten), Essig (2 EL), Salz, Pfeffer, Zucker (2 EL) und die Öle (Öl 2 EL, Sesamöl 2 EL) zur Marinade verrühren.",
+  "Das Gemüse (Frühlingszwiebeln, Gurke, Radieschen, Karotten) klein schneiden.",
+  "Die Nektarinen würfeln.",
+  "Gemüse und Nektarinen in Bowls verteilen.",
+  "Den Lachs im Airfryer bei 180 °C etwa 4 bis 8 Minuten garen.",
+  "Alternativ in der Pfanne 6 bis 10 Minuten braten.",
+  "Den Reis in Bowls verteilen.",
+  "Lachs, Cashewkerne (50 g) und Sesam (20 g) hinzufügen.",
+  "Mit der Marinade beträufeln."
+ ],
+ "tips": "Fassung nach SWR „Sommer-Bowl mit Reis, mariniertem Gemüse und Lachs aus dem Airfryer“ (Fußnote [1411] der Vorlage). Mengen und Schritte wie in der Vorlage für 4 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Fisch, Soja, Sesam und Schalenfrüchte (Cashew). Annahmen der App: „Reis“ als Langkornreis; „Öl“ als Rapsöl, 4 EL insgesamt (2 EL für die Lachs-Marinade, 2 EL für das Dressing) ≈ 40 g; 80 ml Ponzu-Sauce ≈ 88 g (Fertigprodukt, Nährwert nach Richtwert, je nach Hersteller verschieden); 1 TL Wasabi ≈ 5 g als Paste; 2 Limetten als Saft ≈ 60 g; 2 EL Essig ≈ 30 g, 2 EL Zucker ≈ 25 g, 2 EL Sesamöl ≈ 20 g; 2 Frühlingszwiebeln ≈ 30 g; 2 Nektarinen ≈ 300 g; 1 Gurke ≈ 350 g; 2 Karotten ≈ 150 g; Salz und Pfeffer ohne Menge. Die Marinade für den rohen Lachs (Ponzu, Öl, Wasabi) ist nicht dieselbe wie die Marinade zum Beträufeln (Limette, Essig, Zucker, Öle); die Vorlage nennt beide „Marinade“. Lachs vollständig durchgaren (Hinweis der App); für Schwangere, Kleinkinder, Ältere und Immungeschwächte keinen glasigen Kern wählen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Lachs nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 013); Quelle laut Text: SWR „Sommer-Bowl mit Reis, mariniertem Gemüse und Lachs aus dem Airfryer“ (Fußnote [1411], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Lachs-Reis-Bowl mit Rote Bete",
+ "group": "Fisch",
+ "cuisine": "Skandinavisch inspiriert",
+ "origin": "Skandinavisch inspiriert",
+ "servings": 2,
+ "prep": 15,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Lachs",
+  "Vollkornreis",
+  "Rote Bete",
+  "Sojabohnen",
+  "skandinavisch inspiriert",
+  "Arla"
+ ],
+ "ing": [
+  [
+   "vollkornreis",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "lachs",
+   200
+  ],
+  [
+   "rote_bete",
+   100
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "sojabohnen_gegart",
+   100
+  ],
+  [
+   "sprossen",
+   50
+  ],
+  [
+   "limettensaft",
+   30
+  ],
+  [
+   "butter",
+   10
+  ],
+  [
+   "rapsoel",
+   10
+  ],
+  [
+   "creme_fraiche",
+   50
+  ],
+  [
+   "chilisauce_suess",
+   15
+  ],
+  [
+   "ingwer",
+   3
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "sojasauce",
+   30
+  ]
+ ],
+ "spices": [],
+ "steps": [
+  "Den Vollkornreis (150 g) mit 300 ml Wasser garen.",
+  "Die Sojabohnen (100 g) erhitzen.",
+  "Rote Bete und Karotten schälen und schneiden.",
+  "Mit Limettenabrieb und Limettensaft vermengen.",
+  "Den Lachs würfeln.",
+  "Den Lachs in Butter (1 EL) und Rapsöl (1 EL) anbraten.",
+  "Crème fraîche (50 g), Chilisauce (1 EL), Ingwer (1 TL), Knoblauch (1 Zehe) und Sojasauce (2 EL) hinzufügen.",
+  "2 bis 3 Minuten köcheln lassen.",
+  "Den Reis in Bowls verteilen.",
+  "Gemüse, Sojabohnen, Lachs und Sprossen anrichten.",
+  "Mit Limettenspalten servieren."
+ ],
+ "tips": "Fassung nach Arla Foods „Lachs-Reis-Bowl“ (Fußnote [1412] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Fisch, Soja und Milchprodukte. Annahmen der App: Sojabohnen als gegarte Sojabohnen (Dose oder Glas, abgetropft); Erbsensprossen als Mungbohnensprossen (nächstliegende Zutat der App); „Chilisauce“ als süße Chilisauce, 1 EL ≈ 15 g; Rote Bete gegart und vakuumiert; 1 Limette als Saft ≈ 30 g (der Abrieb stammt von derselben Limette und ist nicht gerechnet, die Limettenspalten zum Servieren ebenfalls nicht); 1 EL Butter ≈ 10 g, 1 EL Rapsöl ≈ 10 g, 1 TL Ingwer ≈ 3 g, 2 EL Sojasauce ≈ 30 g. Die Vorlage nennt keine Garzeit für den Vollkornreis; nach Packungsanleitung garen (er braucht meist länger als weißer Reis). Lachs vollständig durchgaren (Hinweis der App); für Schwangere, Kleinkinder, Ältere und Immungeschwächte keinen glasigen Kern wählen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Lachs nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 014); Quelle laut Text: Arla Foods „Lachs-Reis-Bowl“ (Fußnote [1412], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Teriyaki-Lachs-Bowl",
+ "group": "Fisch",
+ "cuisine": "Japanisch inspiriert",
+ "origin": "Japanisch inspiriert",
+ "servings": 2,
+ "prep": 10,
+ "cook": 25,
+ "level": "leicht",
+ "devices": [
+  "Herd",
+  "Backofen"
+ ],
+ "tags": [
+  "Bowl",
+  "Lachs",
+  "Teriyaki",
+  "Reis",
+  "Backofen",
+  "japanisch inspiriert",
+  "Penny"
+ ],
+ "ing": [
+  [
+   "langkornreis",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "lachs",
+   200
+  ],
+  [
+   "teriyakisauce",
+   66
+  ],
+  [
+   "gemuesebruehe",
+   100
+  ],
+  [
+   "limettensaft",
+   30
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "zucchini",
+   100
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "rapsoel",
+   10
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Backofen auf 160 °C vorheizen.",
+  "Den Lachs mit Teriyaki-Sauce (60 ml) marinieren.",
+  "Den Lachs in eine ofenfeste Form geben.",
+  "Etwa 25 Minuten garen.",
+  "Den Reis (150 g) mit 300 ml Wasser garen.",
+  "Die Paprika in Stücke schneiden.",
+  "Die Paprika in Öl (1 EL) dünsten.",
+  "Teriyaki-Sauce, Gemüsebrühe (100 ml) und Limettensaft hinzufügen.",
+  "Das Gemüse (Paprika, Zucchini, Karotten) etwa 5 Minuten dünsten.",
+  "Den Reis in Bowls verteilen.",
+  "Lachs und Gemüse anrichten.",
+  "Mit Limettensaft abschmecken."
+ ],
+ "tips": "Fassung nach Penny „Teriyaki-Lachs-Bowl“ (Fußnote [1413] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Fisch und Soja. Annahmen der App: „Reis“ als Langkornreis; „Öl“ als Rapsöl, 1 EL ≈ 10 g; 60 ml Teriyaki-Sauce ≈ 66 g, die Vorlage nennt sie für die Marinade und noch einmal im Gemüse, aber nur einmal in der Zutatenliste, deshalb sind 60 ml insgesamt gerechnet; 1 Limette als Saft ≈ 30 g; Zucchini und Karotten werden in der Zubereitung nicht eigens geschnitten (Schneiden nach Belieben); Salz und Pfeffer ohne Menge. Lachs vollständig durchgaren (Hinweis der App); für Schwangere, Kleinkinder, Ältere und Immungeschwächte keinen glasigen Kern wählen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Lachs nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 015); Quelle laut Text: Penny „Teriyaki-Lachs-Bowl“ (Fußnote [1413], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Bowl mit glasiertem Lachs und knackigem Gemüse",
+ "group": "Fisch",
+ "cuisine": "Japanisch inspiriert",
+ "origin": "Japanisch inspiriert",
+ "servings": 4,
+ "prep": 30,
+ "cook": 10,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Lachs",
+  "Miso",
+  "Edamame",
+  "Avocado",
+  "japanisch inspiriert",
+  "GA"
+ ],
+ "ing": [
+  [
+   "langkornreis",
+   300
+  ],
+  [
+   "wasser",
+   600
+  ],
+  [
+   "lachs",
+   400
+  ],
+  [
+   "misopaste",
+   70
+  ],
+  [
+   "sojasauce",
+   30
+  ],
+  [
+   "sesamoel",
+   40
+  ],
+  [
+   "limettensaft",
+   60
+  ],
+  [
+   "ingwer",
+   3
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "ahornsirup",
+   40
+  ],
+  [
+   "edamame",
+   100
+  ],
+  [
+   "avocado",
+   140
+  ],
+  [
+   "radieschen",
+   100
+  ],
+  [
+   "gurke",
+   350
+  ]
+ ],
+ "spices": [
+  "fruehlingszwiebel_garnitur",
+  "sesam_garnitur"
+ ],
+ "steps": [
+  "Den Reis (300 g) mit 600 ml Wasser garen.",
+  "Limettenabrieb, Limettensaft, Ingwer (1 TL), Knoblauch (1 Zehe), einen Teil der Miso-Paste und Ahornsirup (2 EL) verrühren.",
+  "Den Lachs damit bestreichen und 30 Minuten ziehen lassen.",
+  "Die restliche Miso-Paste (insgesamt 4 EL) mit Sojasauce (2 EL), Sesamöl und Limettensaft verrühren.",
+  "Den Lachs in Sesamöl (insgesamt 4 EL für Dressing und Braten) braten.",
+  "Die Edamame (100 g) erhitzen.",
+  "Avocado, Radieschen und Gurke klein schneiden.",
+  "Den Reis in Bowls verteilen.",
+  "Gemüse und Lachs anrichten.",
+  "Mit dem Dressing beträufeln.",
+  "Mit Frühlingszwiebeln und Sesam garnieren."
+ ],
+ "tips": "Fassung nach GA „Bowl mit glasiertem Lachs und knackigem Gemüse“ (Fußnote [1414] der Vorlage). Mengen und Schritte wie in der Vorlage für 4 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Fisch, Soja und Sesam. Annahmen der App: „Reis“ als Langkornreis; 4 EL Miso-Paste ≈ 70 g insgesamt (die Vorlage teilt die Menge nicht auf Glasur und Dressing auf); 4 EL Sesamöl ≈ 40 g insgesamt für Dressing und Braten; 2 Limetten als Saft ≈ 60 g (Abrieb nicht gerechnet); 2 EL Ahornsirup ≈ 40 g; 2 EL Sojasauce ≈ 30 g; 1 TL Ingwer ≈ 3 g; 1 Avocado ≈ 140 g essbarer Anteil; 1 Gurke ≈ 350 g. Frühlingszwiebeln und Sesam stehen in der Vorlage ohne Menge und sind nicht gerechnet. Die Zeit-Angabe von 40 Minuten enthält die 30 Minuten Ziehzeit des Lachses. Lachs vollständig durchgaren (Hinweis der App); für Schwangere, Kleinkinder, Ältere und Immungeschwächte keinen glasigen Kern wählen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Lachs nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 016); Quelle laut Text: GA „Bowl mit glasiertem Lachs und knackigem Gemüse“ (Fußnote [1414], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Lachs-Bowl mit Paprika und Rotkohl",
+ "group": "Fisch",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 2,
+ "prep": 10,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Lachs",
+  "Reis",
+  "Paprika",
+  "Rotkohl",
+  "international inspiriert",
+  "Just Spices"
+ ],
+ "ing": [
+  [
+   "langkornreis",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "lachs",
+   200
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "rotkohl",
+   100
+  ],
+  [
+   "olivenoel",
+   10
+  ],
+  [
+   "balsamico",
+   15
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "lachs_gewuerzmischung"
+ ],
+ "steps": [
+  "Den Reis (150 g) mit 300 ml Wasser garen.",
+  "Die Paprika würfeln.",
+  "Den Rotkohl in Streifen schneiden.",
+  "Paprika und Rotkohl mit Öl und Balsamicoessig (1 EL) vermengen.",
+  "Den Lachs würfeln.",
+  "Den Lachs in Öl braten.",
+  "Mit Salz, Pfeffer und Lachs-Gewürzmischung würzen.",
+  "Den Reis in Bowls verteilen.",
+  "Lachs und Gemüse anrichten."
+ ],
+ "tips": "Fassung nach Just Spices „Lachs Bowl“ (Fußnote [1415] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Fisch. Annahmen der App: „Reis“ als Langkornreis; Olivenöl 1 EL ≈ 10 g insgesamt (die Vorlage nennt es für das Gemüse und zum Braten, aber nur einmal in der Zutatenliste); 1 EL Balsamicoessig ≈ 15 g; Salz und Pfeffer ohne Menge. Die Lachs-Gewürzmischung ist herstellerabhängig und ohne Menge angegeben (kann Allergene enthalten, Zutatenliste prüfen). Die Lachs-Gewürzmischung steht in der Zutatenliste, in der Zubereitung nennt die Vorlage nur Salz und Pfeffer; die App führt die Mischung beim Würzen auf. Lachs vollständig durchgaren (Hinweis der App); für Schwangere, Kleinkinder, Ältere und Immungeschwächte keinen glasigen Kern wählen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis durchgehend auf mindestens 70 °C erhitzen; Lachs nicht erneut aufwärmen, sondern kalt essen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 017); Quelle laut Text: Just Spices „Lachs Bowl“ (Fußnote [1415], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+}),
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "name": "Bowl mit Hähnchen, Reis und Gemüse",
+ "group": "Geflügel",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 2,
+ "prep": 10,
+ "cook": 10,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Hähnchen",
+  "Jasminreis",
+  "Teriyaki",
+  "Brokkoli",
+  "international inspiriert",
+  "Chefkoch"
+ ],
+ "ing": [
+  [
+   "jasminreis",
+   125
+  ],
+  [
+   "wasser",
+   250
+  ],
+  [
+   "haehnchenbrust",
+   175
+  ],
+  [
+   "teriyakisauce",
+   165
+  ],
+  [
+   "brokkoli",
+   100
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "fruehlingszwiebel",
+   50
+  ],
+  [
+   "sesam",
+   10
+  ],
+  [
+   "rapsoel",
+   10
+  ]
+ ],
+ "spices": [],
+ "steps": [
+  "Den Jasminreis (125 g) mit 250 ml Wasser garen.",
+  "Das Hähnchenbrustfilet (175 g) in Streifen schneiden.",
+  "Das Hähnchen in Öl (1 EL) braten und dabei vollständig durchgaren.",
+  "Die Teriyaki-Sauce (150 ml) hinzufügen.",
+  "Den Brokkoli blanchieren.",
+  "Die Karotten in Streifen schneiden.",
+  "Alles vermengen.",
+  "Den Reis in Bowls verteilen.",
+  "Hähnchen und Gemüse anrichten.",
+  "Mit Sesam (10 g) garnieren."
+ ],
+ "tips": "Fassung nach Chefkoch „Bowl mit Hähnchen, Reis und Gemüse“ (Fußnote [1383] der Vorlage). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Soja und Sesam. Annahmen der App: „Öl“ als Rapsöl, 1 EL ≈ 10 g; 150 ml Teriyaki-Sauce ≈ 165 g (Fertigprodukt, Nährwert nach Richtwert, je nach Hersteller verschieden; die Vorlage nennt eine deutlich größere Menge Sauce als die Teriyaki-Hähnchen-Bowl der App mit 60 ml für 2 Portionen); Frühlingszwiebeln 50 g stehen in der Zutatenliste, kommen in der Zubereitung aber nicht vor (als Beilage zum Anrichten gerechnet); die Menge Brokkoli und Karotten ist auf 100 g festgelegt. Das Hähnchen vollständig durchgaren (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "reheat": "Reis und Hähnchen durchgehend auf mindestens 70 °C erhitzen.",
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 018); Quelle laut Text: Chefkoch „Bowl mit Hähnchen, Reis und Gemüse“ (Fußnote [1383], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 019 Asia-Bowl mit Lachs (Version 78) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Asia-Bowl mit Lachs, Süßkartoffel und Pak Choi",
+ "group": "Fisch",
+ "cuisine": "Asiatisch inspiriert",
+ "origin": "Asiatisch inspiriert",
+ "servings": 4,
+ "prep": 15,
+ "cook": 20,
+ "level": "mittel",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Lachs",
+  "Süßkartoffel",
+  "Pak Choi",
+  "Kokoswasser",
+  "asiatisch inspiriert",
+  "ZWILLING"
+ ],
+ "ing": [
+  [
+   "langkornreis",
+   300
+  ],
+  [
+   "kokoswasser",
+   600
+  ],
+  [
+   "lachs",
+   400
+  ],
+  [
+   "suesskartoffel",
+   500
+  ],
+  [
+   "pak_choi",
+   200
+  ],
+  [
+   "paprika",
+   300
+  ],
+  [
+   "zitronengras",
+   10
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "ingwer",
+   3
+  ],
+  [
+   "honig",
+   40
+  ],
+  [
+   "sojasauce",
+   45
+  ],
+  [
+   "erdnussoel",
+   20
+  ],
+  [
+   "limettensaft",
+   30
+  ]
+ ],
+ "spices": [
+  "chili_flocken",
+  "reisessig_abschmecken",
+  "kresse_garnitur",
+  "wasabi_nuesse_garnitur",
+  "chili_nuesse_garnitur",
+  "salz"
+ ],
+ "steps": [
+  "Den Reis (300 g) in Kokosnusswasser (600 ml) garen.",
+  "Die Süßkartoffeln schälen und in Scheiben schneiden.",
+  "Die Süßkartoffeln in Salzwasser etwa 10 bis 15 Minuten kochen.",
+  "Den Pak Choi (200 g) putzen und schneiden.",
+  "Die Paprika in Streifen schneiden.",
+  "Das Zitronengras anklopfen und klein schneiden.",
+  "Den Knoblauch fein hacken.",
+  "Den Ingwer (1 TL) reiben.",
+  "Honig (2 EL), Sojasauce (3 EL), Erdnussöl (2 EL), Limettensaft, Limettenabrieb (1 Limette) und Chiliflocken verrühren.",
+  "Den Lachs würfeln.",
+  "Den Lachs in einer Pfanne rundum braten.",
+  "Die Hälfte der Marinade zum Lachs geben.",
+  "Pak Choi und Paprika in einer weiteren Pfanne mit der restlichen Marinade braten.",
+  "Mit Reisessig abschmecken.",
+  "Den Reis in Bowls verteilen.",
+  "Gemüse und Lachs anrichten.",
+  "Mit Kresse, Wasabi- und Chili-Nüssen bestreuen."
+ ],
+ "tips": "Fassung nach ZWILLING „Asia Bowl mit Lachs“ (Fußnote [1417] der Vorlage). Mengen und Schritte wie in der Vorlage für 4 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Fisch, Soja und Erdnüsse (Wasabi- und Chili-Nüsse, herstellerabhängig). Annahmen der App: „Reis“ als Langkornreis; 2 Süßkartoffeln ≈ 500 g (roh, geschält); 2 Paprika ≈ 300 g; 1 Stängel Zitronengras ≈ 10 g; 1 TL Ingwer ≈ 3 g; 2 EL Honig ≈ 40 g; 3 EL Sojasauce ≈ 45 g; 2 EL Erdnussöl ≈ 20 g; 1 Limette als Saft ≈ 30 g (der Abrieb stammt von derselben Limette und ist nicht gerechnet); das Kokosnusswasser ist als ungesüßtes Kokoswasser gerechnet, das Salz im Kochwasser der Süßkartoffeln nicht. Chiliflocken, Reisessig, Kresse, Wasabi-Nüsse und Chili-Nüsse stehen in der Vorlage ohne Menge und sind nicht gerechnet. Hinweis zur Vorlage: Zitronengras und Knoblauch stehen in der Zubereitung, aber nicht in der Marinade (Schritt 9); wohin sie gehören, sagt die Vorlage nicht eindeutig (wahrscheinlich zu Pak Choi und Paprika in die Pfanne). Süßkartoffel ist in Salat/Bowl erlaubt. Lachs vollständig durchgaren (Hinweis der App); für Schwangere, Kleinkinder, Ältere und Immungeschwächte keinen glasigen Kern wählen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "reheat": "Reis und Süßkartoffeln durchgehend auf mindestens 70 °C erhitzen; Lachs nicht erneut aufwärmen, sondern kalt essen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 019); Quelle laut Text: ZWILLING „Asia Bowl mit Lachs“ (Fußnote [1417], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 025 Gemüse-Bowl mit Kichererbsen und Quinoa (Version 79) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Gemüse-Bowl mit Kichererbsen und Quinoa",
+ "group": "Vegetarisch",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 1,
+ "prep": 15,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "vegetarisch",
+  "Quinoa",
+  "Kichererbsen",
+  "Quark-Dip",
+  "international inspiriert",
+  "Verbraucherzentrale"
+ ],
+ "ing": [
+  [
+   "quinoa",
+   70
+  ],
+  [
+   "kichererbsen",
+   70
+  ],
+  [
+   "mais_dose",
+   60
+  ],
+  [
+   "karotte",
+   80
+  ],
+  [
+   "rote_bete",
+   100
+  ],
+  [
+   "weisskohl",
+   100
+  ],
+  [
+   "spinat",
+   40
+  ],
+  [
+   "sonnenblumenkerne",
+   10
+  ],
+  [
+   "magerquark",
+   100
+  ],
+  [
+   "joghurt15",
+   125
+  ],
+  [
+   "essig",
+   15
+  ],
+  [
+   "zitronensaft",
+   30
+  ]
+ ],
+ "spices": [
+  "chili_flocken",
+  "pfeffer",
+  "knoblauch_optional",
+  "schnittlauch_optional"
+ ],
+ "steps": [
+  "Die Quinoa (70 g) und die Kichererbsen (70 g) garen.",
+  "Die Karotten in Streifen schneiden.",
+  "Die Rote Bete würfeln.",
+  "Den Weißkohl in Streifen schneiden.",
+  "Den Spinat waschen.",
+  "Den Mais abtropfen lassen.",
+  "Den Joghurt (125 g) mit dem Magerquark (100 g) vermengen.",
+  "Zitronensaft (30 ml) und Essig (1 EL) hinzufügen.",
+  "Mit Chiliflocken, Pfeffer und optional Knoblauch würzen.",
+  "Die Quinoa in einer Bowl verteilen.",
+  "Gemüse und Kichererbsen anrichten.",
+  "Mit Sonnenblumenkernen (10 g) bestreuen.",
+  "Mit dem Dip servieren."
+ ],
+ "tips": "Fassung nach Verbraucherzentrale Baden-Württemberg „Gemüse-Bowl“ (Fußnote [1418] der Vorlage). Mengen und Schritte wie in der Vorlage für 1 Portion (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Enthält Milchprodukte. Annahmen der App: Kichererbsen und Mais als Dosenware (abgetropft), „garen“ bei den Kichererbsen als Erhitzen gerechnet; Rote Bete gegart und vakuumiert; Spinat als frischer Blattspinat (roh, gewaschen); 1 EL Essig ≈ 15 g; 30 ml Zitronensaft ≈ 30 g. Chiliflocken und Pfeffer stehen in der Vorlage ohne Menge, Knoblauch und Schnittlauch sind optional und ohne Menge; alle nicht gerechnet. Die Vorlage nennt keine Garzeit für die Quinoa; nach Packungsanleitung garen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten und Dip getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochte Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "reheat": "Quinoa und Kichererbsen durchgehend auf mindestens 70 °C erhitzen; Gemüse und Dip kalt servieren.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 025); Quelle laut Text: Verbraucherzentrale Baden-Württemberg „Gemüse-Bowl“ (Fußnote [1418], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 046 Green Goddess Bowl mit Tofu (Version 80) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Green Goddess Bowl mit Tofu, Dinkelreis und Basilikum-Mandel-Pesto",
+ "group": "Vegetarisch",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 4,
+ "prep": 20,
+ "cook": 25,
+ "level": "leicht",
+ "devices": [
+  "Herd",
+  "Mixer"
+ ],
+ "tags": [
+  "Bowl",
+  "vegan",
+  "Dinkelreis",
+  "Tofu",
+  "Brokkoli",
+  "Avocado",
+  "Pesto",
+  "international inspiriert",
+  "EDEKA"
+ ],
+ "ing": [
+  [
+   "dinkelreis",
+   250
+  ],
+  [
+   "brokkoli",
+   500
+  ],
+  [
+   "zuckerschote",
+   400
+  ],
+  [
+   "tofu",
+   400
+  ],
+  [
+   "feldsalat",
+   100
+  ],
+  [
+   "avocado",
+   280
+  ],
+  [
+   "gurke",
+   175
+  ],
+  [
+   "fruehlingszwiebel",
+   60
+  ],
+  [
+   "rapsoel",
+   30
+  ],
+  [
+   "basilikum",
+   50
+  ],
+  [
+   "knoblauch",
+   6
+  ],
+  [
+   "limettensaft",
+   60
+  ],
+  [
+   "mandeln",
+   80
+  ],
+  [
+   "olivenoel",
+   92
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Dinkelreis (250 g) garen.",
+  "Brokkoli (500 g) und Zuckerschoten (400 g) blanchieren.",
+  "Den Tofu (400 g) würfeln und in Bratöl (3 EL) anbraten.",
+  "Den Feldsalat (100 g) waschen.",
+  "Die Avocados (2) in Spalten schneiden.",
+  "Die Gurke (½) in Scheiben schneiden.",
+  "Die Frühlingszwiebeln (3) in Ringe schneiden.",
+  "Für das Pesto Basilikum (2 Bund), Knoblauch (2 Zehen), Limettenabrieb und Limettensaft (2 Limetten), Mandeln (80 g) und Olivenöl (100 ml) mixen.",
+  "Den Dinkel in Bowls verteilen.",
+  "Gemüse, Tofu und Avocado anrichten.",
+  "Mit dem Pesto garnieren."
+ ],
+ "tips": "Fassung nach EDEKA „Green Goddess Bowl“ (Fußnote [1432] der Vorlage). Vegan; enthält Gluten (Dinkel), Soja (Tofu) und Mandeln. Mengen und Schritte wie in der Vorlage für 4 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: „Dinkelreis“ als eigener Eintrag (Dinkelkörner, roh; Richtwert nach üblichen Packungsangaben); Tofu natur; 2 Avocados ≈ 280 g essbarer Anteil; ½ Gurke ≈ 175 g; 3 Frühlingszwiebeln ≈ 60 g; „Bratöl“ als Rapsöl, 3 EL ≈ 30 g; 2 Bund Basilikum ≈ 50 g; 2 Knoblauchzehen ≈ 6 g; 2 Limetten als Saft ≈ 60 g (der Abrieb stammt von denselben Limetten und ist nicht gerechnet); 100 ml Olivenöl ≈ 92 g; Salz und Pfeffer ohne Menge. Die Vorlage nennt weder Wasser noch Garzeit für den Dinkelreis (nach Packungsanleitung garen) und keine Blanchierzeit. Das Pesto mit rohem Knoblauch frisch zubereiten und nicht lange aufbewahren (Hinweis der App). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Linsen, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe). Das Pesto getrennt aufbewahren.",
+ "reheat": "Dinkelreis und Tofu durchgehend auf mindestens 70 °C erhitzen; Gemüse, Avocado und Pesto kalt servieren.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 046); Quelle laut Text: EDEKA „Green Goddess Bowl“ (Fußnote [1432], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 047 Orientalische Linsen-Bowl (Version 80) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Orientalische Linsen-Bowl mit Gemüse und Zitrone",
+ "group": "Vegetarisch",
+ "cuisine": "Orientalisch inspiriert",
+ "origin": "Orientalisch inspiriert",
+ "servings": 2,
+ "prep": 15,
+ "cook": 60,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "vegan",
+  "Linsen",
+  "Zucchini",
+  "Kreuzkümmel",
+  "orientalisch inspiriert",
+  "LECKER"
+ ],
+ "ing": [
+  [
+   "braune_linsen",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "karotte",
+   100
+  ],
+  [
+   "zucchini",
+   100
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "zwiebel",
+   80
+  ],
+  [
+   "knoblauch",
+   6
+  ],
+  [
+   "olivenoel",
+   20
+  ],
+  [
+   "zitronensaft",
+   40
+  ]
+ ],
+ "spices": [
+  "kreuzkuemmel",
+  "paprika_suess",
+  "salz",
+  "pfeffer",
+  "kraeuter_frisch"
+ ],
+ "steps": [
+  "Die Linsen (150 g) in Wasser (300 ml) garen.",
+  "Karotten, Zucchini und Paprika (je 100 g) klein schneiden.",
+  "Zwiebel und Knoblauch (2 Zehen) in Olivenöl (2 EL) anbraten.",
+  "Das Gemüse hinzufügen.",
+  "Mit Kreuzkümmel, Salz und Pfeffer würzen.",
+  "Die Linsen hinzufügen.",
+  "Mit Zitronensaft abschmecken.",
+  "In Bowls verteilen.",
+  "Mit frischen Kräutern garnieren."
+ ],
+ "tips": "Fassung nach LECKER „Orientalische Linsen-Bowl“ (Fußnote [1436] der Vorlage). Vegan. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: „Linsen“ als braune Linsen (die Vorlage nennt keine Sorte); 1 Zwiebel ≈ 80 g; 2 Knoblauchzehen ≈ 6 g; 2 EL Olivenöl ≈ 20 g; 1 Zitrone als Saft ≈ 40 g; Paprikapulver als Paprika edelsüß; frische Kräuter, Salz und Pfeffer ohne Menge. Inkonsistenz in der Vorlage: Das Paprikapulver (1 TL) steht in der Zutatenliste, kommt in den Schritten aber nicht vor (beim Würzen nur Kreuzkümmel, Salz und Pfeffer); es wird nicht verändert, nach Geschmack zusammen mit dem Kreuzkümmel verwenden. Die Vorlage nennt 75 Minuten Gesamtzeit; die Linsen vollständig weich garen. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Linsen, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "reheat": "Linsen und Gemüse durchgehend auf mindestens 70 °C erhitzen; auch kalt oder zimmerwarm essbar.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 047); Quelle laut Text: LECKER „Orientalische Linsen-Bowl“ (Fußnote [1436], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 048 Möhrensalat mit Orange und Sesam (Version 80) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Möhrensalat mit Orange und Sesam",
+ "group": "Vegetarisch",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 2,
+ "prep": 25,
+ "cook": 5,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "Salat",
+  "vegan",
+  "Möhren",
+  "Orange",
+  "Tahini",
+  "Sesam",
+  "international inspiriert",
+  "LECKER"
+ ],
+ "ing": [
+  [
+   "karotte",
+   300
+  ],
+  [
+   "orange",
+   260
+  ],
+  [
+   "sesam",
+   30
+  ],
+  [
+   "tahini",
+   60
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "olivenoel",
+   20
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "kraeuter_frisch"
+ ],
+ "steps": [
+  "Die Möhren (300 g) raspeln.",
+  "Die Orangen (2) schälen und in Segmente schneiden.",
+  "Den Sesam (30 g) rösten.",
+  "Tahini (60 g) mit Zitronensaft (1 Zitrone), Knoblauch (1 Zehe) und Olivenöl (2 EL) verrühren.",
+  "Möhren und Orangen vermengen.",
+  "Mit dem Dressing beträufeln.",
+  "Mit dem Sesam garnieren."
+ ],
+ "tips": "Fassung nach LECKER „Möhrensalat küsst Orange und Sesam“ (Fußnote [1436] der Vorlage). Vegan; enthält Sesam. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: 2 Orangen ≈ 260 g essbarer Anteil; 1 Zitrone als Saft ≈ 40 g; 1 Knoblauchzehe ≈ 3 g; 2 EL Olivenöl ≈ 20 g; frische Kräuter, Salz und Pfeffer stehen ohne Menge in der Vorlage und sind nicht gerechnet (die Kräuter kommen in den Schritten nicht vor). Die Vorlage nennt keine Röstmethode für den Sesam (z. B. trocken in der Pfanne). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Dressing getrennt im Kühlschrank aufbewahren, den fertigen Salat höchstens 1 Tag (Hinweis der App; die Vorlage macht keine Angabe).",
+ "reheat": "Nicht nötig; der Salat wird kalt oder zimmerwarm gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 048); Quelle laut Text: LECKER „Möhrensalat küsst Orange und Sesam“ (Fußnote [1436], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 049 Gyros-Auberginen-Bowl (Version 80) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Gyros-Auberginen-Bowl mit Bulgur und Tzatziki",
+ "group": "Vegetarisch",
+ "cuisine": "Griechisch inspiriert",
+ "origin": "Griechisch inspiriert",
+ "servings": 2,
+ "prep": 10,
+ "cook": 10,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "vegetarisch",
+  "Aubergine",
+  "Bulgur",
+  "Tzatziki",
+  "Feta",
+  "griechisch inspiriert",
+  "LECKER"
+ ],
+ "ing": [
+  [
+   "bulgur",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "aubergine",
+   250
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "tomate",
+   100
+  ],
+  [
+   "feta",
+   50
+  ],
+  [
+   "joghurt10",
+   100
+  ],
+  [
+   "knoblauch",
+   3
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "olivenoel",
+   20
+  ]
+ ],
+ "spices": [
+  "gyros_gewuerz",
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Bulgur (150 g) in Wasser (300 ml) garen.",
+  "Die Aubergine (1) würfeln.",
+  "Die Aubergine mit Gyros-Gewürz braten.",
+  "Paprika (100 g) und Kirschtomaten (100 g) klein schneiden.",
+  "Den griechischen Joghurt (100 g) mit Knoblauch (1 Zehe), Zitronensaft (1 Zitrone), Salz und Pfeffer verrühren.",
+  "Den Bulgur in Bowls verteilen.",
+  "Gemüse und Aubergine anrichten.",
+  "Mit dem Tzatziki servieren."
+ ],
+ "tips": "Fassung nach LECKER „Gyros-Auberginen-Bowl aus dem Airfryer“ (Fußnote [1436] der Vorlage). Vegetarisch; enthält Milchprodukte (Feta, Joghurt) und Gluten (Bulgur). Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: 1 Aubergine ≈ 250 g; Kirschtomaten als frische Tomate; griechischer Joghurt mit 10 % Fett; 1 Knoblauchzehe ≈ 3 g; 1 Zitrone als Saft ≈ 40 g; 2 EL Olivenöl ≈ 20 g; Gyros-Gewürz, Salz und Pfeffer ohne Menge (Gyros-Gewürz ist herstellerabhängig, Zutatenliste prüfen). Inkonsistenzen in der Vorlage, nicht verändert: Der Quellentitel nennt den Airfryer, die Schritte sagen nur „braten“; das Olivenöl steht in der Zutatenliste, kommt in den Schritten aber nicht vor (es ist mitgerechnet und passt zum Braten der Aubergine); „Tzatziki“ entsteht ohne Gurke aus Joghurt, Knoblauch und Zitronensaft. Die Aubergine nicht roh essen, vollständig gar braten. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Linsen, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe).",
+ "reheat": "Bulgur und Aubergine durchgehend auf mindestens 70 °C erhitzen; Gemüse und Tzatziki kalt servieren.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 049); Quelle laut Text: LECKER „Gyros-Auberginen-Bowl aus dem Airfryer“ (Fußnote [1436], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 050 Quinoa-Avocado-Bowl (Version 80) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Quinoa-Avocado-Bowl mit gerösteten Kichererbsen",
+ "group": "Vegetarisch",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 2,
+ "prep": 10,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bowl",
+  "vegan",
+  "Quinoa",
+  "Kichererbsen",
+  "Avocado",
+  "international inspiriert",
+  "LECKER"
+ ],
+ "ing": [
+  [
+   "quinoa",
+   150
+  ],
+  [
+   "wasser",
+   300
+  ],
+  [
+   "kichererbsen",
+   200
+  ],
+  [
+   "avocado",
+   140
+  ],
+  [
+   "paprika",
+   100
+  ],
+  [
+   "rucola",
+   50
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "olivenoel",
+   20
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "kraeuter_frisch"
+ ],
+ "steps": [
+  "Die Quinoa (150 g) in Wasser (300 ml) garen.",
+  "Die Kichererbsen (200 g) rösten.",
+  "Die Paprika (100 g) würfeln.",
+  "Die Avocado (1) in Scheiben schneiden.",
+  "Zitronensaft (1 Zitrone) mit Olivenöl (2 EL), Salz und Pfeffer verrühren.",
+  "Die Quinoa in Bowls verteilen.",
+  "Kichererbsen, Paprika und Avocado anrichten.",
+  "Mit dem Dressing beträufeln.",
+  "Mit Kräutern garnieren."
+ ],
+ "tips": "Fassung nach LECKER „Quinoa-Avocado-Bowl zum Feierabend“ (Fußnote [1436] der Vorlage). Vegan. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: gekochte Kichererbsen als Dosenware (abgetropft); 1 Avocado ≈ 140 g essbarer Anteil; 1 Zitrone als Saft ≈ 40 g; 2 EL Olivenöl ≈ 20 g (laut Vorlage im Dressing); Kräuter, Salz und Pfeffer ohne Menge. Inkonsistenzen in der Vorlage, nicht verändert: Der Rucola (50 g) steht in der Zutatenliste, kommt in den Schritten aber nicht vor (zum Beispiel unter die Bowl legen); für das Rösten der Kichererbsen nennt die Vorlage weder Fett noch Gerät (z. B. trocken in der Pfanne). Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Linsen, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe). Avocado erst kurz vor dem Servieren schneiden.",
+ "reheat": "Nicht nötig; die Bowl wird kalt oder zimmerwarm gegessen.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 050); Quelle laut Text: LECKER „Quinoa-Avocado-Bowl zum Feierabend“ (Fußnote [1436], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bowl 051 Kürbis-Bowl mit Mandel-Couscous (Version 80) ---------- */
+  R({
+ "meal": "Salat/Bowl",
+ "mp": false,
+ "name": "Kürbis-Bowl mit Mandel-Couscous und Joghurt",
+ "group": "Vegetarisch",
+ "cuisine": "International inspiriert",
+ "origin": "International inspiriert",
+ "servings": 2,
+ "prep": 10,
+ "cook": 15,
+ "level": "leicht",
+ "devices": [
+  "Backofen"
+ ],
+ "tags": [
+  "Bowl",
+  "vegetarisch",
+  "Kürbis",
+  "Couscous",
+  "Mandeln",
+  "Granatapfel",
+  "Joghurt",
+  "international inspiriert",
+  "LECKER"
+ ],
+ "ing": [
+  [
+   "couscous",
+   150
+  ],
+  [
+   "gemuesebruehe",
+   300
+  ],
+  [
+   "kuerbis",
+   300
+  ],
+  [
+   "mandeln",
+   50
+  ],
+  [
+   "granatapfelkerne",
+   30
+  ],
+  [
+   "joghurt35",
+   100
+  ],
+  [
+   "ahornsirup",
+   20
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "olivenoel",
+   20
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "minze_ohne_menge"
+ ],
+ "steps": [
+  "Den Kürbis (300 g) würfeln und mit Ahornsirup (1 EL) und Gewürzen im Ofen garen.",
+  "Den Couscous (150 g) mit Gemüsebrühe (300 ml) übergießen.",
+  "Die Mandeln (50 g) rösten.",
+  "Die Granatapfelkerne (30 g) hinzufügen.",
+  "Den Joghurt (100 g) mit Zitronensaft (1 Zitrone), Salz und Minze verrühren.",
+  "Den Couscous in Bowls verteilen.",
+  "Kürbis, Mandeln und Granatapfel anrichten.",
+  "Mit dem Joghurt servieren."
+ ],
+ "tips": "Fassung nach LECKER „Kürbis-Bowl mit Mandel-Couscous“ (Fußnote [1436] der Vorlage). Vegetarisch; enthält Gluten (Couscous), Mandeln und Milchprodukte. Mengen und Schritte wie in der Vorlage für 2 Portionen (fertige Bowl, nicht als Meal-Prep-Baukasten gedacht). Annahmen der App: „Kürbis“ als Hokkaido (die Vorlage nennt keine Sorte); Joghurt als Naturjoghurt 3,5 % Fett; Gemüsebrühe zubereitet; 1 EL Ahornsirup ≈ 20 g; 1 Zitrone als Saft ≈ 40 g; 2 EL Olivenöl ≈ 20 g; Salz, Pfeffer und Minze ohne Menge. Inkonsistenzen in der Vorlage, nicht verändert: Das Olivenöl steht in der Zutatenliste, kommt in den Schritten aber nicht vor (es ist mitgerechnet und passt zum Garen der Kürbiswürfel); die „Gewürze“ für den Kürbis sowie Ofentemperatur und Garzeit nennt die Vorlage nicht (Kürbis garen, bis er weich ist); die Pfeffer-Angabe steht in der Zutatenliste, in den Schritten aber nicht. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Frisch am besten. Reste von Bowl-Komponenten getrennt im Kühlschrank höchstens 1 Tag aufbewahren; gekochten Reis, Linsen, Bulgur, Couscous oder Quinoa rasch abkühlen lassen (Hinweis der App; die Vorlage macht keine Angabe). Den Joghurt getrennt aufbewahren.",
+ "reheat": "Kürbis und Couscous durchgehend auf mindestens 70 °C erhitzen; Joghurt kalt servieren.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; fertige Bowls mit frischem Gemüse sind nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Bowl 051); Quelle laut Text: LECKER „Kürbis-Bowl mit Mandel-Couscous“ (Fußnote [1436], ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Teriyaki-Sauce mit Sesam, Meal-Prep-Baukasten Nr. 20 (Version 82) ---------- */
+  R({
+ "meal": "Sauce/Dips",
+ "mp": false,
+ "name": "Teriyaki-Sauce mit Sesam (Meal-Prep-Baukasten)",
+ "group": "Vegetarisch",
+ "cuisine": "Japan",
+ "origin": "Japan",
+ "servings": 2,
+ "prep": 5,
+ "cook": 0,
+ "level": "leicht",
+ "devices": [],
+ "tags": [
+  "Sauce",
+  "Teriyaki",
+  "Sesam",
+  "Meal-Prep-Baukasten",
+  "Kikkoman"
+ ],
+ "ing": [
+  [
+   "teriyakisauce",
+   70
+  ],
+  [
+   "sesam",
+   10
+  ]
+ ],
+ "spices": [],
+ "steps": [
+  "Die Teriyaki-Sauce (60 ml) in eine Schüssel geben.",
+  "Den Sesam (10 g) hinzufügen.",
+  "Alles verrühren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Nr. 20). Quelle laut Text: Kikkoman „Teriyaki Lachs Bowl“ (Fußnote [1390], Seite nicht gelesen). Lagerung laut Vorlage: Kühlschrank 4–5 Tage. Enthält Soja, Gluten (je nach Produkt) und Sesam. Annahmen der App: 60 ml Teriyaki-Sauce ≈ 70 g (Dichte etwa 1,15); die Vorlage nennt keine Portionen, gerechnet sind 2 Portionen zu etwa 40 g. Als Baustein passt die Menge nicht (60 ml ergeben keine zwei 50-ml-Blöcke), deshalb steht sie als Rezept unter Sauce/Dips. Die Nährwerte sind aus der Zutatenbasis der App errechnet, keine Angabe der Quelle. Nicht praktisch getestet.",
+ "storage": "Im Kühlschrank in einem verschlossenen Glas 4–5 Tage aufbewahren (Vorlage).",
+ "reheat": "Nicht nötig; die Sauce wird kalt verwendet.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten, Nr. 20); Quelle laut Text: Kikkoman „Teriyaki Lachs Bowl“ (Fußnote [1390], Standardrezept ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
 /* ===== Bibliothek ab r77 (Entscheidung des Auftraggebers, 28.10.2026, aktualisiert) =====
    Ausgemustert bleiben nur die früheren eigenen Rezepte r01 bis r76. Die von Perplexity gelieferten (r77 bis r94) und die nach Online-Recherche geschriebenen Rezepte (r95 ff., Quelle "Eigene Fassung nach Recherche (Claude)") sind wieder in der Bibliothek, auf ausdrücklichen Wunsch des Auftraggebers ("alle Rezepte einbauen").
    Wieder nur Perplexity: in der Schleife unten nach dem ersten if den Zweig else if (!/^Perplexity/.test(a[i].src || "")) { RETIRED[...] = ...; a.splice(i, 1); } ergänzen (Sicherung: data_rezepte5.js.bak_perp).
@@ -68070,84 +71187,84 @@ function B(o) {
 const BAUSTEINE = [
   /* ---------- Protein ---------- */
   B({
-    name: 'Hähnchen-Geschnetzeltes, mild gewürzt', mod: 'Protein', group: 'Geflügel', ml: 250, cooked: 1250, prep: 20, cook: 20,
+    name: 'Hähnchen-Geschnetzeltes, mild gewürzt', mod: 'Protein', group: 'Geflügel', ml: 125, cooked: 1250, prep: 20, cook: 20,
     ing: [['haehnchenbrust', 1000], ['zwiebel', 150], ['knoblauch', 15], ['olivenoel', 20], ['huehnerbruehe', 300]],
     spices: ['salz', 'pfeffer', 'paprika_suess', 'thymian'],
     steps: ['Hähnchenbrust in schmale Streifen schneiden, mit Salz, Pfeffer, Paprika und Thymian mischen.', 'Öl in einer großen Pfanne heiß werden lassen, Fleisch in zwei Portionen 4 Minuten kräftig anbraten und herausnehmen.', 'Zwiebel und Knoblauch im Bratsatz glasig dünsten, mit der Brühe ablöschen, Fleisch zurückgeben und 5 Minuten leise ziehen lassen, bis es durch ist (Kern mind. 70 °C).', 'Auf Zimmertemperatur bringen, in Silikonformen füllen und einfrieren.'],
     tips: 'Passt zu Reis, Nudeln und jeder Sauce. Nicht zu lange garen, sonst wird die Brust beim Aufwärmen trocken.', months: 3
   }),
   B({
-    name: 'Pulled Chicken mit Rauchpaprika', mod: 'Protein', group: 'Geflügel', style: 'mex', cuisine: 'Mexiko', ml: 250, cooked: 1250, prep: 20, cook: 60, devices: ['Multikocher', 'Dutch Oven', 'Herd'],
+    name: 'Pulled Chicken mit Rauchpaprika', mod: 'Protein', group: 'Geflügel', style: 'mex', cuisine: 'Mexiko', ml: 125, cooked: 1250, prep: 20, cook: 60, devices: ['Multikocher', 'Dutch Oven', 'Herd'],
     ing: [['haehnchenkeule', 1200], ['zwiebel', 200], ['tomatenmark', 40], ['passata', 200], ['essig', 30], ['honig', 15]],
     spices: ['rauchpaprika', 'kreuzkuemmel', 'knoblauchpulver', 'oregano', 'salz'],
     steps: ['Keulenfleisch mit allen Gewürzen einreiben und mit gewürfelter Zwiebel, Tomatenmark, Passata, Essig und Honig in den Topf geben.', 'Zugedeckt bei kleiner Hitze 50 Minuten schmoren, bis das Fleisch zerfällt und im Kern mindestens 70 °C hat.', 'Fleisch mit zwei Gabeln zerzupfen und in der Sauce 5 Minuten durchziehen lassen.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
     tips: 'Für Tacos, Bowls und Wraps. Im Multikocher auf „Schmoren“ etwa 45 Minuten.', months: 3
   }),
   B({
-    name: 'Putenhack-Gemüse-Basis', mod: 'Protein', group: 'Geflügel', ml: 250, cooked: 1350, prep: 20, cook: 25,
+    name: 'Putenhack-Gemüse-Basis', mod: 'Protein', group: 'Geflügel', ml: 125, cooked: 1350, prep: 20, cook: 25,
     ing: [['putenhack', 1000], ['zwiebel', 150], ['karotte', 150], ['staudensellerie', 100], ['tomatenmark', 30], ['olivenoel', 20], ['gemuesebruehe', 200]],
     spices: ['salz', 'pfeffer', 'oregano', 'knoblauchpulver'],
     steps: ['Zwiebel, Karotte und Sellerie fein würfeln und im Öl 6 Minuten weich dünsten.', 'Hack zugeben, krümelig braten, bis nichts Rosa mehr zu sehen ist, dann Tomatenmark kurz mitrösten.', 'Mit Brühe ablöschen, würzen und 10 Minuten einkochen lassen, bis das Hack durch ist (mind. 70 °C).', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
     tips: 'Vielseitig für Pasta, Gemüsepfannen, gefüllte Paprika und Bowls.', months: 3
   }),
   B({
-    name: 'Rinderhack-Basis mit Zwiebel und Tomate', mod: 'Protein', group: 'Rind', ml: 250, cooked: 1250, prep: 15, cook: 25,
+    name: 'Rinderhack-Basis mit Zwiebel und Tomate', mod: 'Protein', group: 'Rind', ml: 125, cooked: 1250, prep: 15, cook: 25,
     ing: [['rinderhack', 1000], ['zwiebel', 200], ['knoblauch', 20], ['tomatenmark', 40], ['olivenoel', 10], ['rinderbruehe', 200]],
     spices: ['salz', 'pfeffer', 'paprika_suess', 'oregano'],
     steps: ['Zwiebel würfeln und im Öl glasig dünsten, Knoblauch kurz mitgaren.', 'Hack zugeben und bei hoher Hitze krümelig und braun anbraten, dann Tomatenmark 2 Minuten mitrösten.', 'Mit Brühe ablöschen, würzen und 8 Minuten einkochen lassen, bis alles durch ist (mind. 70 °C).', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
     tips: 'Grundlage für Bolognese, Chili, Hackpfanne und gefüllte Gemüse. Fett nach dem Braten abschöpfen.', months: 3
   }),
   B({
-    name: 'Rindergulasch-Schmorfleisch', mod: 'Protein', group: 'Rind', style: 'deutsch', cuisine: 'Deutschland', ml: 250, cooked: 1750, prep: 25, cook: 120, devices: ['Dutch Oven', 'Multikocher', 'Herd'],
+    name: 'Rindergulasch-Schmorfleisch', mod: 'Protein', group: 'Rind', style: 'deutsch', cuisine: 'Deutschland', ml: 125, cooked: 1750, prep: 25, cook: 120, devices: ['Dutch Oven', 'Multikocher', 'Herd'],
     ing: [['rindergulasch', 1200], ['zwiebel', 400], ['paprika', 200], ['tomatenmark', 50], ['rapsoel', 20], ['rinderbruehe', 500]],
     spices: ['paprika_suess', 'kuemmel', 'majoran', 'salz', 'pfeffer', 'lorbeer'],
     steps: ['Fleisch trocken tupfen und im heißen Öl portionsweise rundum braun anbraten.', 'Zwiebeln und Paprika würfeln, zugeben und 5 Minuten mitrösten, Tomatenmark und Gewürze unterrühren.', 'Mit Brühe aufgießen und zugedeckt 100 bis 120 Minuten bei kleiner Hitze schmoren, bis das Fleisch weich ist.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
     tips: 'Im Dutch Oven im Ofen bei 160 °C geht es ohne Rühren. Die Sauce vor dem Einfrieren nicht zu dünn einkochen.', months: 3
   }),
   B({
-    name: 'Schweinefilet-Streifen in Pilzsauce', mod: 'Protein', group: 'Schwein', style: 'deutsch', cuisine: 'Deutschland', ml: 250, cooked: 1400, prep: 20, cook: 20,
+    name: 'Schweinefilet-Streifen in Pilzsauce', mod: 'Protein', group: 'Schwein', style: 'deutsch', cuisine: 'Deutschland', ml: 125, cooked: 1400, prep: 20, cook: 20,
     ing: [['schweinefilet', 1000], ['champignons', 300], ['zwiebel', 150], ['senf', 20], ['rapsoel', 20], ['huehnerbruehe', 300]],
     spices: ['salz', 'pfeffer', 'paprika_suess'],
     steps: ['Filet in dünne Streifen schneiden und würzen. Pilze in Scheiben, Zwiebel in Würfel schneiden.', 'Fleisch im heißen Öl portionsweise 2 Minuten scharf anbraten und herausnehmen.', 'Pilze und Zwiebel im Bratsatz 6 Minuten braten, Senf zugeben, mit Brühe ablöschen und 5 Minuten einkochen.', 'Fleisch zurückgeben und 3 Minuten durchziehen lassen, bis es durch ist. Abkühlen lassen, einfrieren.'],
     tips: 'Beim Aufwärmen nur erhitzen und nicht kochen, damit das Filet zart bleibt.', months: 2
   }),
   B({
-    name: 'Hackbällchen in Tomatensauce', mod: 'Protein', group: 'Rind', style: 'italien', cuisine: 'Italien', ml: 250, cooked: 1700, prep: 30, cook: 30,
+    name: 'Hackbällchen in Tomatensauce', mod: 'Protein', group: 'Rind', style: 'italien', cuisine: 'Italien', ml: 125, cooked: 1700, prep: 30, cook: 30,
     ing: [['rinderhack', 600], ['schweinehack', 200], ['eier', 55], ['semmelbroesel', 60], ['zwiebel', 100], ['petersilie', 15], ['passata', 800], ['olivenoel', 15]],
     spices: ['salz', 'pfeffer', 'oregano', 'knoblauchpulver'],
     steps: ['Hack mit Ei, Semmelbröseln, fein gewürfelter Zwiebel, Petersilie und Gewürzen verkneten und zu etwa 24 kleinen Bällchen formen.', 'Bällchen im Öl 5 Minuten rundum anbraten.', 'Passata zugießen und zugedeckt 20 Minuten leise köcheln, bis die Bällchen im Kern mindestens 70 °C haben.', 'Abkühlen lassen, in Silikonformen füllen (je Block 3 bis 4 Bällchen mit Sauce) und einfrieren.'],
     tips: 'Mit Reis, Nudeln oder Polenta kombinieren. Ein Schuss Balsamico am Ende rundet die Sauce ab.', months: 3
   }),
   B({
-    name: 'Garnelen in Knoblauch-Tomaten', mod: 'Protein', group: 'Fisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 250, cooked: 1000, prep: 15, cook: 15,
+    name: 'Garnelen in Knoblauch-Tomaten', mod: 'Protein', group: 'Fisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 125, cooked: 1000, prep: 15, cook: 15,
     ing: [['garnelen', 800], ['tomaten_dose', 400], ['knoblauch', 30], ['olivenoel', 20], ['zitronensaft', 20], ['petersilie', 20]],
     spices: ['salz', 'pfeffer', 'chili_flocken'],
     steps: ['Knoblauch im Öl bei mittlerer Hitze 1 Minute anschwitzen, Tomaten zugeben und 8 Minuten einkochen.', 'Garnelen zugeben und 3 Minuten ziehen lassen, bis sie rosa und durchgegart sind.', 'Zitronensaft und Petersilie unterrühren, abkühlen lassen.', 'In Silikonformen füllen und rasch einfrieren.'],
     tips: 'Beim Aufwärmen nur kurz erhitzen, sonst werden die Garnelen zäh. Frisch verbrauchen, innerhalb von 2 Monaten.', months: 2
   }),
   B({
-    name: 'Kabeljau-Fenchel-Tomatenragout', mod: 'Protein', group: 'Fisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 250, cooked: 1700, prep: 20, cook: 25,
+    name: 'Kabeljau-Fenchel-Tomatenragout', mod: 'Protein', group: 'Fisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 125, cooked: 1700, prep: 20, cook: 25,
     ing: [['kabeljau', 1000], ['fenchel', 300], ['tomaten_dose', 400], ['zwiebel', 100], ['oliven', 50], ['olivenoel', 20], ['gemuesebruehe', 200]],
     spices: ['salz', 'pfeffer', 'fenchelsaat', 'oregano'],
     steps: ['Fenchel und Zwiebel würfeln und im Öl 8 Minuten weich dünsten.', 'Tomaten, Brühe, Oliven und Gewürze zugeben und 10 Minuten einkochen.', 'Kabeljau in große Stücke schneiden, einlegen und zugedeckt 6 Minuten bei kleiner Hitze gar ziehen lassen.', 'Vorsichtig umrühren, abkühlen lassen, in Silikonformen füllen und einfrieren.'],
     tips: 'Fisch möglichst innerhalb von 2 Monaten essen. Langsam im Kühlschrank auftauen.', months: 2
   }),
   B({
-    name: 'Rote Linsen mit Röstgemüse', mod: 'Protein', group: 'Vegetarisch', style: 'indien', cuisine: 'Indien', ml: 250, cooked: 1600, prep: 15, cook: 25,
+    name: 'Rote Linsen mit Röstgemüse', mod: 'Protein', group: 'Vegetarisch', style: 'indien', cuisine: 'Indien', ml: 125, cooked: 1600, prep: 15, cook: 25,
     ing: [['linsen', 350], ['zwiebel', 150], ['karotte', 150], ['tomatenmark', 30], ['olivenoel', 20], ['gemuesebruehe', 800]],
     spices: ['kurkuma', 'kreuzkuemmel', 'koriander_gem', 'salz', 'pfeffer'],
     steps: ['Zwiebel und Karotte fein würfeln und im Öl 6 Minuten dünsten, Tomatenmark und Gewürze 1 Minute mitrösten.', 'Gewaschene Linsen und Brühe zugeben und 18 bis 20 Minuten köcheln, bis alles weich ist.', 'Kräftig abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
     tips: 'Ergibt mit Reis ein vollständiges Dal. Pro Block rund 15 g Eiweiß, mit Skyr oder Ei obenauf mehr.', months: 4
   }),
   B({
-    name: 'Kichererbsen in Tomaten-Kreuzkümmel-Sauce', mod: 'Protein', group: 'Vegetarisch', style: 'orient', cuisine: 'Orient', ml: 250, cooked: 1550, prep: 15, cook: 20,
+    name: 'Kichererbsen in Tomaten-Kreuzkümmel-Sauce', mod: 'Protein', group: 'Vegetarisch', style: 'orient', cuisine: 'Orient', ml: 125, cooked: 1550, prep: 15, cook: 20,
     ing: [['kichererbsen', 960], ['tomaten_dose', 400], ['zwiebel', 200], ['knoblauch', 20], ['olivenoel', 20]],
     spices: ['kreuzkuemmel', 'paprika_suess', 'kurkuma', 'salz', 'pfeffer'],
     steps: ['Zwiebel würfeln und im Öl glasig dünsten, Knoblauch und Gewürze 1 Minute mitgaren.', 'Tomaten und abgetropfte Kichererbsen zugeben und 12 Minuten leise köcheln.', 'Mit Salz und Pfeffer abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
     tips: 'Zu Reis, Bulgur oder Quinoa. Frischen Joghurt oder Skyr erst nach dem Auftauen dazugeben.', months: 4
   }),
   B({
-    name: 'Tofu-Hack mit Ingwer und Soja', mod: 'Protein', group: 'Vegetarisch', style: 'asien', cuisine: 'Asien', ml: 250, cooked: 1000, prep: 15, cook: 15,
+    name: 'Tofu-Hack mit Ingwer und Soja', mod: 'Protein', group: 'Vegetarisch', style: 'asien', cuisine: 'Asien', ml: 125, cooked: 1000, prep: 15, cook: 15,
     ing: [['tofu', 800], ['sojasauce', 40], ['zwiebel', 150], ['ingwer', 20], ['knoblauch', 15], ['rapsoel', 25]],
     spices: ['pfeffer', 'fuenf_gewuerz'],
     steps: ['Tofu mit den Händen grob zerbröseln und im Öl bei hoher Hitze 8 Minuten braun braten.', 'Zwiebel, Ingwer und Knoblauch fein würfeln, zugeben und 3 Minuten mitbraten.', 'Mit Sojasauce und Gewürz abschmecken, abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
@@ -68243,21 +71360,21 @@ const BAUSTEINE = [
   }),
   /* ---------- Gemüse und Suppen ---------- */
   B({
-    name: 'Mediterranes Ofengemüse', mod: 'Gemüse', group: 'Vegetarisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 250, dens: 0.9, cooked: 1275, prep: 20, cook: 35, devices: ['Backofen', 'Airfryer'],
+    name: 'Mediterranes Ofengemüse', mod: 'Gemüse', group: 'Vegetarisch', style: 'mediterran', cuisine: 'Mittelmeer', ml: 125, dens: 0.9, cooked: 1275, prep: 20, cook: 35, devices: ['Backofen', 'Airfryer'],
     ing: [['paprika', 400], ['zucchini', 500], ['aubergine', 400], ['zwiebel', 200], ['olivenoel', 40]],
     spices: ['salz', 'pfeffer', 'oregano', 'thymian'],
     steps: ['Gemüse in grobe Stücke schneiden, mit Öl und Gewürzen mischen und auf zwei Blechen verteilen.', 'Bei 210 °C Ober-/Unterhitze 30 bis 35 Minuten rösten, bis die Ränder braun sind, einmal wenden.', 'Auf einem Blech abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
     tips: 'Das Gemüse wird nach dem Auftauen weicher. Für Bowls, Pasta und als Füllung gedacht, nicht für knackige Beilagen.', months: 3
   }),
   B({
-    name: 'Spinat mit Zwiebel und Knoblauch', mod: 'Gemüse', group: 'Vegetarisch', ml: 250, dens: 1, cooked: 700, prep: 15, cook: 10,
+    name: 'Spinat mit Zwiebel und Knoblauch', mod: 'Gemüse', group: 'Vegetarisch', ml: 125, dens: 1, cooked: 700, prep: 15, cook: 10,
     ing: [['spinat', 1500], ['zwiebel', 150], ['knoblauch', 20], ['olivenoel', 20]],
     spices: ['salz', 'pfeffer', 'muskat'],
     steps: ['Zwiebel und Knoblauch im Öl 3 Minuten dünsten.', 'Spinat in Portionen zugeben und zusammenfallen lassen, bis die Flüssigkeit fast verdampft ist (ca. 5 Minuten).', 'Mit Salz, Pfeffer und Muskat würzen und abkühlen lassen.', 'In Silikonformen füllen und einfrieren.'],
     tips: 'Zu Fisch, Ei, Linsen und Paneer. Die Menge reduziert sich stark beim Garen.', months: 3
   }),
   B({
-    name: 'Rotkohl mit Apfel', mod: 'Gemüse', group: 'Vegetarisch', style: 'deutsch', cuisine: 'Deutschland', ml: 250, cooked: 1300, prep: 20, cook: 40,
+    name: 'Rotkohl mit Apfel', mod: 'Gemüse', group: 'Vegetarisch', style: 'deutsch', cuisine: 'Deutschland', ml: 125, cooked: 1300, prep: 20, cook: 40,
     ing: [['rotkohl', 1200], ['apfel', 300], ['zwiebel', 150], ['essig', 40], ['honig', 20], ['rapsoel', 15]],
     spices: ['salz', 'pfeffer', 'nelken', 'lorbeer', 'zimt'],
     steps: ['Kohl fein hobeln, Apfel und Zwiebel würfeln.', 'Zwiebel im Öl glasig dünsten, Kohl, Apfel, Essig, Honig und Gewürze zugeben.', 'Zugedeckt 35 bis 40 Minuten bei kleiner Hitze schmoren, zwischendurch rühren, bis der Kohl weich ist.', 'Abkühlen lassen, in Silikonformen füllen und einfrieren.'],
@@ -68822,7 +71939,622 @@ const BAUSTEINE = [
     steps: ["Die abgetropften Kichererbsen mit einer Gabel zerdrücken.","Mit den Haferflocken, der fein gehackten Zwiebel, dem Knoblauch, der Sojasauce und den Gewürzen (Chilipulver, Paprikapulver, Kreuzkümmel, Oregano, Salz, Pfeffer) in einer Schüssel vermengen.","Zu Patties formen.","In einer Pfanne bei mittlerer Hitze auf jeder Seite 4 bis 5 Minuten goldbraun braten.","Abkühlen lassen und in ein Sub füllen.","Abkühlen lassen, in Silikonformen (250 ml) füllen und einfrieren. Hinweis der App, nicht aus der Vorlage: Die Vorlage nennt nur den Kühlschrank; die Gefrierdauer ist ein Richtwert."],
     tips: "Auf Wunsch folgt dieser Baustein den Zutaten und Mengen des eingereichten Rezepttextes (Subway-Beläge zum Selbermachen, jede Sorte ist ein eigener Baustein), ohne Ersatz. Umrechnung von ml in g (Annahme, im Text nicht angegeben): Mayonnaise 0,92, Ketchup 1,15, Honig 1,4, Senf 1,05, Balsamico und Essig 1,0 bis 1,1, Olivenöl 0,91, Sojasauce 1,15; 1 EL = etwa 10 g Zucker, 1 TL = etwa 5 g. Wasser, Bratfett und Gewürze sind nicht eingerechnet. Ausbeute, Blockzahl und Dichte sind Schätzungen. Die Haferflocken halten den Patty zusammen. Ergebnis laut Vorlage: scharfer, pflanzlicher Patty, vegetarisch und vegan. Enthält Gluten (Hafer) und Soja. Die Vorlage nennt für die Lagerung nur den Kühlschrank (bis zu 4 Tage). Ein Block entspricht etwa der Hälfte des Rezepts (2 Sub-Beläge); die Dichte ist als Schüttdichte geschätzt.", months: 3,
     src: "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber eingereichten Rezepttext (Subway-Beläge zum Selbermachen, „Spicy Vegan Patty“; genannte Quelle: Subway Deutschland, Fleisch- und Protein-Beläge, https://www.subway.com/v1v2/assets/de-at/nutrition/documents/nutrition-information-english.pdf) mit den Zutaten und Mengen der Vorlage auf ausdrücklichen Wunsch, in eigenen Worten; die Seite wurde von Claude nicht aufgerufen und nicht gelesen; Zeiten sind Richtwerte, nicht getestet"
-  })
+  }),
+  /* ---------- Meal-Prep-Baukasten, Teil 1 (Version 81): Basen und Gemüse für den Reiskocher ---------- */
+  B({
+ "name": "Jasminreis im Reiskocher",
+ "mod": "Beilage",
+ "group": "Vegetarisch",
+ "style": "asien",
+ "cuisine": "Asien",
+ "ml": 250,
+ "dens": 0.8,
+ "cooked": 440,
+ "prep": 5,
+ "cook": 50,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "jasminreis",
+   200
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Den Reis (200 g) waschen.",
+  "Reis und Wasser (250 ml) in den Innentopf des Reiskochers geben und eine Prise Salz hinzufügen.",
+  "Den Modus „Weiß“ wählen und starten (etwa 40 Minuten).",
+  "Nach dem Garen 10 Minuten quellen lassen und mit einer Gabel auflockern.",
+  "Ergänzung der App, nicht aus der Vorlage: Den Reis flach ausbreiten, innerhalb von 2 Stunden in Silikonformen füllen, fest andrücken und rasch einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Annahmen der App: Ausbeute etwa 440 g gekocht (Richtwert); Block zu 250 ml. Reis rasch abkühlen lassen und nie warm stehen lassen. Die Vorlage nennt die Waschdauer nicht (Basmatireis: bis das Wasser klar ist).",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "reheat": "Mit einem Löffel Wasser abgedeckt erhitzen, bis es durchgehend sehr heiß ist (mind. 70 °C).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Anleitung Digitaler Reiskocher“ (Fußnote [1487], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Sushi-Reis im Reiskocher",
+ "mod": "Beilage",
+ "group": "Vegetarisch",
+ "style": "asien",
+ "cuisine": "Japan",
+ "ml": 250,
+ "dens": 0.85,
+ "cooked": 440,
+ "prep": 5,
+ "cook": 50,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "sushireis",
+   200
+  ]
+ ],
+ "spices": [
+  "salz",
+  "reisessig_abschmecken"
+ ],
+ "steps": [
+  "Den Reis (200 g) waschen.",
+  "Reis und Wasser (250 ml) in den Innentopf des Reiskochers geben und eine Prise Salz hinzufügen.",
+  "Den Modus „Sushi“ wählen und starten (etwa 40 Minuten).",
+  "Nach dem Garen 10 Minuten quellen lassen und mit Reisessig abschmecken.",
+  "Ergänzung der App, nicht aus der Vorlage: Den Reis flach ausbreiten, innerhalb von 2 Stunden in Silikonformen füllen, fest andrücken und rasch einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Inkonsistenz in der Vorlage, nicht verändert: Der Reisessig steht nicht in der Zutatenliste, wird aber im letzten Schritt zum Abschmecken genannt; er ist ohne Menge und nicht mitgerechnet. Annahmen der App: Ausbeute etwa 440 g gekocht (Richtwert); Block zu 250 ml. Reis rasch abkühlen lassen und nie warm stehen lassen.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "reheat": "Mit einem Löffel Wasser abgedeckt erhitzen, bis es durchgehend sehr heiß ist (mind. 70 °C).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Anleitung Digitaler Reiskocher“ (Fußnote [1487], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Hirse im Reiskocher",
+ "mod": "Beilage",
+ "group": "Vegetarisch",
+ "ml": 250,
+ "dens": 0.75,
+ "cooked": 550,
+ "prep": 5,
+ "cook": 30,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "hirse",
+   200
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Die Hirse (200 g) waschen.",
+  "Hirse und Wasser (400 ml) in den Innentopf des Reiskochers geben und eine Prise Salz hinzufügen.",
+  "Den Modus „Getreide“ wählen und starten (etwa 20 Minuten).",
+  "Nach dem Garen 10 Minuten quellen lassen und auflockern.",
+  "Ergänzung der App, nicht aus der Vorlage: Die Hirse flach ausbreiten, innerhalb von 2 Stunden in Silikonformen füllen, fest andrücken und rasch einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: Reishunger „Getreide im Digitalen Reiskocher“. Annahmen der App: Ausbeute etwa 550 g gekocht (Richtwert); Block zu 250 ml.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "reheat": "Mit einem Löffel Wasser abgedeckt erhitzen, bis es durchgehend sehr heiß ist (mind. 70 °C).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Getreide im Digitalen Reiskocher“ (Fußnote [1486], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Buchweizen im Reiskocher",
+ "mod": "Beilage",
+ "group": "Vegetarisch",
+ "ml": 250,
+ "dens": 0.75,
+ "cooked": 540,
+ "prep": 5,
+ "cook": 30,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "buchweizen",
+   200
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Den Buchweizen (200 g) waschen.",
+  "Buchweizen und Wasser (400 ml) in den Innentopf des Reiskochers geben und eine Prise Salz hinzufügen.",
+  "Den Modus „Getreide“ wählen und starten (etwa 20 Minuten).",
+  "Nach dem Garen 10 Minuten quellen lassen und auflockern.",
+  "Ergänzung der App, nicht aus der Vorlage: Den Buchweizen flach ausbreiten, innerhalb von 2 Stunden in Silikonformen füllen, fest andrücken und rasch einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: Reishunger „Getreide im Digitalen Reiskocher“. Annahmen der App: „Buchweizen“ als geschälter Buchweizen (roh, eigener Eintrag mit Richtwert); Ausbeute etwa 540 g gekocht (Richtwert); Block zu 250 ml.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "reheat": "Mit einem Löffel Wasser abgedeckt erhitzen, bis es durchgehend sehr heiß ist (mind. 70 °C).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Getreide im Digitalen Reiskocher“ (Fußnote [1486], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Linsen im Reiskocher",
+ "mod": "Beilage",
+ "group": "Vegetarisch",
+ "ml": 250,
+ "dens": 0.85,
+ "cooked": 460,
+ "prep": 5,
+ "cook": 45,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "braune_linsen",
+   200
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Die Linsen (200 g) waschen.",
+  "Linsen und Wasser (500 ml) in den Innentopf des Reiskochers geben und eine Prise Salz hinzufügen. Den Topf nicht zu voll füllen, weil Linsen schäumen.",
+  "Den Modus „Getreide“ wählen und starten (etwa 25 bis 30 Minuten).",
+  "Nach dem Garen 10 Minuten quellen lassen und abtropfen.",
+  "Ergänzung der App, nicht aus der Vorlage: Die Linsen flach ausbreiten, innerhalb von 2 Stunden in Silikonformen füllen, fest andrücken und rasch einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: Reishunger „Linsen im Digitalen Reiskocher“. Annahmen der App: „Linsen“ als braune Linsen (die Vorlage nennt keine Sorte); Ausbeute etwa 460 g abgetropft gekocht (Richtwert); Block zu 250 ml. Linsen vollständig weich garen.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "reheat": "Mit einem Löffel Wasser abgedeckt erhitzen, bis es durchgehend sehr heiß ist (mind. 70 °C).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Linsen im Digitalen Reiskocher“ (Fußnote [1486], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Kichererbsen im Reiskocher (getrocknet)",
+ "mod": "Beilage",
+ "group": "Vegetarisch",
+ "ml": 250,
+ "dens": 0.68,
+ "cooked": 480,
+ "prep": 10,
+ "cook": 100,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "kichererbsen_trocken",
+   200
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Die Kichererbsen (200 g) 12 Stunden einweichen und danach abgießen.",
+  "Kichererbsen und Wasser (800 ml) in den Innentopf des Reiskochers geben.",
+  "Den Modus „Getreide“ wählen und starten (etwa 90 Minuten).",
+  "Nach dem Garen salzen (eine Prise) und abtropfen.",
+  "Ergänzung der App, nicht aus der Vorlage: Die Kichererbsen flach ausbreiten, innerhalb von 2 Stunden in Silikonformen füllen, fest andrücken und rasch einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: Reishunger „Kichererbsen zubereiten“. Die Einweichzeit von 12 Stunden (über Nacht) ist in der Zeitangabe nicht enthalten. Das Salz erst nach dem Garen zugeben (Hinweis der Vorlage). Annahmen der App: Ausbeute etwa 480 g gekocht und abgetropft (Richtwert); Block zu 250 ml. Kichererbsen vollständig weich garen.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "reheat": "Mit einem Löffel Wasser abgedeckt erhitzen, bis es durchgehend sehr heiß ist (mind. 70 °C).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Kichererbsen zubereiten“ (Fußnote [1483], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Brokkoli aus dem Dämpfeinsatz des Reiskochers",
+ "mod": "Gemüse",
+ "group": "Vegetarisch",
+ "ml": 125,
+ "dens": 0.55,
+ "cooked": 280,
+ "prep": 5,
+ "cook": 15,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "brokkoli",
+   300
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Brokkoli (300 g) in Röschen teilen.",
+  "Wasser (100 ml) in den Innentopf des Reiskochers geben und den Brokkoli in den Dämpfeinsatz legen.",
+  "Den Modus „Dämpfen“ wählen und starten; 8 bis 10 Minuten garen.",
+  "Mit Salz und Pfeffer würzen.",
+  "Ergänzung der App, nicht aus der Vorlage: Den Brokkoli abkühlen lassen, in Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: Reishunger „Dämpfeinsatz im Digitalen Reiskocher“. Annahmen der App: Ausbeute etwa 280 g gedämpft (Richtwert); Block zu 125 ml (Wunsch des Auftraggebers: Gemüse in 125-ml-Blöcken; wird kein Fleisch gegessen, zwei Gemüse-Blöcke nehmen); Salz und Pfeffer ohne Menge. Gedämpftes Gemüse wird beim Auftauen weicher; beim Aufwärmen nur kurz erhitzen.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Dämpfeinsatz im Digitalen Reiskocher“ (Fußnote [1486], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Karotten aus dem Dämpfeinsatz des Reiskochers",
+ "mod": "Gemüse",
+ "group": "Vegetarisch",
+ "ml": 125,
+ "dens": 0.6,
+ "cooked": 285,
+ "prep": 8,
+ "cook": 17,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "karotte",
+   300
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Die Karotten (300 g) in Streifen schneiden.",
+  "Wasser (100 ml) in den Innentopf des Reiskochers geben und die Karotten in den Dämpfeinsatz legen.",
+  "Den Modus „Dämpfen“ wählen und starten; 10 bis 12 Minuten garen.",
+  "Mit Salz und Pfeffer würzen.",
+  "Ergänzung der App, nicht aus der Vorlage: Die Karotten abkühlen lassen, in Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: Reishunger „Dämpfeinsatz im Digitalen Reiskocher“. Annahmen der App: Ausbeute etwa 285 g gedämpft (Richtwert); Block zu 125 ml (Wunsch des Auftraggebers: Gemüse in 125-ml-Blöcken; wird kein Fleisch gegessen, zwei Gemüse-Blöcke nehmen); Salz und Pfeffer ohne Menge. Gedämpftes Gemüse wird beim Auftauen weicher; beim Aufwärmen nur kurz erhitzen.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Dämpfeinsatz im Digitalen Reiskocher“ (Fußnote [1486], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  /* ---------- Meal-Prep-Baukasten, Teil 2 (Version 82): Zucchini, Proteine, Dressings ---------- */
+  B({
+ "name": "Zucchini aus dem Dämpfeinsatz des Reiskochers",
+ "mod": "Gemüse",
+ "group": "Vegetarisch",
+ "ml": 125,
+ "dens": 0.55,
+ "cooked": 270,
+ "prep": 5,
+ "cook": 13,
+ "devices": [
+  "Reiskocher"
+ ],
+ "ing": [
+  [
+   "zucchini",
+   300
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Die Zucchini (300 g) in Scheiben schneiden.",
+  "Wasser (100 ml) in den Innentopf des Reiskochers geben und die Zucchini in den Dämpfeinsatz legen.",
+  "Den Modus „Dämpfen“ wählen und starten; 6 bis 8 Minuten garen.",
+  "Mit Salz und Pfeffer würzen.",
+  "Ergänzung der App, nicht aus der Vorlage: Die Zucchini abkühlen lassen, in Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: Reishunger „Dämpfeinsatz im Digitalen Reiskocher“. Annahmen der App: Ausbeute etwa 270 g gedämpft (Richtwert); Block zu 125 ml (Wunsch des Auftraggebers: Gemüse in 125-ml-Blöcken; wird kein Fleisch gegessen, zwei Gemüse-Blöcke nehmen); Salz und Pfeffer ohne Menge. Zucchini wird beim Auftauen weich und wässrig; beim Aufwärmen nur kurz erhitzen und Wasser abgießen.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Reishunger „Dämpfeinsatz im Digitalen Reiskocher“ (Fußnote [1486], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Hähnchenbrust, in der Pfanne gebraten",
+ "mod": "Protein",
+ "group": "Geflügel",
+ "ml": 125,
+ "dens": 0.6,
+ "cooked": 235,
+ "prep": 10,
+ "cook": 15,
+ "devices": [
+  "Herd"
+ ],
+ "ing": [
+  [
+   "haehnchenbrust",
+   300
+  ],
+  [
+   "rapsoel",
+   10
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "paprika_suess"
+ ],
+ "steps": [
+  "Die Hähnchenbrust (300 g) würfeln oder in Streifen schneiden.",
+  "Mit Öl (1 EL), Salz, Pfeffer und Paprikapulver würzen.",
+  "In der Pfanne goldbraun braten (laut Vorlage etwa 6 bis 8 Minuten pro Seite).",
+  "Die Kerntemperatur prüfen: mindestens 74 °C.",
+  "Ergänzung der App, nicht aus der Vorlage: Das Fleisch rasch abkühlen lassen, in Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: USDA „Sichere Kerntemperaturen“. Block zu 125 ml (Wunsch des Auftraggebers; etwa 80 bis 100 g gegart, passend zu den Richtwerten von rund 100 bis 120 g Fleisch oder Fisch je Mahlzeit; für mehr Eiweiß zwei Blöcke nehmen). Annahmen der App: „Öl“ als Rapsöl, 1 EL ≈ 10 g; Ausbeute etwa 235 g gebraten; Salz, Pfeffer und Paprikapulver ohne Menge. Inkonsistenz der Vorlage, nicht verändert: „6 bis 8 Minuten pro Seite“ passt eher zu ganzen Filets als zu Würfeln oder Streifen; maßgeblich ist die Kerntemperatur von mindestens 74 °C. Geflügel vollständig durchgaren.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: USDA „Sichere Kerntemperaturen“ (Fußnote [1030], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Lachs aus dem Ofen",
+ "mod": "Protein",
+ "group": "Fisch",
+ "ml": 125,
+ "dens": 0.7,
+ "cooked": 260,
+ "prep": 10,
+ "cook": 20,
+ "devices": [
+  "Backofen"
+ ],
+ "ing": [
+  [
+   "lachs",
+   300
+  ],
+  [
+   "rapsoel",
+   10
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer",
+  "zitrone_ohne_menge"
+ ],
+ "steps": [
+  "Das Lachsfilet (300 g) in Stücke schneiden.",
+  "Mit Öl (1 EL), Salz, Pfeffer und Zitrone würzen.",
+  "Im Ofen bei 180 °C etwa 20 Minuten garen.",
+  "Die Kerntemperatur prüfen: mindestens 63 °C.",
+  "Ergänzung der App, nicht aus der Vorlage: Den Lachs rasch abkühlen lassen, in Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 2–3 Tage, Tiefkühler bis 2 Monate. Quelle: USDA „Sichere Kerntemperaturen“. Block zu 125 ml (Wunsch des Auftraggebers; etwa 80 bis 100 g gegart, passend zu den Richtwerten von rund 100 bis 120 g Fleisch oder Fisch je Mahlzeit; für mehr Eiweiß zwei Blöcke nehmen). Annahmen der App: „Öl“ als Rapsöl, 1 EL ≈ 10 g; Ausbeute etwa 260 g gegart; Zitrone, Salz und Pfeffer ohne Menge. Für Schwangere, Kinder und Ältere keinen glasigen Kern: den Lachs vollständig durchgaren.",
+ "months": 2,
+ "storage": "Im Kühlschrank 2–3 Tage (laut Vorlage).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: USDA „Sichere Kerntemperaturen“ (Fußnote [1030], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Knuspriger Tofu in Sojasauce-Paprika-Marinade",
+ "mod": "Protein",
+ "group": "Vegetarisch",
+ "style": "asien",
+ "cuisine": "Asien",
+ "ml": 125,
+ "dens": 0.6,
+ "cooked": 280,
+ "prep": 10,
+ "cook": 10,
+ "devices": [
+  "Herd"
+ ],
+ "ing": [
+  [
+   "tofu",
+   300
+  ],
+  [
+   "rapsoel",
+   10
+  ],
+  [
+   "sojasauce",
+   30
+  ],
+  [
+   "speisestaerke",
+   8
+  ]
+ ],
+ "spices": [
+  "paprika_suess"
+ ],
+ "steps": [
+  "Den Tofu natur (300 g) würfeln.",
+  "Mit Sojasauce (2 EL) und Paprikapulver (1 TL) würzen.",
+  "In Speisestärke (1 EL) wälzen.",
+  "In Öl (1 EL) etwa 8 bis 10 Minuten knusprig braten.",
+  "Ergänzung der App, nicht aus der Vorlage: Den Tofu abkühlen lassen, in Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: Kühlschrank 3–4 Tage, Tiefkühler bis 2 Monate. Quelle: NDR „Tofu richtig zubereiten“. Block zu 125 ml (Wunsch des Auftraggebers; etwa 80 bis 100 g gegart, passend zu den Richtwerten von rund 100 bis 120 g Fleisch oder Fisch je Mahlzeit; für mehr Eiweiß zwei Blöcke nehmen). Enthält Soja (und Gluten aus der Sojasauce). Annahmen der App: „Öl“ als Rapsöl, 1 EL ≈ 10 g; 2 EL Sojasauce ≈ 30 g; 1 EL Speisestärke ≈ 8 g; Ausbeute etwa 280 g gebraten. Eingefrorener Tofu wird weniger knusprig und etwas fester; zum Aufwärmen in der Pfanne oder im Airfryer knusprig machen.",
+ "months": 2,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: NDR „Tofu richtig zubereiten“ (Fußnote [1388], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Tahini-Dressing",
+ "mod": "Booster",
+ "typ": "Dressing",
+ "group": "Vegetarisch",
+ "style": "orient",
+ "cuisine": "Orient",
+ "ml": 50,
+ "dens": 1,
+ "cooked": 183,
+ "prep": 5,
+ "cook": 0,
+ "devices": [],
+ "ing": [
+  [
+   "tahini",
+   60
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "knoblauch",
+   3
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Das Tahini (60 g) in eine Schüssel geben.",
+  "Den Zitronensaft (1 Zitrone) hinzufügen.",
+  "Den Knoblauch (1 Zehe) fein hacken.",
+  "Das Wasser (80 ml) hinzufügen.",
+  "Alles glatt rühren und mit Salz und Pfeffer abschmecken.",
+  "Ergänzung der App, nicht aus der Vorlage: In 50-ml-Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: nur im Kühlschrank (4–5 Tage), kein Einfrieren genannt; das Einfrieren als 50-ml-Würfel ist eine Richtwert-Ergänzung der App (1 Monat). Quelle: Stoneline „Falafel-Bowl mit Tahini-Dressing“. Annahmen der App: 1 Zitrone als Saft ≈ 40 g; 1 Knoblauchzehe ≈ 3 g; das Wasser (80 ml) ist nicht in der Zutatenliste gerechnet, aber in der Ausbeute; Salz und Pfeffer ohne Menge. Enthält Sesam. Nach dem Auftauen kräftig rühren, bei Bedarf einen Schluck Wasser zugeben.",
+ "months": 1,
+ "storage": "Im Kühlschrank 4–5 Tage (laut Vorlage).",
+ "thaw": "Würfel im Kühlschrank auftauen und kräftig durchrühren oder schütteln; kalt servieren.",
+ "reheat": "Kalt servieren, nicht erhitzen.",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: Stoneline „Falafel-Bowl mit Tahini-Dressing“ (Fußnote [1407], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Joghurt-Kräuter-Dressing",
+ "mod": "Booster",
+ "typ": "Dressing",
+ "group": "Vegetarisch",
+ "style": "neutral",
+ "cuisine": "",
+ "ml": 50,
+ "dens": 1.02,
+ "cooked": 253,
+ "prep": 5,
+ "cook": 0,
+ "devices": [],
+ "ing": [
+  [
+   "joghurt35",
+   200
+  ],
+  [
+   "olivenoel",
+   10
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "knoblauch",
+   3
+  ]
+ ],
+ "spices": [
+  "kraeuter_frisch",
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Joghurt (200 g) in eine Schüssel geben.",
+  "Olivenöl (1 EL) und Zitronensaft (1 Zitrone) hinzufügen.",
+  "Den Knoblauch (1 Zehe) fein hacken und mit den frischen Kräutern unterrühren.",
+  "Alles verrühren und mit Salz und Pfeffer abschmecken.",
+  "Ergänzung der App, nicht aus der Vorlage: In 50-ml-Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: nur im Kühlschrank (4–5 Tage), kein Einfrieren genannt; das Einfrieren als 50-ml-Würfel ist eine Richtwert-Ergänzung der App (1 Monat). Quelle: EDEKA „Buddha Bowl“. Annahmen der App: Joghurt als Naturjoghurt 3,5 % Fett (die Vorlage nennt keine Sorte); 1 EL Olivenöl ≈ 10 g; 1 Zitrone als Saft ≈ 40 g; 1 Knoblauchzehe ≈ 3 g; frische Kräuter, Salz und Pfeffer ohne Menge. Enthält Milch. Milchprodukte trennen sich beim Einfrieren etwas: nach dem Auftauen gut verrühren, die Textur kann leicht körnig bleiben.",
+ "months": 1,
+ "storage": "Im Kühlschrank 3–4 Tage (laut Vorlage).",
+ "thaw": "Würfel im Kühlschrank auftauen und kräftig durchrühren oder schütteln; kalt servieren.",
+ "reheat": "Kalt servieren, nicht erhitzen.",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: EDEKA „Buddha Bowl“ (Fußnote [1389], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  B({
+ "name": "Zitronen-Olivenöl-Dressing",
+ "mod": "Booster",
+ "typ": "Dressing",
+ "group": "Vegetarisch",
+ "style": "mediterran",
+ "cuisine": "Mittelmeer",
+ "ml": 50,
+ "dens": 0.95,
+ "cooked": 98,
+ "prep": 5,
+ "cook": 0,
+ "devices": [],
+ "ing": [
+  [
+   "olivenoel",
+   55
+  ],
+  [
+   "zitronensaft",
+   40
+  ],
+  [
+   "knoblauch",
+   3
+  ]
+ ],
+ "spices": [
+  "salz",
+  "pfeffer"
+ ],
+ "steps": [
+  "Den Zitronensaft (1 Zitrone) in eine Schüssel geben.",
+  "Das Olivenöl (60 ml) hinzufügen.",
+  "Den Knoblauch (1 Zehe) fein hacken.",
+  "Alles verrühren und mit Salz und Pfeffer abschmecken.",
+  "Ergänzung der App, nicht aus der Vorlage: In 50-ml-Silikonformen füllen und einfrieren."
+ ],
+ "tips": "Teil der Vorlage „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (Grundregel der Vorlage: jede Zutat wird separat zubereitet und separat gelagert; beim Essen werden Basis, Protein, Gemüse, Sauce und Toppings kombiniert). Zutaten und Mengen wie übergeben. Lagerung laut Vorlage: nur im Kühlschrank (4–5 Tage), kein Einfrieren genannt; das Einfrieren als 50-ml-Würfel ist eine Richtwert-Ergänzung der App (1 Monat). Quelle: EDEKA „Lachs-Reis-Bowl“. Annahmen der App: 60 ml Olivenöl ≈ 55 g; 1 Zitrone als Saft ≈ 40 g; 1 Knoblauchzehe ≈ 3 g; Salz und Pfeffer ohne Menge. Öl und Zitrone trennen sich: vor dem Servieren kräftig schütteln oder rühren.",
+ "months": 1,
+ "storage": "Im Kühlschrank 4–5 Tage (laut Vorlage).",
+ "thaw": "Würfel im Kühlschrank auftauen und kräftig durchrühren oder schütteln; kalt servieren.",
+ "reheat": "Kalt servieren, nicht erhitzen.",
+ "src": "Eigene Fassung (Claude) als Baustein, nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten); Quelle laut Text: EDEKA „Lachs-Reis-Bowl“ (Fußnote [1385], ohne Quellenlink, Seite nicht gelesen); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Blockgröße, Ausbeute und Einfrieren sind Richtwerte der App"
+}),
+  /* ---------- Version 83: Nudeln als 500-ml-Block ---------- */
+  B({
+ "name": "Vollkornnudeln, bissfest gekocht (500-ml-Block, zwei Portionen)",
+ "mod": "Beilage",
+ "group": "Vegetarisch",
+ "style": "italien",
+ "cuisine": "Italien",
+ "ml": 500,
+ "dens": 0.6,
+ "cooked": 1200,
+ "prep": 5,
+ "cook": 10,
+ "devices": [
+  "Herd"
+ ],
+ "ing": [
+  [
+   "vollkornnudeln",
+   500
+  ]
+ ],
+ "spices": [
+  "salz"
+ ],
+ "steps": [
+  "Die Nudeln in reichlich Salzwasser 2 Minuten kürzer als auf der Packung angegeben kochen, damit sie beim Aufwärmen nicht weich werden.",
+  "Abgießen, kalt abschrecken und sehr gut abtropfen lassen.",
+  "Mit etwa 1 Teelöffel Öl mischen.",
+  "Mit einer Gabel zu Nestern von je etwa 150 g aufdrehen, zwei Nester in eine 500-ml-Form legen, fest andrücken und glatt streichen. Ein Stück Backpapier direkt auf die Nudeln legen.",
+  "Rasch einfrieren; durchgefroren aus der Form lösen und im Gefrierbeutel lagern."
+ ],
+ "tips": "Gleiche Charge wie „Vollkornnudeln, bissfest gekocht“ (250 ml, eine Portion), hier aber als 500-ml-Block für zwei Portionen (auf Wunsch des Auftraggebers, der Spaghetti auch in 500-ml-Formen einfrieren kann). Ein Block entspricht etwa 300 g gekochten Nudeln (rund 125 g trocken). Die Form darf nicht halb leer bleiben: fest andrücken und Backpapier auflegen, sonst droht Gefrierbrand. Ein einmal aufgetauter Block wird nicht wieder eingefroren; für nur eine Portion besser den 250-ml-Baustein nehmen. Ausbeute und Dichte sind Richtwerte der App.",
+ "months": 2,
+ "thaw": "Block direkt aus dem Gefrierer 1 bis 2 Minuten in kochendes Wasser geben oder in der Sauce erhitzen.",
+ "src": "Eigene Grundzubereitung für das Gefrierer-Meal-Prep (Variante mit 500-ml-Block)"
+})
 ];
 /* Die 11 Subway-Saucen sind seit Version 31 Rezepte in der Kategorie Sauce/Dips (r359 bis r369). Als Bausteine werden sie nicht mehr angeboten;
    die alten Einträge bleiben nur in BMAP, damit gespeicherte Einträge (Vorrat, Plan) mit ihrer ID weiter aufgelöst werden. Die Reihenfolge und damit die IDs der übrigen Bausteine ändern sich nicht. */
@@ -68839,12 +72571,12 @@ BAUSTEINE.forEach(b => {
   b.fill = b.yieldMl / (b.n * b.ml);
   b.meal = 'Baustein';
   b.freeze = { ok: 'ja', block: b.ml, months: b.months, note: '' };
-  b.storage = 'Im Kühlschrank bis zu 3 Tage' + (b.group === 'Fisch' ? ' (Fisch besser nach 2 Tagen aufbrauchen)' : '') + '.';
+  b.storage = b.storage || ('Im Kühlschrank bis zu 3 Tage' + (b.group === 'Fisch' ? ' (Fisch besser nach 2 Tagen aufbrauchen)' : '') + '.');
   b.level = 'leicht';
 });
 const MOD_IDS = MODULE.map(m => m.id);
 const PREP_KEYS = ['Komplett', 'Protein', 'Beilage', 'Sauce', 'Gemüse', 'Booster'];
-const KEY_ML = { Komplett: '500 oder 250 ml', Protein: '250 ml', Beilage: '250 ml', Sauce: '125 ml', Gemüse: '250 oder 500 ml', Booster: '50 ml' };
+const KEY_ML = { Komplett: '500 oder 250 ml', Protein: '125 oder 250 ml', Beilage: '250 ml', Sauce: '125 ml', Gemüse: '125, 250 oder 500 ml', Booster: '50 ml' };
 const BLOCK_PREFIX = { Protein: 'P', Beilage: 'B', Sauce: 'S', Gemüse: 'G', Booster: 'X', Komplett: 'K' };
 
 function cubePP(b) { return calcRecipe(b).pp; }
@@ -69109,6 +72841,7 @@ S('pastinake', 'Gemüse', 'Pastinake', 'FFFL----FFFF', 'k');
 S('sellerieknolle', 'Gemüse', 'Knollensellerie', 'LLLLLLLFFFFL', 'k');
 S('fruehlingszwiebel', 'Gemüse', 'Frühlingszwiebel', 'IIGGFFFFFFGI', 'k');
 S('rucola', 'Gemüse', 'Rucola', 'IIGFFFFFFFGI', 'k');
+S('feldsalat', 'Gemüse', 'Feldsalat', 'FFFGGG---GFF', 'e');
 S('chinakohl', 'Gemüse', 'Chinakohl', 'LLIIFFFFFFFL', 'k');
 S('pak_choi', 'Gemüse', 'Pak Choi', 'IIGFFFFFFFFI', 'k');
 S('spargel', 'Gemüse', 'Spargel (grün und weiß)', 'IIIFFFIIIIII', 'k');
@@ -69158,7 +72891,8 @@ const SAISON_NEUTRAL = {
   apfelsaft: 'Äpfel mit eigener Saison, Saft ohne eigene Saison',
   suesskartoffel: 'Überwiegend Importware, ganzjährig im Handel; nur in Frühstück, Snack, Dessert und Salat/Bowl erlaubt',
   taro: 'Importware (Asialäden), ganzjährig im Handel',
-  mangopueree: 'Verarbeitetes Püree aus Importware (Mango), ganzjährig im Handel'
+  mangopueree: 'Verarbeitetes Püree aus Importware (Mango), ganzjährig im Handel',
+  nektarine: 'Überwiegend Importware, Hauptsaison im Sommer'
 };
 
 /* ===== Saison: Bewertung (rein rechnerisch, ohne Oberfläche) ===== */

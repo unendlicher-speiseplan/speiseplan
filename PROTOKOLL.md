@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-11-01 06:30 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-11-02 01:00 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,66 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag Version 84: Gramm je Block gegart, Fleisch- und Gemüse-Bausteine auf 125 ml
+
+- **Anzeige:** Die Gramm je Block (`pp.g`) waren bei Bausteinen die Summe der rohen Zutaten geteilt durch die Blockzahl (Reis zum Beispiel 63 g statt etwa 190 g gegart). Jetzt gilt für Bausteine das geschätzte Gewicht nach dem Garen (`cooked`) geteilt durch die Blockzahl (`calcRecipe` in logic.js).
+- **Blockgrößen auf Wunsch des Auftraggebers:** Die zwölf vorhandenen Protein-Bausteine (b01 bis b12) und die drei Gemüse-Beilagen (Ofengemüse, Spinat, Rotkohl) wurden von 250 ml auf 125 ml umgestellt; Blockzahl und Nährwerte je Block werden neu berechnet. **Unverändert** (auf Wunsch): die Subway-Beläge (b83 bis b90), alle Booster (darunter die acht Marinaden von Sizzle Brothers laut Hinweis der Nutzerin), die Saucen (waren schon 125 ml) und die beiden Suppen (Kürbis-Ingwer, Tomaten-Paprika; 500 ml). Dichte und Ausbeute der alten Bausteine wurden nicht verändert. Hinweis: Gespeicherte Vorräte, die sich auf diese Bausteine beziehen, zählen jetzt Blöcke zu 125 ml. Tests angepasst: test_logic3.js (Mahlzeit-Volumen 500 ml, Session mit 24 Blöcken à 250 ml und 10 à 125 ml, Einbuchen 10×125 ml) und smoke3.js (Vorrat b01 10×125 ml, Ist-Bestand Protein 20). APP_VERSION 84.
+
+## Nachtrag Version 83: Vollkornnudeln als 500-ml-Block (b106)
+
+- Auf Wunsch des Auftraggebers („Spaghetti auch in 500-ml-Formen einfrieren“): neuer Baustein „Vollkornnudeln, bissfest gekocht (500-ml-Block, zwei Portionen)“, Modul Beilage, gleiche Charge wie der 250-ml-Baustein (500 g trocken, 4 Blöcke à 500 ml, je zwei Nester von etwa 150 g). Zähler: 95 Bausteine. APP_VERSION 83.
+
+## Nachtrag Version 82: Meal-Prep-Baukasten, Teil 2 (7 Bausteine und 1 Rezept)
+
+- Neu als Bausteine: Zucchini (Gemüse), Hähnchenbrust, Lachs, Tofu (Protein) und drei Dressings (Tahini, Joghurt-Kräuter, Zitronen-Olivenöl; Booster, 50 ml). Neu als Rezept r968 unter Sauce/Dips: Teriyaki-Sauce mit Sesam (60 ml ergeben keine zwei 50-ml-Blöcke).
+- **Blockgrößen nach Rückfrage und Recherche:** Ein Teller mit 400 bis 550 g (Apotheken Umschau) und 100 bis 120 g Fleisch oder Fisch je Mahlzeit (SGE, Verbraucherzentrale 125 bis 150 g roh) führt zu Protein-Blöcken à 125 ml (Originalmengen der Vorlage, 3 bis 4 Blöcke je Charge) und Gemüse-Blöcken à 125 ml (Wunsch des Auftraggebers; ohne Fleisch zwei Gemüse-Blöcke). Brokkoli und Karotten aus Version 81 wurden auf 125 ml umgestellt (je 4 Blöcke). Beilagen bleiben bei 250 ml. Die vorhandenen Bausteine wurden nicht geändert. `KEY_ML` zeigt die zusätzlichen Größen an.
+- Lagerangaben der Vorlage stehen in `storage` und im Tipp, das Einfrieren ist eine Richtwert-Ergänzung der App (Dressings 1 Monat, übrige 2 Monate). Neues Gewürz: Zitrone (Menge nicht angegeben). Zähler: 94 Bausteine, 954 Rezepte in der Bibliothek, Sauce/Dips 22, Dressings 6. APP_VERSION 82.
+
+## Nachtrag Version 81: Meal-Prep-Baukasten, Teil 1 (8 Bausteine)
+
+- Die Datei „Meal-Prep-Baukasten: Rezepte und Anleitungen für jede Hauptzutat“ (20 Komponenten) wird als Bausteine aufgenommen, nicht als Rezepte. Auf Rückfrage entschied der Auftraggeber: nur die 16 neuen; Basmatireis, Vollkorn-Basmatireis, Quinoa und Bulgur entfallen, weil es sie als Bausteine schon gibt. Teil 1 (diese Version): Jasminreis, Sushi-Reis, Hirse, Buchweizen, Linsen, Kichererbsen (alle Beilage, im Reiskocher), Brokkoli und Karotten (Gemüse, Dämpfeinsatz). Zähler: 87 Bausteine (vorher 79). Teil 2 folgt in Version 82 (Zucchini, Hähnchenbrust, Lachs, Tofu, drei Dressings, Teriyaki-Sauce).
+- Mengen wie in der Vorlage (200 g roh bzw. 300 g Gemüse je Charge). Das Einfrieren in Blöcken ist eine Ergänzung der App (Vorlage: Tiefkühler bis 2 Monate); Ausbeute und Dichte sind Richtwerte. Neue Zutat: Buchweizen. logic3.js: eine eigene Lagerangabe (`storage`) eines Bausteins hat Vorrang vor dem Standardtext. Inkonsistenz der Vorlage beim Sushi-Reis (Reisessig fehlt in der Zutatenliste) steht im Tipp. APP_VERSION 81.
+
+## Nachtrag Version 80: Bowls 046 bis 051 (r962–r967)
+
+- Neu unter Salat/Bowl: Green Goddess Bowl mit Tofu (4 Portionen), Orientalische Linsen-Bowl, Möhrensalat mit Orange und Sesam, Gyros-Auberginen-Bowl, Quinoa-Avocado-Bowl, Kürbis-Bowl mit Mandel-Couscous (je 2 Portionen). Die Bowls 041 bis 044 der Vorgängerdatei waren Wiederholungen früherer Bowls und wurden nicht doppelt angelegt. Neue Zutaten: Dinkelreis, Feldsalat (mit Saison-Eintrag). Neue Gewürzeinträge: Gyros-Gewürz, Minze (Menge nicht angegeben). Inkonsistenzen der Vorlage stehen in den Tipps der Rezepte. Saison-Tests: 64 bewertete Zutaten (vorher 63), 25 eigene Einschätzungen (vorher 24). APP_VERSION 80.
+
+## Nachtrag Version 79: Gemüse-Bowl mit Kichererbsen und Quinoa (r961)
+
+- Neu unter Salat/Bowl: Bowl 025 (1 Portion, nach Verbraucherzentrale Baden-Württemberg). Die Bowls 026 bis 029 der übergebenen Datei sind identisch mit den Bowls 007 bis 011 (Version 76) und wurden nicht doppelt angelegt. Neue Gewürzeinträge: Knoblauch (optional), Schnittlauch (optional). APP_VERSION 79.
+
+## Nachtrag Version 78: Asia-Bowl mit Lachs, Süßkartoffel und Pak Choi (r960)
+
+- Neu unter Salat/Bowl: Bowl 019 (4 Portionen, nach ZWILLING). Die Bowls 020 bis 024 der übergebenen Datei sind identisch mit den Bowls 007 bis 011 (Version 76) und wurden nicht doppelt angelegt. Neue Gewürzeinträge: Reisessig, Kresse, Wasabi-Nüsse, Chili-Nüsse (ohne Menge). Hinweis: Verwendung von Zitronengras und Knoblauch in der Zubereitung nicht eindeutig. Test: Der Name mit „Süßkartoffel“ ist in smoke2 und smoke3 wie bei der Quinoa-Gemüse-Bowl von der Ausschlussprüfung im HTML ausgenommen (Süßkartoffel ist in Salat/Bowl erlaubt). APP_VERSION 78.
+
+## Nachtrag Version 77: Bowls 013 bis 018 (r954 bis r959)
+
+- Neu unter Salat/Bowl, Portionen wie in der Vorlage: Sommer-Bowl mit Lachs und mariniertem Gemüse (4), Lachs-Reis-Bowl mit Rote Bete (2), Teriyaki-Lachs-Bowl (2), Bowl mit glasiertem Lachs und knackigem Gemüse (4), Lachs-Bowl mit Paprika und Rotkohl (2), Bowl mit Hähnchen, Reis und Gemüse (2). Neue Zutaten: Ponzu-Sauce, Wasabi-Paste, Nektarine (Saison: neutral); neue Gewürzeinträge für Frühlingszwiebeln und Sesam zum Garnieren sowie Lachs-Gewürzmischung. Annahmen: „Reis“ als Langkornreis, Erbsensprossen als Mungbohnensprossen, „Chilisauce“ als süße Chilisauce. Hinweise im Tipp: gemeinsam genannte Mengen (Teriyaki, Miso, Sesamöl, Öl) sind einmal gerechnet. APP_VERSION 77.
+
+## Nachtrag Version 76: Sechs weitere fertige Bowls (r948 bis r953)
+
+- Neu unter Salat/Bowl: Griechische Hähnchen-Bowl mit Bulgur und Tzatziki (2 Portionen), Falafel-Bowl mit Couscous und Tahini-Dressing (4), Garnelen-Bowl mit Mango und Limette (2), Avocado-Spinat-Bowl mit Garnelen (4), Karibische Garnelen-Bowl mit Wasabi-Limetten-Creme (2), Reis-Bowl mit Garnelen in Mojo-Soße (2); Portionen wie in der Vorlage. Neue Gewürzeinträge für Zutaten ohne Menge oder ohne Eintrag in der Zutatenliste (Asia-Gewürzmischung, Koriander, Zucker, Wasabi, Frühlingszwiebeln, Ahornsirup, Olivenöl zum Braten). Hinweise: Wasabi (Bowl 011) und Frühlingszwiebeln (Bowl 012) stehen nur in der Zubereitung; Bowl 010 nennt Babyspinat, aber „auftauen“; Zeit der Hähnchen-Bowl 45 statt 35 Minuten. APP_VERSION 76.
+
+## Nachtrag Version 75: Sechs fertige Bowls (r942 bis r947)
+
+- Neu unter Salat/Bowl, je 2 Portionen wie in der Vorlage: Teriyaki-Hähnchen-Bowl, Lachs-Teriyaki-Bowl, Vegane Quinoa-Bowl mit Knusper-Tofu (NDR), Mediterrane Kichererbsen-Bowl, Asiatische Bowl mit Pak Choi und Tofu (DM), Buddha-Bowl mit Tofu und Rote Bete (EDEKA). Neue Zutat: Teriyaki-Sauce; neue Gewürzeinträge: Frische Kräuter, Minze (Garnitur). Annahmen: Kokosblütenzucker als Palmzucker, rote Currypaste als Thai-Currypaste, Rote Bete gegart. Hinweise: Minze, Rucola und Sprossen der Quinoa-Bowl stehen nicht in der Zubereitung bzw. Zutatenliste der Vorlage; Zeit des Lachses 55 statt 35 Minuten. Test: Autoplan-Seed in test_logic2 von 7 auf 5 gestellt (der größere Rezeptpool lässt Seed 7 nur 4 Tage im Kalorienkorridor treffen). APP_VERSION 75.
+
+## Nachtrag Version 74: Vegetarische Leberwurst (r941)
+
+- Neu unter Aufstrich: Vegetarische Leberwurst, Linsen-Leberwurst nach SWR (4 Portionen; Vorlage 4 bis 6). Zutaten, Mengen und alle 17 Schritte wie übergeben; Histamin-Hinweis der Vorlage im Tipp (nicht umgesetzt). Annahmen: Alblinsen als braune Linsen, Sellerie als Knollensellerie, Räuchersalz als Rauchsalz. Hinweis zur hohen Majoran-Menge (20 g). APP_VERSION 74.
+
+## Nachtrag Version 73: Hotpot-Brühen unter Suppe/Eintopf (r939, r940)
+
+- Auf Wunsch von Beilage nach Suppe/Eintopf verschoben und als Brühe verdeutlicht: Namen „Hotpot-Brühe scharf …“ und „Hotpot-Brühe mild …“, Tag „Suppenbasis“, Tipp beginnt mit dem Hinweis, dass es nur die Brühe ist und nicht die vollständige Mahlzeit (Ausnahme vom Kalorien- und Eiweißrahmen). APP_VERSION 73.
+
+## Nachtrag Version 72: Hotpot-Brühen (r939, r940)
+
+- Neu unter Beilage: Traditionelle Sichuan-Málà-Hotpot-Brühe mit Instant-Gewürzpaste (r939) und Milde chinesische Hotpot-Brühe mit Instant-Knochenbrühekonzentrat (r940), je 4 Portionen (Vorlage: 4 bis 6 Personen, ca. 1,5 Liter). Klassische Zubereitung, Instant-Variante, Yin-Yang-Mengen, Lagerung und Sicherheitshinweise (Botulismus bei Knoblauch in Öl) vollständig übernommen. Neue Zutaten: Rindertalg, rote Chilis getrocknet, Douchi, Kandiszucker, Shiitake getrocknet, Hühnerkarkasse und Schweineknochen für Brühe (Knochen nur mit Richtwert für den in die Brühe übergehenden Anteil). APP_VERSION 72.
+
+## Nachtrag Version 71: Ntomatorizo, Griechischer Tomatenreis (r938)
+
+- Neu unter Beilage: Ntomatorizo (Griechischer Tomatenreis, 4 Portionen) nach den Quellen SBS Greek, Real Greek Recipes und Travel & Food; Gramm für Stück- und Löffelangaben sind Annahmen (ca.). Histamin-Hinweis: wegen der Tomaten nicht für eine histaminarme Ernährung geeignet. APP_VERSION 71.
 
 ## Nachtrag Version 70: Salate nur mit SIGHI-Kategorie 0
 
@@ -1314,17 +1374,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **852** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 112, Rind: 115, Schwein: 119, Fisch: 80, Vegetarisch: 426 |
-| Verteilung nach Mahlzeit | Hauptgericht: 356, Suppe/Eintopf: 65, Salat/Bowl: 23, Frühstück: 18, Smoothie: 16, Snack: 181, Dessert: 98, Beilage: 29, Aufstrich: 45, Sauce/Dips: 21 |
-| Einfrierbar: ja / eingeschränkt | 138 / 41 |
-| Zutaten im Stamm (davon mit Nährwerten) | 581 (580) |
-| Gewürze | 120 |
-| Bausteine (Meal-Prep) | **79** (Protein: 20, Beilage: 8, Sauce: 23, Gemüse: 5, Booster: 23) |
+| Mitgelieferte Rezepte | **883** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 116, Rind: 116, Schwein: 119, Fisch: 91, Vegetarisch: 441 |
+| Verteilung nach Mahlzeit | Hauptgericht: 356, Suppe/Eintopf: 67, Salat/Bowl: 49, Frühstück: 18, Smoothie: 16, Snack: 181, Dessert: 98, Beilage: 30, Aufstrich: 46, Sauce/Dips: 22 |
+| Einfrierbar: ja / eingeschränkt | 141 / 41 |
+| Zutaten im Stamm (davon mit Nährwerten) | 595 (594) |
+| Gewürze | 141 |
+| Bausteine (Meal-Prep) | **95** (Protein: 23, Beilage: 15, Sauce: 23, Gemüse: 8, Booster: 26) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine, Dämpfer, Stabmixer, Handmixer, Eismaschine, Wok, Thermometer, Vakuumierer, Dörrautomat, Mikrowelle, Reiskocher, Mooncake-Form, Waffeleisen, Küchenbrenner, Eisportionierer, Slow Cooker |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 3863 KB |
+| Größe `dist/index.html` | 4003 KB |
 
 ---
 
@@ -1521,7 +1581,7 @@ Kategorie `Dessert` in `MEALS`, Platz `d` in `SLOTS`, angezeigt nur bei `state.d
 | Befehl | Ergebnis | Status |
 |---|---|---|
 | `node test_logic2.js` | 95 Prüfungen | bestanden |
-| `node test_logic3.js` | 317 Prüfungen | bestanden |
+| `node test_logic3.js` | 365 Prüfungen | bestanden |
 | `node test_bls.js` | 9 Prüfungen | bestanden |
 | `node smoke2.js` | 153 Prüfungen | bestanden |
 | `node smoke3.js` | 92 Prüfungen | bestanden |
@@ -1546,8 +1606,8 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 852 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
-- **Bausteine:** 79 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
+- **Rezepte:** 883 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Bausteine:** 95 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
 - **Autoplan:** rechnet je Platz mit einer Portion. Gut für etwa 1500 bis 1900 kcal. Proteinziele über etwa 130 g werden nur an einem Teil der Tage erreicht.
