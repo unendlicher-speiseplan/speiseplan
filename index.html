@@ -308,7 +308,7 @@ button.badge { border: 0; cursor: pointer; font-family: inherit; }
 <script>
 /* ===== Daten & Logik (ohne DOM, testbar) ===== */
 // Versionsnummer der App: bei jeder Auslieferung erhöhen (fortlaufende ganze Zahl). Sie steht in der Kopfzeile und unter Mehr.
-const APP_VERSION = '84';
+const APP_VERSION = '86';
 const ALLERGENE = {
   gluten: 'Glutenhaltiges Getreide', krebs: 'Krebstiere', ei: 'Eier', fisch: 'Fisch', erdnuss: 'Erdnüsse',
   soja: 'Soja', milch: 'Milch', schale: 'Schalenfrüchte', sellerie: 'Sellerie', senf: 'Senf',
@@ -1439,6 +1439,7 @@ const ZUTATEN_PLUS = [
   I('dinkelreis', 'Dinkelreis (roh, Dinkelkörner; eigener Richtwert)', 'Trockenprodukte', 335, 12, 66, 2.5, { al: ['gluten'], fod: 1 }),
   I('feldsalat', 'Feldsalat', 'Gemüse', 14, 1.8, 0.7, 0.4),
   I('buchweizen', 'Buchweizen (geschält, roh; eigener Richtwert)', 'Trockenprodukte', 345, 10.5, 70, 2.7),
+  I('cabanossi', 'Cabanossi (geräucherte Dauerwurst; eigener Richtwert)', 'Fleisch & Geflügel', 375, 19, 1, 33, { his: 2 }),
   I('pilzcremesuppe', 'Kondensierte Pilzcremesuppe (Dose, unverdünnt; eigener Richtwert)', 'Konserven', 80, 1.4, 7, 5, { al: ['gluten', 'milch'] }),
   I('kartoffelchips', 'Kartoffelchips (gesalzen)', 'Trockenprodukte', 536, 6, 50, 34),
   I('veggie_crumbles', 'Veggie-Hack / Burger-Crumbles (vegetarisch, Soja-Weizen-Basis; eigener Richtwert)', 'Sonstiges', 150, 17, 9, 4.5, { al: ['soja', 'gluten'], hul: 1 }),
@@ -1519,7 +1520,8 @@ const SPICES = [
   { id: 'schnittlauch_optional', name: 'Schnittlauch (optional, Menge nicht angegeben)' },
   { id: 'gyros_gewuerz', name: 'Gyros-Gewürz (Menge nicht angegeben, Mischung herstellerabhängig)' },
   { id: 'minze_ohne_menge', name: 'Minze, frisch (Menge nicht angegeben)' },
-  { id: 'zitrone_ohne_menge', name: 'Zitrone (Menge nicht angegeben, zum Würzen)' }
+  { id: 'zitrone_ohne_menge', name: 'Zitrone (Menge nicht angegeben, zum Würzen)' },
+  { id: 'brot_zum_servieren', name: 'Landbrot oder Ciabatta zum Servieren (Menge nicht angegeben, nicht gerechnet)', al: ['gluten'] }
 ].map(s => Object.assign({ al: [], fod: 0 }, s));
 const SMAP = {};
 SPICES.forEach(s => { SMAP[s.id] = s; });
@@ -2245,6 +2247,7 @@ Object.assign(BLS_REF, {
   "dinkelreis": { m: "own", c: "", n: "Dinkelreis (Dinkelkörner, roh): kein BLS-Eintrag; eigener Richtwert nach üblichen Packungsangaben, je nach Hersteller verschieden.", e: 0, o: [335, 12, 66, 2.5] },
   "feldsalat": { m: "own", c: "", n: "Feldsalat: Richtwert nach üblichen Tabellenwerten (rund 14 kcal je 100 g).", e: 0, o: [14, 1.8, 0.7, 0.4] },
   "buchweizen": { m: "own", c: "", n: "Buchweizen (geschält, roh): kein BLS-Eintrag; eigener Richtwert nach üblichen Tabellenwerten (rund 345 kcal je 100 g), je nach Hersteller verschieden.", e: 0, o: [345, 10.5, 70, 2.7] },
+  "cabanossi": { m: "own", c: "", n: "Cabanossi (geräucherte Dauerwurst): kein BLS-Eintrag; eigener Richtwert nach üblichen Packungsangaben (rund 375 kcal je 100 g), je nach Hersteller verschieden.", e: 0, o: [375, 19, 1, 33] },
 });
 Object.assign(BLS_REF, {
   "taropaste": { m: "own", c: "", n: "Taropaste: kein BLS-Eintrag; rechnerisch aus dem Grundrezept „Gemeinsame Taropaste“ der App (600 g Taro, 150 g Zucker, 120 g Kokosmilch, 60 g Butter, Ausbeute laut Vorlage ca. 800 g). Taro ist selbst eine Näherung nach Kartoffeln. Gekaufte Pasten können abweichen; die Packungsangaben sind maßgeblich.", e: 0, o: [227, 1.9, 32.5, 9.5] }
@@ -70720,6 +70723,199 @@ SEED2.push(
   "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
  },
  "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Meal-Prep-Baukasten, Nr. 20); Quelle laut Text: Kikkoman „Teriyaki Lachs Bowl“ (Fußnote [1390], Standardrezept ohne Quellenlink); Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Bud-Spencer-Bohnenpfanne (Version 85) ---------- */
+  R({
+ "meal": "Hauptgericht",
+ "mp": false,
+ "name": "Bud-Spencer-Bohnenpfanne mit Speck, Cabanossi und Tomaten",
+ "group": "Schwein",
+ "cuisine": "Westernküche",
+ "origin": "Westernküche",
+ "servings": 4,
+ "prep": 10,
+ "cook": 25,
+ "level": "leicht",
+ "devices": [
+  "Herd"
+ ],
+ "tags": [
+  "Bud Spencer",
+  "Terence Hill",
+  "Bohnen",
+  "Pfannengericht",
+  "Westernküche",
+  "herzhaft",
+  "Abendessen"
+ ],
+ "ing": [
+  [
+   "weisse_bohnen",
+   400
+  ],
+  [
+   "kidneybohnen",
+   400
+  ],
+  [
+   "speckwuerfel",
+   150
+  ],
+  [
+   "cabanossi",
+   150
+  ],
+  [
+   "zwiebel",
+   120
+  ],
+  [
+   "knoblauch",
+   6
+  ],
+  [
+   "tomaten_dose",
+   400
+  ],
+  [
+   "tomatenmark",
+   15
+  ],
+  [
+   "chili_frisch",
+   10
+  ],
+  [
+   "olivenoel",
+   20
+  ]
+ ],
+ "spices": [
+  "paprika_suess",
+  "thymian",
+  "salz",
+  "pfeffer",
+  "brot_zum_servieren"
+ ],
+ "steps": [
+  "Eine große Gusseisenpfanne oder einen breiten Schmortopf auf mittlerer bis hoher Hitze vorheizen.",
+  "Das Olivenöl (2 EL) hineingeben und den gewürfelten Speck (150 g) darin 3 bis 4 Minuten knusprig ausbraten.",
+  "Die Cabanossi-Scheiben (150 g) zugeben und 2 bis 3 Minuten mitbraten, bis sie leicht gebräunt sind.",
+  "Zwiebel (1 große, fein gewürfelt) und Knoblauch (2 Zehen, fein gehackt) zugeben und 3 bis 4 Minuten glasig dünsten.",
+  "Tomatenmark (1 EL), die fein gehackte Chilischote, Paprikapulver (1 TL) und Thymian (1 TL) zugeben und etwa 1 Minute unter Rühren mitrösten.",
+  "Die geschälten Tomaten (400 g) samt Saft sowie die weißen Bohnen (400 g) und die Kidneybohnen (400 g) hinzufügen.",
+  "Alles gut vermengen, einmal aufkochen lassen und bei mittlerer Hitze 15 bis 20 Minuten offen köcheln lassen.",
+  "Gelegentlich umrühren. Wird die Sauce zu dick, 2 bis 3 EL Wasser oder Gemüsebrühe zugeben.",
+  "Mit Salz und frisch gemahlenem Pfeffer abschmecken; vorsichtig salzen, weil Speck und Cabanossi schon salzig sind.",
+  "Das Brot in Scheiben schneiden oder grob zerreißen und zur Bohnenpfanne servieren."
+ ],
+ "tips": "Fassung nach einem vom Auftraggeber übergebenen Rezepttext (keine Quelle genannt). Mengen und Schritte wie in der Vorlage für 4 Portionen. Serviervorschlag der Vorlage: direkt in der Pfanne auf den Tisch stellen, kräftiges Brot zum Tunken dazu; optional ein Klecks saure Sahne, frischer Thymian oder geriebener Parmesan (nicht gerechnet). Tipps der Vorlage: für mehr Raucharoma geräucherten Paprika nehmen; milder ohne Chili oder mit einer halben roten Paprika; statt Cabanossi gehen auch Salami oder Landjäger; eine vegetarische Variante mit geräuchertem Tofu und veganer Wurst; am nächsten Tag schmeckt die Pfanne oft noch besser. Annahmen der App: Bohnen als Dosenware (abgetropft, abgespült); „Speck oder Bacon“ als geräucherte Speckwürfel; Cabanossi als eigener Eintrag (Richtwert nach üblichen Packungsangaben); 1 große Zwiebel ≈ 120 g; 2 Knoblauchzehen ≈ 6 g; „geschälte Tomaten“ als Tomaten aus der Dose (gehackt, 400 g mit Saft); 1 EL Tomatenmark ≈ 15 g; 1 Chilischote ≈ 10 g; 2 EL Olivenöl ≈ 20 g; Paprikapulver als edelsüß; Salz, Pfeffer und Brot ohne Menge, Brot nicht gerechnet. Die Nährwerte der Vorlage (ca. 650 kcal, 28 g Eiweiß je Portion) sind nicht übernommen; die App rechnet aus ihrer Zutatenbasis. Speck und Cabanossi sind verzehrfertig bzw. werden gebraten; die Bohnen aus der Dose sind bereits gegart. Nicht praktisch getestet.",
+ "storage": "Im Kühlschrank abgedeckt höchstens 3 Tage aufbewahren (Hinweis der App; die Vorlage macht keine Angabe).",
+ "reheat": "Unter Rühren durchgehend auf mindestens 70 °C erhitzen, bei Bedarf mit etwas Wasser.",
+ "freeze": {
+  "ok": "nein",
+  "block": 0,
+  "months": 0,
+  "note": "Die Vorlage macht keine Angabe zum Einfrieren; deshalb nicht für den Gefrierplan vorgesehen."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext; keine Quelle im Text angegeben; Standardrezept ohne Quellenlink; Zutaten und Mengen wie übergeben, Schritte in eigenen Worten"
+})
+);
+
+SEED2.push(
+  /* ---------- Saftige Vanille-Schoko-Muffins (Version 86) ---------- */
+  R({
+ "meal": "Snack",
+ "mp": true,
+ "name": "Saftige Vanille-Schoko-Muffins",
+ "group": "Vegetarisch",
+ "cuisine": "US-amerikanisch",
+ "origin": "US-amerikanisch",
+ "servings": 12,
+ "prep": 10,
+ "cook": 22,
+ "level": "leicht",
+ "devices": [
+  "Backofen"
+ ],
+ "tags": [
+  "Muffins",
+  "Vanille",
+  "Schokolade",
+  "Joghurt",
+  "saftig",
+  "Backen",
+  "Frühstück",
+  "Snack"
+ ],
+ "ing": [
+  [
+   "mehl",
+   250
+  ],
+  [
+   "zucker",
+   100
+  ],
+  [
+   "brauner_zucker",
+   30
+  ],
+  [
+   "backpulver",
+   5
+  ],
+  [
+   "eier",
+   110
+  ],
+  [
+   "joghurt35",
+   200
+  ],
+  [
+   "rapsoel",
+   92
+  ],
+  [
+   "vanilleextrakt",
+   5
+  ],
+  [
+   "zartbitter",
+   150
+  ]
+ ],
+ "spices": [
+  "natron",
+  "salz"
+ ],
+ "steps": [
+  "Den Backofen auf 180 °C Ober-/Unterhitze vorheizen.",
+  "Ein 12er-Muffinblech mit Papierbackförmchen auslegen oder die Vertiefungen einfetten.",
+  "In einer großen Schüssel Mehl (250 g), weißen Zucker (100 g), braunen Zucker (30 g), Backpulver (1 TL), Natron (1 TL) und Salz (1 Prise) gründlich vermischen.",
+  "In einer zweiten Schüssel Eier (2 Stück, Größe M), Naturjoghurt (200 g), Öl (100 ml) und Vanilleextrakt (1 TL) glatt verrühren.",
+  "Die flüssige Mischung zu den trockenen Zutaten geben.",
+  "Den Teig nur kurz mit einem Löffel oder Teigspatel verrühren, bis keine großen Mehlnester mehr sichtbar sind. Nicht zu lange rühren, sonst werden die Muffins zäh.",
+  "Die Schokoladenstückchen (150 g) unterheben.",
+  "Den Teig gleichmäßig auf die 12 Förmchen verteilen und diese zu etwa drei Vierteln füllen. Nach Wunsch die Muffins vor dem Backen mit etwas Zucker bestreuen.",
+  "18 bis 22 Minuten backen, bis die Oberseite goldbraun ist.",
+  "Stäbchenprobe machen: Es dürfen noch feuchte Krümel am Holzstäbchen haften, aber kein roher Teig.",
+  "Die Muffins 5 Minuten in der Form abkühlen lassen, anschließend auf einem Kuchengitter vollständig auskühlen lassen."
+ ],
+ "tips": "Fassung nach einem vom Auftraggeber übergebenen Rezepttext (Grundrezept für Joghurt-Öl-Muffins; keine Quelle mit Link genannt). Mengen und Schritte wie in der Vorlage für 12 Muffins; die Kochzeit der Vorlage ist 18 bis 22 Minuten (in der App 22 Minuten eingetragen). Serviervorschlag der Vorlage: lauwarm oder vollständig abgekühlt, dazu Kaffee, Tee oder ein Glas Milch. Tipps der Vorlage: Öl statt Butter hält die Muffins länger saftig; der Joghurt sorgt für eine zarte Krume und zusätzliche Feuchtigkeit; den Teig nicht übermäßig verrühren, sobald die Zutaten verbunden sind, aufhören. Varianten der Vorlage (nicht gerechnet): Blaubeer-Muffins mit 150 g Blaubeeren statt der Schokolade (vorher leicht in Mehl wenden); Zitronenmuffins mit dem Abrieb einer Bio-Zitrone und 1 EL Zitronensaft statt Vanilleextrakt; Apfel-Zimt-Muffins mit 150 g fein gewürfelten Äpfeln und 1 TL Zimt. Annahmen der App: Mehl als Weizenmehl (Type 405); Joghurt als Naturjoghurt 3,5 % Fett; neutrales Öl als Rapsöl, 100 ml ≈ 92 g; 2 Eier der Größe M ≈ 110 g; 1 TL Backpulver ≈ 5 g; 1 TL Vanilleextrakt ≈ 5 g; die backfesten Schokoladenstückchen als Zartbitterschokolade (Vorlage nennt die Sorte nicht); Natron und Salz ohne Gramm-Menge. Nicht gerechnet sind die optionalen Zutaten der Vorlage (1 bis 2 EL Milch bei sehr festem Teig, 1 EL Zucker zum Bestreuen). Die Nährwerte der Vorlage (ca. 230 kcal, 4 g Eiweiß je Muffin) sind nicht übernommen; die App rechnet aus ihrer Zutatenbasis. Enthält Gluten, Ei und Milch. Nicht praktisch getestet.",
+ "storage": "Luftdicht verpackt bei Raumtemperatur 2 bis 3 Tage, im Kühlschrank bis zu 5 Tage.",
+ "reheat": "Vor dem Verzehr kurz auftauen oder erwärmen (Mikrowelle oder Backofen).",
+ "freeze": {
+  "ok": "ja",
+  "block": 250,
+  "months": 3,
+  "note": "Laut Vorlage bis zu 3 Monate; vor dem Verzehr kurz auftauen oder erwärmen. Blockgröße 250 ml ist ein Richtwert der App (eine Portion ist ein Muffin)."
+ },
+ "src": "Eigene Fassung (Claude) nach einem vom Auftraggeber übergebenen Rezepttext (Joghurt-Öl-Muffin-Grundrezept); keine Quelle mit Link im Text angegeben; Zutaten und Mengen wie übergeben, Schritte in eigenen Worten; Zeiten nach Vorlage, nicht getestet"
 })
 );
 

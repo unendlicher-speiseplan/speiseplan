@@ -1,6 +1,6 @@
 # PROTOKOLL: Unendlicher Speiseplan (Übergabe an jede KI und jeden Chat)
 
-Stand dieser ZIP: 2026-11-02 01:00 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
+Stand dieser ZIP: 2026-11-03 03:30 UTC · Paket: App (Ausspielung). Der Quellcode steht in speiseplan-projekt.zip.
 
 **Zweck dieser Datei:** Ein neuer Chat oder eine andere KI soll nur diese ZIP lesen und ohne Rückfragen weiterarbeiten können. Alles Wichtige steht hier: Vorgaben des Auftraggebers, Architektur, Datenformate, Teststand, bekannte Fallen, offene Aufgaben und ehrliche Grenzen. Die Zahlen in Abschnitt 3 und 4 sind beim Packen automatisch aus dem Quellcode erzeugt und stimmen mit dieser ZIP überein. Alles andere ist von Hand geschrieben. Bei Widerspruch gilt der Quellcode.
 
@@ -18,6 +18,14 @@ Das von ChatGPT weiterentwickelte Paket wurde gründlich geprüft (Build, alle T
 - **Widersprüche in den Berichten bereinigt:** r277 wurde durch den Nachtrag unten **ersetzt**. Aussagen wie „unverändert belassen“ im Sonderfall-Abschluss beschreiben den Stand **vor** diesem Nachtrag. Die Zählungen und „verbindlich“-Angaben in den älteren Runden-Einträgen sind Verlaufsdokumentation; maßgeblich sind die automatisch erzeugten Zahlen in Abschnitt 3 und 4 sowie der Quellcode.
 - **Grenze bei r277:** Die BBC-Seite ist für Abrufwerkzeuge gesperrt. Zutaten und Mengen hat laut Nachtrag der Auftraggeber übermittelt; die Arbeitsschritte stammen aus einer Drittseiten-Kopie. Nach Projektregel werden gesperrte Seiten nicht über Spiegel umgangen. Die Schritte von r277 gelten deshalb nur als vorläufig, bis der Auftraggeber den Originaltext bestätigt.
 - **Bewusst nicht geändert:** Bei weiteren Bestandsrezepten haben die Quellenabgleiche Zutaten und Schritte angepasst (zum Beispiel r167, r170, r172, r179, r211, r219 bis r223, r239, r240, r248, r250, r323). Die Änderungen sind in den Tipps der Rezepte benannt; der Auftraggeber sollte sie bei Gelegenheit prüfen und kann jede einzelne zurücknehmen lassen.
+
+## Nachtrag Version 86: Saftige Vanille-Schoko-Muffins (r970)
+
+- Neu unter Snack (Gruppe Vegetarisch): Saftige Vanille-Schoko-Muffins, 12 Portionen (12 Muffins). Nur vorhandene Zutaten; Schokoladenstückchen als Zartbitterschokolade angenommen; Nährwerte der Vorlage nicht übernommen. APP_VERSION 86.
+
+## Nachtrag Version 85: Bud-Spencer-Bohnenpfanne (r969)
+
+- Neu unter Hauptgericht (Gruppe Schwein): Bud-Spencer-Bohnenpfanne mit Speck, Cabanossi und Tomaten, 4 Portionen. Neue Zutat: Cabanossi (Richtwert); neuer Gewürzeintrag: Landbrot oder Ciabatta zum Servieren (nicht gerechnet). Nährwerte der Vorlage nicht übernommen. APP_VERSION 85.
 
 ## Nachtrag Version 84: Gramm je Block gegart, Fleisch- und Gemüse-Bausteine auf 125 ml
 
@@ -1374,17 +1382,17 @@ Das Produkt läuft **ohne Server**: als eigenständige PWA (GitHub Pages) und al
 
 | Kennzahl | Wert |
 |---|---|
-| Mitgelieferte Rezepte | **883** (aktueller Stand) |
-| Verteilung nach Gruppe | Geflügel: 116, Rind: 116, Schwein: 119, Fisch: 91, Vegetarisch: 441 |
-| Verteilung nach Mahlzeit | Hauptgericht: 356, Suppe/Eintopf: 67, Salat/Bowl: 49, Frühstück: 18, Smoothie: 16, Snack: 181, Dessert: 98, Beilage: 30, Aufstrich: 46, Sauce/Dips: 22 |
-| Einfrierbar: ja / eingeschränkt | 141 / 41 |
-| Zutaten im Stamm (davon mit Nährwerten) | 595 (594) |
-| Gewürze | 141 |
+| Mitgelieferte Rezepte | **885** (aktueller Stand) |
+| Verteilung nach Gruppe | Geflügel: 116, Rind: 116, Schwein: 120, Fisch: 91, Vegetarisch: 442 |
+| Verteilung nach Mahlzeit | Hauptgericht: 357, Suppe/Eintopf: 67, Salat/Bowl: 49, Frühstück: 18, Smoothie: 16, Snack: 182, Dessert: 98, Beilage: 30, Aufstrich: 46, Sauce/Dips: 22 |
+| Einfrierbar: ja / eingeschränkt | 142 / 41 |
+| Zutaten im Stamm (davon mit Nährwerten) | 596 (595) |
+| Gewürze | 142 |
 | Bausteine (Meal-Prep) | **95** (Protein: 23, Beilage: 15, Sauce: 23, Gemüse: 8, Booster: 26) |
 | Einkaufskategorien | Fleisch & Geflügel, Fisch & Meeresfrüchte, Gemüse, Obst, Milchprodukte, Eier, Tiefkühlprodukte, Trockenprodukte, Konserven, Gewürze & Öle, Sonstiges |
 | Geräte-Werte | Airfryer, Kontaktgrill, Multikocher, Sous-vide, Herd, Backofen, Monsieur Cuisine Connect, Dutch Oven, Mixer, Küchenmaschine, Fleischwolf, Nudelmaschine, Dämpfer, Stabmixer, Handmixer, Eismaschine, Wok, Thermometer, Vakuumierer, Dörrautomat, Mikrowelle, Reiskocher, Mooncake-Form, Waffeleisen, Küchenbrenner, Eisportionierer, Slow Cooker |
 | Feste Ausschlüsse | keine ganz ausgeschlossenen Zutaten; Ananas, Süßkartoffel und Batate sind erlaubt, aber nicht als Hauptgericht (nur Frühstück, Snack, Dessert) |
-| Größe `dist/index.html` | 4003 KB |
+| Größe `dist/index.html` | 4012 KB |
 
 ---
 
@@ -1606,7 +1614,7 @@ Weitere Hinweise zu den Tests:
 
 ## 6. Ehrliche Grenzen des aktuellen Stands
 
-- **Rezepte:** 883 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
+- **Rezepte:** 885 von 240 geplanten sind mitgeliefert. Status „Entwurf, automatisch validiert“, **von der KI nicht gekocht**. Der Nutzer kann Rezepte entfernen und durch eigene oder importierte ersetzen.
 - **Bausteine:** 95 Bausteine als eigene Grundzubereitungen, Status „Entwurf, automatisch validiert“. Ausbeute, Blockanzahl und Küchenzeiten sind Schätzungen. Nichts davon wurde gekocht oder eingefroren.
 - **Nährwerte:** 194 von 266 Zutaten direkt nach BLS 4.0 (Stand 29.10.2026) (Quelle und Code je Zutat in `data_bls.js`, Auszug in `bls_auszug.json`, geprüft von `test_bls.js`), die übrigen 72 mit Näherungs-, abgeleiteten oder eigenen Werten (Kennung `m` in `data_bls.js`, je begründet). Das gilt je 100 g der Zutat; die Mahlzeitenwerte sind daraus gerechnet. Marken, Sorte, Reifegrad und Garverluste (Rezeptmengen sind Rohgewichte) lassen Abweichungen im Alltag zu. „Absolut“ ist nicht erreichbar, nachvollziehbar und belegt schon.
 - **Nicht testbar durch die KI:** Funktionen, die nur im Claude-Artifact laufen (KI-Vorschläge, KI-Import, Speichern im Claude-Konto, Downloads über `downloads`), sowie die Installation der App als PWA auf einem echten Handy. Der Nutzer bestätigte, dass die gehostete App läuft.
